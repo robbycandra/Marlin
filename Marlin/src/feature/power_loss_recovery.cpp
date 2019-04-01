@@ -150,6 +150,15 @@ void PrintJobRecovery::save(const bool force/*=false*/, const bool save_queue/*=
     info.valid_foot = info.valid_head;
 
     // Machine state
+    #if ENABLED(DEBUG_POWER_LOSS_RECOVERY)
+      SERIAL_ECHOPGM("previous_position: ");
+      LOOP_XYZE(i) {
+        if (i) SERIAL_CHAR(',');
+        SERIAL_ECHO(info.current_position[i]);
+      }
+      SERIAL_EOL();
+    #endif
+
     COPY(info.current_position, current_position);
     #if HAS_HOME_OFFSET
       COPY(info.home_offset, home_offset);
