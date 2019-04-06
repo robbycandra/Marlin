@@ -38,20 +38,19 @@
   /**
    * Marlin release version identifier
    */
-  #define SHORT_BUILD_VERSION "bugfix-2.0.x"
+  #define SHORT_BUILD_VERSION "2.0.0" REXYZ_FW_VERSION
 
   /**
    * Verbose version identifier which should contain a reference to the location
    * from where the binary was downloaded or the source code was compiled.
    */
-  #define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION " (Github)"
-
+  #define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION " (Rexyz)"
   /**
    * The STRING_DISTRIBUTION_DATE represents when the binary file was built,
    * here we define this default string as the date where the latest release
    * version was tagged.
    */
-  #define STRING_DISTRIBUTION_DATE "2018-01-20"
+  #define STRING_DISTRIBUTION_DATE REXYZ_STRING_DISTRIBUTION_DATE
 
   /**
    * Required minimum Configuration.h and Configuration_adv.h file versions.
@@ -73,25 +72,26 @@
   /**
    * Defines a generic printer name to be output to the LCD after booting Marlin.
    */
-  #define MACHINE_NAME "3D Printer"
-
+  #define MACHINE_TYPE REXYZ_MACHINE_TYPE
+  #define MACHINE_NAME "Rexyz-" REXYZ_MACHINE_FRAME_TYPE
+  
   /**
    * The SOURCE_CODE_URL is the location where users will find the Marlin Source
    * Code which is installed on the device. In most cases —unless the manufacturer
    * has a distinct Github fork— the Source Code URL should just be the main
    * Marlin repository.
    */
-  #define SOURCE_CODE_URL "https://github.com/MarlinFirmware/Marlin"
+  #define SOURCE_CODE_URL REXYZ_SOURCE_CODE_URL
 
   /**
    * Default generic printer UUID.
    */
-  #define DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
+  #define DEFAULT_MACHINE_UUID REXYZ_DEFAULT_MACHINE_UUID
 
   /**
    * The WEBSITE_URL is the location where users can get more information such as
    * documentation about a specific Marlin release.
    */
-  #define WEBSITE_URL "http://marlinfw.org"
+  #define WEBSITE_URL REXYZ_WEBSITE_URL
 
 #endif // USE_AUTOMATIC_VERSIONING

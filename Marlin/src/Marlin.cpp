@@ -1045,6 +1045,12 @@ void setup() {
   #if HAS_SPI_LCD && ENABLED(SHOW_BOOTSCREEN)
     ui.show_bootscreen();
   #endif
+  
+  #if ENABLED(STARTUP_TONE)
+    ui.buzz(200,784);
+    ui.buzz(200,1318);
+    ui.buzz(200,1046);
+  #endif  
 
   #if ENABLED(MIXING_EXTRUDER)
     mixer.init();

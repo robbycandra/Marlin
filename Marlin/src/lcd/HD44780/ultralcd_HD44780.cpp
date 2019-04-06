@@ -405,9 +405,9 @@ void MarlinUI::clear_lcd() { lcd.clear(); }
 
   static void logo_lines(PGM_P const extra) {
     int16_t indent = (LCD_WIDTH - 8 - utf8_strlen_P(extra)) / 2;
-    lcd_moveto(indent, 0); lcd_put_wchar('\x00'); lcd_put_u8str_P(PSTR( "------" ));  lcd_put_wchar('\x01');
-    lcd_moveto(indent, 1);                        lcd_put_u8str_P(PSTR("|Marlin|"));  lcd_put_u8str_P(extra);
-    lcd_moveto(indent, 2); lcd_put_wchar('\x02'); lcd_put_u8str_P(PSTR( "------" ));  lcd_put_wchar('\x03');
+    lcd_moveto(indent, 0); lcd_put_wchar('\x00'); lcd_put_u8str_P(PSTR( "-----" ));  lcd_put_wchar('\x01');
+    lcd_moveto(indent, 1);                        lcd_put_u8str_P(PSTR("|REXYZ|"));  lcd_put_u8str_P(extra);
+    lcd_moveto(indent, 2); lcd_put_wchar('\x02'); lcd_put_u8str_P(PSTR( "-----" ));  lcd_put_wchar('\x03');
   }
 
   void MarlinUI::show_bootscreen() {
