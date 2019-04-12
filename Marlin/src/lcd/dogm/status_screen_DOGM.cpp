@@ -41,6 +41,8 @@
   #include "../../feature/filwidth.h"
   #include "../../module/planner.h"
   #include "../../gcode/parser.h"
+#elif HAS_ABL_OR_UBL
+  #include "../../module/planner.h"
 #endif
 
 #if ENABLED(SDSUPPORT)
@@ -395,16 +397,30 @@ void MarlinUI::draw_status_screen() {
     // SD Card Symbol
     //
     if (card.isFileOpen() && PAGE_CONTAINS(42, 51)) {
-      // Upper box
-      u8g.drawBox(42, 42, 8, 7);     // 42-48 (or 41-47)
-      // Right edge
-      u8g.drawBox(50, 44, 2, 5);     // 44-48 (or 43-47)
-      // Bottom hollow box
-      u8g.drawFrame(42, 49, 10, 4);  // 49-52 (or 48-51)
-      // Corner pixel
-      u8g.drawPixel(50, 43);         // 43 (or 42)
+      #if HAS_ABL_OR_UBL
+        u8g.drawBitmapP(37, 42, 2, 5, status_SD);
+      #else
+        // Upper box
+        u8g.drawBox(42, 42, 8, 7);     // 42-48 (or 41-47)
+        // Right edge
+        u8g.drawBox(50, 44, 2, 5);     // 44-48 (or 43-47)
+        // Bottom hollow box
+        u8g.drawFrame(42, 49, 10, 4);  // 49-52 (or 48-51)
+        // Corner pixel
+        u8g.drawPixel(50, 43);         // 43 (or 42)
+      #endif
     }
   #endif // SDSUPPORT
+
+  #if HAS_ABL_OR_UBL
+    if (planner.leveling_active) {
+      #if ENABLED(AUTO_BED_LEVELING_UBL)
+        u8g.drawBitmapP(37, 48, 2, 5, status_UBL);
+      #else
+        u8g.drawBitmapP(37, 48, 2, 5, status_ABL);
+      #endif
+    }
+  #endif
 
   #if HAS_PRINT_PROGRESS
     //

@@ -1098,6 +1098,34 @@
 
 #endif
 
+#if HAS_ABL_NOT_UBL
+      const unsigned char status_ABL[] PROGMEM = {
+        B00110011,B10010000,
+        B01001010,B01010000,
+        B01001011,B10010000,
+        B01111010,B01010000,
+        B01001011,B10011110,
+      };
+#endif
+#if ENABLED(AUTO_BED_LEVELING_UBL)
+      const unsigned char status_UBL[] PROGMEM = {
+        B01001011,B10010000,
+        B01001010,B01010000,
+        B01001011,B10010000,
+        B01001010,B01010000,
+        B00110011,B10011110,
+      };
+#endif
+#if ENABLED(SDSUPPORT)
+      const unsigned char status_SD[] PROGMEM = {
+        B00111110,B01111000,
+        B01000000,B01000100,
+        B00111100,B01000010,
+        B00000010,B01000100,
+        B01111100,B01111000,
+      };
+#endif
+
 //
 // Custom Logo Bitmap Properties
 //
