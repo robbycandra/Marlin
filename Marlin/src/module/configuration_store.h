@@ -35,6 +35,8 @@ class MarlinSettings {
 
     static void reset();
     static bool save();    // Return 'true' if data was saved
+    static bool is_rexyz();  // Return 'true' if previous eprom is Rexyz 
+    static void mark_rexyz();
 
     FORCE_INLINE static bool init_eeprom() {
       reset();
@@ -84,6 +86,7 @@ class MarlinSettings {
 
   private:
     static void postprocess();
+    static char mach_ver[10];
 
     #if ENABLED(EEPROM_SETTINGS)
 

@@ -424,7 +424,7 @@ void MarlinSettings::postprocess() {
   #endif
 
   const char version[4] = EEPROM_VERSION;
-
+  char MarlinSettings::mach_ver[10];
   bool MarlinSettings::eeprom_error, MarlinSettings::validating;
 
   bool MarlinSettings::size_error(const uint16_t size) {
@@ -1126,6 +1126,60 @@ void MarlinSettings::postprocess() {
 
     return !eeprom_error;
   }
+  
+  void MarlinSettings::mark_rexyz() {
+    uint16_t working_crc = 0;
+    mach_ver[0] = 'R';
+    mach_ver[1] = 'X';
+    strncpy(mach_ver+2, MACHINE_TYPE, sizeof(mach_ver)-2);
+    int eeprom_index = EEPROM_OFFSET - sizeof(mach_ver);
+    EEPROM_WRITE(mach_ver);  // invalidate data first
+  }
+
+  // Cek apakah eeprom sebelumnya adalah Rexyz
+  // Syaratnya: Pada eeprom sebelumnya harus sudah pernah Store
+
+  bool MarlinSettings::is_rexyz() {
+    uint16_t working_crc = 0;
+    char stored_ver[4];
+    bool saved_eeprom_error;
+    uint32_t tmp1[4];
+
+    saved_eeprom_error = eeprom_error;
+    eeprom_error = false;
+
+    int eeprom_index = EEPROM_OFFSET - sizeof(mach_ver);
+    EEPROM_READ_ALWAYS(mach_ver);
+    //SERIAL_ECHO("mach ver:");
+    //SERIAL_ECHOLN(mach_ver);
+    if (mach_ver[0] == 'R' && mach_ver[1] == 'X') {
+      eeprom_error = saved_eeprom_error;
+      return true;
+    }
+
+    #if ENABLED(REXYZ_MARKING_UPDATE)
+      EEPROM_READ_ALWAYS(stored_ver);
+      //SERIAL_ECHO("stored ver:");
+      //SERIAL_ECHOLN(stored_ver);
+      if (stored_ver[0] == 'V' && stored_ver[1] == '5' && stored_ver[2] == '5' && stored_ver[3] == '\0') {
+        eeprom_index += 3;
+        EEPROM_READ_ALWAYS(tmp1); // max_acceleration_mm_per_s2
+        //SERIAL_ECHOLNPAIR("max X accel",tmp1[0]);
+        //SERIAL_ECHOLNPAIR("max Y accel",tmp1[1]);
+        //SERIAL_ECHOLNPAIR("max Z accel",tmp1[2]);
+        //SERIAL_ECHOLNPAIR("max E accel",tmp1[3]);
+        if (tmp1[0] == 3000 && tmp1[1] == 3000 && tmp1[2] == 500 && tmp1[3] == 10000) {
+          mark_rexyz();
+          eeprom_error = saved_eeprom_error;
+          return true;
+        }
+      }
+    #endif
+
+    eeprom_error = saved_eeprom_error;
+    return false;
+  }
+
 
   /**
    * M501 - Retrieve Configuration

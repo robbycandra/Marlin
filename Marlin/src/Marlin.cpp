@@ -1050,7 +1050,20 @@ void setup() {
     ui.buzz(200,784);
     ui.buzz(200,1318);
     ui.buzz(200,1046);
-  #endif  
+  #endif
+  
+  if (settings.is_rexyz() == false) {
+    #if ENABLED(REXYZ_MARKING_INIT)
+      settings.mark_rexyz();
+    #else
+      SERIAL_ECHOLN("Not Rexyz Product");
+      do {
+        ui.buzz(200,784);
+        ui.buzz(200,1046);
+      }
+      while(true);
+    #endif
+  }
 
   #if ENABLED(MIXING_EXTRUDER)
     mixer.init();
