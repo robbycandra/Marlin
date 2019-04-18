@@ -1172,9 +1172,7 @@ void MarlinSettings::postprocess() {
 
   bool MarlinSettings::is_rexyz() {
     uint16_t working_crc = 0;
-    char stored_ver[4];
     bool saved_eeprom_error;
-    uint32_t tmp1[4];
 
     saved_eeprom_error = eeprom_error;
     eeprom_error = false;
@@ -1189,6 +1187,8 @@ void MarlinSettings::postprocess() {
     }
 
     #if ENABLED(REXYZ_MARKING_UPDATE)
+      char stored_ver[4];
+      uint32_t tmp1[4];
       EEPROM_READ_ALWAYS(stored_ver);
       //SERIAL_ECHO("stored ver:");
       //SERIAL_ECHOLN(stored_ver);
