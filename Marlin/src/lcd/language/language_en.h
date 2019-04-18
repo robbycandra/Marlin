@@ -214,6 +214,9 @@
 #ifndef MSG_LEVEL_CORNERS
   #define MSG_LEVEL_CORNERS                   _UxGT("Level corners")
 #endif
+#ifndef MSG_ADJUST_Z_OFFSET
+  #define MSG_ADJUST_Z_OFFSET                 _UxGT("Adjust Z Offset")
+#endif
 #ifndef MSG_NEXT_CORNER
   #define MSG_NEXT_CORNER                     _UxGT("Next corner")
 #endif

@@ -31,6 +31,9 @@
 #include "menu.h"
 #include "../../module/motion.h"
 #include "../../module/planner.h"
+#if HAS_BED_PROBE
+  #include "../../module/probe.h"
+#endif
 
 #if HAS_LEVELING
   #include "../../feature/bedlevel/bedlevel.h"
@@ -48,6 +51,11 @@ static_assert(LEVEL_CORNERS_Z_HOP >= 0, "LEVEL_CORNERS_Z_HOP must be >= 0. Pleas
 
 #if HAS_LEVELING
   static bool leveling_was_active = false;
+#endif
+
+#if HAS_BED_PROBE
+static float measured_z = NAN;
+static bool is_probe_paused = false, is_deploy = true;
 #endif
 
 static inline void _lcd_level_bed_corners_back() {
@@ -132,4 +140,171 @@ void _lcd_level_bed_corners() {
   ui.goto_screen(_lcd_level_bed_corners_homing);
 }
 
+#if HAS_BED_PROBE
+
+static inline void _lcd_calibrate_next_corner() {
+  if (++bed_corner > 4) bed_corner = 1;
+  line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
+  do {
+    if (READ(Z_MIN_PROBE_PIN) == Z_MIN_PROBE_ENDSTOP_INVERTING) break;
+
+    BUZZ(100, 659);
+    BUZZ(100, 698);
+    is_probe_paused = true;
+    is_deploy = true;
+
+    draw_menu_item_static(0,PSTR("Deploy Probe"),false,false);
+
+    //KEEPALIVE_STATE(PAUSED_FOR_USER);
+    wait_for_user = true;
+    while (wait_for_user) idle();
+    //KEEPALIVE_STATE(IN_HANDLER);
+  } while(true);
+  is_probe_paused = false;
+
+  switch (bed_corner) {
+    case 1:
+      measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      break;
+    case 2:
+      measured_z = probe_pt(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      break;
+    case 3:
+      measured_z = probe_pt(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      break;
+    case 4:
+      measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      break;
+  }
+  
+  if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", measured_z);
+  ui.encoderPosition = 2;
+  ui.lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
+}
+
+static inline void _lcd_calibrate_z() {
+  line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
+  if (bed_corner == 0) ++bed_corner;
+
+  do {
+    if (READ(Z_MIN_PROBE_PIN) == Z_MIN_PROBE_ENDSTOP_INVERTING) break;
+
+    BUZZ(100, 659);
+    BUZZ(100, 698);
+    is_probe_paused = true;
+    is_deploy = true;
+
+    draw_menu_item_static(0,PSTR("Deploy Probe"),false,false);
+
+    //KEEPALIVE_STATE(PAUSED_FOR_USER);
+    wait_for_user = true;
+    while (wait_for_user) idle();
+    //KEEPALIVE_STATE(IN_HANDLER);
+  } while(true);
+  is_probe_paused = false;
+
+  switch (bed_corner) {
+    case 1:
+      measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      break;
+    case 2:
+      measured_z = probe_pt(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      break;
+    case 3:
+      measured_z = probe_pt(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      break;
+    case 4:
+      measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      break;
+  }
+  if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", measured_z);
+  ui.lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
+}
+
+static inline void _lcd_save_offset() {
+  //note: measured_z = run_z_probe() + zprobe_zoffset;
+  zprobe_zoffset -= measured_z;
+  measured_z = 0;
+  ui.lcdDrawUpdate = LCDVIEW_REDRAW_NOW; 
+}
+
+static inline void _lcd_z_offset_calibration_back() {
+  #if HAS_BED_PROBE
+    do {
+      if (READ(Z_MIN_PROBE_PIN) != Z_MIN_PROBE_ENDSTOP_INVERTING) break;
+
+      BUZZ(100, 659);
+      BUZZ(100, 698);
+      is_probe_paused = true;
+      is_deploy = false;
+
+      draw_menu_item_static(0,PSTR("Stow Probe"),false,false);
+
+      //KEEPALIVE_STATE(PAUSED_FOR_USER);
+      wait_for_user = true;
+      while (wait_for_user) idle();
+      //KEEPALIVE_STATE(IN_HANDLER);
+    } while(true);
+    is_probe_paused = false;
+  #endif
+  #if HAS_LEVELING
+    set_bed_leveling_enabled(leveling_was_active);
+  #endif
+  ui.goto_previous_screen_no_defer();
+}
+
+static inline void menu_z_offset_calibration() {
+  char mea_z[10];
+  dtostrf(measured_z,1,2,mea_z);
+  START_MENU();
+  if (is_probe_paused) {
+    if (is_deploy) {
+      STATIC_ITEM("Deploy Probe", false, false);
+    } else {
+      STATIC_ITEM("Stow Probe", false, false);
+    }
+  }
+  else {
+    if (bed_corner == 0)
+      STATIC_ITEM("Adjust Nozzle Height");
+    else
+      STATIC_ITEM("Offset ",false,false, mea_z);
+  }
+  MENU_ITEM(function, MSG_BACK, _lcd_z_offset_calibration_back);
+  MENU_ITEM(function,"Calibrate", _lcd_calibrate_z);
+  MENU_ITEM(function, MSG_NEXT_CORNER, _lcd_calibrate_next_corner);
+  MENU_ITEM(function, "Save Offset", _lcd_save_offset);
+  END_MENU();
+}
+
+static inline void _lcd_z_offset_calibration_homing() {
+  _lcd_draw_homing();
+  if (all_axes_homed()) {
+    bed_corner = 0;
+    zprobe_zoffset = 0;
+    ui.goto_screen(menu_z_offset_calibration);
+    line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
+    current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET;
+    current_position[Y_AXIS] = Y_MIN_BED + LEVEL_CORNERS_INSET;
+    planner.buffer_line(current_position, MMM_TO_MMS(manual_feedrate_mm_m[X_AXIS]), active_extruder);
+    line_to_z(LEVEL_CORNERS_HEIGHT);
+  }
+}
+
+void _lcd_z_offset_calibration() {
+  ui.defer_status_screen();
+  STOW_PROBE();
+  if (!all_axes_known()) {
+    set_all_unhomed();
+    enqueue_and_echo_commands_P(PSTR("G28"));
+  }
+
+  // Disable leveling so the planner won't mess with us
+  #if HAS_LEVELING
+    leveling_was_active = planner.leveling_active;
+    set_bed_leveling_enabled(false);
+  #endif
+  ui.goto_screen(_lcd_z_offset_calibration_homing);
+}
+#endif // HAS_BED_PROBE
 #endif // HAS_LCD_MENU && LEVEL_BED_CORNERS
