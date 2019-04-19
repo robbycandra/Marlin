@@ -594,7 +594,7 @@
 // Specify here all the endstop connectors that are connected to any endstop or probe.
 // Almost all printers will be using one per axis. Probes will use one or more of the
 // extra connectors. Leave undefined any used for non-endstop and non-probe purposes.
-//#define USE_XMIN_PLUG
+#define USE_XMIN_PLUG   REXYZ_USE_XMIN_PLUG  
 //#define USE_YMIN_PLUG
 #define USE_ZMIN_PLUG
 #define USE_XMAX_PLUG
@@ -803,7 +803,7 @@
  *      - normally-open switches to 5V and D32.
  *
  */
-//#define Z_MIN_PROBE_PIN X_MIN_PIN // Pin 32 is the RAMPS default
+#define Z_MIN_PROBE_PIN REXYZ_Z_MIN_PROBE_PIN // Pin 32 is the RAMPS default
 
 /**
  * Probe Type
@@ -817,14 +817,14 @@
  * Use G29 repeatedly, adjusting the Z height at each point with movement commands
  * or (with LCD_BED_LEVELING) the LCD controller.
  */
-#define PROBE_MANUALLY
-#define MANUAL_PROBE_START_Z 0
+#define PROBE_MANUALLY       REXYZ_PROBE_MANUALLY
+#define MANUAL_PROBE_START_Z REXYZ_MANUAL_PROBE_START_Z
 
 /**
  * A Fix-Mounted Probe either doesn't deploy or needs manual deployment.
  *   (e.g., an inductive probe or a nozzle-based probe-switch.)
  */
-//#define FIX_MOUNTED_PROBE
+#define FIX_MOUNTED_PROBE    REXYZ_FIX_MOUNTED_PROBE
 
 /**
  * Z Servo Probe, such as an endstop switch on a rotating arm.
@@ -888,9 +888,9 @@
  *      O-- FRONT --+
  *    (0,0)
  */
-#define X_PROBE_OFFSET_FROM_EXTRUDER 10  // X offset: -left  +right  [of the nozzle]
-#define Y_PROBE_OFFSET_FROM_EXTRUDER 10  // Y offset: -front +behind [the nozzle]
-#define Z_PROBE_OFFSET_FROM_EXTRUDER 0   // Z offset: -below +above  [the nozzle]
+#define X_PROBE_OFFSET_FROM_EXTRUDER REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER // X offset: -left  +right  [of the nozzle]
+#define Y_PROBE_OFFSET_FROM_EXTRUDER REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER // Y offset: -front +behind [the nozzle]
+#define Z_PROBE_OFFSET_FROM_EXTRUDER REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER // Z offset: -below +above  [the nozzle]
 
 // Certain types of probes need to stay away from edges
 #define MIN_PROBE_EDGE 30
@@ -938,9 +938,9 @@
 //#define Z_MIN_PROBE_REPEATABILITY_TEST
 
 // Before deploy/stow pause for user confirmation
-//#define PAUSE_BEFORE_DEPLOY_STOW
+#define PAUSE_BEFORE_DEPLOY_STOW REXYZ_PAUSE_BEFORE_DEPLOY_STOW
 #if ENABLED(PAUSE_BEFORE_DEPLOY_STOW)
-  //#define PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED // For Manual Deploy Allenkey Probe
+  #define PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED // For Manual Deploy Allenkey Probe
 #endif
 
 /**
