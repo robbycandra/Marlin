@@ -21,6 +21,9 @@
  */
 #pragma once
 
+#include "Configuration_Rexyz.h"
+#include "Conditionals_Rexyz.h"
+
 /**
  * Configuration.h
  *
