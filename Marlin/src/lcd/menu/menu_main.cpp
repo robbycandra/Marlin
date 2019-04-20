@@ -120,7 +120,6 @@ void menu_configuration();
 void menu_user();
 void menu_temp_e0_filament_change();
 void menu_change_filament();
-void menu_info();
 void menu_led();
 
 #if ENABLED(MIXING_EXTRUDER)
@@ -221,10 +220,6 @@ void menu_main() {
     #else
       MENU_ITEM(submenu, MSG_FILAMENTCHANGE, menu_change_filament);
     #endif
-  #endif
-
-  #if ENABLED(LCD_INFO_MENU)
-    MENU_ITEM(submenu, MSG_INFO_MENU, menu_info);
   #endif
 
   #if ENABLED(LED_CONTROL_MENU)

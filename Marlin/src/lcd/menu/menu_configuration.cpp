@@ -51,6 +51,7 @@
 
 void menu_advanced_settings();
 void menu_delta_calibrate();
+void menu_info();
 
 static void lcd_factory_settings() {
   settings.reset();
@@ -350,6 +351,10 @@ void menu_configuration() {
     // Preheat configurations
     MENU_ITEM(submenu, MSG_PREHEAT_1_SETTINGS, menu_preheat_material1_settings);
     MENU_ITEM(submenu, MSG_PREHEAT_2_SETTINGS, menu_preheat_material2_settings);
+  #endif
+
+  #if ENABLED(LCD_INFO_MENU)
+    MENU_ITEM(submenu, MSG_INFO_MENU, menu_info);
   #endif
 
   #if ENABLED(EEPROM_SETTINGS)
