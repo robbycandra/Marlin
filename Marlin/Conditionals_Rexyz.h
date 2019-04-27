@@ -25,8 +25,8 @@
  *
  */
 
-#define REXYZ_FW_VERSION ".3" // Change this with each update
-#define REXYZ_STRING_DISTRIBUTION_DATE "2019-04-19"
+#define REXYZ_FW_VERSION ".4" // Change this with each update
+#define REXYZ_STRING_DISTRIBUTION_DATE "2019-04-29"
 #define REXYZ_DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
 #define REXYZ_SOURCE_CODE_URL "http://rajawali3d.com"
 #define REXYZ_WEBSITE_URL "http://rajawali3d.com"
@@ -145,8 +145,8 @@
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
 
-    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
-    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
+    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 75 //30  // (steps/s) Encoder rate for 10x speed
+    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 16 // 80  // (steps/s) Encoder rate for 100x speed
 
 #endif
 #if defined(REXYZ_4MAX)
@@ -304,6 +304,7 @@
     #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -0.2   
 #endif
 
+// maks 7 char because used for marking.
 #define REXYZ_MACHINE_TYPE REXYZ_MACHINE_FRAME_TYPE REXYZ_MACHINE_TOOLHEAD_TYPE
 
 #endif /* CONDITIONALS_REXYZ */

@@ -135,7 +135,7 @@
 // The following define selects which electronics board you have.
 // Please choose the name from boards.h that matches your setup
 #ifndef MOTHERBOARD
-  #define MOTHERBOARD BOARD_RAMPS_14_EFB
+  #define MOTHERBOARD REXYZ_MOTHERBOARD
 #endif
 
 // Optional custom name for your RepStrap or other custom machine
@@ -404,11 +404,11 @@
 //#define TEMP_SENSOR_1_AS_REDUNDANT
 #define MAX_REDUNDANT_TEMP_SENSOR_DIFF 10
 
-#define TEMP_RESIDENCY_TIME      6  // (seconds) Time to wait for hotend to "settle" in M109
+#define TEMP_RESIDENCY_TIME      REXYZ_TEMP_RESIDENCY_TIME  // (seconds) Time to wait for hotend to "settle" in M109
 #define TEMP_WINDOW              1  // (°C) Temperature proximity for the "temperature reached" timer
 #define TEMP_HYSTERESIS          3  // (°C) Temperature proximity considered "close enough" to the target
 
-#define TEMP_BED_RESIDENCY_TIME  6  // (seconds) Time to wait for bed to "settle" in M190
+#define TEMP_BED_RESIDENCY_TIME  REXYZ_TEMP_RESIDENCY_TIME  // (seconds) Time to wait for bed to "settle" in M190
 #define TEMP_BED_WINDOW          1  // (°C) Temperature proximity for the "temperature reached" timer
 #define TEMP_BED_HYSTERESIS      3  // (°C) Temperature proximity considered "close enough" to the target
 
@@ -431,7 +431,7 @@
 #define HEATER_3_MAXTEMP 275
 #define HEATER_4_MAXTEMP 275
 #define HEATER_5_MAXTEMP 275
-#define BED_MAXTEMP      130
+#define BED_MAXTEMP      REXYZ_BED_MAXTEMP
 
 //===========================================================================
 //============================= PID Settings ================================
@@ -444,26 +444,22 @@
 #define PID_MAX BANG_MAX // Limits current to nozzle while PID is active (see PID_FUNCTIONAL_RANGE below); 255=full current
 #define PID_K1 0.95      // Smoothing factor within any PID loop
 #if ENABLED(PIDTEMP)
-  #define PID_EDIT_MENU         // Add PID editing to the "Advanced Settings" menu. (~700 bytes of PROGMEM)
-  #define PID_AUTOTUNE_MENU     // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of PROGMEM)
+  #define PID_EDIT_MENU      REXYZ_PID_EDIT_MENU        // Add PID editing to the "Advanced Settings" menu. (~700 bytes of PROGMEM)
+  #define PID_AUTOTUNE_MENU  REXYZ_PID_AUTOTUNE_MENU   // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of PROGMEM)
   //#define PID_DEBUG             // Sends debug data to the serial port.
   //#define PID_OPENLOOP 1        // Puts PID in open loop. M104/M140 sets the output power from 0 to PID_MAX
   //#define SLOW_PWM_HEATERS      // PWM with very low frequency (roughly 0.125Hz=8s) and minimum state time of approximately 1s useful for heaters driven by a relay
   //#define PID_PARAMS_PER_HOTEND // Uses separate PID parameters for each extruder (useful for mismatched extruders)
                                   // Set/get with gcode: M301 E[extruder number, 0-2]
-  #define PID_FUNCTIONAL_RANGE 20 // If the temperature difference between the target temperature and the actual temperature
+  #define PID_FUNCTIONAL_RANGE REXYZ_PID_FUNCTIONAL_RANGE // If the temperature difference between the target temperature and the actual temperature
                                   // is more than PID_FUNCTIONAL_RANGE then the PID will be shut off and the heater will be set to min/max.
 
   // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
 
-  // Rexyz S20
-  #define DEFAULT_Kp 20.81
-  #define DEFAULT_Ki 1.46
-  #define DEFAULT_Kd 74.17
-
-  //#define DEFAULT_Kp 12.91
-  //#define DEFAULT_Ki 0.83
-  //#define DEFAULT_Kd 50.50
+  // Rexyz 
+  #define DEFAULT_Kp REXYZ_DEFAULT_Kp
+  #define DEFAULT_Ki REXYZ_DEFAULT_Ki
+  #define DEFAULT_Kd REXYZ_DEFAULT_Kd
 
   // Ultimaker
   //#define DEFAULT_Kp 22.2
@@ -594,12 +590,12 @@
 // Specify here all the endstop connectors that are connected to any endstop or probe.
 // Almost all printers will be using one per axis. Probes will use one or more of the
 // extra connectors. Leave undefined any used for non-endstop and non-probe purposes.
-#define USE_XMIN_PLUG   REXYZ_USE_XMIN_PLUG  
-//#define USE_YMIN_PLUG
-#define USE_ZMIN_PLUG
-#define USE_XMAX_PLUG
-#define USE_YMAX_PLUG
-#define USE_ZMAX_PLUG
+#define USE_XMIN_PLUG REXYZ_USE_XMIN_PLUG  
+#define USE_YMIN_PLUG REXYZ_USE_YMIN_PLUG 
+#define USE_ZMIN_PLUG REXYZ_USE_ZMIN_PLUG 
+#define USE_XMAX_PLUG REXYZ_USE_XMAX_PLUG 
+#define USE_YMAX_PLUG REXYZ_USE_YMAX_PLUG 
+#define USE_ZMAX_PLUG REXYZ_USE_ZMAX_PLUG 
 
 // Enable pullup for all endstops to prevent a floating state
 #define ENDSTOPPULLUPS
@@ -628,12 +624,12 @@
 #endif
 
 // Mechanical endstop with COM to ground and NC to Signal uses "false" here (most common setup).
-#define X_MIN_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
-#define Y_MIN_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
-#define Z_MIN_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
-#define X_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
-#define Y_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
-#define Z_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
+#define X_MIN_ENDSTOP_INVERTING REXYZ_X_MIN_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
+#define Y_MIN_ENDSTOP_INVERTING REXYZ_Y_MIN_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
+#define Z_MIN_ENDSTOP_INVERTING REXYZ_Z_MIN_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
+#define X_MAX_ENDSTOP_INVERTING REXYZ_X_MAX_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
+#define Y_MAX_ENDSTOP_INVERTING REXYZ_Y_MAX_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
+#define Z_MAX_ENDSTOP_INVERTING REXYZ_Z_MAX_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
 #define Z_MIN_PROBE_ENDSTOP_INVERTING true // set to true to invert the logic of the probe.
 
 /**
@@ -708,7 +704,7 @@
  * Override with M92
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4[, E5]]]]]
  */
-#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 95 }
+#define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
 
 /**
  * Default Max Feed Rate (mm/s)
@@ -723,7 +719,7 @@
  * Override with M201
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4[, E5]]]]]
  */
-#define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 100, 10000 }
+#define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 100, 5000 }
 
 /**
  * Default Acceleration (change/s) change = mm/s
@@ -759,7 +755,7 @@
   #define DEFAULT_ZJERK  0.4
 #endif
 
-#define DEFAULT_EJERK    10.0  // May be used by Linear Advance
+#define DEFAULT_EJERK    5.0  // May be used by Linear Advance
 
 /**
  * S-Curve Acceleration
@@ -982,15 +978,15 @@
 // @section machine
 
 // Invert the stepper direction. Change (or reverse the motor connector) if an axis goes the wrong way.
-#define INVERT_X_DIR false
-#define INVERT_Y_DIR true
-#define INVERT_Z_DIR true
+#define INVERT_X_DIR REXYZ_INVERT_X_DIR 
+#define INVERT_Y_DIR REXYZ_INVERT_Y_DIR 
+#define INVERT_Z_DIR REXYZ_INVERT_Z_DIR 
 
 // @section extruder
 
 // For direct drive extruder v9 set to true, for geared extruder set to false.
 #define INVERT_E0_DIR false
-#define INVERT_E1_DIR true
+#define INVERT_E1_DIR REXYZ_INVERT_E1_DIR
 #define INVERT_E2_DIR false
 #define INVERT_E3_DIR false
 #define INVERT_E4_DIR false
@@ -1007,9 +1003,9 @@
 
 // Direction of endstops when homing; 1=MAX, -1=MIN
 // :[-1,1]
-#define X_HOME_DIR 1
-#define Y_HOME_DIR 1
-#define Z_HOME_DIR 1
+#define X_HOME_DIR REXYZ_X_HOME_DIR
+#define Y_HOME_DIR REXYZ_Y_HOME_DIR
+#define Z_HOME_DIR REXYZ_Z_HOME_DIR
 
 // @section machine
 
@@ -1018,12 +1014,12 @@
 #define Y_BED_SIZE REXYZ_Y_BED_SIZE
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
-#define X_MIN_POS 0
+#define X_MIN_POS REXYZ_X_MIN_POS
 #define Y_MIN_POS 0
 #define Z_MIN_POS 0
-#define X_MAX_POS REXYZ_X_MAX_SIZE
-#define Y_MAX_POS REXYZ_Y_MAX_SIZE
-#define Z_MAX_POS REXYZ_Z_MAX_SIZE 
+#define X_MAX_POS REXYZ_X_MAX_POS
+#define Y_MAX_POS REXYZ_Y_MAX_POS
+#define Z_MAX_POS REXYZ_Z_MAX_POS 
 
 /**
  * Software Endstops
@@ -1065,11 +1061,11 @@
 #define FILAMENT_RUNOUT_SENSOR
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
   #define NUM_RUNOUT_SENSORS   1     // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
-  #define FIL_RUNOUT_INVERTING false // set to true to invert the logic of the sensor.
+  #define FIL_RUNOUT_INVERTING REXYZ_FIL_RUNOUT_INVERTING // set to true to invert the logic of the sensor.
   #define FIL_RUNOUT_PULLUP          // Use internal pullup for filament runout pins.
 
   //#define FIL_RUNOUT_PULLDOWN      // Use internal pulldown for filament runout pins.
-  #define FIL_RUNOUT_PIN 14          // Y-Min at MKS GEN L
+  #define FIL_RUNOUT_PIN REXYZ_FIL_RUNOUT_PIN // Y-Min at MKS GEN L
 
   // Set one or more commands to execute on filament runout.
   // (After 'M412 H' Marlin will ask the host to handle the process.)
@@ -1181,8 +1177,8 @@
 #if EITHER(AUTO_BED_LEVELING_LINEAR, AUTO_BED_LEVELING_BILINEAR)
 
   // Set the number of grid points per dimension.
-  #define GRID_MAX_POINTS_X 3
-  #define GRID_MAX_POINTS_Y GRID_MAX_POINTS_X
+  #define GRID_MAX_POINTS_X REXYZ_GRID_MAX_POINTS_X
+  #define GRID_MAX_POINTS_Y REXYZ_GRID_MAX_POINTS_Y
 
   // Set the boundaries for probing (where the probe can reach).
   #define LEFT_PROBE_BED_POSITION MIN_PROBE_EDGE
@@ -1272,10 +1268,10 @@
 #define LEVEL_BED_CORNERS
 
 #if ENABLED(LEVEL_BED_CORNERS)
-  #define LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
-  #define LEVEL_CORNERS_Z_HOP  4.0  // (mm) Move nozzle up before moving between corners
-  #define LEVEL_CORNERS_HEIGHT 0.0  // (mm) Z height of nozzle at leveling points
-  //#define LEVEL_CENTER_TOO        // Move to the center after the last corner
+  #define LEVEL_CORNERS_INSET REXYZ_LEVEL_CORNERS_INSET    // (mm) An inset for corner leveling
+  #define LEVEL_CORNERS_Z_HOP REXYZ_LEVEL_CORNERS_Z_HOP    // (mm) Move nozzle up before moving between corners
+  #define LEVEL_CORNERS_HEIGHT 0.0                         // (mm) Z height of nozzle at leveling points
+  #define LEVEL_CENTER_TOO REXYZ_LEVEL_CENTER_TOO          // Move to the center after the last corner
 #endif
 
 /**
@@ -1424,12 +1420,12 @@
 // Preheat Constants
 #define PREHEAT_1_LABEL       "PLA"
 #define PREHEAT_1_TEMP_HOTEND 180
-#define PREHEAT_1_TEMP_BED     60
+#define PREHEAT_1_TEMP_BED     REXYZ_PREHEAT_1_TEMP_BED 
 #define PREHEAT_1_FAN_SPEED     0 // Value from 0 to 255
 
 #define PREHEAT_2_LABEL       "ABS"
 #define PREHEAT_2_TEMP_HOTEND 240
-#define PREHEAT_2_TEMP_BED     90
+#define PREHEAT_2_TEMP_BED     REXYZ_PREHEAT_2_TEMP_BED 
 #define PREHEAT_2_FAN_SPEED     0 // Value from 0 to 255
 
 /**
@@ -1691,8 +1687,8 @@
 // Note: Test audio output with the G-Code:
 //  M300 S<frequency Hz> P<duration ms>
 //
-//#define LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
-//#define LCD_FEEDBACK_FREQUENCY_HZ 5000
+#define LCD_FEEDBACK_FREQUENCY_DURATION_MS REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS
+#define LCD_FEEDBACK_FREQUENCY_HZ REXYZ_LCD_FEEDBACK_FREQUENCY_HZ
 
 //=============================================================================
 //======================== LCD / Controller Selection =========================
@@ -1705,7 +1701,7 @@
 //
 // Note: Usually sold with a white PCB.
 //
-#define REPRAP_DISCOUNT_SMART_CONTROLLER
+//#define REPRAP_DISCOUNT_SMART_CONTROLLER
 
 //
 // Original RADDS LCD Display+Encoder+SDCardReader
