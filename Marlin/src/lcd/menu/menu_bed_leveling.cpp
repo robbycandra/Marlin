@@ -270,6 +270,14 @@ void menu_bed_leveling() {
     if (!is_homed) MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28"));
   #endif
 
+  #if ENABLED(LEVEL_BED_CORNERS)
+    MENU_ITEM(submenu, MSG_LEVEL_CORNERS, _lcd_level_bed_corners);
+    #if HAS_BED_PROBE
+      MENU_ITEM(submenu, "Measure Probe Offset", _lcd_measure_probe_offset);
+      MENU_ITEM(submenu, "Adjust Corner", _lcd_adjust_corner);
+    #endif
+  #endif
+
   // Level Bed
   #if EITHER(PROBE_MANUALLY, MESH_BED_LEVELING)
     // Manual leveling uses a guided procedure
@@ -306,14 +314,6 @@ void menu_bed_leveling() {
     MENU_ITEM(submenu, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
     MENU_ITEM_EDIT(float52, MSG_ZPROBE_ZOFFSET, &zprobe_zoffset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
-  #endif
-
-  #if ENABLED(LEVEL_BED_CORNERS)
-    MENU_ITEM(submenu, MSG_LEVEL_CORNERS, _lcd_level_bed_corners);
-    #if HAS_BED_PROBE
-      MENU_ITEM(submenu, "Measure Probe Offset", _lcd_measure_probe_offset);
-      MENU_ITEM(submenu, "Adjust Corner", _lcd_adjust_corner);
-    #endif
   #endif
 
   #if ENABLED(EEPROM_SETTINGS)

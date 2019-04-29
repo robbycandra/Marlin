@@ -425,14 +425,6 @@ void menu_motion() {
   MENU_BACK(MSG_MAIN);
 
   //
-  // Move Axis
-  //
-  #if ENABLED(DELTA)
-    if (all_axes_homed())
-  #endif
-      MENU_ITEM(submenu, MSG_MOVE_AXIS, menu_move);
-
-  //
   // Auto Home
   //
   MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28"));
@@ -441,6 +433,14 @@ void menu_motion() {
     MENU_ITEM(gcode, MSG_AUTO_HOME_Y, PSTR("G28 Y"));
     MENU_ITEM(gcode, MSG_AUTO_HOME_Z, PSTR("G28 Z"));
   #endif
+
+  //
+  // Move Axis
+  //
+  #if ENABLED(DELTA)
+    if (all_axes_homed())
+  #endif
+      MENU_ITEM(submenu, MSG_MOVE_AXIS, menu_move);
 
   //
   // Auto Z-Align

@@ -285,8 +285,6 @@ void menu_configuration() {
     MENU_ITEM(submenu, MSG_DEBUG_MENU, menu_debug);
   #endif
 
-  MENU_ITEM(submenu, MSG_ADVANCED_SETTINGS, menu_advanced_settings);
-
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     MENU_ITEM(submenu, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
@@ -346,6 +344,8 @@ void menu_configuration() {
   #if ENABLED(POWER_LOSS_RECOVERY)
     MENU_ITEM_EDIT_CALLBACK(bool, MSG_OUTAGE_RECOVERY, &recovery.enabled, recovery.changed);
   #endif
+
+  MENU_ITEM(submenu, MSG_ADVANCED_SETTINGS, menu_advanced_settings);
 
   #if DISABLED(SLIM_LCD_MENUS)
     // Preheat configurations
