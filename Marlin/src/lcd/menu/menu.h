@@ -375,7 +375,8 @@ void _lcd_draw_homing();
 #if ENABLED(LEVEL_BED_CORNERS)
   void _lcd_level_bed_corners();
   #if HAS_BED_PROBE
-    void _lcd_z_offset_calibration();
+    void _lcd_measure_probe_offset();
+    void _lcd_adjust_corner();
   #endif
 #endif
 
