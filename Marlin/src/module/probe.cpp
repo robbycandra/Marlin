@@ -28,6 +28,8 @@
 
 #if HAS_BED_PROBE
 
+#include "../lcd/menu/menu.h"
+
 #include "../libs/buzzer.h"
 
 #include "probe.h"
@@ -308,6 +310,22 @@ inline void do_probe_raise(const float z_raise) {
     do_blocking_move_to_z(z_dest);
 }
 
+static inline void _lcd_deploy_message() {
+  START_SCREEN();
+  STATIC_ITEM_P(PSTR(MSG_MANUAL_DEPLOY), true, true);
+  if ( LCD_HEIGHT > 3) STATIC_ITEM(" ");
+  STATIC_ITEM_P(PSTR(MSG_USERWAIT), true, true);
+  END_SCREEN();
+}
+
+static inline void _lcd_stow_message() {
+  START_SCREEN();
+  STATIC_ITEM_P(PSTR(MSG_MANUAL_STOW), true, true);
+  if ( LCD_HEIGHT > 3) STATIC_ITEM(" ");
+  STATIC_ITEM_P(PSTR(MSG_USERWAIT), true, true);
+  END_SCREEN();
+}
+
 FORCE_INLINE void probe_specific_action(const bool deploy) {
   #if ENABLED(PAUSE_BEFORE_DEPLOY_STOW)
     do {
@@ -315,12 +333,23 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
         if (deploy == (READ(Z_MIN_PROBE_PIN) == Z_MIN_PROBE_ENDSTOP_INVERTING)) break;
       #endif
 
+      #if HAS_LCD_MENU
+        ui.save_previous_screen();
+        ui.defer_status_screen();
+        if (deploy) {
+          ui.goto_screen(_lcd_deploy_message);
+        }
+        else {
+          ui.goto_screen(_lcd_stow_message);
+        }
+      #endif
+
       BUZZ(100, 659);
       BUZZ(100, 698);
 
       PGM_P const ds_str = deploy ? PSTR(MSG_MANUAL_DEPLOY) : PSTR(MSG_MANUAL_STOW);
-      ui.return_to_status();       // To display the new status message
-      ui.set_status_P(ds_str, 99);
+      //ui.return_to_status();       // To display the new status message
+      //ui.set_status_P(ds_str, 99);
       serialprintPGM(ds_str);
       SERIAL_EOL();
 
@@ -332,6 +361,8 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
       while (wait_for_user) idle();
       ui.reset_status();
       KEEPALIVE_STATE(IN_HANDLER);
+      ui.goto_previous_screen();
+      
     } while(
       #if ENABLED(PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED)
         true
