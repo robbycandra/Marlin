@@ -34,6 +34,7 @@
 #if ENABLED(PROBE_MANUALLY)
   bool g29_in_progress = false;
 #endif
+bool g29_is_running = false;
 
 #if ENABLED(LCD_BED_LEVELING)
   #include "../../lcd/ultralcd.h"

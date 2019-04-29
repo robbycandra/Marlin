@@ -278,6 +278,7 @@ G29_TYPE GcodeSuite::G29() {
   /**
    * On the initial G29 fetch command parameters.
    */
+  g29_is_running = true;
   if (!g29_in_progress) {
 
     #if ENABLED(DUAL_X_CARRIAGE)
@@ -792,6 +793,8 @@ G29_TYPE GcodeSuite::G29() {
       ui.wait_for_bl_move = false;
     #endif
   #endif
+  g29_is_running = false;
+
 
   // Calculate leveling, print reports, correct the position
   if (!isnan(measured_z)) {

@@ -33,6 +33,7 @@ typedef struct {
 #else
   constexpr bool g29_in_progress = false;
 #endif
+extern bool g29_is_running;
 
 bool leveling_is_valid();
 void set_bed_leveling_enabled(const bool enable=true);

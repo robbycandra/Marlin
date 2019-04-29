@@ -196,6 +196,33 @@
     ui.goto_screen(_lcd_level_bed_homing);
     enqueue_and_echo_commands_P(PSTR("G28"));
   }
+#else
+  extern bool g29_is_running;
+
+  void _lcd_level_bed_homing_done() {
+    if (ui.should_draw()) draw_edit_screen(PSTR("Bed Leveling..."));
+    if (!g29_is_running) {
+      ui.defer_status_screen(false);
+      ui.goto_previous_screen_no_defer();
+    }
+  }
+
+  void _lcd_level_bed_homing() {
+    _lcd_draw_homing();
+    if (all_axes_homed()) {
+      ui.goto_screen(_lcd_level_bed_homing_done);
+      enqueue_and_echo_commands_P(PSTR("G29"));
+    }
+  }
+
+  void _lcd_level_bed_continue() {
+    ui.defer_status_screen();
+    if (!all_axes_known()) {
+      set_all_unhomed();
+      enqueue_and_echo_commands_P(PSTR("G28"));
+    }
+    ui.goto_screen(_lcd_level_bed_homing);
+  }
 
 #endif // PROBE_MANUALLY || MESH_BED_LEVELING
 
@@ -249,7 +276,7 @@ void menu_bed_leveling() {
     MENU_ITEM(submenu, MSG_LEVEL_BED, _lcd_level_bed_continue);
   #else
     // Automatic leveling can just run the G-code
-    MENU_ITEM(gcode, MSG_LEVEL_BED, is_homed ? PSTR("G29") : PSTR("G28\nG29"));
+    MENU_ITEM(submenu, MSG_LEVEL_BED, _lcd_level_bed_continue);
   #endif
 
   #if ENABLED(MESH_EDIT_MENU)
