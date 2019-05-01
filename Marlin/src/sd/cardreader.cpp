@@ -658,6 +658,11 @@ const char* CardReader::diveToFile(SdFile*& curDir, const char * const path, con
     curDir = &workDir; 
 
   startDir = curDir;
+  if (echo) {
+    SERIAL_ECHOLNPAIR("==== Dive ====\nPath: ", path);
+    curDir->getFilename(echo_fn);
+    SERIAL_ECHOLNPAIR("Cur Dir: ", echo_fn);
+  }
 
   // Start dive
   while (dirname_start) {
@@ -671,7 +676,7 @@ const char* CardReader::diveToFile(SdFile*& curDir, const char * const path, con
     strncpy(dosSubdirname, dirname_start, len);
     dosSubdirname[len] = 0;
 
-    if (echo) SERIAL_ECHOLN(dosSubdirname);
+    if (echo) SERIAL_ECHOLNPAIR("Sub Dir Name: ", dosSubdirname);
 
     // Open curDir
     if (!sub->open(curDir, dosSubdirname, O_READ)) {
@@ -685,6 +690,11 @@ const char* CardReader::diveToFile(SdFile*& curDir, const char * const path, con
     // curDir now subDir
     curDir = sub;
 
+    if (echo) {
+      curDir->getFilename(echo_fn);
+      SERIAL_ECHOLNPAIR("New Dir: ", echo_fn);
+      SERIAL_ECHOLNPAIR("Work Dir Depth: ", workDirDepth);
+    }
     // Update workDirParents and workDirDepth
     if (workDirDepth < MAX_DIR_DEPTH) workDirParents[workDirDepth++] = *curDir;
 
