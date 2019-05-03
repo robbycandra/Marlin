@@ -37,7 +37,7 @@
  */
 
 // Change EEPROM version if the structure changes
-#define EEPROM_VERSION "V65"
+#define EEPROM_VERSION "R65"
 #define EEPROM_OFFSET 100
 
 // Check the integrity of data offsets.
@@ -170,7 +170,10 @@ typedef struct SettingsDataStruct {
   // HAS_BED_PROBE
   //
 
+  float zprobe_xoffset;
+  float zprobe_yoffset;
   float zprobe_zoffset;
+  uint8_t rexyz_probe_mode;
 
   //
   // ABL_PLANAR
@@ -578,12 +581,17 @@ void MarlinSettings::postprocess() {
     // Probe Z Offset
     //
     {
-      _FIELD_TEST(zprobe_zoffset);
+      _FIELD_TEST(zprobe_xoffset);
 
       #if !HAS_BED_PROBE
+        const float zprobe_xoffset = 0;
+        const float zprobe_yoffset = 0;
         const float zprobe_zoffset = 0;
       #endif
+      EEPROM_WRITE(zprobe_xoffset);
+      EEPROM_WRITE(zprobe_yoffset);
       EEPROM_WRITE(zprobe_zoffset);
+      EEPROM_WRITE(rexyz_probe_mode);
     }
 
     //
@@ -1372,12 +1380,17 @@ void MarlinSettings::postprocess() {
       // Probe Z Offset
       //
       {
-        _FIELD_TEST(zprobe_zoffset);
+        _FIELD_TEST(zprobe_xoffset);
 
         #if !HAS_BED_PROBE
+          float zprobe_xoffset;
+          float zprobe_yoffset;
           float zprobe_zoffset;
         #endif
+        EEPROM_READ(zprobe_xoffset);
+        EEPROM_READ(zprobe_yoffset);
         EEPROM_READ(zprobe_zoffset);
+        EEPROM_READ(rexyz_probe_mode);
       }
 
       //
@@ -1980,15 +1993,21 @@ void MarlinSettings::postprocess() {
   }
 
   bool MarlinSettings::load() {
+    bool success = true;
     if (validate()) {
-      const bool success = _load();
+      success = _load();
       #if ENABLED(EXTENSIBLE_UI)
         if (success) ExtUI::onLoadSettings();
       #endif
-      return success;
+    } 
+    else {
+      reset();
     }
-    reset();
-    return true;
+    zprobe_max_x = MIN(X_MAX_BED - (MIN_PROBE_EDGE), X_MAX_POS + X_PROBE_OFFSET_FROM_EXTRUDER);
+    zprobe_max_y = MIN(Y_MAX_BED - (MIN_PROBE_EDGE), Y_MAX_POS + Y_PROBE_OFFSET_FROM_EXTRUDER);
+    zprobe_min_x = MAX(X_MIN_BED + MIN_PROBE_EDGE, X_MIN_POS + X_PROBE_OFFSET_FROM_EXTRUDER);
+    zprobe_min_y = MAX(Y_MIN_BED + MIN_PROBE_EDGE, Y_MIN_POS + Y_PROBE_OFFSET_FROM_EXTRUDER);
+    return success;
   }
 
   #if ENABLED(AUTO_BED_LEVELING_UBL)
@@ -2190,7 +2209,14 @@ void MarlinSettings::reset() {
     reset_bed_level();
   #endif
 
+  #if ENABLED(PROBE_MANUALLY)
+    rexyz_probe_mode = REXYZPROBE_NO_PROBE;
+  #else
+    rexyz_probe_mode = REXYZPROBE_PROXYMITY;
+  #endif
   #if HAS_BED_PROBE
+    zprobe_xoffset = X_PROBE_OFFSET_FROM_EXTRUDER;
+    zprobe_yoffset = Y_PROBE_OFFSET_FROM_EXTRUDER;
     zprobe_zoffset = Z_PROBE_OFFSET_FROM_EXTRUDER;
   #endif
 
@@ -2916,6 +2942,11 @@ void MarlinSettings::reset() {
     #endif // FWRETRACT
 
     /**
+     * Probe Mode
+     */
+    SERIAL_ECHOLNPAIR("Probe Mode : ", rexyz_probe_mode);
+
+    /**
      * Probe Offset
      */
     #if HAS_BED_PROBE
@@ -2925,6 +2956,8 @@ void MarlinSettings::reset() {
         say_units(true);
       }
       CONFIG_ECHO_START();
+      SERIAL_ECHOLNPAIR("  M851 X", LINEAR_UNIT(zprobe_xoffset));
+      SERIAL_ECHOLNPAIR("  M851 Y", LINEAR_UNIT(zprobe_yoffset));
       SERIAL_ECHOLNPAIR("  M851 Z", LINEAR_UNIT(zprobe_zoffset));
     #endif
 
