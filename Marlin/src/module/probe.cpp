@@ -330,11 +330,10 @@ static inline void _lcd_stow_message() {
 }
 
 FORCE_INLINE void probe_specific_action(const bool deploy) {
-  #if ENABLED(PAUSE_BEFORE_DEPLOY_STOW)
+  if (rexyz_probe_mode == REXYZPROBE_MANUAL_DEPLOY) {
     do {
-      #if ENABLED(PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED)
+      // PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
         if (deploy == (READ(Z_MIN_PROBE_PIN) == Z_MIN_PROBE_ENDSTOP_INVERTING)) break;
-      #endif
 
       #if HAS_LCD_MENU
         ui.save_previous_screen();
@@ -366,16 +365,8 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
       KEEPALIVE_STATE(IN_HANDLER);
       ui.goto_previous_screen();
       
-    } while(
-      #if ENABLED(PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED)
-        true
-      #else
-        false
-      #endif
-    );
-
-  #endif // PAUSE_BEFORE_DEPLOY_STOW
-
+    } while(true);
+  }
   #if ENABLED(SOLENOID_PROBE)
 
     #if HAS_SOLENOID_1
@@ -398,10 +389,6 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
 
     do_blocking_move_to_x(deploy ? Z_PROBE_DEPLOY_X : Z_PROBE_RETRACT_X);
 
-  #elif DISABLED(PAUSE_BEFORE_DEPLOY_STOW)
-
-    UNUSED(deploy);
-
   #endif
 }
 
@@ -418,8 +405,13 @@ bool set_probe_deployed(const bool deploy) {
   // Make room for probe to deploy (or stow)
   // Fix-mounted probe should only raise for deploy
   // unless PAUSE_BEFORE_DEPLOY_STOW is enabled
-  #if ENABLED(FIX_MOUNTED_PROBE) && DISABLED(PAUSE_BEFORE_DEPLOY_STOW)
-    const bool deploy_stow_condition = deploy;
+  
+  #if ENABLED(FIX_MOUNTED_PROBE) 
+    bool deploy_stow_condition = true;
+    if (rexyz_probe_mode == REXYZPROBE_MANUAL_DEPLOY)
+      deploy_stow_condition = true;
+    else
+      deploy_stow_condition = deploy;
   #else
     constexpr bool deploy_stow_condition = true;
   #endif
