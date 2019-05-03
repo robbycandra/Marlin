@@ -453,7 +453,7 @@
               SERIAL_ECHO(g29_y_pos);
               SERIAL_ECHOLNPGM(").\n");
             }
-            probe_entire_mesh(g29_x_pos + X_PROBE_OFFSET_FROM_EXTRUDER, g29_y_pos + Y_PROBE_OFFSET_FROM_EXTRUDER,
+            probe_entire_mesh(g29_x_pos + zprobe_xoffset, g29_y_pos + zprobe_yoffset,
                               parser.seen('T'), parser.seen('E'), parser.seen('U'));
 
             report_current_position();
@@ -481,8 +481,8 @@
                 g29_x_pos = X_HOME_POS;
                 g29_y_pos = Y_HOME_POS;
               #else // cartesian
-                g29_x_pos = X_PROBE_OFFSET_FROM_EXTRUDER > 0 ? X_BED_SIZE : 0;
-                g29_y_pos = Y_PROBE_OFFSET_FROM_EXTRUDER < 0 ? Y_BED_SIZE : 0;
+                g29_x_pos = zprobe_xoffset > 0 ? X_BED_SIZE : 0;
+                g29_y_pos = zprobe_yoffset < 0 ? Y_BED_SIZE : 0;
               #endif
             }
 
@@ -782,8 +782,8 @@
       restore_ubl_active_state_and_leave();
 
       do_blocking_move_to_xy(
-        constrain(rx - (X_PROBE_OFFSET_FROM_EXTRUDER), MESH_MIN_X, MESH_MAX_X),
-        constrain(ry - (Y_PROBE_OFFSET_FROM_EXTRUDER), MESH_MIN_Y, MESH_MAX_Y)
+        constrain(rx - (zprobe_xoffset), MESH_MIN_X, MESH_MAX_X),
+        constrain(ry - (zprobe_yoffset), MESH_MIN_Y, MESH_MAX_Y)
       );
     }
 
@@ -1279,8 +1279,8 @@
     out_mesh.distance = -99999.9f;
 
     // Get our reference position. Either the nozzle or probe location.
-    const float px = rx + (probe_as_reference == USE_PROBE_AS_REFERENCE ? X_PROBE_OFFSET_FROM_EXTRUDER : 0),
-                py = ry + (probe_as_reference == USE_PROBE_AS_REFERENCE ? Y_PROBE_OFFSET_FROM_EXTRUDER : 0);
+    const float px = rx + (probe_as_reference == USE_PROBE_AS_REFERENCE ? zprobe_xoffset : 0),
+                py = ry + (probe_as_reference == USE_PROBE_AS_REFERENCE ? zprobe_yoffset : 0);
 
     float best_so_far = 99999.99f;
 

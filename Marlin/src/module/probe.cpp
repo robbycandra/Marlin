@@ -58,7 +58,8 @@ uint8_t rexyz_probe_mode;
   #include "planner.h"
 #endif
 
-float zprobe_zoffset; // Initialized by settings.load()
+float zprobe_xoffset, zprobe_yoffset, zprobe_zoffset;         // Initialized by settings.load()
+float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by settings.load()
 
 #if ENABLED(BLTOUCH)
   #include "../feature/bltouch.h"
@@ -735,8 +736,8 @@ float probe_pt(const float &rx, const float &ry, const ProbePtRaise raise_after/
   float nx = rx, ny = ry;
   if (probe_relative) {
     if (!position_is_reachable_by_probe(rx, ry)) return NAN;  // The given position is in terms of the probe
-    nx -= (X_PROBE_OFFSET_FROM_EXTRUDER);                     // Get the nozzle position
-    ny -= (Y_PROBE_OFFSET_FROM_EXTRUDER);
+    nx -= (zprobe_xoffset);                     // Get the nozzle position
+    ny -= (zprobe_yoffset);
   }
   else if (!position_is_reachable(nx, ny)) return NAN;        // The given position is in terms of the nozzle
 
