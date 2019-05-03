@@ -27,6 +27,13 @@
 
 #include "../inc/MarlinConfig.h"
 
+enum ProbeMode : uint8_t {
+  REXYZPROBE_NO_PROBE,
+  REXYZPROBE_PROXYMITY,
+  REXYZPROBE_MANUAL_DEPLOY
+};
+extern uint8_t rexyz_probe_mode;
+
 #if HAS_BED_PROBE
   extern float zprobe_zoffset;
   bool set_probe_deployed(const bool deploy);

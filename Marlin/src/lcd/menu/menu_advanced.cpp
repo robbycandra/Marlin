@@ -235,6 +235,77 @@ void menu_backlash();
 
 #endif // !NO_VOLUMETRICS || ADVANCED_PAUSE_FEATURE
 
+#if DISABLED(BABYSTEP_ZPROBE_OFFSET) && HAS_BED_PROBE
+  //
+  // Advanced Settings > Probe
+  //
+  void lcd_menu_choose_probe() {
+    ui.encoder_direction_normal();
+    #if ENABLED(PROBE_MANUALLY)
+      if (int16_t(ui.encoderPosition) < REXYZPROBE_NO_PROBE) ui.encoderPosition = REXYZPROBE_NO_PROBE;
+    #else
+      if (int16_t(ui.encoderPosition) < REXYZPROBE_PROXYMITY) ui.encoderPosition = REXYZPROBE_PROXYMITY;
+    #endif
+    #if ENABLED(FIX_MOUNTED_PROBE)
+      if (int16_t(ui.encoderPosition) > REXYZPROBE_MANUAL_DEPLOY) ui.encoderPosition = REXYZPROBE_MANUAL_DEPLOY;
+    #else
+      if (int16_t(ui.encoderPosition) > REXYZPROBE_NO_PROBE) ui.encoderPosition = REXYZPROBE_NO_PROBE;
+    #endif
+    if (ui.should_draw())
+      switch (ui.encoderPosition) {
+      case REXYZPROBE_NO_PROBE:
+        draw_edit_screen(PSTR("Choose Probe"), "No Probe / Manual");
+        break;
+      case REXYZPROBE_PROXYMITY:
+        draw_edit_screen(PSTR("Choose Probe"), "Proximity Sensor.");
+        break;
+      case REXYZPROBE_MANUAL_DEPLOY:
+        draw_edit_screen(PSTR("Choose Probe"), "Manual Deploy Prb");
+        break;
+      }
+    if (ui.lcd_clicked) {
+      rexyz_probe_mode = ui.encoderPosition;
+      if (ui.use_click()) ui.goto_previous_screen();
+    }
+  }
+
+  void menu_advanced_probe() {
+    START_MENU();
+    MENU_BACK(MSG_ADVANCED_SETTINGS);
+    do { 
+      _skipStatic = false; 
+      if (_menuLineNr == _thisItemNr) { 
+        if (encoderLine == _thisItemNr && ui.use_click()) { 
+          _MENU_ITEM_MULTIPLIER_CHECK(false); 
+          ui.save_previous_screen();
+          ui.refresh();
+          ui.encoderPosition = rexyz_probe_mode;
+          ui.currentScreen = lcd_menu_choose_probe;
+          if (screen_changed) return; 
+        } 
+        if (ui.should_draw()) 
+          switch (rexyz_probe_mode) {
+          case REXYZPROBE_NO_PROBE:
+            draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "No Probe");
+            break;
+          case REXYZPROBE_PROXYMITY:
+            draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Proximity");
+            break;
+          case REXYZPROBE_MANUAL_DEPLOY:
+            draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Manual Deploy");
+            break;
+          }
+      } 
+      ++_thisItemNr; 
+    }while(0);
+    _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe X Offset"), PSTR("Probe X Offset"),&zprobe_xoffset, 0, 30);
+    _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe Y Offset"), PSTR("Probe Y Offset"),&zprobe_yoffset, -30, 30);
+    _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe Z Offset"), PSTR("Probe Z Offset"),&zprobe_zoffset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+    END_MENU();
+  }
+#endif // !BABYSTEP_ZPROBE_OFFSET && HAS_BED_PROBE
+
+
 //
 // Advanced Settings > Temperature helpers
 //
@@ -700,6 +771,12 @@ void menu_advanced_settings() {
     MENU_ITEM(gcode, MSG_BLTOUCH_SELFTEST, PSTR("M280 P" STRINGIFY(Z_PROBE_SERVO_NR) " S" STRINGIFY(BLTOUCH_SELFTEST)));
     if (!endstops.z_probe_enabled && bltouch.triggered())
       MENU_ITEM(gcode, MSG_BLTOUCH_RESET, PSTR("M280 P" STRINGIFY(Z_PROBE_SERVO_NR) " S" STRINGIFY(BLTOUCH_RESET)));
+  #endif
+
+  #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
+    MENU_ITEM(submenu, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
+  #elif HAS_BED_PROBE
+    MENU_ITEM(submenu, "Probe", menu_advanced_probe);
   #endif
 
   #if ENABLED(SD_FIRMWARE_UPDATE)

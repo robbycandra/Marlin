@@ -26,6 +26,8 @@
 
 #include "../inc/MarlinConfig.h"
 
+uint8_t rexyz_probe_mode;
+
 #if HAS_BED_PROBE
 
 #include "../lcd/menu/menu.h"
