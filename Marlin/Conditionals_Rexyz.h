@@ -26,7 +26,7 @@
  */
 
 #define REXYZ_FW_VERSION ".4" // Change this with each update
-#define REXYZ_STRING_DISTRIBUTION_DATE "2019-04-29"
+#define REXYZ_STRING_DISTRIBUTION_DATE "2019-05-03"
 #define REXYZ_DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
 #define REXYZ_SOURCE_CODE_URL "http://rajawali3d.com"
 #define REXYZ_WEBSITE_URL "http://rajawali3d.com"
@@ -41,9 +41,8 @@
 
 #if ( \
     !defined(REXYZ_MK8_MANUAL_PROBE) && \
-    !defined(REXYZ_MK8_ALLENKEY_MANUAL) && \
-    !defined(REXYZ_MK8_PROXIMITY_8MM) && \
-    !defined(REXYZ_MK8_PROXIMITY_4MM) \
+    !defined(REXYZ_MK8_MULTI_FIXPROBE) && \
+    !defined(REXYZ_MK8_PROXIMITY_8MM) \
 )
     #error Must specify toolhead model. Please see "Configuration_REXYZ.h" for directions.
 #endif
@@ -145,8 +144,8 @@
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
 
-    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 75 //30  // (steps/s) Encoder rate for 10x speed
-    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 16 // 80  // (steps/s) Encoder rate for 100x speed
+    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 45 
+    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 120 
 
 #endif
 #if defined(REXYZ_4MAX)
@@ -274,17 +273,6 @@
     #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER 0 
     #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER 0   
 #endif
-#if defined(REXYZ_MK8_ALLENKEY_MANUAL)
-    #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDA"
-    #define REXYZ_USE_XMIN_PLUG
-    #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
-    #define REXYZ_FIX_MOUNTED_PROBE
-    #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
-    #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
-    #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 23.5
-    #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -20.4 
-    #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -4.2   
-#endif
 #if defined(REXYZ_MK8_PROXIMITY_8MM)
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDP8"
     #define REXYZ_USE_XMIN_PLUG
@@ -292,16 +280,21 @@
     #define REXYZ_FIX_MOUNTED_PROBE
     #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 28.5
     #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -23.5 
-    #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -0.2   
+    #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -0.5   
 #endif
-#if defined(REXYZ_MK8_PROXIMITY_4MM)
-    #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDP4"
+#if defined(REXYZ_MK8_MULTI_FIXPROBE)
+    #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDF"
     #define REXYZ_USE_XMIN_PLUG
     #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
     #define REXYZ_FIX_MOUNTED_PROBE
+    #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
+    #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
     #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 29
     #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -20.13 
-    #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -0.2   
+    #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -0.5   
+    //#define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 23
+    //#define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -26.5 
+    //#define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -2.6
 #endif
 
 // maks 7 char because used for marking.
