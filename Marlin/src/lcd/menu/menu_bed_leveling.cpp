@@ -200,7 +200,12 @@
   extern bool g29_is_running;
 
   void _lcd_level_bed_homing_done() {
-    if (ui.should_draw()) draw_edit_screen(PSTR("Bed Leveling..."));
+    if (ui.should_draw()) {
+      if (g29_is_running)
+        draw_edit_screen(PSTR("Bed Leveling..."));
+      else
+        draw_edit_screen(PSTR("Bed Leveling Done"));
+    }
     if (!g29_is_running) {
       ui.defer_status_screen(false);
       ui.goto_previous_screen_no_defer();
