@@ -36,6 +36,7 @@ extern uint8_t rexyz_probe_mode;
 
 #if HAS_BED_PROBE
   extern float zprobe_xoffset, zprobe_yoffset, zprobe_zoffset;
+  extern float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y;
   bool set_probe_deployed(const bool deploy);
   #ifdef Z_AFTER_PROBING
     void move_z_after_probing();

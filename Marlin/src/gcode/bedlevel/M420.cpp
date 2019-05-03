@@ -64,10 +64,10 @@ void GcodeSuite::M420() {
   #if ENABLED(MARLIN_DEV_MODE)
     if (parser.intval('S') == 2) {
       #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
-        bilinear_start[X_AXIS] = MIN_PROBE_X;
-        bilinear_start[Y_AXIS] = MIN_PROBE_Y;
-        bilinear_grid_spacing[X_AXIS] = (MAX_PROBE_X - (MIN_PROBE_X)) / (GRID_MAX_POINTS_X - 1);
-        bilinear_grid_spacing[Y_AXIS] = (MAX_PROBE_Y - (MIN_PROBE_Y)) / (GRID_MAX_POINTS_Y - 1);
+        bilinear_start[X_AXIS] = zprobe_min_x;
+        bilinear_start[Y_AXIS] = zprobe_min_y;
+        bilinear_grid_spacing[X_AXIS] = (zprobe_max_x - (zprobe_min_x)) / (GRID_MAX_POINTS_X - 1);
+        bilinear_grid_spacing[Y_AXIS] = (zprobe_max_y - (zprobe_min_y)) / (GRID_MAX_POINTS_Y - 1);
       #endif
       for (uint8_t x = 0; x < GRID_MAX_POINTS_X; x++)
         for (uint8_t y = 0; y < GRID_MAX_POINTS_Y; y++) {
@@ -77,10 +77,10 @@ void GcodeSuite::M420() {
           #endif
         }
       SERIAL_ECHOPGM("Simulated " STRINGIFY(GRID_MAX_POINTS_X) "x" STRINGIFY(GRID_MAX_POINTS_X) " mesh ");
-      SERIAL_ECHOPAIR(" (", MIN_PROBE_X);
-      SERIAL_CHAR(','); SERIAL_ECHO(MIN_PROBE_Y);
-      SERIAL_ECHOPAIR(")-(", MAX_PROBE_X);
-      SERIAL_CHAR(','); SERIAL_ECHO(MAX_PROBE_Y);
+      SERIAL_ECHOPAIR(" (", zprobe_min_x);
+      SERIAL_CHAR(','); SERIAL_ECHO(zprobe_min_y);
+      SERIAL_ECHOPAIR(")-(", zprobe_max_x);
+      SERIAL_CHAR(','); SERIAL_ECHO(zprobe_max_y);
       SERIAL_ECHOLNPGM(")");
     }
   #endif
