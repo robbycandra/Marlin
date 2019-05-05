@@ -939,6 +939,21 @@ void setup() {
 
   queue_setup();
 
+  // UI must be initialized before EEPROM
+  // (because EEPROM code calls the UI).
+  ui.init();
+  ui.reset_status();
+
+  #if HAS_SPI_LCD && ENABLED(SHOW_BOOTSCREEN)
+    ui.show_bootscreen();
+  #endif
+
+  #if ENABLED(STARTUP_TONE)
+    ui.buzz(200,784);
+    ui.buzz(200,1318);
+    ui.buzz(200,1046);
+  #endif
+  
   #if ENABLED(SDIO_SUPPORT) && SD_DETECT_PIN == -1
     // Auto-mount the SD for EEPROM.dat emulation
     if (!card.isDetected()) card.initsd();
@@ -947,6 +962,19 @@ void setup() {
   // Load data from EEPROM if available (or use defaults)
   // This also updates variables in the planner, elsewhere
   (void)settings.load();
+
+  if (settings.is_rexyz() == false) {
+    #if ENABLED(REXYZ_MARKING_INIT)
+      settings.mark_rexyz();
+    #else
+      SERIAL_ECHOLN("Not Rexyz Product");
+      do {
+        ui.buzz(200,784);
+        ui.buzz(200,1046);
+      }
+      while(true);
+    #endif
+  }
 
   #if HAS_M206_COMMAND
     // Initialize current position based on home_offset
@@ -1043,32 +1071,6 @@ void setup() {
   #if HAS_FANMUX
     fanmux_init();
   #endif
-
-  ui.init();
-  ui.reset_status();
-
-  #if HAS_SPI_LCD && ENABLED(SHOW_BOOTSCREEN)
-    ui.show_bootscreen();
-  #endif
-  
-  #if ENABLED(STARTUP_TONE)
-    ui.buzz(200,784);
-    ui.buzz(200,1318);
-    ui.buzz(200,1046);
-  #endif
-  
-  if (settings.is_rexyz() == false) {
-    #if ENABLED(REXYZ_MARKING_INIT)
-      settings.mark_rexyz();
-    #else
-      SERIAL_ECHOLN("Not Rexyz Product");
-      do {
-        ui.buzz(200,784);
-        ui.buzz(200,1046);
-      }
-      while(true);
-    #endif
-  }
 
   #if ENABLED(MIXING_EXTRUDER)
     mixer.init();
