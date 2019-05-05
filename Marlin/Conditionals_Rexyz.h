@@ -144,8 +144,8 @@
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
 
-    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 45 
-    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 120 
+    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
+    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
 
 #endif
 #if defined(REXYZ_4MAX)
