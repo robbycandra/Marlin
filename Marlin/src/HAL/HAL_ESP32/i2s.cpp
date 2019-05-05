@@ -21,8 +21,9 @@
  */
 #ifdef ARDUINO_ARCH_ESP32
 
-#include <Arduino.h> // replace that with the proper imports
 #include "i2s.h"
+
+#include "../shared/Marduino.h"
 #include "../../core/macros.h"
 #include "driver/periph_ctrl.h"
 #include "rom/lldesc.h"
