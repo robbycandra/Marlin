@@ -47,7 +47,7 @@
       mixer.gradient.start_z += float(int16_t(ui.encoderPosition)) * 0.1;
       ui.encoderPosition = 0;
       NOLESS(mixer.gradient.start_z, 0);
-      NOMORE(mixer.gradient.start_z, Z_MAX_POS);
+      NOMORE(mixer.gradient.start_z, zv_max_pos);
     }
     if (ui.should_draw()) {
       char tmp[21];
@@ -72,7 +72,7 @@
       mixer.gradient.end_z += float(int16_t(ui.encoderPosition)) * 0.1;
       ui.encoderPosition = 0;
       NOLESS(mixer.gradient.end_z, 0);
-      NOMORE(mixer.gradient.end_z, Z_MAX_POS);
+      NOMORE(mixer.gradient.end_z, zv_max_pos);
     }
 
     if (ui.should_draw()) {

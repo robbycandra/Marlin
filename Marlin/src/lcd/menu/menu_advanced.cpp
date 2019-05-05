@@ -235,6 +235,19 @@ void menu_backlash();
 
 #endif // !NO_VOLUMETRICS || ADVANCED_PAUSE_FEATURE
 
+void menu_advanced_homePos() {
+  START_MENU();
+  MENU_BACK(MSG_ADVANCED_SETTINGS);
+  #if HAS_M206_COMMAND
+    //
+    // Set Home Offsets
+    //
+    MENU_ITEM(function, MSG_SET_HOME_OFFSETS, _lcd_set_home_offsets);
+  #endif
+  MENU_ITEM_EDIT(uint16_3, "Z Max Pos", &zv_max_pos, Z_MAX_POS - 30,  Z_MAX_POS + 20);
+  END_MENU();
+}
+
 #if DISABLED(BABYSTEP_ZPROBE_OFFSET) && HAS_BED_PROBE
   //
   // Advanced Settings > Probe
@@ -695,13 +708,6 @@ void menu_advanced_settings() {
 
   #if DISABLED(SLIM_LCD_MENUS)
 
-    #if HAS_M206_COMMAND
-      //
-      // Set Home Offsets
-      //
-      MENU_ITEM(function, MSG_SET_HOME_OFFSETS, _lcd_set_home_offsets);
-    #endif
-
     // M203 / M205 - Feedrate items
     MENU_ITEM(submenu, MSG_VELOCITY, menu_advanced_velocity);
 
@@ -779,6 +785,10 @@ void menu_advanced_settings() {
   #elif HAS_BED_PROBE
     MENU_ITEM(submenu, "Probe", menu_advanced_probe);
   #endif
+
+  #if DISABLED(DELTA)
+    MENU_ITEM(submenu, "Home Position", menu_advanced_homePos);
+  #endif  
 
   #if ENABLED(SD_FIRMWARE_UPDATE)
     bool sd_update_state = settings.sd_update_status();
