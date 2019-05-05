@@ -37,7 +37,7 @@
  */
 
 // Change EEPROM version if the structure changes
-#define EEPROM_VERSION "V66"
+#define EEPROM_VERSION "R66"
 #define EEPROM_OFFSET 100
 
 // Check the integrity of data offsets.
@@ -50,6 +50,7 @@
 #include "planner.h"
 #include "stepper.h"
 #include "temperature.h"
+#include "motion.h"
 #include "../lcd/ultralcd.h"
 #include "../core/language.h"
 #include "../libs/vector_3.h"
@@ -150,6 +151,11 @@ typedef struct SettingsDataStruct {
   #if HAS_HOTEND_OFFSET
     float hotend_offset[XYZ][HOTENDS - 1];              // M218 XYZ
   #endif
+
+  //
+  // Z MAX POS
+  //
+  uint16_t zv_max_pos;
 
   //
   // FILAMENT_RUNOUT_SENSOR
@@ -557,6 +563,11 @@ void MarlinSettings::postprocess() {
           LOOP_XYZ(i) EEPROM_WRITE(hotend_offset[i][e]);
       #endif
     }
+
+    //
+    // Z MAX POS
+    //
+    EEPROM_WRITE(zv_max_pos);
 
     //
     // Filament Runout Sensor
@@ -1400,6 +1411,11 @@ void MarlinSettings::postprocess() {
             LOOP_XYZ(i) EEPROM_READ(hotend_offset[i][e]);
         #endif
       }
+
+      //
+      // Z MAX POS
+      //
+      EEPROM_READ(zv_max_pos);
 
       //
       // Filament Runout Sensor
@@ -2282,6 +2298,10 @@ void MarlinSettings::reset() {
   #if HAS_HOTEND_OFFSET
     reset_hotend_offsets();
   #endif
+  //
+  // Z MAX POS
+  //
+  zv_max_pos = Z_MAX_POS;
 
   //
   // Filament Runout Sensor
@@ -2819,6 +2839,8 @@ void MarlinSettings::reset() {
         SERIAL_ECHOLNPAIR_F(" Z", LINEAR_UNIT(hotend_offset[Z_AXIS][e]), 3);
       }
     #endif
+
+    SERIAL_ECHOLNPAIR("Z MAX POS", int(zv_max_pos));
 
     #if HAS_FILAMENT_SENSOR
       CONFIG_ECHO_HEADING("Filament Runout Sensor:");
