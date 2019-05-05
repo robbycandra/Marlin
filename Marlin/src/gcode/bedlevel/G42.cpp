@@ -27,6 +27,7 @@
 #include "../gcode.h"
 #include "../../Marlin.h" // for IsRunning()
 #include "../../module/motion.h"
+#include "../../module/probe.h"
 #include "../../feature/bedlevel/bedlevel.h"
 
 /**

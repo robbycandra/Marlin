@@ -27,6 +27,8 @@
 #include "../inc/MarlinConfig.h"
 
 uint8_t rexyz_probe_mode;
+float zprobe_xoffset, zprobe_yoffset, zprobe_zoffset;         // Initialized by settings.load()
+float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by settings.load()
 
 #if HAS_BED_PROBE
 
@@ -57,9 +59,6 @@ uint8_t rexyz_probe_mode;
 #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
   #include "planner.h"
 #endif
-
-float zprobe_xoffset, zprobe_yoffset, zprobe_zoffset;         // Initialized by settings.load()
-float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by settings.load()
 
 #if ENABLED(BLTOUCH)
   #include "../feature/bltouch.h"
