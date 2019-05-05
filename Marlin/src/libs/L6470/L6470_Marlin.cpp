@@ -392,7 +392,7 @@ bool L6470_Marlin::get_user_input(uint8_t &driver_count, uint8_t axis_index[3], 
           || position_min < (Z_MIN_POS)
         #endif
         #ifdef Z_MAX_POS
-          || position_max > (Z_MAX_POS)
+          || position_max > (zv_max_pos)
         #endif
       ) {
         err_out_of_bounds();

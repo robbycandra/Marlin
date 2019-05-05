@@ -97,7 +97,7 @@ void GcodeSuite::M701() {
 
   // Lift Z axis
   if (park_point.z > 0)
-    do_blocking_move_to_z(MIN(current_position[Z_AXIS] + park_point.z, Z_MAX_POS), NOZZLE_PARK_Z_FEEDRATE);
+    do_blocking_move_to_z(MIN(current_position[Z_AXIS] + park_point.z, zv_max_pos), NOZZLE_PARK_Z_FEEDRATE);
 
   // Load filament
   #if ENABLED(PRUSA_MMU2)
@@ -197,7 +197,7 @@ void GcodeSuite::M702() {
 
   // Lift Z axis
   if (park_point.z > 0)
-    do_blocking_move_to_z(MIN(current_position[Z_AXIS] + park_point.z, Z_MAX_POS), NOZZLE_PARK_Z_FEEDRATE);
+    do_blocking_move_to_z(MIN(current_position[Z_AXIS] + park_point.z, zv_max_pos), NOZZLE_PARK_Z_FEEDRATE);
 
   // Unload filament
   #if ENABLED(PRUSA_MMU2)

@@ -65,7 +65,11 @@ void GcodeSuite::M428() {
 
   float diff[XYZ];
   LOOP_XYZ(i) {
-    diff[i] = base_home_pos((AxisEnum)i) - current_position[i];
+    if ((AxisEnum)i == Z_AXIS)
+      diff[i] = (Z_HOME_DIR < 0 ? Z_MIN_POS : zv_max_pos) - current_position[i];
+    else {
+      diff[i] = base_home_pos((AxisEnum)i) - current_position[i];
+    }
     if (!WITHIN(diff[i], -20, 20) && home_dir((AxisEnum)i) > 0)
       diff[i] = -current_position[i];
     if (!WITHIN(diff[i], -20, 20)) {

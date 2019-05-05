@@ -60,7 +60,7 @@ float delta_height,
 
 float delta_tower[ABC][2],
       delta_diagonal_rod_2_tower[ABC],
-      delta_clip_start_height = Z_MAX_POS;
+      delta_clip_start_height = zv_max_pos;
 
 float delta_safe_distance_from_top();
 

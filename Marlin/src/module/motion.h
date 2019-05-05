@@ -43,6 +43,9 @@ FORCE_INLINE bool all_axes_known() { return (axis_known_position & xyz_bits) == 
 FORCE_INLINE void set_all_unhomed() { axis_homed = 0; }
 FORCE_INLINE void set_all_unknown() { axis_known_position = 0; }
 
+// Z_MAX_POS
+extern uint16_t zv_max_pos;
+
 // Error margin to work around float imprecision
 constexpr float slop = 0.0001;
 
@@ -131,7 +134,7 @@ typedef struct { float min, max; } axis_limits_t;
   );
 #else
   constexpr bool soft_endstops_enabled = false;
-  //constexpr axis_limits_t soft_endstop[XYZ] = { { X_MIN_POS, X_MAX_POS }, { Y_MIN_POS, Y_MAX_POS }, { Z_MIN_POS, Z_MAX_POS } };
+  //constexpr axis_limits_t soft_endstop[XYZ] = { { X_MIN_POS, X_MAX_POS }, { Y_MIN_POS, Y_MAX_POS }, { Z_MIN_POS, zv_max_pos } };
   #define apply_motion_limits(V)    NOOP
   #define update_software_endstops(...) NOOP
 #endif

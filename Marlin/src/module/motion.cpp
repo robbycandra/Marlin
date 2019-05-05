@@ -90,6 +90,8 @@ XYZ_CONSTS(signed char, home_dir, HOME_DIR);
  */
 uint8_t axis_homed, axis_known_position; // = 0
 
+uint16_t zv_max_pos;
+
 // Relative Mode. Enable with G91, disable with G90.
 bool relative_mode; // = false;
 
@@ -99,7 +101,13 @@ bool relative_mode; // = false;
  *   Used by 'line_to_current_position' to do a move after changing it.
  *   Used by 'sync_plan_position' to update 'planner.position'.
  */
-float current_position[XYZE] = { X_HOME_POS, Y_HOME_POS, Z_HOME_POS };
+
+#ifdef MANUAL_Z_HOME_POS
+  float current_position[XYZE] = { X_HOME_POS, Y_HOME_POS, MANUAL_Z_HOME_POS };
+#else
+  float current_position[XYZE] = { X_HOME_POS, Y_HOME_POS, (float)(Z_HOME_DIR < 0 ? Z_MIN_POS : zv_max_pos) };
+#endif
+
 
 /**
  * Cartesian Destination
@@ -451,7 +459,7 @@ void clean_up_after_endstop_or_probe_move() {
   bool soft_endstops_enabled = true;
 
   // Software Endstops are based on the configured limits.
-  axis_limits_t soft_endstop[XYZ] = { { X_MIN_BED, X_MAX_BED }, { Y_MIN_BED, Y_MAX_BED }, { Z_MIN_POS, Z_MAX_POS } };
+  axis_limits_t soft_endstop[XYZ] = { { X_MIN_BED, X_MAX_BED }, { Y_MIN_BED, Y_MAX_BED }, { Z_MIN_POS, (float)zv_max_pos } };
 
   /**
    * Software endstops can be used to monitor the open end of
@@ -528,13 +536,20 @@ void clean_up_after_endstop_or_probe_move() {
       else {
         const float offs = hotend_offset[axis][active_extruder];
         soft_endstop[axis].min = base_min_pos(axis) + offs;
-        soft_endstop[axis].max = base_max_pos(axis) + offs;
+        if (axis == Z_AXIS)
+          soft_endstop[axis].max = zv_max_pos + offs;
+        else
+          soft_endstop[axis].max = base_max_pos(axis) + offs;
       }
 
     #else
 
       soft_endstop[axis].min = base_min_pos(axis);
-      soft_endstop[axis].max = base_max_pos(axis);
+      if (axis == Z_AXIS)
+        soft_endstop[axis].max = zv_max_pos;
+      else
+        soft_endstop[axis].max = base_max_pos(axis);
+        
 
     #endif
 
@@ -1310,7 +1325,12 @@ void set_axis_is_at_home(const AxisEnum axis) {
     #endif
     : base_home_pos(axis));
   #else
-    current_position[axis] = base_home_pos(axis);
+    if (axis == Z_AXIS)
+      current_position[axis] = (Z_HOME_DIR < 0 ? Z_MIN_POS : zv_max_pos);
+    else {
+      current_position[axis] = base_home_pos(axis);
+    }
+      
   #endif
 
   /**

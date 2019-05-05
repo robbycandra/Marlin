@@ -36,14 +36,24 @@ float delta_segments_per_second = SCARA_SEGMENTS_PER_SECOND;
 
 void scara_set_axis_is_at_home(const AxisEnum axis) {
   if (axis == Z_AXIS)
-    current_position[Z_AXIS] = Z_HOME_POS;
+    #ifdef MANUAL_Z_HOME_POS
+      current_position[Z_AXIS] = MANUAL_Z_HOME_POS;
+    #else
+      current_position[Z_AXIS] = (Z_HOME_DIR < 0 ? Z_MIN_POS : zv_max_pos);
+    #endif
   else {
 
     /**
      * SCARA homes XY at the same time
      */
     float homeposition[XYZ];
-    LOOP_XYZ(i) homeposition[i] = base_home_pos((AxisEnum)i);
+    LOOP_XYZ(i) {
+      if ((AxisEnum)i == Z_AXIS)
+        homeposition[i] = (Z_HOME_DIR < 0 ? Z_MIN_POS : zv_max_pos);
+      else {
+        homeposition[i] = base_home_pos((AxisEnum)i);
+      }
+    }
 
     // SERIAL_ECHOLNPAIR("homeposition X:", homeposition[X_AXIS], " Y:", homeposition[Y_AXIS]);
 
