@@ -56,6 +56,7 @@ static_assert(LEVEL_CORNERS_Z_HOP >= 0, "LEVEL_CORNERS_Z_HOP must be >= 0. Pleas
 #if HAS_BED_PROBE
 static float measured_z = NAN;
 static float previous_zoffset;
+static bool firstprobe = true;
 #endif
 
 /**
@@ -159,6 +160,10 @@ static inline void _lcd_probe_corner() {
   {
     switch (bed_corner) {
       case 1:
+        if (firstprobe) {
+          measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+          firstprobe = false;
+        }
         measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
         break;
       case 2:
@@ -197,10 +202,12 @@ static inline void _lcd_adjust_corner_homing() {
   _lcd_draw_homing();
   if (all_axes_homed()) {
     bed_corner = 1;
+    measured_z = 0;
+    firstprobe = true;
     ui.goto_screen(menu_adjust_corner);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
-    current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET;
-    current_position[Y_AXIS] = Y_MIN_BED + LEVEL_CORNERS_INSET;
+    current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET - zprobe_xoffset;
+    current_position[Y_AXIS] = Y_MIN_BED + LEVEL_CORNERS_INSET - zprobe_yoffset;
     planner.buffer_line(current_position, MMM_TO_MMS(manual_feedrate_mm_m[X_AXIS]), active_extruder);
   }
 }
@@ -227,6 +234,10 @@ static inline void _lcd_measure_offset() {
   line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
   if (bed_corner == 0) ++bed_corner;
   if (!DEPLOY_PROBE()) {
+    if (firstprobe) {
+      measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      firstprobe = false;
+    }
     measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", measured_z);
     ui.lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
@@ -262,6 +273,8 @@ static inline void _lcd_measure_probe_offset_homing() {
     bed_corner = 0;
     previous_zoffset = zprobe_zoffset;
     zprobe_zoffset = 0;
+    measured_z = 0;
+    firstprobe = true;
     ui.goto_screen(menu_measure_probe_offset);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
     current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET;
