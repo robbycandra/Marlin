@@ -669,6 +669,7 @@ void MarlinUI::quick_feedback(const bool clear_buttons/*=true*/) {
  */
 
 LCDViewAction MarlinUI::lcdDrawUpdate = LCDVIEW_CLEAR_CALL_REDRAW;
+bool MarlinUI::lcdCurDisplayTimeUpdate = true;
 
 bool MarlinUI::detected() {
   return
@@ -923,7 +924,10 @@ void MarlinUI::update() {
 
       // Keeping track of the longest time for an individual LCD update.
       // Used to do screen throttling when the planner starts to fill up.
-      NOLESS(max_display_update_time, millis() - ms);
+      if (lcdCurDisplayTimeUpdate)
+        NOLESS(max_display_update_time, millis() - ms);
+      else
+        lcdCurDisplayTimeUpdate = true;
     }
 
     #if HAS_LCD_MENU && LCD_TIMEOUT_TO_STATUS

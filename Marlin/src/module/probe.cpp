@@ -330,9 +330,7 @@ static inline void _lcd_stow_message() {
 
 FORCE_INLINE void probe_specific_action(const bool deploy) {
   if (rexyz_probe_mode == REXYZPROBE_MANUAL_DEPLOY) {
-    do {
-      // PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
-        if (deploy == (READ(Z_MIN_PROBE_PIN) == Z_MIN_PROBE_ENDSTOP_INVERTING)) break;
+    while (deploy != (READ(Z_MIN_PROBE_PIN) == Z_MIN_PROBE_ENDSTOP_INVERTING)) {
 
       #if HAS_LCD_MENU
         ui.save_previous_screen();
@@ -348,11 +346,11 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
       BUZZ(100, 659);
       BUZZ(100, 698);
 
-      PGM_P const ds_str = deploy ? PSTR(MSG_MANUAL_DEPLOY) : PSTR(MSG_MANUAL_STOW);
+      //PGM_P const ds_str = deploy ? PSTR(MSG_MANUAL_DEPLOY) : PSTR(MSG_MANUAL_STOW);
       //ui.return_to_status();       // To display the new status message
       //ui.set_status_P(ds_str, 99);
-      serialprintPGM(ds_str);
-      SERIAL_EOL();
+      //serialprintPGM(ds_str);
+      //SERIAL_EOL();
 
       KEEPALIVE_STATE(PAUSED_FOR_USER);
       wait_for_user = true;
@@ -360,11 +358,11 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
         host_prompt_do(PROMPT_USER_CONTINUE, PSTR("Stow Probe"), PSTR("Continue"));
       #endif
       while (wait_for_user) idle();
-      ui.reset_status();
-      KEEPALIVE_STATE(IN_HANDLER);
+      //ui.reset_status();
+      KEEPALIVE_STATE(NOT_BUSY);
+      ui.lcdCurDisplayTimeUpdate = false;
       ui.goto_previous_screen();
-      
-    } while(true);
+    } 
   }
   #if ENABLED(SOLENOID_PROBE)
 

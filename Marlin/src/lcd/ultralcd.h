@@ -307,6 +307,7 @@ public:
       static bool detected();
 
       static LCDViewAction lcdDrawUpdate;
+      static bool lcdCurDisplayTimeUpdate;
       static inline bool should_draw() { return bool(lcdDrawUpdate); }
       static inline void refresh(const LCDViewAction type) { lcdDrawUpdate = type; }
       static inline void refresh() { refresh(LCDVIEW_CLEAR_CALL_REDRAW); }
