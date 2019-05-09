@@ -21,6 +21,7 @@
  */
 
 #include "../inc/MarlinConfigPre.h"
+#include "src/core/serial.h"
 
 // These displays all share the MarlinUI class
 #if HAS_SPI_LCD || ENABLED(EXTENSIBLE_UI)
@@ -863,6 +864,12 @@ void MarlinUI::update() {
     // then we want to use 1/2 of the time only.
     uint16_t bbr2 = planner.block_buffer_runtime() >> 1;
 
+    if (DEBUGGING(INFO)) 
+      if (lcdDrawUpdate == LCDVIEW_CLEAR_CALL_REDRAW) {
+        SERIAL_ECHOLNPAIR("bbr2 = ", bbr2);
+        SERIAL_ECHOLNPAIR("max_display_update_time = ", max_display_update_time);
+      }
+
     if ((should_draw() || drawing_screen) && (!bbr2 || bbr2 > max_display_update_time)) {
 
       // Change state of drawing flag between screen updates
@@ -928,8 +935,14 @@ void MarlinUI::update() {
         NOLESS(max_display_update_time, millis() - ms);
       else
         lcdCurDisplayTimeUpdate = true;
+
+      if (DEBUGGING(INFO)) 
+        if (max_display_update_time > 1000) 
+          SERIAL_ECHOLNPAIR("Long max_display_update_time = ", max_display_update_time);
+      
     }
 
+    // force defer return_to_status back to status after LCD_TIMEOUT_TO STATUS
     #if HAS_LCD_MENU && LCD_TIMEOUT_TO_STATUS
       // Return to Status Screen after a timeout
       if (on_status_screen() || defer_return_to_status)
@@ -939,6 +952,7 @@ void MarlinUI::update() {
     #endif
 
     // Change state of drawing flag between screen updates
+    // drawing screen is false for 2004
     if (!drawing_screen) switch (lcdDrawUpdate) {
       case LCDVIEW_CLEAR_CALL_REDRAW:
         clear_lcd(); break;
