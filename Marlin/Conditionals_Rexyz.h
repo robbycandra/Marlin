@@ -25,8 +25,8 @@
  *
  */
 
-#define REXYZ_FW_VERSION ".4" // Change this with each update
-#define REXYZ_STRING_DISTRIBUTION_DATE "2019-05-03"
+#define REXYZ_FW_VERSION ".5" // Change this with each update
+#define REXYZ_STRING_DISTRIBUTION_DATE "2019-05-09"
 #define REXYZ_DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
 #define REXYZ_SOURCE_CODE_URL "http://rajawali3d.com"
 #define REXYZ_WEBSITE_URL "http://rajawali3d.com"
