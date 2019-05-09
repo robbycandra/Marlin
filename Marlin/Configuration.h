@@ -715,6 +715,7 @@
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4[, E5]]]]]
  */
 #define DEFAULT_MAX_FEEDRATE          { 300, 300, 30, 50 }
+#define MAX_FEEDRATE_LIMIT            { 400, 400, 50, 100 }
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
@@ -723,6 +724,7 @@
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4[, E5]]]]]
  */
 #define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 100, 5000 }
+#define MAX_ACCELERATION_LIMIT        { 3000, 3000, 200, 10000 }
 
 /**
  * Default Acceleration (change/s) change = mm/s
@@ -742,6 +744,7 @@
 #define JUNCTION_DEVIATION
 #if ENABLED(JUNCTION_DEVIATION)
   #define JUNCTION_DEVIATION_MM 0.02  // (mm) Distance from real junction edge
+  #define MAX_JUNCTION_DEVIATION_MM 0.2f
 #endif
 
 /**

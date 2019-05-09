@@ -542,7 +542,9 @@ void menu_advanced_homePos() {
     MENU_BACK(MSG_ADVANCED_SETTINGS);
 
     // M203 Max Feedrate
-    #define EDIT_VMAX(N) MENU_MULTIPLIER_ITEM_EDIT(float3, MSG_VMAX MSG_##N, &planner.settings.max_feedrate_mm_s[_AXIS(N)], 1, 999)
+    static constexpr uint32_t max_feedrate[] = MAX_FEEDRATE_LIMIT;
+    #define EDIT_VMAX(N) MENU_MULTIPLIER_ITEM_EDIT(float3, MSG_VMAX MSG_##N, &planner.settings.max_feedrate_mm_s[_AXIS(N)], 1, max_feedrate[_AXIS(N)])
+
     EDIT_VMAX(A);
     EDIT_VMAX(B);
     EDIT_VMAX(C);
@@ -565,7 +567,7 @@ void menu_advanced_homePos() {
         #endif // E_STEPPERS > 3
       #endif // E_STEPPERS > 2
     #elif E_STEPPERS
-      MENU_MULTIPLIER_ITEM_EDIT(float3, MSG_VMAX MSG_E, &planner.settings.max_feedrate_mm_s[E_AXIS], 1, 999);
+      MENU_MULTIPLIER_ITEM_EDIT(float3, MSG_VMAX MSG_E, &planner.settings.max_feedrate_mm_s[E_AXIS], 1, max_feedrate[E_AXIS]);
     #endif
 
     // M205 S Min Feedrate
@@ -592,7 +594,8 @@ void menu_advanced_homePos() {
     MENU_MULTIPLIER_ITEM_EDIT(float5_25, MSG_A_TRAVEL, &planner.settings.travel_acceleration, 25, 99000);
 
     // M201 settings
-    #define EDIT_AMAX(Q,L) MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(long5_25, MSG_AMAX MSG_##Q, &planner.settings.max_acceleration_mm_per_s2[_AXIS(Q)], L, 99000, _reset_acceleration_rates)
+    static constexpr uint32_t max_accel[] = MAX_ACCELERATION_LIMIT;
+    #define EDIT_AMAX(Q,L) MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(long5_25, MSG_AMAX MSG_##Q, &planner.settings.max_acceleration_mm_per_s2[_AXIS(Q)], L, max_accel[_AXIS(Q)], _reset_acceleration_rates)
 
     EDIT_AMAX(A,100);
     EDIT_AMAX(B,100);
@@ -616,7 +619,7 @@ void menu_advanced_homePos() {
         #endif // E_STEPPERS > 3
       #endif // E_STEPPERS > 2
     #elif E_STEPPERS
-      MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(long5, MSG_AMAX MSG_E, &planner.settings.max_acceleration_mm_per_s2[E_AXIS], 100, 99000, _reset_acceleration_rates);
+      MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(long5, MSG_AMAX MSG_E, &planner.settings.max_acceleration_mm_per_s2[E_AXIS], 100, max_accel[E_AXIS], _reset_acceleration_rates);
     #endif
 
     END_MENU();
@@ -629,9 +632,9 @@ void menu_advanced_homePos() {
 
     #if ENABLED(JUNCTION_DEVIATION)
       #if ENABLED(LIN_ADVANCE)
-        MENU_ITEM_EDIT_CALLBACK(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f, planner.recalculate_max_e_jerk);
+        MENU_ITEM_EDIT_CALLBACK(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, MAX_JUNCTION_DEVIATION_MM, planner.recalculate_max_e_jerk);
       #else
-        MENU_ITEM_EDIT(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f);
+        MENU_ITEM_EDIT(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, MAX_JUNCTION_DEVIATION_MM);
       #endif
     #endif
     #if HAS_CLASSIC_JERK

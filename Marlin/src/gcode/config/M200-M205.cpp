@@ -62,7 +62,8 @@ void GcodeSuite::M201() {
   LOOP_XYZE(i) {
     if (parser.seen(axis_codes[i])) {
       const uint8_t a = (i == E_AXIS ? E_AXIS_N(target_extruder) : i);
-      planner.settings.max_acceleration_mm_per_s2[a] = parser.value_axis_units((AxisEnum)a);
+      static constexpr uint32_t max_accel[] = MAX_ACCELERATION_LIMIT;
+      planner.settings.max_acceleration_mm_per_s2[a] = constrain(parser.value_axis_units((AxisEnum)a), 10, max_accel[a]);
     }
   }
   // steps per sq second need to be updated to agree with the units per sq second (as they are what is used in the planner)
@@ -82,7 +83,8 @@ void GcodeSuite::M203() {
   LOOP_XYZE(i)
     if (parser.seen(axis_codes[i])) {
       const uint8_t a = (i == E_AXIS ? E_AXIS_N(target_extruder) : i);
-      planner.settings.max_feedrate_mm_s[a] = parser.value_axis_units((AxisEnum)a);
+      static constexpr uint32_t max_feedrate[] = MAX_FEEDRATE_LIMIT;
+      planner.settings.max_feedrate_mm_s[a] = constrain(parser.value_axis_units((AxisEnum)a), 10, max_feedrate[a]);
     }
 }
 
@@ -141,14 +143,14 @@ void GcodeSuite::M205() {
   #if ENABLED(JUNCTION_DEVIATION)
     if (parser.seen('J')) {
       const float junc_dev = parser.value_linear_units();
-      if (WITHIN(junc_dev, 0.01f, 0.3f)) {
+      if (WITHIN(junc_dev, 0.01f, MAX_JUNCTION_DEVIATION_MM)) {
         planner.junction_deviation_mm = junc_dev;
         #if ENABLED(LIN_ADVANCE)
           planner.recalculate_max_e_jerk();
         #endif
       }
       else
-        SERIAL_ERROR_MSG("?J out of range (0.01 to 0.3)");
+        SERIAL_ERROR_MSG("?J out of range.");
     }
   #endif
   #if HAS_CLASSIC_JERK

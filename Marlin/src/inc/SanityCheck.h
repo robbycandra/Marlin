@@ -2029,7 +2029,9 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
  */
 constexpr float sanity_arr_1[] = DEFAULT_AXIS_STEPS_PER_UNIT,
                 sanity_arr_2[] = DEFAULT_MAX_FEEDRATE,
-                sanity_arr_3[] = DEFAULT_MAX_ACCELERATION;
+                sanity_arr_3[] = DEFAULT_MAX_ACCELERATION,
+                sanity_arr_4[] = MAX_FEEDRATE_LIMIT,
+                sanity_arr_5[] = MAX_ACCELERATION_LIMIT;
 
 #define _ARR_TEST(N,I) (sanity_arr_##N[MIN(I,int(COUNT(sanity_arr_##N))-1)] > 0)
 
@@ -2053,6 +2055,20 @@ static_assert(   _ARR_TEST(3,0) && _ARR_TEST(3,1) && _ARR_TEST(3,2)
               && _ARR_TEST(3,3) && _ARR_TEST(3,4) && _ARR_TEST(3,5)
               && _ARR_TEST(3,6) && _ARR_TEST(3,7) && _ARR_TEST(3,8),
               "DEFAULT_MAX_ACCELERATION values must be positive.");
+
+static_assert(COUNT(sanity_arr_4) >= XYZE, "MAX_FEEDRATE_LIMIT requires X, Y, Z and E elements.");
+static_assert(COUNT(sanity_arr_4) <= XYZE_N, "MAX_FEEDRATE_LIMIT has too many elements. (Did you forget to enable DISTINCT_E_FACTORS?)");
+static_assert(   _ARR_TEST(4,0) && _ARR_TEST(4,1) && _ARR_TEST(4,2)
+              && _ARR_TEST(4,3) && _ARR_TEST(4,4) && _ARR_TEST(4,5)
+              && _ARR_TEST(4,6) && _ARR_TEST(4,7) && _ARR_TEST(4,8),
+              "MAX_FEEDRATE_LIMIT values must be positive.");
+
+static_assert(COUNT(sanity_arr_5) >= XYZE, "MAX_ACCELERATION_LIMIT requires X, Y, Z and E elements.");
+static_assert(COUNT(sanity_arr_5) <= XYZE_N, "MAX_ACCELERATION_LIMIT has too many elements. (Did you forget to enable DISTINCT_E_FACTORS?)");
+static_assert(   _ARR_TEST(5,0) && _ARR_TEST(5,1) && _ARR_TEST(5,2)
+              && _ARR_TEST(5,3) && _ARR_TEST(5,4) && _ARR_TEST(5,5)
+              && _ARR_TEST(5,6) && _ARR_TEST(5,7) && _ARR_TEST(5,8),
+              "MAX_ACCELERATION_LIMIT values must be positive.");
 
 #undef _ARR_TEST
 
