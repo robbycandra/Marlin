@@ -151,6 +151,7 @@ static inline void _lcd_probe_calibration_back() {
     set_bed_leveling_enabled(leveling_was_active);
   #endif
   zprobe_zoffset = previous_zoffset;
+  clean_up_after_endstop_or_probe_move();
   ui.goto_previous_screen_no_defer();
 }
 
@@ -178,6 +179,7 @@ static inline void _lcd_probe_corner() {
     }
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", measured_z);
     ui.lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
+    ui.lcdCurDisplayTimeUpdate = false;
   }
 }
 
@@ -204,6 +206,7 @@ static inline void _lcd_adjust_corner_homing() {
     bed_corner = 1;
     measured_z = 0;
     firstprobe = true;
+    setup_for_endstop_or_probe_move();
     ui.goto_screen(menu_adjust_corner);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
     current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET - zprobe_xoffset;
@@ -241,6 +244,7 @@ static inline void _lcd_measure_offset() {
     measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", measured_z);
     ui.lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
+    ui.lcdCurDisplayTimeUpdate = false;
   }
 }
 
@@ -275,6 +279,7 @@ static inline void _lcd_measure_probe_offset_homing() {
     zprobe_zoffset = 0;
     measured_z = 0;
     firstprobe = true;
+    setup_for_endstop_or_probe_move();
     ui.goto_screen(menu_measure_probe_offset);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
     current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET;
