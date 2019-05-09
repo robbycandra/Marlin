@@ -24,7 +24,7 @@
 #include "src/core/serial.h"
 
 // These displays all share the MarlinUI class
-#if HAS_SPI_LCD || ENABLED(EXTENSIBLE_UI)
+#if HAS_DISPLAY
   #include "ultralcd.h"
   #include "fontutils.h"
   MarlinUI ui;
@@ -1210,7 +1210,7 @@ void MarlinUI::update() {
 
 #endif // HAS_SPI_LCD
 
-#if HAS_SPI_LCD || ENABLED(EXTENSIBLE_UI)
+#if HAS_DISPLAY
 
   #if ENABLED(EXTENSIBLE_UI)
     #include "extensible_ui/ui_api.h"
@@ -1394,4 +1394,4 @@ void MarlinUI::update() {
     }
   #endif
 
-#endif // HAS_SPI_LCD || EXTENSIBLE_UI
+#endif // HAS_DISPLAY
