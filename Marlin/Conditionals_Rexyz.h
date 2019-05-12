@@ -26,7 +26,7 @@
  */
 
 #define REXYZ_FW_VERSION ".5" // Change this with each update
-#define REXYZ_STRING_DISTRIBUTION_DATE "2019-05-09"
+#define REXYZ_STRING_DISTRIBUTION_DATE "2019-05-11"
 #define REXYZ_DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
 #define REXYZ_SOURCE_CODE_URL "http://rajawali3d.com"
 #define REXYZ_WEBSITE_URL "http://rajawali3d.com"
@@ -253,7 +253,7 @@
     #define REXYZ_Y_MAX_POS 216
     #define REXYZ_Z_MAX_POS 299
 
-    #define REXYZ_LEVEL_CORNERS_INSET 5    // (mm) An inset for corner leveling
+    #define REXYZ_LEVEL_CORNERS_INSET 20   // (mm) An inset for corner leveling
     #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
     #define REXYZ_LEVEL_CENTER_TOO         // Move to the center after the last corner
 

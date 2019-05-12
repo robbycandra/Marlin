@@ -714,8 +714,8 @@
  * Override with M203
  *                                      X, Y, Z, E0 [, E1[, E2[, E3[, E4[, E5]]]]]
  */
-#define DEFAULT_MAX_FEEDRATE          { 300, 300, 30, 50 }
-#define MAX_FEEDRATE_LIMIT            { 400, 400, 50, 100 }
+#define DEFAULT_MAX_FEEDRATE          { 300, 300, 30, 25 }
+#define MAX_FEEDRATE_LIMIT            { 400, 400, 50, 50 }
 
 /**
  * Default Max Acceleration (change/s) change = mm/s
@@ -1148,7 +1148,7 @@
  * Turn on with the command 'M111 S32'.
  * NOTE: Requires a lot of PROGMEM!
  */
-#define DEBUG_LEVELING_FEATURE
+//#define DEBUG_LEVELING_FEATURE
 
 #if ANY(MESH_BED_LEVELING, AUTO_BED_LEVELING_BILINEAR, AUTO_BED_LEVELING_UBL)
   // Gradually reduce leveling correction until a set height is reached,
