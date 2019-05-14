@@ -2163,6 +2163,10 @@ void MarlinSettings::postprocess() {
     } 
     else {
       reset();
+	  #if ENABLED(EEPROM_AUTO_INIT)
+	    (void)save();
+	    SERIAL_ECHO_MSG("EEPROM Initialized");
+	  #endif
     }
     zprobe_max_x = MIN(X_MAX_BED - (MIN_PROBE_EDGE), X_MAX_POS + X_PROBE_OFFSET_FROM_EXTRUDER);
     zprobe_max_y = MIN(Y_MAX_BED - (MIN_PROBE_EDGE), Y_MAX_POS + Y_PROBE_OFFSET_FROM_EXTRUDER);
@@ -2229,7 +2233,7 @@ void MarlinSettings::postprocess() {
       #endif
     }
 
-    void MarlinSettings::load_mesh(const int8_t slot, void * const into/*=NULL*/) {
+    void MarlinSettings::load_mesh(const int8_t slot, void * const into/*=nullptr*/) {
 
       #if ENABLED(AUTO_BED_LEVELING_UBL)
 
@@ -2653,7 +2657,7 @@ void MarlinSettings::reset() {
   #if HAS_TRINAMIC
     inline void say_M906(const bool forReplay) { CONFIG_ECHO_START(); SERIAL_ECHOPGM("  M906"); }
     #if HAS_STEALTHCHOP
-      void say_M569(const char * const etc=NULL) {
+      void say_M569(const char * const etc=nullptr) {
         SERIAL_ECHOPGM("  M569 S1");
         if (etc) {
           SERIAL_CHAR(' ');

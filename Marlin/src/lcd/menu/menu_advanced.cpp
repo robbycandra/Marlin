@@ -697,7 +697,7 @@ void menu_advanced_homePos() {
         PSTR(MSG_BUTTON_INIT), PSTR(MSG_BUTTON_CANCEL),
         []{ ui.completion_feedback(settings.init_eeprom()); },
         ui.goto_previous_screen,
-        PSTR(MSG_INIT_EEPROM), NULL, PSTR("?")
+        PSTR(MSG_INIT_EEPROM), nullptr, PSTR("?")
       );
     }
 
