@@ -297,6 +297,20 @@
     //#define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -2.6
 #endif
 
+//===========================================================================
+//============================= Filament Sensor Settings ====================
+//===========================================================================
+
+#define FILAMENT_RUNOUT_DISTANCE_MM 6
+
+#if defined(REXYZ_FILAMENT_MOTION_DETECTOR)
+    #define REXYZ_FILAMENT_RUNOUT_SCRIPT "M25 P\nM24"
+    #define FILAMENT_MOTION_SENSOR
+    #define REXYZ_FILAMENT_DISTANCE_PER_MOTION 0.894
+#else
+    #define REXYZ_FILAMENT_RUNOUT_SCRIPT "M600"
+#endif
+
 // maks 7 char because used for marking.
 #define REXYZ_MACHINE_TYPE REXYZ_MACHINE_FRAME_TYPE REXYZ_MACHINE_TOOLHEAD_TYPE
 

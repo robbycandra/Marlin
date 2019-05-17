@@ -83,7 +83,18 @@ class TFilamentMonitor : public FilamentMonitorBase {
 
     #ifdef FILAMENT_RUNOUT_DISTANCE_MM
       static inline float& runout_distance() { return response.runout_distance_mm; }
-      static inline void set_runout_distance(const float &mm) { response.runout_distance_mm = mm; }
+      static inline void set_runout_distance(const float &mm) { 
+        response.runout_distance_mm = mm;
+        #ifdef FILAMENT_MOTION_SENSOR
+          sensor.runout_max_motion_before_runout = (int) (response.runout_distance_mm / REXYZ_FILAMENT_DISTANCE_PER_MOTION * 0.8);
+          sensor.runout_motion_fastest_delay = (int) 900 * REXYZ_FILAMENT_DISTANCE_PER_MOTION / planner.settings.max_feedrate_mm_s[E_AXIS];
+        #endif
+        #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
+          SERIAL_ECHOLNPAIR("Runout Distance mm = ", response.runout_distance_mm);
+          SERIAL_ECHOLNPAIR("Runout Distance motion = ", sensor.runout_max_motion_before_runout);
+          SERIAL_ECHOLNPAIR("Runout Fastest Delay = ", sensor.runout_motion_fastest_delay);
+        #endif
+      }
     #endif
 
     // Handle a block completion. RunoutResponseDelayed uses this to
@@ -194,35 +205,87 @@ class FilamentSensorBase {
    */
   class FilamentSensorEncoder : public FilamentSensorBase {
     private:
-      static uint8_t motion_detected;
+
+      static uint8_t motion_detected[EXTRUDERS];
 
       static inline void poll_motion_sensor() {
+
+        // get run out pin state, check if there are any changes
         static uint8_t old_state;
         const uint8_t new_state = poll_runout_pins(),
                       change    = old_state ^ new_state;
-        old_state = new_state;
+        static millis_t t = 0;
+        const millis_t ms = millis();
 
-        #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
-          if (change) {
-            SERIAL_ECHOPGM("Motion detected:");
+        // if run out pin state change
+        if (change) {
+          if (ELAPSED(ms, t)) {
+            t = millis() +  runout_motion_fastest_delay;
+            old_state = new_state;
+            #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
+              SERIAL_ECHOPGM("M e:");
+            #endif
             for (uint8_t e = 0; e < NUM_RUNOUT_SENSORS; e++)
-              if (TEST(change, e)) { SERIAL_CHAR(' '); SERIAL_CHAR('0' + e); }
-            SERIAL_EOL();
-          }
-        #endif
+              if (TEST(change, e)) { 
+                // increase motion_detected counter
+                // 1 motion detected is 0.84mm filament movement
+                // if block is big than we need to flag filament preset.
+                // motion detect limit = FILAMENT_RUNOUT_DISTANCE_MM / 0.84 * 80%
+                if (motion_detected[e] > runout_max_motion_before_runout) {
+                  motion_detected[e] = 0;
+                  filament_present(e);
+                  #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
+                    SERIAL_ECHO(" F OK.");
+                  #endif
+                } 
+                motion_detected[e]++;
 
-        motion_detected |= change;
+                #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
+                  SERIAL_CHAR(' '); 
+                  SERIAL_CHAR('0' + e);           
+                  SERIAL_ECHOPAIR(", #", motion_detected[e]);    
+                #endif
+              }
+            #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
+              SERIAL_EOL();
+            #endif
+          }
+        }
       }
 
     public:
-      static inline void block_completed(const block_t* const b) {
-        // If the sensor wheel has moved since the last call to
-        // this method reset the runout counter for the extruder.
-        if (TEST(motion_detected, b->extruder))
-          filament_present(b->extruder);
+      static uint8_t runout_max_motion_before_runout;
+      static uint16_t runout_motion_fastest_delay; 
 
-        // Clear motion triggers for next block
-        motion_detected = 0;
+      // stepper finish one block of command
+      static inline void block_completed(const block_t* const b) {
+
+        // if the block is not filament retraction
+        // the block is filament retraction, ignore it
+        #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
+          SERIAL_ECHO("Blk,");
+        #endif
+
+        if (b->steps[X_AXIS] || b->steps[Y_AXIS] || b->steps[Z_AXIS]
+          #if ENABLED(ADVANCED_PAUSE_FEATURE)
+            || did_pause_print // Allow pause purge move to re-trigger runout state
+          #endif
+        ) {
+          // Motion valid if There is more than 1 motion detected.
+          // Set flag filament present. 
+          if (motion_detected[b->extruder] > 0) {
+            filament_present(b->extruder);
+            #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
+              SERIAL_ECHOLN(" F OK.");
+            #endif
+          }
+        } else {
+          #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
+            SERIAL_ECHOLN(" Ret.");
+          #endif
+        }
+        // reset motion detected
+        motion_detected[b->extruder] = 0;
       }
 
       static inline void run() { poll_motion_sensor(); }
@@ -303,7 +366,7 @@ class FilamentSensorBase {
           if (ELAPSED(ms, t)) {
             t = millis() + 1000UL;
             LOOP_L_N(i, EXTRUDERS) {
-              serialprintPGM(i ? PSTR(", ") : PSTR("Remaining mm: "));
+              serialprintPGM(i ? PSTR(", ") : PSTR("FR: "));
               SERIAL_ECHO(runout_mm_countdown[i]);
             }
             SERIAL_EOL();
@@ -316,7 +379,7 @@ class FilamentSensorBase {
       }
 
       static inline void filament_present(const uint8_t extruder) {
-        runout_mm_countdown[extruder] = runout_distance_mm;
+        runout_mm_countdown[extruder] = runout_distance_mm; //FILAMENT_RUNOUT_DISTANCE_MM;
       }
 
       static inline void block_completed(const block_t* const b) {
