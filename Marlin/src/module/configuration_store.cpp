@@ -2168,10 +2168,10 @@ void MarlinSettings::postprocess() {
 	    SERIAL_ECHO_MSG("EEPROM Initialized");
 	  #endif
     }
-    zprobe_max_x = MIN(X_MAX_BED - (MIN_PROBE_EDGE), X_MAX_POS + X_PROBE_OFFSET_FROM_EXTRUDER);
-    zprobe_max_y = MIN(Y_MAX_BED - (MIN_PROBE_EDGE), Y_MAX_POS + Y_PROBE_OFFSET_FROM_EXTRUDER);
-    zprobe_min_x = MAX(X_MIN_BED + MIN_PROBE_EDGE, X_MIN_POS + X_PROBE_OFFSET_FROM_EXTRUDER);
-    zprobe_min_y = MAX(Y_MIN_BED + MIN_PROBE_EDGE, Y_MIN_POS + Y_PROBE_OFFSET_FROM_EXTRUDER);
+    zprobe_max_x = MIN(X_MAX_BED - (MIN_PROBE_EDGE), X_MAX_POS + zprobe_xoffset);
+    zprobe_max_y = MIN(Y_MAX_BED - (MIN_PROBE_EDGE), Y_MAX_POS + zprobe_yoffset);
+    zprobe_min_x = MAX(X_MIN_BED + MIN_PROBE_EDGE, X_MIN_POS + zprobe_xoffset);
+    zprobe_min_y = MAX(Y_MIN_BED + MIN_PROBE_EDGE, Y_MIN_POS + zprobe_yoffset);
     return success;
   }
 
@@ -2401,7 +2401,7 @@ void MarlinSettings::reset() {
   #if ENABLED(PROBE_MANUALLY)
     rexyz_probe_mode = REXYZPROBE_NO_PROBE;
   #else
-    rexyz_probe_mode = REXYZPROBE_PROXYMITY;
+    rexyz_probe_mode = REXYZ_DEFAULT_PROBE;
   #endif
   #if HAS_BED_PROBE
     zprobe_xoffset = X_PROBE_OFFSET_FROM_EXTRUDER;
