@@ -322,8 +322,8 @@ void menu_advanced_homePos() {
       } 
       ++_thisItemNr; 
     }while(0);
-    _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe X Offset"), PSTR("Probe X Offset"),&zprobe_xoffset, 0, 30);
-    _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe Y Offset"), PSTR("Probe Y Offset"),&zprobe_yoffset, -30, 30);
+    _MENU_ITEM_VARIANT_P(float3, _edit, true, PSTR("Probe X Offset"), PSTR("Probe X Offset"),&zprobe_xoffset, 0, 30);
+    _MENU_ITEM_VARIANT_P(float3, _edit, true, PSTR("Probe Y Offset"), PSTR("Probe Y Offset"),&zprobe_yoffset, -30, 30);
     _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe Z Offset"), PSTR("Probe Z Offset"),&zprobe_zoffset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
     END_MENU();
   }
