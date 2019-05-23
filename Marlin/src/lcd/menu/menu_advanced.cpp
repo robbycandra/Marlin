@@ -50,12 +50,11 @@
 
 #ifdef FILAMENT_RUNOUT_DISTANCE_MM
   #include "../../feature/runout.h"
+  float lcd_runout_distance_mm;
 #endif
 
 void menu_tmc();
 void menu_backlash();
-
-float lcd_runout_distance_mm;
 
 #if ENABLED(DAC_STEPPER_CURRENT)
 
@@ -237,11 +236,12 @@ float lcd_runout_distance_mm;
     #endif
 
     #ifdef FILAMENT_RUNOUT_DISTANCE_MM
-      MENU_MULTIPLIER_ITEM_EDIT(float3, "Runout Distance mm", &lcd_runout_distance_mm, 1,  30);
+      MENU_ITEM_EDIT_CALLBACK(float3, MSG_RUNOUT_DISTANCE_MM, &lcd_runout_distance_mm, 1, 30, []{
+        runout.set_runout_distance(lcd_runout_distance_mm);
+      });
     #endif
 
     END_MENU();
-    runout.set_runout_distance(lcd_runout_distance_mm);
   }
 
 #endif // !NO_VOLUMETRICS || ADVANCED_PAUSE_FEATURE
@@ -717,7 +717,9 @@ void menu_advanced_homePos() {
 #endif // !SLIM_LCD_MENUS
 
 void menu_advanced_settings() {
-  lcd_runout_distance_mm = runout.runout_distance();
+  #ifdef FILAMENT_RUNOUT_DISTANCE_MM
+    lcd_runout_distance_mm = runout.runout_distance();
+  #endif  
   START_MENU();
   MENU_BACK(MSG_CONFIGURATION);
 
