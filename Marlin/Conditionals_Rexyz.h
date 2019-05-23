@@ -303,9 +303,8 @@
 //============================= Filament Sensor Settings ====================
 //===========================================================================
 
-#define FILAMENT_RUNOUT_DISTANCE_MM 6
-
 #if defined(REXYZ_FILAMENT_MOTION_DETECTOR)
+    #define FILAMENT_RUNOUT_DISTANCE_MM 6
     #define REXYZ_FILAMENT_RUNOUT_SCRIPT "M25 P\nM24"
     #define FILAMENT_MOTION_SENSOR
     #define REXYZ_FILAMENT_DISTANCE_PER_MOTION 0.894
