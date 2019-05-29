@@ -34,6 +34,7 @@
 #if ( \
     !defined(REXYZ_S22) && \
     !defined(REXYZ_S33) && \
+    !defined(REXYZ_A33) && \
     !defined(REXYZ_4MAX) \
 )
     #error Must specify printer model. Please see "Configuration_Rexyz.h" for directions.
@@ -54,21 +55,48 @@
 #if defined(REXYZ_S22)
     #define REXYZ_MACHINE_FRAME_TYPE "S22"
     #define REXYZ_S_TYPE
+    #define REXYZ_AVR
 #endif
 #if defined(REXYZ_S33)
     #define REXYZ_MACHINE_FRAME_TYPE "S33"
     #define REXYZ_S_TYPE
+    #define REXYZ_AVR
+#endif
+#if defined(REXYZ_A33)
+    #define REXYZ_MACHINE_FRAME_TYPE "A33"
+    #define REXYZ_A_TYPE
+    #define REXYZ_LPC1768
 #endif
 #if defined(REXYZ_4MAX)
     #define REXYZ_MACHINE_FRAME_TYPE "4MAX"
+    #define REXYZ_AVR
 #endif
 
 //===========================================================================
 //============================= Board Settings ============================
 //===========================================================================
 
-#if defined(REXYZ_S_TYPE)
+#if defined(REXYZ_LPC1768)
+    #define REXYZ_SERIAL_PORT -1
+    #define LPC_SD_ONBOARD
+    #define USB_SD_ONBOARD
+#endif
+#if defined(REXYZ_AVR)
+    #define ENDSTOP_INTERRUPTS_FEATURE
+    #define REXYZ_SERIAL_PORT 0
+#endif
 
+#if defined(REXYZ_A_TYPE)
+    #define REXYZ_MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
+
+    #define REXYZ_FIL_RUNOUT_INVERTING false
+    #define REXYZ_FIL_RUNOUT_PIN P1_27//Y_MIN_PIN //14
+
+    #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
+    #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
+    #define REXYZ_E0_AUTO_FAN_PIN -1
+#endif
+#if defined(REXYZ_S_TYPE)
     #define REXYZ_MOTHERBOARD BOARD_RAMPS_14_EFB
 
     #define REXYZ_FIL_RUNOUT_INVERTING false
@@ -77,7 +105,6 @@
     #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
     #define REXYZ_E0_AUTO_FAN_PIN -1
-
 #endif
 #if defined(REXYZ_4MAX)
     #define REXYZ_MOTHERBOARD BOARD_TRIGORILLA_14
@@ -92,7 +119,6 @@
     #define REXYZ_CONTROLLER_FAN_PIN FAN1_PIN    // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 127        // 255 == full speed
     #define REXYZ_E0_AUTO_FAN_PIN FAN2_PIN
-
 #endif
 
 //===========================================================================
@@ -107,7 +133,7 @@
     #define REXYZ_PID_AUTOTUNE_MENU   // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of PROGMEM)
     #define REXYZ_PID_FUNCTIONAL_RANGE 20 // If the temperature difference between the target temperature and the actual temperature
 
-#if defined(REXYZ_S_TYPE)
+#if defined(REXYZ_S_TYPE) || defined(REXYZ_A_TYPE)
     #define REXYZ_DEFAULT_Kp 20.81
     #define REXYZ_DEFAULT_Ki 1.46
     #define REXYZ_DEFAULT_Kd 74.17
@@ -139,6 +165,16 @@
 //============================= LCD & Sound Settings ============================
 //===========================================================================
 
+#if defined(REXYZ_A_TYPE)
+    #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER    
+
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
+
+    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
+    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
+
+#endif
 #if defined(REXYZ_S_TYPE)
     #define REPRAP_DISCOUNT_SMART_CONTROLLER
 
@@ -165,7 +201,7 @@
 //============================= Endstop & Motor Settings ====================
 //===========================================================================
 
-#if defined(REXYZ_S_TYPE)
+#if defined(REXYZ_S_TYPE) || defined(REXYZ_A_TYPE)
     #define REXYZ_USE_ZMIN_PLUG
     #define REXYZ_USE_XMAX_PLUG
     #define REXYZ_USE_YMAX_PLUG
@@ -232,7 +268,7 @@
     #define REXYZ_GRID_MAX_POINTS_X 3
     #define REXYZ_GRID_MAX_POINTS_Y 3
 #endif
-#if defined(REXYZ_S33)
+#if defined(REXYZ_S33) || defined(REXYZ_A33)
     #define REXYZ_X_BED_SIZE 300
     #define REXYZ_Y_BED_SIZE 300
     #define REXYZ_X_MIN_POS 0
