@@ -1298,23 +1298,23 @@ void MarlinSettings::postprocess() {
     mach_ver[1] = 'X';
     strncpy(mach_ver+2, MACHINE_TYPE, sizeof(mach_ver)-2);
     int eeprom_index = EEPROM_OFFSET - sizeof(mach_ver);
+    persistentStore.access_start();
     EEPROM_WRITE(mach_ver);  // invalidate data first
+    persistentStore.access_finish();
   }
 
   // Cek apakah eeprom sebelumnya adalah Rexyz
   // Syaratnya: Pada eeprom sebelumnya harus sudah pernah Store
 
   bool MarlinSettings::is_rexyz() {
-    uint16_t working_crc = 0;
-    bool saved_eeprom_error;
-
-    saved_eeprom_error = eeprom_error;
+    uint16_t w_crc = 0;
+    const bool saved_eeprom_error = eeprom_error;
     eeprom_error = false;
 
-    int eeprom_index = EEPROM_OFFSET - sizeof(mach_ver);
-    EEPROM_READ_ALWAYS(mach_ver);
-    //SERIAL_ECHO("mach ver:");
-    //SERIAL_ECHOLN(mach_ver);
+    int ee_index = EEPROM_OFFSET - sizeof(mach_ver);
+    persistentStore.read_data(ee_index, (uint8_t*)mach_ver, sizeof(mach_ver), &w_crc); 
+    UPDATE_TEST_INDEX(mach_ver);
+
     if (mach_ver[0] == 'R' && mach_ver[1] == 'X') {
       eeprom_error = saved_eeprom_error;
       return true;
