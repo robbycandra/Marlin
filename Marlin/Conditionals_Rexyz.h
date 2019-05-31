@@ -274,7 +274,7 @@
     #define REXYZ_X_MIN_POS 0
     #define REXYZ_X_MAX_POS 300
     #define REXYZ_Y_MAX_POS 300
-    #define REXYZ_Z_MAX_POS 363
+    #define REXYZ_Z_MAX_POS 365
 
     #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
     #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
@@ -345,7 +345,7 @@
 //===========================================================================
 
 #if defined(REXYZ_FILAMENT_MOTION_DETECTOR)
-    #define FILAMENT_RUNOUT_DISTANCE_MM 6
+    #define FILAMENT_RUNOUT_DISTANCE_MM 5
     //#define REXYZ_FILAMENT_RUNOUT_SCRIPT "M25 P\nM24"
     #define REXYZ_FILAMENT_RUNOUT_SCRIPT "M600"
     #define FILAMENT_MOTION_SENSOR
