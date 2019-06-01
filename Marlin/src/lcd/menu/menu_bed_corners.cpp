@@ -205,6 +205,7 @@ static inline void _lcd_adjust_corner_homing() {
   if (all_axes_homed()) {
     bed_corner = 1;
     measured_z = 0;
+    previous_zoffset = zprobe_zoffset;
     firstprobe = true;
     setup_for_endstop_or_probe_move();
     ui.goto_screen(menu_adjust_corner);
