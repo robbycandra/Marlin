@@ -932,13 +932,16 @@ void MarlinUI::update() {
       // Used to do screen throttling when the planner starts to fill up.
       if (lcdCurDisplayTimeUpdate)
         NOLESS(max_display_update_time, millis() - ms);
-      else
+      else {
         lcdCurDisplayTimeUpdate = true;
+        if (DEBUGGING(INFO)) 
+            SERIAL_ECHOLNPAIR("Max_display_update_time not updated = ", max_display_update_time);
+
+      }
 
       if (DEBUGGING(INFO)) 
         if (max_display_update_time > 1000) 
           SERIAL_ECHOLNPAIR("Long max_display_update_time = ", max_display_update_time);
-      
     }
 
     // force defer return_to_status back to status after LCD_TIMEOUT_TO STATUS
