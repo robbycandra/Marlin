@@ -43,6 +43,9 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
 
 #include "../gcode/gcode.h"
 #include "../lcd/ultralcd.h"
+#if ENABLED(HOST_PROMPT_SUPPORT)
+  #include "../feature/host_actions.h"
+#endif
 
 #if ANY(Z_PROBE_SLED, Z_PROBE_ALLEN_KEY, PROBE_TRIGGERED_WHEN_STOWED_TEST) || (QUIET_PROBING && ENABLED(PROBING_STEPPERS_OFF))
   #include "../Marlin.h" // for stop(), disable_e_steppers
