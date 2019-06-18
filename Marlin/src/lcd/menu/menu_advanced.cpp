@@ -703,7 +703,7 @@ void menu_advanced_homePos() {
 void menu_advanced_settings() {
   #ifdef FILAMENT_RUNOUT_DISTANCE_MM
     lcd_runout_distance_mm = runout.runout_distance();
-  #endif  
+  #endif
   START_MENU();
   MENU_BACK(MSG_CONFIGURATION);
 

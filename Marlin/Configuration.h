@@ -645,13 +645,13 @@
 #endif
 
 // Mechanical endstop with COM to ground and NC to Signal uses "false" here (most common setup).
-#define X_MIN_ENDSTOP_INVERTING REXYZ_X_MIN_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
-#define Y_MIN_ENDSTOP_INVERTING REXYZ_Y_MIN_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
-#define Z_MIN_ENDSTOP_INVERTING REXYZ_Z_MIN_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
-#define X_MAX_ENDSTOP_INVERTING REXYZ_X_MAX_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
-#define Y_MAX_ENDSTOP_INVERTING REXYZ_Y_MAX_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
-#define Z_MAX_ENDSTOP_INVERTING REXYZ_Z_MAX_ENDSTOP_INVERTING // set to true to invert the logic of the endstop.
-#define Z_MIN_PROBE_ENDSTOP_INVERTING true // set to true to invert the logic of the probe.
+#define X_MIN_ENDSTOP_INVERTING REXYZ_X_MIN_ENDSTOP_INVERTING // Set to true to invert the logic of the endstop.
+#define Y_MIN_ENDSTOP_INVERTING REXYZ_Y_MIN_ENDSTOP_INVERTING // Set to true to invert the logic of the endstop.
+#define Z_MIN_ENDSTOP_INVERTING REXYZ_Z_MIN_ENDSTOP_INVERTING // Set to true to invert the logic of the endstop.
+#define X_MAX_ENDSTOP_INVERTING REXYZ_X_MAX_ENDSTOP_INVERTING // Set to true to invert the logic of the endstop.
+#define Y_MAX_ENDSTOP_INVERTING REXYZ_Y_MAX_ENDSTOP_INVERTING // Set to true to invert the logic of the endstop.
+#define Z_MAX_ENDSTOP_INVERTING REXYZ_Z_MAX_ENDSTOP_INVERTING // Set to true to invert the logic of the endstop.
+#define Z_MIN_PROBE_ENDSTOP_INVERTING true // Set to true to invert the logic of the probe.
 
 /**
  * Stepper Drivers
@@ -1087,20 +1087,19 @@
 #define FILAMENT_RUNOUT_SENSOR
 #if ENABLED(FILAMENT_RUNOUT_SENSOR)
   #define NUM_RUNOUT_SENSORS   1     // Number of sensors, up to one per extruder. Define a FIL_RUNOUT#_PIN for each.
-  #define FIL_RUNOUT_INVERTING REXYZ_FIL_RUNOUT_INVERTING // set to true to invert the logic of the sensor.
+  #define FIL_RUNOUT_INVERTING REXYZ_FIL_RUNOUT_INVERTING // Set to true to invert the logic of the sensor.
   #define FIL_RUNOUT_PULLUP          // Use internal pullup for filament runout pins.
-
   //#define FIL_RUNOUT_PULLDOWN      // Use internal pulldown for filament runout pins.
   #define FIL_RUNOUT_PIN REXYZ_FIL_RUNOUT_PIN // Y-Min at MKS GEN L
 
   // Set one or more commands to execute on filament runout.
   // (After 'M412 H' Marlin will ask the host to handle the process.)
-  #define FILAMENT_RUNOUT_SCRIPT REXYZ_FILAMENT_RUNOUT_SCRIPT 
+  #define FILAMENT_RUNOUT_SCRIPT REXYZ_FILAMENT_RUNOUT_SCRIPT
 
   // After a runout is detected, continue printing this length of filament
   // before executing the runout script. Useful for a sensor at the end of
   // a feed tube. Requires 4 bytes SRAM per sensor, plus 4 bytes overhead.
-  //#define FILAMENT_RUNOUT_DISTANCE_MM 
+  //#define FILAMENT_RUNOUT_DISTANCE_MM
 
   #ifdef FILAMENT_RUNOUT_DISTANCE_MM
     // Enable this option to use an encoder disc that toggles the runout pin
