@@ -77,7 +77,12 @@
 //===========================================================================
 
 #if defined(REXYZ_LPC1768)
-    #define REXYZ_SERIAL_PORT -1
+    // If not using TFT
+    //#define REXYZ_SERIAL_PORT -1
+    // If using TFT (or not using)
+    #define REXYZ_SERIAL_PORT 0
+    #define SERIAL_PORT_2 -1
+    // Use Onboard SD Card.
     #define LPC_SD_ONBOARD
     #define USB_SD_ONBOARD
 #endif
