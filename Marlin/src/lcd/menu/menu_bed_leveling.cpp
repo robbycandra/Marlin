@@ -216,7 +216,7 @@
     _lcd_draw_homing();
     if (all_axes_homed()) {
       ui.goto_screen(_lcd_level_bed_homing_done);
-      enqueue_and_echo_commands_P(PSTR("G29"));
+      queue.inject_P(PSTR("G29"));
     }
   }
 
@@ -224,7 +224,7 @@
     ui.defer_status_screen();
     if (!all_axes_known()) {
       set_all_unhomed();
-      enqueue_and_echo_commands_P(PSTR("G28"));
+      queue.inject_P(PSTR("G28"));
     }
     ui.goto_screen(_lcd_level_bed_homing);
   }

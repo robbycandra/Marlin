@@ -221,7 +221,7 @@ void _lcd_adjust_corner() {
   STOW_PROBE();
   if (!all_axes_known()) {
     set_all_unhomed();
-    enqueue_and_echo_commands_P(PSTR("G28"));
+    queue.inject_P(PSTR("G28"));
   }
 
   // Disable leveling so the planner won't mess with us
@@ -295,7 +295,7 @@ void _lcd_measure_probe_offset() {
   STOW_PROBE();
   if (!all_axes_known()) {
     set_all_unhomed();
-    enqueue_and_echo_commands_P(PSTR("G28"));
+    queue.inject_P(PSTR("G28"));
   }
 
   // Disable leveling so the planner won't mess with us
