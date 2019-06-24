@@ -270,6 +270,9 @@ void menu_advanced_homePos() {
       case REXYZPROBE_MANUAL_DEPLOY:
         draw_edit_screen(PSTR("Choose Probe"), "Manual Deploy Prb");
         break;
+      case REXYZPROBE_BLTOUCH:
+        draw_edit_screen(PSTR("Choose Probe"), "BL/3D Touch");
+        break;
       }
     if (ui.lcd_clicked) {
       rexyz_probe_mode = ui.encoderPosition;
@@ -280,6 +283,7 @@ void menu_advanced_homePos() {
   void menu_advanced_probe() {
     START_MENU();
     MENU_BACK(MSG_ADVANCED_SETTINGS);
+    /*
     do { 
       _skipStatic = false; 
       if (_menuLineNr == _thisItemNr) { 
@@ -302,10 +306,15 @@ void menu_advanced_homePos() {
           case REXYZPROBE_MANUAL_DEPLOY:
             draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Manual Deploy");
             break;
+          case REXYZPROBE_BLTOUCH:
+            draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "BL/3D Touch");
+            break;
           }
       } 
       ++_thisItemNr; 
     }while(0);
+     */
+
     _MENU_ITEM_VARIANT_P(float3, _edit, true, PSTR("Probe X Offset"), PSTR("Probe X Offset"),&zprobe_xoffset, 0, 30);
     _MENU_ITEM_VARIANT_P(float3, _edit, true, PSTR("Probe Y Offset"), PSTR("Probe Y Offset"),&zprobe_yoffset, -30, 30);
     _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe Z Offset"), PSTR("Probe Z Offset"),&zprobe_zoffset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);

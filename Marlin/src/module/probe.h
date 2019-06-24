@@ -30,7 +30,8 @@
 enum ProbeMode : uint8_t {
   REXYZPROBE_NO_PROBE,
   REXYZPROBE_PROXYMITY,
-  REXYZPROBE_MANUAL_DEPLOY
+  REXYZPROBE_MANUAL_DEPLOY,
+  REXYZPROBE_BLTOUCH
 };
 extern uint8_t rexyz_probe_mode;
 extern float zprobe_xoffset, zprobe_yoffset, zprobe_zoffset;

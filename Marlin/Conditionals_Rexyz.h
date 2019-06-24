@@ -44,6 +44,7 @@
     !defined(REXYZ_MK8_MANUAL_PROBE) && \
     !defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) && \
     !defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) && \
+    !defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH) && \
     !defined(REXYZ_MK8_PROXIMITY_8MM) \
 )
     #error Must specify toolhead model. Please see "Configuration_REXYZ.h" for directions.
@@ -230,7 +231,6 @@
 
     #define REXYZ_Z_DUAL_STEPPER_DRIVERS
     #define REXYZ_Z_DUAL_ENDSTOPS
-    #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 
 #endif
 #if defined(REXYZ_4MAX)
@@ -293,7 +293,7 @@
     #define REXYZ_X_MIN_POS -5
     #define REXYZ_X_MAX_POS 216
     #define REXYZ_Y_MAX_POS 216
-    #define REXYZ_Z_MAX_POS 299
+    #define REXYZ_Z_MAX_POS 296
 
     #define REXYZ_LEVEL_CORNERS_INSET 20   // (mm) An inset for corner leveling
     #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
@@ -314,6 +314,7 @@
     #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 0
     #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER 0 
     #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER 0   
+    #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 #endif
 #if defined(REXYZ_MK8_PROXIMITY_8MM)
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDP8"
@@ -323,14 +324,16 @@
     #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 28.5
     #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -23.5 
     #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -0.5   
+    #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 #endif
-#if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXYMITY) || defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL)
+#if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXYMITY) || defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) 
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDF"
     #define REXYZ_USE_XMIN_PLUG
     #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
     #define REXYZ_FIX_MOUNTED_PROBE
     #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
     #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
+    #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
     #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXYMITY) 
       #define REXYZ_DEFAULT_PROBE 1
       #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 29
@@ -343,6 +346,24 @@
       #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -27 
       #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -2.7
     #endif   
+#endif
+#if defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH)  
+    #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDB"
+    #define REXYZ_USE_XMIN_PLUG
+    #define REXYZ_Z_MIN_PROBE_PIN Z_MIN_PIN
+    #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
+    #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
+    #define REXYZ_Z2_USE_ENDSTOP _XMIN_
+
+      #define BLTOUCH
+      #define BLTOUCH_FORCE_SW_MODE
+      #define BLTOUCH_SET_5V_MODE
+      //#define BLTOUCH_LCD_VOLTAGE_MENU
+      #define NUM_SERVOS 1
+      #define REXYZ_DEFAULT_PROBE 1
+      #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 29
+      #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -20
+      #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -0.5
 #endif
 
 //===========================================================================
