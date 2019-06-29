@@ -26,7 +26,6 @@
  */
 
 #define REXYZ_FW_VERSION ".7" // Change this with each update
-#define REXYZ_STRING_DISTRIBUTION_DATE "2019-06-20"
 #define REXYZ_DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
 #define REXYZ_SOURCE_CODE_URL "http://rajawali3d.com"
 #define REXYZ_WEBSITE_URL "http://rajawali3d.com"
@@ -84,8 +83,9 @@
     //#define REXYZ_SERIAL_PORT -1
     //#define SERIAL_PORT_2 0
     // Use Onboard SD Card.
-    #define LPC_SD_ONBOARD
-    #define USB_SD_ONBOARD
+    //#define LPC_SD_ONBOARD
+    //#define USB_SD_ONBOARD
+    #define SDCARD_CONNECTION ONBOARD
 #endif
 #if defined(REXYZ_AVR)
     #define ENDSTOP_INTERRUPTS_FEATURE
