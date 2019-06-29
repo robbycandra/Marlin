@@ -236,6 +236,7 @@ void _lcd_adjust_corner() {
 
 static inline void _lcd_measure_offset() {
   line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
+  planner.synchronize();
   if (bed_corner == 0) ++bed_corner;
   if (!DEPLOY_PROBE()) {
     if (firstprobe) {
