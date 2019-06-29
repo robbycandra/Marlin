@@ -79,10 +79,10 @@
 
 #if defined(REXYZ_LPC1768)
     // If not using TFT
-    //#define REXYZ_SERIAL_PORT -1
+    #define REXYZ_SERIAL_PORT -1
     // If using TFT (or not using)
-    #define REXYZ_SERIAL_PORT 0
-    #define SERIAL_PORT_2 -1
+    //#define REXYZ_SERIAL_PORT -1
+    //#define SERIAL_PORT_2 0
     // Use Onboard SD Card.
     #define LPC_SD_ONBOARD
     #define USB_SD_ONBOARD
@@ -350,10 +350,10 @@
 #if defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH)  
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDB"
     #define REXYZ_USE_XMIN_PLUG
-    #define REXYZ_Z_MIN_PROBE_PIN Z_MIN_PIN
+    #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
     #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
     #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
-    #define REXYZ_Z2_USE_ENDSTOP _XMIN_
+    #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 
       #define BLTOUCH
       #define BLTOUCH_FORCE_SW_MODE
@@ -361,9 +361,9 @@
       //#define BLTOUCH_LCD_VOLTAGE_MENU
       #define NUM_SERVOS 1
       #define REXYZ_DEFAULT_PROBE 1
-      #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 29
-      #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -20
-      #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -0.5
+      #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 25
+      #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -23
+      #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -3
 #endif
 
 //===========================================================================
