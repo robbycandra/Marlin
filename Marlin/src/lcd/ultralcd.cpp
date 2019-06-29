@@ -1,9 +1,9 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (C) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
- * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
+ * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +105,7 @@
   #endif
 #endif
 
-#if ENABLED(SDSUPPORT)
+#if ENABLED(INIT_SDCARD_ON_BOOT)
   uint8_t lcd_sd_status;
 #endif
 
@@ -320,7 +320,9 @@ void MarlinUI::init() {
     #if PIN_EXISTS(SD_DETECT)
       SET_INPUT_PULLUP(SD_DETECT_PIN);
     #endif
-    lcd_sd_status = 2; // UNKNOWN
+    #if ENABLED(INIT_SDCARD_ON_BOOT)
+      lcd_sd_status = 2; // UNKNOWN
+    #endif
   #endif
 
   #if HAS_ENCODER_ACTION && HAS_SLOW_BUTTONS
@@ -772,7 +774,7 @@ void MarlinUI::update() {
 
   #endif // HAS_LCD_MENU
 
-  #if ENABLED(SDSUPPORT)
+  #if ENABLED(INIT_SDCARD_ON_BOOT)
 
     const uint8_t sd_status = (uint8_t)IS_SD_INSERTED();
     if (sd_status != lcd_sd_status && detected()) {
@@ -813,7 +815,7 @@ void MarlinUI::update() {
       #endif
     }
 
-  #endif // SDSUPPORT
+  #endif // INIT_SDCARD_ON_BOOT
 
   if (ELAPSED(ms, next_lcd_update_ms)
     #if HAS_GRAPHICAL_LCD

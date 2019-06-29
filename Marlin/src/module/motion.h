@@ -1,9 +1,9 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (C) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
- * Copyright (C) 2011 Camiel Gubbels / Erik van der Zalm
+ * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,6 +45,16 @@ FORCE_INLINE void set_all_unknown() { axis_known_position = 0; }
 
 // Z_MAX_POS
 extern uint16_t zv_max_pos;
+
+FORCE_INLINE bool homing_needed() {
+  return !(
+    #if ENABLED(HOME_AFTER_DEACTIVATE)
+      all_axes_known()
+    #else
+      all_axes_homed()
+    #endif
+  );
+}
 
 // Error margin to work around float imprecision
 constexpr float slop = 0.0001;
