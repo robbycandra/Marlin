@@ -198,11 +198,35 @@
   }
 #else
   extern bool g29_is_running;
+  extern int probe_xpos;
+  extern int probe_ypos;
+  extern float probe_measured_z;
 
   void _lcd_level_bed_homing_done() {
+    char mea_z[10], promptstr[16];
     if (g29_is_running) {
       if (ui.should_draw()) {
-        draw_edit_screen(PSTR("Bed Leveling..."));
+        dtostrf(probe_measured_z,1,2,mea_z);
+        #if ENABLED(REXYZ_LCD12864)
+          if (probe_xpos == 0) {
+            sprintf_P(promptstr, PSTR(" Bed Leveling"));
+            draw_edit_screen(promptstr);
+          }
+          else {
+            sprintf_P(promptstr, PSTR(" Probe x%i y%i"), probe_xpos, probe_ypos);
+            draw_edit_screen(promptstr, mea_z);
+          }
+        #endif
+        #if ENABLED(REXYZ_LCD2004)
+          if (probe_xpos == 0) {
+            sprintf_P(promptstr, PSTR("Bed Leveling"));
+            draw_edit_screen(promptstr);
+          }
+          else {
+            sprintf_P(promptstr, PSTR("Probe x%i y%i"), probe_xpos, probe_ypos);
+            draw_edit_screen(promptstr, mea_z);
+          }
+        #endif
         ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
       }
     } 

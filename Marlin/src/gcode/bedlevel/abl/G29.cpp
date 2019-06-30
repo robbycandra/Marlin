@@ -283,6 +283,9 @@ G29_TYPE GcodeSuite::G29() {
    * On the initial G29 fetch command parameters.
    */
   g29_is_running = true;
+  probe_measured_z = 0;
+  probe_xpos = 0;
+  probe_ypos = 0;
   if (!g29_in_progress) {
 
     #if HOTENDS > 1
@@ -709,6 +712,9 @@ G29_TYPE GcodeSuite::G29() {
           #endif
 
           measured_z = faux ? 0.001 * random(-100, 101) : probe_pt(xProbe, yProbe, raise_after, verbose_level);
+          probe_xpos = xCount + 1;
+          probe_ypos = yCount + 1;
+          probe_measured_z = measured_z;
 
           if (isnan(measured_z)) {
             set_bed_leveling_enabled(abl_should_enable);
@@ -797,8 +803,6 @@ G29_TYPE GcodeSuite::G29() {
       ui.wait_for_bl_move = false;
     #endif
   #endif
-  g29_is_running = false;
-
 
   // Calculate leveling, print reports, correct the position
   if (!isnan(measured_z)) {
@@ -989,6 +993,8 @@ G29_TYPE GcodeSuite::G29() {
   #if HAS_BED_PROBE && defined(Z_AFTER_PROBING)
     move_z_after_probing();
   #endif
+
+  g29_is_running = false;
 
   report_current_position();
 

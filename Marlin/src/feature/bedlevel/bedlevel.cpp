@@ -35,6 +35,8 @@
   bool g29_in_progress = false;
 #endif
 bool g29_is_running = false;
+int probe_xpos = 0, probe_ypos = 0;
+float probe_measured_z = 0;
 
 #if ENABLED(LCD_BED_LEVELING)
   #include "../../lcd/ultralcd.h"
