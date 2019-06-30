@@ -30,23 +30,40 @@
 #define REXYZ_SOURCE_CODE_URL "http://rajawali3d.com"
 #define REXYZ_WEBSITE_URL "http://rajawali3d.com"
 
-#if ( \
+/*
+ #if ( \
     !defined(REXYZ_S22) && \
     !defined(REXYZ_S33) && \
-    !defined(REXYZ_A33) && \
+    !defined(REXYZ_N2) && \
+    !defined(REXYZ_N3) && \
     !defined(REXYZ_4MAX) \
 )
     #error Must specify printer model. Please see "Configuration_Rexyz.h" for directions.
 #endif
+*/
 
-#if ( \
-    !defined(REXYZ_MK8_MANUAL_PROBE) && \
-    !defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) && \
-    !defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) && \
-    !defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH) && \
-    !defined(REXYZ_MK8_PROXIMITY_8MM) \
-)
-    #error Must specify toolhead model. Please see "Configuration_REXYZ.h" for directions.
+/**
+ * Allow one and only one Printer to be defined
+ */
+#if 1 != 0 \
+  + ENABLED(REXYZ_S22) \
+  + ENABLED(REXYZ_S33) \
+  + ENABLED(REXYZ_N2) \
+  + ENABLED(REXYZ_N3) \
+  + ENABLED(REXYZ_4MAX) 
+  #error "Please enable one and only one Printer."
+#endif
+
+/**
+ * Allow one and only one Toolhead to be defined
+ */
+#if 1 != 0 \
+  + ENABLED(REXYZ_MK8_MANUAL_PROBE) \
+  + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) \
+  + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) \
+  + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH) \
+  + ENABLED(REXYZ_MK8_PROXIMITY_8MM) 
+  #error "Please enable one and only one toolhead model."
 #endif
 
 //===========================================================================
@@ -54,18 +71,27 @@
 //===========================================================================
 #if defined(REXYZ_S22)
     #define REXYZ_MACHINE_FRAME_TYPE "S22"
-    #define REXYZ_S_TYPE
     #define REXYZ_AVR
+    #define REXYZ_S_TYPE
+    #define REXYZ_LCD2004
 #endif
 #if defined(REXYZ_S33)
     #define REXYZ_MACHINE_FRAME_TYPE "S33"
-    #define REXYZ_S_TYPE
     #define REXYZ_AVR
+    #define REXYZ_S_TYPE
+    #define REXYZ_LCD2004
 #endif
-#if defined(REXYZ_A33)
-    #define REXYZ_MACHINE_FRAME_TYPE "A33"
-    #define REXYZ_A_TYPE
+#if defined(REXYZ_N2)
+    #define REXYZ_MACHINE_FRAME_TYPE "N2"
     #define REXYZ_LPC1768
+    #define REXYZ_N_TYPE
+    #define REXYZ_LCD2004
+#endif
+#if defined(REXYZ_N3)
+    #define REXYZ_MACHINE_FRAME_TYPE "N3"
+    #define REXYZ_LPC1768
+    #define REXYZ_N_TYPE
+    #define REXYZ_LCD12864
 #endif
 #if defined(REXYZ_4MAX)
     #define REXYZ_MACHINE_FRAME_TYPE "4MAX"
@@ -82,9 +108,8 @@
     // If using TFT (or not using)
     //#define REXYZ_SERIAL_PORT -1
     //#define SERIAL_PORT_2 0
+
     // Use Onboard SD Card.
-    //#define LPC_SD_ONBOARD
-    //#define USB_SD_ONBOARD
     #define SDCARD_CONNECTION ONBOARD
 #endif
 #if defined(REXYZ_AVR)
@@ -92,7 +117,7 @@
     #define REXYZ_SERIAL_PORT 0
 #endif
 
-#if defined(REXYZ_A_TYPE)
+#if defined(REXYZ_N_TYPE)
     #define REXYZ_MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
 
     #define REXYZ_FIL_RUNOUT_INVERTING false
@@ -100,7 +125,7 @@
 
     #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
-    #define REXYZ_E0_AUTO_FAN_PIN -1
+    #define E0_AUTO_FAN_PIN FAN1_PIN
 #endif
 #if defined(REXYZ_S_TYPE)
     #define REXYZ_MOTHERBOARD BOARD_RAMPS_14_EFB
@@ -110,7 +135,7 @@
 
     #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
-    #define REXYZ_E0_AUTO_FAN_PIN -1
+    #define E0_AUTO_FAN_PIN -1
 #endif
 #if defined(REXYZ_4MAX)
     #define REXYZ_MOTHERBOARD BOARD_TRIGORILLA_14
@@ -124,7 +149,7 @@
     #define REXYZ_USE_CONTROLLER_FAN 
     #define REXYZ_CONTROLLER_FAN_PIN FAN1_PIN    // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 127        // 255 == full speed
-    #define REXYZ_E0_AUTO_FAN_PIN FAN2_PIN
+    #define E0_AUTO_FAN_PIN FAN2_PIN
 #endif
 
 //===========================================================================
@@ -139,7 +164,20 @@
     #define REXYZ_PID_AUTOTUNE_MENU   // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of PROGMEM)
     #define REXYZ_PID_FUNCTIONAL_RANGE 20 // If the temperature difference between the target temperature and the actual temperature
 
-#if defined(REXYZ_S_TYPE) || defined(REXYZ_A_TYPE)
+#if defined(REXYZ_N_TYPE)
+    #define REXYZ_DEFAULT_Kp 9.60
+    #define REXYZ_DEFAULT_Ki 0.56
+    #define REXYZ_DEFAULT_Kd 41.53
+
+    #define REXYZ_PREHEAT_1_TEMP_BED  60  
+    #define REXYZ_PREHEAT_2_TEMP_BED  90
+
+    #define REXYZ_THERMAL_PROTECTION_PERIOD 60        // Seconds
+    #define REXYZ_WATCH_TEMP_PERIOD 40                // Seconds
+    #define REXYZ_THERMAL_PROTECTION_BED_PERIOD 40    // Seconds
+    #define REXYZ_WATCH_BED_TEMP_PERIOD 120                // Seconds
+#endif
+#if defined(REXYZ_S_TYPE)
     #define REXYZ_DEFAULT_Kp 20.81
     #define REXYZ_DEFAULT_Ki 1.46
     #define REXYZ_DEFAULT_Kd 74.17
@@ -171,7 +209,7 @@
 //============================= LCD & Sound Settings ============================
 //===========================================================================
 
-#if defined(REXYZ_A_TYPE)
+#if defined(REXYZ_LCD12864)
     #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER    
 
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
@@ -181,7 +219,7 @@
     #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
 
 #endif
-#if defined(REXYZ_S_TYPE)
+#if defined(REXYZ_LCD2004)
     #define REPRAP_DISCOUNT_SMART_CONTROLLER
 
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
@@ -207,7 +245,7 @@
 //============================= Endstop & Motor Settings ====================
 //===========================================================================
 
-#if defined(REXYZ_S_TYPE) || defined(REXYZ_A_TYPE)
+#if defined(REXYZ_S_TYPE) || defined(REXYZ_N_TYPE)
     #define REXYZ_USE_ZMIN_PLUG
     #define REXYZ_USE_XMAX_PLUG
     #define REXYZ_USE_YMAX_PLUG
@@ -259,7 +297,7 @@
 //============================= Bed Settings ====================
 //===========================================================================
 
-#if defined(REXYZ_S22)
+#if defined(REXYZ_S22) || defined(REXYZ_N2)
     #define REXYZ_X_BED_SIZE 220
     #define REXYZ_Y_BED_SIZE 220
     #define REXYZ_X_MIN_POS 0
@@ -273,7 +311,7 @@
     #define REXYZ_GRID_MAX_POINTS_X 3
     #define REXYZ_GRID_MAX_POINTS_Y 3
 #endif
-#if defined(REXYZ_S33) || defined(REXYZ_A33)
+#if defined(REXYZ_S33) || defined(REXYZ_N3)
     #define REXYZ_X_BED_SIZE 300
     #define REXYZ_Y_BED_SIZE 300
     #define REXYZ_X_MIN_POS 0
@@ -306,6 +344,21 @@
 //===========================================================================
 //============================= Probe Settings ==============================
 //===========================================================================
+//
+//  1. D = Direct Extruder
+//  2. D = Direct Drive
+//  3. M = Manual Probe
+//     P8= Proximity 8mm  
+//     F = Fixed Probe
+//     T = 3D Touch Probe
+//  Yg pernah terjual :
+//    REXYZ_MK8_MANUAL_PROBE - Yohanes
+//    REXYZ_MK8_MULTI_FIXPROBE_PROXYMITY - Panji Enjoy dll
+//    REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH
+//  
+//  Tidak pernah terjual :  
+//    REXYZ_MK8_MULTI_FIXPROBE_MANUAL
+//    REXYZ_MK8_PROXIMITY_8MM
 
 #if defined(REXYZ_MK8_MANUAL_PROBE)
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDM"
@@ -348,7 +401,7 @@
     #endif   
 #endif
 #if defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH)  
-    #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDB"
+    #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDT"
     #define REXYZ_USE_XMIN_PLUG
     #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
     #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
@@ -380,6 +433,9 @@
     #define REXYZ_FILAMENT_RUNOUT_SCRIPT "M600"
 #endif
 
+//===========================================================================
+//============================= Rexyz Machine Type ====================
+//===========================================================================
 // maks 7 char because used for marking.
 #define REXYZ_MACHINE_TYPE REXYZ_MACHINE_FRAME_TYPE REXYZ_MACHINE_TOOLHEAD_TYPE
 
