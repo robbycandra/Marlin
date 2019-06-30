@@ -268,7 +268,7 @@
     #define REXYZ_Z_MAX_POS 255
 
     #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
-    #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
+    #define REXYZ_LEVEL_CORNERS_Z_HOP 10.0  // (mm) Move nozzle up before moving between corners
 
     #define REXYZ_GRID_MAX_POINTS_X 3
     #define REXYZ_GRID_MAX_POINTS_Y 3
