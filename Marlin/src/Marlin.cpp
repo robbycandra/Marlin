@@ -947,7 +947,7 @@ void setup() {
 
   // Load data from EEPROM if available (or use defaults)
   // This also updates variables in the planner, elsewhere
-  (void)settings.load();
+  settings.first_load();
 
   if (settings.is_rexyz() == false) {
     #if ENABLED(REXYZ_MARKING_INIT)
