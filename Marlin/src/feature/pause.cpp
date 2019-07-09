@@ -327,6 +327,14 @@ bool unload_filament(const float &unload_length, const bool show_lcd/*=false*/,
     if (show_lcd) lcd_pause_show_message(PAUSE_MESSAGE_UNLOAD, mode);
   #endif
 
+  #if FILAMENT_UNLOAD_FIRST_PURGE_LENGTH > 0
+    // First Purge to ensure the filament touch the heater.
+    do_pause_e_move((FILAMENT_UNLOAD_FIRST_PURGE_LENGTH) * mix_multiplier, (FILAMENT_CHANGE_SLOW_LOAD_FEEDRATE) * mix_multiplier);
+
+    // Wait for filament to heat
+    safe_delay(FILAMENT_UNLOAD_DELAY);
+  #endif
+
   // Retract filament
   do_pause_e_move(-(FILAMENT_UNLOAD_RETRACT_LENGTH) * mix_multiplier, (PAUSE_PARK_RETRACT_FEEDRATE) * mix_multiplier);
 
