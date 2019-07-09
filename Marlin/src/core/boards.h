@@ -200,6 +200,7 @@
 #define BOARD_MKS_SGEN                2018  // MKS-SGen (Power outputs: Hotend0, Hotend1, Bed, Fan)
 #define BOARD_MKS_SGEN_L              2019  // MKS-SGen-L (Power outputs: Hotend0, Hotend1, Bed, Fan)
 #define BOARD_TH3D_EZBOARD            2020  // TH3D EZBoard v1.0
+#define BOARD_GMARSH_X6_REV1          2021  // GMARSH X6 board, revision 1 prototype
 
 //
 // SAM3X8E ARM Cortex M3
@@ -270,6 +271,7 @@
 #define BOARD_BLACK_STM32F407VE       4106  // BLACK_STM32F407VE
 #define BOARD_BLACK_STM32F407ZE       4107  // BLACK_STM32F407ZE
 #define BOARD_STEVAL                  4108  // STEVAL-3DP001V1 3D PRINTER BOARD
+#define BOARD_BIGTREE_SKR_PRO_V1_1    4109  // BigTreeTech SKR Pro v1.1 (STM32F407ZG)
 
 //
 // ARM Cortex M7

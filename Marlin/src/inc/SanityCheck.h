@@ -384,10 +384,11 @@
   #error "POWER_SUPPLY is now obsolete. Please remove it from Configuration.h."
 #endif
 
-#define BOARD_MKS_13     -47
-#define BOARD_TRIGORILLA -343
-#define BOARD_RURAMPS4D  -1550
-#define BOARD_FORMBOT_TREX2 -81
+#define BOARD_MKS_13        -1109
+#define BOARD_TRIGORILLA    -1131
+#define BOARD_RURAMPS4D     -3020
+#define BOARD_FORMBOT_TREX2 -1125
+#define BOARD_BIQU_SKR_V1_1 -2014
 #if MB(MKS_13)
   #error "BOARD_MKS_13 has been renamed BOARD_MKS_GEN_13. Please update your configuration."
 #elif MB(TRIGORILLA)
@@ -396,11 +397,14 @@
   #error "BOARD_RURAMPS4D has been renamed BOARD_RURAMPS4D_11. Please update your configuration."
 #elif MB(FORMBOT_TREX2)
   #error "FORMBOT_TREX2 has been renamed BOARD_FORMBOT_TREX2PLUS. Please update your configuration."
+#elif MB(BOARD_BIQU_SKR_V1_1)
+  #error "BIQU_SKR_V1_1 has been renamed BOARD_BIGTREE_SKR_V1_1. Please update your configuration."
 #endif
 #undef BOARD_MKS_13
 #undef BOARD_TRIGORILLA
 #undef BOARD_RURAMPS4D
 #undef BOARD_FORMBOT_TREX2
+#undef BOARD_BIQU_SKR_V1_1
 
 /**
  * Marlin release, version and default string
@@ -2011,7 +2015,7 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
 /**
  * TMC2208/2209 software UART and ENDSTOP_INTERRUPTS both use pin change interrupts (PCI)
  */
-#if (HAS_DRIVER(TMC2208) || HAS_DRIVER(TMC2209)) && ENABLED(ENDSTOP_INTERRUPTS_FEATURE) && !( \
+#if HAS_TMC220x && !defined(TARGET_LPC1768) && ENABLED(ENDSTOP_INTERRUPTS_FEATURE) && !( \
        defined(X_HARDWARE_SERIAL ) \
     || defined(X2_HARDWARE_SERIAL) \
     || defined(Y_HARDWARE_SERIAL ) \
@@ -2029,9 +2033,9 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
 #endif
 
 /**
- * TMC2208/2209 software UART is only supported on AVR and LPC
+ * TMC2208/2209 software UART is only supported on AVR, LPC, STM32F1 and STM32F4
  */
-#if (HAS_DRIVER(TMC2208) || HAS_DRIVER(TMC2209)) && !defined(__AVR__) && !defined(TARGET_LPC1768) && !( \
+#if HAS_TMC220x && !defined(__AVR__) && !defined(TARGET_LPC1768) && !defined(TARGET_STM32F1) && !defined(TARGET_STM32F4) && !( \
        defined(X_HARDWARE_SERIAL ) \
     || defined(X2_HARDWARE_SERIAL) \
     || defined(Y_HARDWARE_SERIAL ) \
@@ -2044,7 +2048,7 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
     || defined(E3_HARDWARE_SERIAL) \
     || defined(E4_HARDWARE_SERIAL) \
     || defined(E5_HARDWARE_SERIAL) )
-  #error "TMC2208 Software Serial is supported only on AVR and LPC1768 platforms."
+  #error "TMC2208 Software Serial is supported only on AVR, LPC1768, STM32F1 and STM32F4 platforms."
 #endif
 
 #if ENABLED(SENSORLESS_HOMING)

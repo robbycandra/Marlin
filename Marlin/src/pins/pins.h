@@ -352,6 +352,8 @@
   #include "pins_BIGTREE_SKR_V1.3.h"    // LPC1768                                    env:LPC1768
 #elif MB(TH3D_EZBOARD)
   #include "pins_TH3D_EZBOARD.h"        // LPC1768                                    env:LPC1768
+#elif MB(GMARSH_X6_REV1)
+  #include "pins_GMARSH_X6_REV1.h"      // LPC1768                                    env:LPC1768
 
 //
 // Other 32-bit Boards
@@ -467,6 +469,8 @@
   #include "pins_BLACK_STM32F407VE.h" // STM32F4                                    env:black_stm32f407ve
 #elif MB(STEVAL)
   #include "pins_STEVAL.h"            // STM32F4                                    env:STM32F4
+#elif MB(BIGTREE_SKR_PRO_V1_1)
+  #include "pins_BIGTREE_SKR_PRO_V1.1.h" // STM32F4                                 env:BIGTREE_SKR_PRO
 
 //
 // ARM Cortex M7
@@ -945,6 +949,12 @@
   #ifndef X2_MS3_PIN
     #define X2_MS3_PIN    _EPIN(E_STEPPERS, MS3)
   #endif
+  #ifndef X2_SERIAL_TX_PIN
+    #define X2_SERIAL_TX_PIN    _EPIN(E_STEPPERS, SERIAL_TX)
+  #endif
+  #ifndef X2_SERIAL_RX_PIN
+    #define X2_SERIAL_RX_PIN    _EPIN(E_STEPPERS, SERIAL_RX)
+  #endif
   #define Y2_E_INDEX INCREMENT(E_STEPPERS)
 #else
   #define Y2_E_INDEX E_STEPPERS
@@ -971,6 +981,12 @@
   #endif
   #ifndef Y2_MS3_PIN
     #define Y2_MS3_PIN    _EPIN(Y2_E_INDEX, MS3)
+  #endif
+  #ifndef Y2_SERIAL_TX_PIN
+    #define Y2_SERIAL_TX_PIN    _EPIN(Y2_E_INDEX, SERIAL_TX)
+  #endif
+  #ifndef Y2_SERIAL_RX_PIN
+    #define Y2_SERIAL_RX_PIN    _EPIN(Y2_E_INDEX, SERIAL_RX)
   #endif
   #define Z2_E_INDEX INCREMENT(Y2_E_INDEX)
 #else
@@ -999,6 +1015,12 @@
   #ifndef Z2_MS3_PIN
     #define Z2_MS3_PIN    _EPIN(Z2_E_INDEX, MS3)
   #endif
+  #ifndef Z2_SERIAL_TX_PIN
+    #define Z2_SERIAL_TX_PIN    _EPIN(Z2_E_INDEX, SERIAL_TX)
+  #endif
+  #ifndef Z2_SERIAL_RX_PIN
+    #define Z2_SERIAL_RX_PIN    _EPIN(Z2_E_INDEX, SERIAL_RX)
+  #endif
   #define Z3_E_INDEX INCREMENT(Z2_E_INDEX)
 #else
   #define Z3_E_INDEX Z2_E_INDEX
@@ -1024,5 +1046,11 @@
   #endif
   #ifndef Z3_MS3_PIN
     #define Z3_MS3_PIN    _EPIN(Z3_E_INDEX, MS3)
+  #endif
+  #ifndef Z3_SERIAL_TX_PIN
+    #define Z3_SERIAL_TX_PIN    _EPIN(Z3_E_INDEX, SERIAL_TX)
+  #endif
+  #ifndef Z3_SERIAL_RX_PIN
+    #define Z3_SERIAL_RX_PIN    _EPIN(Z3_E_INDEX, SERIAL_RX)
   #endif
 #endif
