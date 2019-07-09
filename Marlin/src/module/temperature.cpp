@@ -714,24 +714,38 @@ int16_t Temperature::getHeaterPower(const heater_ind_t heater_id) {
           break;
       }
 
+      uint8_t fan_Auto_Speed = 0;
+      if (temp_hotend[f].current >= EXTRUDER_AUTO_FAN_TEMPERATURE_MAX)
+      {
+        fan_Auto_Speed = EXTRUDER_AUTO_FAN_SPEED_MAX;
+      }
+      else if (temp_hotend[f].current < EXTRUDER_AUTO_FAN_TEMPERATURE)
+      {
+        fan_Auto_Speed = EXTRUDER_AUTO_FAN_SPEED;
+      }
+      else
+      {
+        fan_Auto_Speed = EXTRUDER_AUTO_FAN_SPEED + ( EXTRUDER_AUTO_FAN_SPEED_MAX - EXTRUDER_AUTO_FAN_SPEED ) * (temp_hotend[f].current - EXTRUDER_AUTO_FAN_TEMPERATURE) / (EXTRUDER_AUTO_FAN_TEMPERATURE_MAX - EXTRUDER_AUTO_FAN_TEMPERATURE);
+      }
+
       switch (f) {
         #if HAS_AUTO_FAN_0
-          case 0: _UPDATE_AUTO_FAN(E0, fan_on, EXTRUDER_AUTO_FAN_SPEED); break;
+          case 0: _UPDATE_AUTO_FAN(E0, fan_on, fan_Auto_Speed); break;
         #endif
         #if HAS_AUTO_FAN_1
-          case 1: _UPDATE_AUTO_FAN(E1, fan_on, EXTRUDER_AUTO_FAN_SPEED); break;
+          case 1: _UPDATE_AUTO_FAN(E1, fan_on, fan_Auto_Speed); break;
         #endif
         #if HAS_AUTO_FAN_2
-          case 2: _UPDATE_AUTO_FAN(E2, fan_on, EXTRUDER_AUTO_FAN_SPEED); break;
+          case 2: _UPDATE_AUTO_FAN(E2, fan_on, fan_Auto_Speed); break;
         #endif
         #if HAS_AUTO_FAN_3
-          case 3: _UPDATE_AUTO_FAN(E3, fan_on, EXTRUDER_AUTO_FAN_SPEED); break;
+          case 3: _UPDATE_AUTO_FAN(E3, fan_on, fan_Auto_Speed); break;
         #endif
         #if HAS_AUTO_FAN_4
-          case 4: _UPDATE_AUTO_FAN(E4, fan_on, EXTRUDER_AUTO_FAN_SPEED); break;
+          case 4: _UPDATE_AUTO_FAN(E4, fan_on, fan_Auto_Speed); break;
         #endif
         #if HAS_AUTO_FAN_5
-          case 5: _UPDATE_AUTO_FAN(E5, fan_on, EXTRUDER_AUTO_FAN_SPEED); break;
+          case 5: _UPDATE_AUTO_FAN(E5, fan_on, fan_Auto_Speed); break;
         #endif
         #if HAS_AUTO_CHAMBER_FAN && !AUTO_CHAMBER_IS_E
           case CHAMBER_FAN_INDEX: _UPDATE_AUTO_FAN(CHAMBER, fan_on, CHAMBER_AUTO_FAN_SPEED); break;
