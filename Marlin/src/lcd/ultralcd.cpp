@@ -103,6 +103,11 @@
   #if HAS_SLOW_BUTTONS
     volatile uint8_t MarlinUI::slow_buttons;
   #endif
+  #if ENABLED(TOUCH_BUTTONS)
+    #include "../feature/touch/xpt2046.h"
+    volatile uint8_t MarlinUI::touch_buttons;
+    uint8_t MarlinUI::read_touch_buttons() { return touch.read_buttons(); }
+  #endif
 #endif
 
 #if ENABLED(INIT_SDCARD_ON_BOOT)
@@ -325,8 +330,13 @@ void MarlinUI::init() {
     #endif
   #endif
 
-  #if HAS_ENCODER_ACTION && HAS_SLOW_BUTTONS
-    slow_buttons = 0;
+  #if HAS_ENCODER_ACTION
+    #if HAS_SLOW_BUTTONS
+      slow_buttons = 0;
+    #endif
+    #if ENABLED(TOUCH_BUTTONS)
+      touch_buttons = 0;
+    #endif
   #endif
 
   update_buttons();
@@ -549,7 +559,7 @@ void MarlinUI::status_screen() {
     else if ((old_frm < 100 && new_frm > 100) || (old_frm > 100 && new_frm < 100))
       new_frm = 100;
 
-    new_frm = constrain(new_frm, 10, 999);
+    LIMIT(new_frm, 10, 999);
 
     if (old_frm != new_frm) {
       feedrate_percentage = new_frm;
@@ -825,6 +835,11 @@ void MarlinUI::update() {
 
     next_lcd_update_ms = ms + LCD_UPDATE_INTERVAL;
 
+    #if ENABLED(TOUCH_BUTTONS)
+      if (on_status_screen())
+        next_lcd_update_ms += (LCD_UPDATE_INTERVAL) * 2;
+    #endif
+
     #if ENABLED(LCD_HAS_STATUS_INDICATORS)
       update_indicators();
     #endif
@@ -833,6 +848,10 @@ void MarlinUI::update() {
 
       #if HAS_SLOW_BUTTONS
         slow_buttons = read_slow_buttons(); // Buttons that take too long to read in interrupt context
+      #endif
+
+      #if ENABLED(TOUCH_BUTTONS)
+        touch_buttons = read_touch_buttons();
       #endif
 
       #if ENABLED(REPRAPWORLD_KEYPAD)
@@ -1200,6 +1219,9 @@ void MarlinUI::update() {
         buttons = newbutton
           #if HAS_SLOW_BUTTONS
             | slow_buttons
+          #endif
+          #if ENABLED(TOUCH_BUTTONS)
+            | touch_buttons
           #endif
         ;
       #elif HAS_ADC_BUTTONS
