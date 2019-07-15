@@ -322,8 +322,8 @@
     #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
     #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
 
-    #define REXYZ_GRID_MAX_POINTS_X 4
-    #define REXYZ_GRID_MAX_POINTS_Y 4
+    #define REXYZ_GRID_MAX_POINTS_X 5
+    #define REXYZ_GRID_MAX_POINTS_Y 5
 #endif
 #if defined(REXYZ_4MAX)
     #define REXYZ_X_BED_SIZE 216
