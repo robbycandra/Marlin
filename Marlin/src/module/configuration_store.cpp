@@ -2207,10 +2207,10 @@ void MarlinSettings::postprocess() {
 	    SERIAL_ECHO_MSG("EEPROM Initialized");
 	  #endif
     }
-    zprobe_max_x = MIN(X_MAX_BED - (MIN_PROBE_EDGE), X_MAX_POS + zprobe_xoffset);
-    zprobe_max_y = MIN(Y_MAX_BED - (MIN_PROBE_EDGE), Y_MAX_POS + zprobe_yoffset);
-    zprobe_min_x = MAX(X_MIN_BED + MIN_PROBE_EDGE, X_MIN_POS + zprobe_xoffset);
-    zprobe_min_y = MAX(Y_MIN_BED + MIN_PROBE_EDGE, Y_MIN_POS + zprobe_yoffset);
+    zprobe_max_x = _MIN(X_MAX_BED - (MIN_PROBE_EDGE), X_MAX_POS + zprobe_xoffset);
+    zprobe_max_y = _MIN(Y_MAX_BED - (MIN_PROBE_EDGE), Y_MAX_POS + zprobe_yoffset);
+    zprobe_min_x = _MAX(X_MIN_BED + MIN_PROBE_EDGE, X_MIN_POS + zprobe_xoffset);
+    zprobe_min_y = _MAX(Y_MIN_BED + MIN_PROBE_EDGE, Y_MIN_POS + zprobe_yoffset);
     return success;
   }
 
