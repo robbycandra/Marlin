@@ -160,9 +160,23 @@
     #define REXYZ_TEMP_RESIDENCY_TIME  6 // (seconds) Time to wait for bed to "settle" in M190
     #define REXYZ_BED_MAXTEMP 130
 
-    #define REXYZ_PID_EDIT_MENU        // Add PID editing to the "Advanced Settings" menu. (~700 bytes of PROGMEM)
-    #define REXYZ_PID_AUTOTUNE_MENU   // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of PROGMEM)
+    #define PID_EDIT_MENU        // Add PID editing to the "Advanced Settings" menu. (~700 bytes of PROGMEM)
+    #define PID_AUTOTUNE_MENU   // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of PROGMEM)
     #define REXYZ_PID_FUNCTIONAL_RANGE 20 // If the temperature difference between the target temperature and the actual temperature
+
+    #define REXYZ_THERMAL_PROTECTION_PERIOD 60        // Seconds
+    #define REXYZ_WATCH_TEMP_PERIOD 40                // Seconds
+    #define REXYZ_THERMAL_PROTECTION_BED_PERIOD 40    // Seconds
+    #define REXYZ_WATCH_BED_TEMP_PERIOD 120                // Seconds
+
+#if defined(REXYZ_LPC1768)
+    #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
+    #define EXTRUDER_AUTO_FAN_SPEED_MAX 191   // 255 == full speed
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 63   // 255 == full speed
+#endif
+#if defined(REXYZ_AVR)
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
+#endif
 
 #if defined(REXYZ_N_TYPE)
     #define REXYZ_DEFAULT_Kp 9.60
@@ -171,11 +185,6 @@
 
     #define REXYZ_PREHEAT_1_TEMP_BED  60  
     #define REXYZ_PREHEAT_2_TEMP_BED  90
-
-    #define REXYZ_THERMAL_PROTECTION_PERIOD 60        // Seconds
-    #define REXYZ_WATCH_TEMP_PERIOD 40                // Seconds
-    #define REXYZ_THERMAL_PROTECTION_BED_PERIOD 40    // Seconds
-    #define REXYZ_WATCH_BED_TEMP_PERIOD 120                // Seconds
 #endif
 #if defined(REXYZ_S_TYPE)
     #define REXYZ_DEFAULT_Kp 20.81
@@ -184,11 +193,6 @@
 
     #define REXYZ_PREHEAT_1_TEMP_BED  60  
     #define REXYZ_PREHEAT_2_TEMP_BED  90
-
-    #define REXYZ_THERMAL_PROTECTION_PERIOD 60        // Seconds
-    #define REXYZ_WATCH_TEMP_PERIOD 40                // Seconds
-    #define REXYZ_THERMAL_PROTECTION_BED_PERIOD 40    // Seconds
-    #define REXYZ_WATCH_BED_TEMP_PERIOD 120                // Seconds
 #endif
 #if defined(REXYZ_4MAX)
     #define REXYZ_DEFAULT_Kp 16.69
@@ -197,12 +201,6 @@
 
     #define REXYZ_PREHEAT_1_TEMP_BED  60  
     #define REXYZ_PREHEAT_2_TEMP_BED  100
-
-    #define REXYZ_THERMAL_PROTECTION_PERIOD 60        // Seconds
-    #define REXYZ_WATCH_TEMP_PERIOD 40                // Seconds
-    #define REXYZ_THERMAL_PROTECTION_BED_PERIOD 40    // Seconds
-    #define REXYZ_WATCH_BED_TEMP_PERIOD 120           // Seconds
-
 #endif
 
 //===========================================================================
@@ -379,7 +377,7 @@
     #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -0.5   
     #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 #endif
-#if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXYMITY) || defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) 
+#if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) || defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) 
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDF"
     #define REXYZ_USE_XMIN_PLUG
     #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
@@ -387,7 +385,7 @@
     #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
     #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
     #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
-    #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXYMITY) 
+    #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) 
       #define REXYZ_DEFAULT_PROBE 1
       #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 29
       #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -20
