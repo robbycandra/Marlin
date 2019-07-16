@@ -378,7 +378,11 @@
     #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 #endif
 #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) || defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) 
-    #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDF"
+    #ifdef REXYZ_FILAMENT_MOTION_DETECTOR
+      #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDFS"
+    #else
+      #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDF"
+    #endif
     #define REXYZ_USE_XMIN_PLUG
     #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
     #define REXYZ_FIX_MOUNTED_PROBE
@@ -435,6 +439,7 @@
 //============================= Rexyz Machine Type ====================
 //===========================================================================
 // maks 7 char because used for marking.
+
 #define REXYZ_MACHINE_TYPE REXYZ_MACHINE_FRAME_TYPE REXYZ_MACHINE_TOOLHEAD_TYPE
 
 #endif /* CONDITIONALS_REXYZ */
