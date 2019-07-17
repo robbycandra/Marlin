@@ -1064,8 +1064,8 @@
 
 // Travel limits (mm) after homing, corresponding to endstop positions.
 #define X_MIN_POS REXYZ_X_MIN_POS
-#define Y_MIN_POS 0
-#define Z_MIN_POS 0
+#define Y_MIN_POS REXYZ_Y_MIN_POS
+#define Z_MIN_POS REXYZ_Z_MIN_POS
 #define X_MAX_POS REXYZ_X_MAX_POS
 #define Y_MAX_POS REXYZ_Y_MAX_POS
 #define Z_MAX_POS REXYZ_Z_MAX_POS 

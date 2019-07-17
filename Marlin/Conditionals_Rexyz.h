@@ -48,9 +48,10 @@
 #if 1 != 0 \
   + ENABLED(REXYZ_S22) \
   + ENABLED(REXYZ_S33) \
+  + ENABLED(REXYZ_4MAX) \
   + ENABLED(REXYZ_N2) \
   + ENABLED(REXYZ_N3) \
-  + ENABLED(REXYZ_4MAX) 
+  + ENABLED(REXYZ_A8P)
   #error "Please enable one and only one Printer."
 #endif
 
@@ -81,6 +82,10 @@
     #define REXYZ_S_TYPE
     #define REXYZ_LCD2004
 #endif
+#if defined(REXYZ_4MAX)
+    #define REXYZ_MACHINE_FRAME_TYPE "4MAX"
+    #define REXYZ_AVR
+#endif
 #if defined(REXYZ_N2)
     #define REXYZ_MACHINE_FRAME_TYPE "N2"
     #define REXYZ_LPC1768
@@ -93,9 +98,10 @@
     #define REXYZ_N_TYPE
     #define REXYZ_LCD12864
 #endif
-#if defined(REXYZ_4MAX)
-    #define REXYZ_MACHINE_FRAME_TYPE "4MAX"
-    #define REXYZ_AVR
+#if defined(REXYZ_A8P)
+    #define REXYZ_MACHINE_FRAME_TYPE "A8P"
+    #define REXYZ_LPC1768
+    #define REXYZ_LCD_ANET_12864
 #endif
 
 //===========================================================================
@@ -109,6 +115,10 @@
 //============================= Board Settings ============================
 //===========================================================================
 
+#if defined(REXYZ_AVR)
+    #define ENDSTOP_INTERRUPTS_FEATURE
+    #define REXYZ_SERIAL_PORT 0
+#endif
 #if defined(REXYZ_LPC1768)
     // If not using TFT
     #define REXYZ_SERIAL_PORT -1
@@ -119,21 +129,7 @@
     // Use Onboard SD Card.
     #define SDCARD_CONNECTION ONBOARD
 #endif
-#if defined(REXYZ_AVR)
-    #define ENDSTOP_INTERRUPTS_FEATURE
-    #define REXYZ_SERIAL_PORT 0
-#endif
 
-#if defined(REXYZ_N_TYPE)
-    #define REXYZ_MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
-
-    #define REXYZ_FIL_RUNOUT_INVERTING false
-    #define REXYZ_FIL_RUNOUT_PIN P1_27//Y_MIN_PIN //14
-
-    #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
-    #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
-    #define E0_AUTO_FAN_PIN FAN1_PIN
-#endif
 #if defined(REXYZ_S_TYPE)
     #define REXYZ_MOTHERBOARD BOARD_RAMPS_14_EFB
 
@@ -158,6 +154,26 @@
     #define REXYZ_CONTROLLERFAN_SPEED 127        // 255 == full speed
     #define E0_AUTO_FAN_PIN FAN2_PIN
 #endif
+#if defined(REXYZ_N_TYPE)
+    #define REXYZ_MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
+
+    #define REXYZ_FIL_RUNOUT_INVERTING false
+    #define REXYZ_FIL_RUNOUT_PIN P1_27//Y_MIN_PIN //14
+
+    #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
+    #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
+    #define E0_AUTO_FAN_PIN FAN1_PIN
+#endif
+#if defined(REXYZ_A8P)
+    #define REXYZ_MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
+
+    #define REXYZ_FIL_RUNOUT_INVERTING false
+    #define REXYZ_FIL_RUNOUT_PIN P1_27//Y_MIN_PIN //14
+
+    #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
+    #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
+    #define E0_AUTO_FAN_PIN FAN1_PIN
+#endif
 
 //===========================================================================
 //============================= Thermal Settings ============================
@@ -176,23 +192,15 @@
     #define REXYZ_THERMAL_PROTECTION_BED_PERIOD 40    // Seconds
     #define REXYZ_WATCH_BED_TEMP_PERIOD 120                // Seconds
 
+#if defined(REXYZ_AVR)
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
+#endif
 #if defined(REXYZ_LPC1768)
     #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
     #define EXTRUDER_AUTO_FAN_SPEED_MAX 191   // 255 == full speed
     #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 63   // 255 == full speed
 #endif
-#if defined(REXYZ_AVR)
-    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
-#endif
 
-#if defined(REXYZ_N_TYPE)
-    #define REXYZ_DEFAULT_Kp 9.60
-    #define REXYZ_DEFAULT_Ki 0.56
-    #define REXYZ_DEFAULT_Kd 41.53
-
-    #define REXYZ_PREHEAT_1_TEMP_BED  60  
-    #define REXYZ_PREHEAT_2_TEMP_BED  90
-#endif
 #if defined(REXYZ_S_TYPE)
     #define REXYZ_DEFAULT_Kp 20.81
     #define REXYZ_DEFAULT_Ki 1.46
@@ -208,6 +216,22 @@
 
     #define REXYZ_PREHEAT_1_TEMP_BED  60  
     #define REXYZ_PREHEAT_2_TEMP_BED  100
+#endif
+#if defined(REXYZ_N_TYPE)
+    #define REXYZ_DEFAULT_Kp 9.60
+    #define REXYZ_DEFAULT_Ki 0.56
+    #define REXYZ_DEFAULT_Kd 41.53
+
+    #define REXYZ_PREHEAT_1_TEMP_BED  60  
+    #define REXYZ_PREHEAT_2_TEMP_BED  90
+#endif
+#if defined(REXYZ_A8P)
+    #define REXYZ_DEFAULT_Kp 16.69
+    #define REXYZ_DEFAULT_Ki 0.94
+    #define REXYZ_DEFAULT_Kd 73.85
+
+    #define REXYZ_PREHEAT_1_TEMP_BED  60  
+    #define REXYZ_PREHEAT_2_TEMP_BED  80
 #endif
 
 //===========================================================================
@@ -245,6 +269,16 @@
     #define REXYZ_ENCODER_100X_STEPS_PER_SEC 160  // (steps/s) Encoder rate for 100x speed
 
 #endif
+#if defined(REXYZ_A8P)
+    #define ANET_FULL_GRAPHICS_LCD    
+
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
+
+    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
+    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
+
+#endif
 
 //===========================================================================
 //============================= Endstop & Motor Settings ====================
@@ -272,9 +306,9 @@
     #define REXYZ_Y_HOME_DIR 1
     #define REXYZ_Z_HOME_DIR 1
 
-    #define REXYZ_Z_DUAL_STEPPER_DRIVERS
-    #define REXYZ_Z_DUAL_ENDSTOPS
-
+    #define Z_DUAL_STEPPER_DRIVERS
+    #define Z_DUAL_ENDSTOPS
+    #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 #endif
 #if defined(REXYZ_4MAX)
     #define REXYZ_USE_XMIN_PLUG
@@ -298,6 +332,34 @@
     #define REXYZ_Z_HOME_DIR 1
 #endif
 
+#if defined(REXYZ_A8P)
+    #define REXYZ_USE_XMIN_PLUG
+    #define REXYZ_USE_YMIN_PLUG
+    #define REXYZ_USE_ZMIN_PLUG
+    #define REXYZ_USE_ZMAX_PLUG
+
+    #define REXYZ_X_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+    #define REXYZ_Y_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+    #define REXYZ_Z_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+    #define REXYZ_X_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+    #define REXYZ_Y_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+    #define REXYZ_Z_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+
+    #define REXYZ_INVERT_X_DIR false
+    #define REXYZ_INVERT_Y_DIR false
+    #define REXYZ_INVERT_Z_DIR false
+    #define REXYZ_INVERT_E1_DIR false
+
+    #define REXYZ_X_HOME_DIR -1
+    #define REXYZ_Y_HOME_DIR -1
+    #define REXYZ_Z_HOME_DIR -1
+
+    #define Z_DUAL_STEPPER_DRIVERS
+    #define Z_DUAL_ENDSTOPS
+    #define REXYZ_Z2_USE_ENDSTOP _ZMAX_
+
+#endif
+
 //===========================================================================
 //============================= Bed Settings ====================
 //===========================================================================
@@ -316,24 +378,12 @@
     #define REXYZ_GRID_MAX_POINTS_X 3
     #define REXYZ_GRID_MAX_POINTS_Y 3
 #endif
-#if defined(REXYZ_S33) || defined(REXYZ_N3)
-    #define REXYZ_X_BED_SIZE 300
-    #define REXYZ_Y_BED_SIZE 300
-    #define REXYZ_X_MIN_POS 0
-    #define REXYZ_X_MAX_POS 300
-    #define REXYZ_Y_MAX_POS 300
-    #define REXYZ_Z_MAX_POS 365
-
-    #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
-    #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
-
-    #define REXYZ_GRID_MAX_POINTS_X 5
-    #define REXYZ_GRID_MAX_POINTS_Y 5
-#endif
 #if defined(REXYZ_4MAX)
     #define REXYZ_X_BED_SIZE 216
     #define REXYZ_Y_BED_SIZE 216
     #define REXYZ_X_MIN_POS -5
+    #define REXYZ_Y_MIN_POS 0
+    #define REXYZ_Z_MIN_POS 0
     #define REXYZ_X_MAX_POS 216
     #define REXYZ_Y_MAX_POS 216
     #define REXYZ_Z_MAX_POS 296
@@ -344,6 +394,39 @@
 
     #define REXYZ_GRID_MAX_POINTS_X 3
     #define REXYZ_GRID_MAX_POINTS_Y 3
+#endif
+#if defined(REXYZ_S33) || defined(REXYZ_N3)
+    #define REXYZ_X_BED_SIZE 300
+    #define REXYZ_Y_BED_SIZE 300
+    #define REXYZ_X_MIN_POS 0
+    #define REXYZ_Y_MIN_POS 0
+    #define REXYZ_Z_MIN_POS 0
+    #define REXYZ_X_MAX_POS 300
+    #define REXYZ_Y_MAX_POS 300
+    #define REXYZ_Z_MAX_POS 365
+
+    #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
+    #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
+
+    #define REXYZ_GRID_MAX_POINTS_X 5
+    #define REXYZ_GRID_MAX_POINTS_Y 5
+#endif
+#if defined(REXYZ_A8P)
+    #define REXYZ_X_BED_SIZE 300
+    #define REXYZ_Y_BED_SIZE 300
+    #define REXYZ_X_MIN_POS -20
+    #define REXYZ_Y_MIN_POS -5
+    #define REXYZ_Z_MIN_POS 0
+    #define REXYZ_X_MAX_POS 300
+    #define REXYZ_Y_MAX_POS 300
+    #define REXYZ_Z_MAX_POS 350
+
+    #define REXYZ_LEVEL_CORNERS_INSET 30   // (mm) An inset for corner leveling
+    #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
+    //#define REXYZ_LEVEL_CENTER_TOO         // Move to the center after the last corner
+
+    #define REXYZ_GRID_MAX_POINTS_X 4
+    #define REXYZ_GRID_MAX_POINTS_Y 4
 #endif
 
 //===========================================================================
@@ -372,7 +455,6 @@
     #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 0
     #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER 0 
     #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER 0   
-    #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 #endif
 #if defined(REXYZ_MK8_PROXIMITY_8MM)
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDP8"
@@ -382,7 +464,6 @@
     #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 28.5
     #define REXYZ_Y_PROBE_OFFSET_FROM_EXTRUDER -23.5 
     #define REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER -0.5   
-    #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 #endif
 #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) || defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) 
     #ifdef REXYZ_FILAMENT_MOTION_DETECTOR
@@ -395,7 +476,6 @@
     #define REXYZ_FIX_MOUNTED_PROBE
     #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
     #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
-    #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
     #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) 
       #define REXYZ_DEFAULT_PROBE 1
       #define REXYZ_X_PROBE_OFFSET_FROM_EXTRUDER 29
@@ -415,7 +495,6 @@
     #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
     #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
     #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
-    #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 
       #define BLTOUCH
       #define BLTOUCH_FORCE_SW_MODE
