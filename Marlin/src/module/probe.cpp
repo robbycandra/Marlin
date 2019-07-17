@@ -32,7 +32,9 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
 
 #if HAS_BED_PROBE
 
-#include "../lcd/menu/menu.h"
+#if HAS_LCD_MENU
+  #include "../lcd/menu/menu.h"
+#endif
 
 #include "../libs/buzzer.h"
 
@@ -351,21 +353,23 @@ inline void do_probe_raise(const float z_raise) {
     do_blocking_move_to_z(z_dest);
 }
 
-static inline void _lcd_deploy_message() {
-  START_SCREEN();
-  STATIC_ITEM_P(PSTR(MSG_MANUAL_DEPLOY), true, true);
-  if ( LCD_HEIGHT > 3) STATIC_ITEM(" ");
-  STATIC_ITEM_P(PSTR(MSG_USERWAIT), true, true);
-  END_SCREEN();
-}
+#if HAS_LCD_MENU
+  static inline void _lcd_deploy_message() {
+    START_SCREEN();
+    STATIC_ITEM_P(PSTR(MSG_MANUAL_DEPLOY), true, true);
+    if ( LCD_HEIGHT > 3) STATIC_ITEM(" ");
+    STATIC_ITEM_P(PSTR(MSG_USERWAIT), true, true);
+    END_SCREEN();
+  }
 
-static inline void _lcd_stow_message() {
-  START_SCREEN();
-  STATIC_ITEM_P(PSTR(MSG_MANUAL_STOW), true, true);
-  if ( LCD_HEIGHT > 3) STATIC_ITEM(" ");
-  STATIC_ITEM_P(PSTR(MSG_USERWAIT), true, true);
-  END_SCREEN();
-}
+  static inline void _lcd_stow_message() {
+    START_SCREEN();
+    STATIC_ITEM_P(PSTR(MSG_MANUAL_STOW), true, true);
+    if ( LCD_HEIGHT > 3) STATIC_ITEM(" ");
+    STATIC_ITEM_P(PSTR(MSG_USERWAIT), true, true);
+    END_SCREEN();
+  }
+#endif
 
 FORCE_INLINE void probe_specific_action(const bool deploy) {
   if (rexyz_probe_mode == REXYZPROBE_MANUAL_DEPLOY) {
@@ -392,14 +396,18 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
       //SERIAL_EOL();
 
       KEEPALIVE_STATE(PAUSED_FOR_USER);
-      wait_for_user = true;
+      #if HAS_LCD_MENU
+        wait_for_user = true;
+      #endif
       #if ENABLED(HOST_PROMPT_SUPPORT)
         host_prompt_do(PROMPT_USER_CONTINUE, PSTR("Stow Probe"), PSTR("Continue"));
       #endif
-      while (wait_for_user) idle();
-      //ui.reset_status();
-      ui.lcdCurDisplayTimeUpdate = false;
-      ui.goto_previous_screen();
+      #if HAS_LCD_MENU
+        while (wait_for_user) idle();
+        //ui.reset_status();
+        ui.lcdCurDisplayTimeUpdate = false;
+        ui.goto_previous_screen();
+      #endif
     } 
   }
   #if ENABLED(SOLENOID_PROBE)
