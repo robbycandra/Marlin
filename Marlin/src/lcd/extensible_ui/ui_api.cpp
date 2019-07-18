@@ -672,6 +672,8 @@ namespace ExtUI {
             && (linked_nozzles || active_extruder == 0)
           #endif
         ) zprobe_zoffset += mm;
+      #else
+        UNUSED(mm);
       #endif
 
       #if EXTRUDERS > 1
@@ -691,6 +693,7 @@ namespace ExtUI {
         }
       #else
         UNUSED(linked_nozzles);
+        UNUSED(mm);
       #endif
     }
 
