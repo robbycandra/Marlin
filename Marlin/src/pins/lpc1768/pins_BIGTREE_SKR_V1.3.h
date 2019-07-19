@@ -174,21 +174,45 @@
 #define FAN_PIN            P2_03
 #define HEATER_BED_PIN     P2_05
 
-/**
+/** 
+ * PINOUT SKR 1.3 for REPRAP SMART LCD 
  *              _____                                             _____
- *          NC | · · | GND                                    5V | · · | GND
- *       RESET | · · | 1.31(SD_DETECT)             (LCD_D7) 1.23 | · · | 1.22 (LCD_D6)
- *  (MOSI)0.18 | · · | 3.25(BTN_EN2)               (LCD_D5) 1.21 | · · | 1.20 (LCD_D4)
- * (SD_SS)0.16 | · · | 3.26(BTN_EN1)               (LCD_RS) 1.19 | · · | 1.18 (LCD_EN)
- *   (SCK)0.15 | · · | 0.17(MISO)                 (BTN_ENC) 0.28 | · · | 1.30 (BEEPER)
+ *          NC |10 9 | GND                                    5V |10 9 | GND
+ *       RESET | 8 7 | 1.31(SD_DETECT)             (LCD_D7) 1.23 | 8 7 | 1.22 (LCD_D6)
+ *  (MOSI)0.18 | 6 5   3.25(BTN_EN2)               (LCD_D5) 1.21 | 6 5   1.20 (LCD_D4)
+ * (SD_SS)0.16 | 4 3 | 3.26(BTN_EN1)               (LCD_RS) 1.19 | 4 3 | 1.18 (LCD_EN)
+ *   (SCK)0.15 | 2 1 | 0.17(MISO)                 (BTN_ENC) 0.28 | 2 1 | 1.30 (BEEPER)
  *              -----                                             -----
  *              EXP2                                              EXP1
  */
+
+/**
+ * PINOUT SKR 1.3 for ANET LCD 
+ *              _____                                             _____
+ *      BEEPER |10 9 | LCD D4                      (BEEPER) 1.30 | 1 2 | 0.28 (BTN ENC)
+ *     BTN ENC | 8 7 | SDSS or N/C                 (LCD_D4) 1.18 | 3 4 | 1.19 (N/C)
+ *     BTN_EN1 | 6 5   LCD ENABLE                 (BTN_EN1) 1.20   5 6 | 1.21 (LCD_ENABLE)
+ *     BTN_EN2 | 4 3 | LCD RS                     (BTN_EN2) 1.22 | 7 8 | 1.23 (LCD_RS)
+ *          5V | 2 1 | GND                                   GND | 9 10| 5V
+ *              -----                                             -----
+ *            ANET LCD                                           MOD EXP1 
+ *                                                           TURN CONNECTOR, 
+ *                                                     SWITCH 2 <-> 3 AND 9 <-> 10
+ */
+
 #if HAS_SPI_LCD
   #define BEEPER_PIN       P1_30   // (37) not 5V tolerant
   #define BTN_ENC          P0_28   // (58) open-drain
+  #if ENABLED(ANET_FULL_GRAPHICS_LCD)
+    #define LCD_PINS_RS    P1_23
 
-  #if ENABLED(CR10_STOCKDISPLAY)
+    #define BTN_EN1        P1_22  
+    #define BTN_EN2        P1_20
+
+    #define LCD_PINS_ENABLE P1_21
+    #define LCD_PINS_D4    P1_18 
+
+  #elif ENABLED(CR10_STOCKDISPLAY)
     #define LCD_PINS_RS    P1_22
 
     #define BTN_EN1        P1_18
