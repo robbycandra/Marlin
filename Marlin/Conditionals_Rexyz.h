@@ -101,7 +101,6 @@
 #if defined(REXYZ_A8P)
     #define REXYZ_MACHINE_FRAME_TYPE "A8P"
     #define REXYZ_LPC1768
-    #define REXYZ_LCD_ANET_12864
 #endif
 
 //===========================================================================
