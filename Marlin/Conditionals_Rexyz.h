@@ -104,13 +104,6 @@
 #endif
 
 //===========================================================================
-//============================= Feature Settings ============================
-//===========================================================================
-
-    #define POWER_LOSS_RECOVERY
-    #define LCD_BED_LEVELING
-
-//===========================================================================
 //============================= Board Settings ============================
 //===========================================================================
 
@@ -119,14 +112,14 @@
     #define REXYZ_SERIAL_PORT 0
 #endif
 #if defined(REXYZ_LPC1768)
-    // If not using TFT
     #define REXYZ_SERIAL_PORT -1
-    // If using TFT (or not using)
-    //#define REXYZ_SERIAL_PORT -1
-    //#define SERIAL_PORT_2 0
-
     // Use Onboard SD Card.
     #define SDCARD_CONNECTION ONBOARD
+  #if defined(REXYZ_TOUCH_UI)
+      // If using TFT (or not using)
+      //#define REXYZ_SERIAL_PORT -1
+    #define SERIAL_PORT_2 0
+  #endif
 #endif
 
 #if defined(REXYZ_S_TYPE)
@@ -278,6 +271,27 @@
     #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
 
 #endif
+
+#if defined(REXYZ_TOUCH_UI)
+    //#define EXTENSIBLE_UI
+    //#define EXTUI_EXAMPLE
+#endif
+
+
+//===========================================================================
+//============================= Feature Settings ============================
+//===========================================================================
+#if defined(EXTENSIBLE_UI)
+#else
+    #define POWER_LOSS_RECOVERY
+    #define LCD_BED_LEVELING
+#endif
+
+#if defined(REXYZ_A8P)
+  #define FILAMENT_RUNOUT_SENSOR
+#else
+  #define FILAMENT_RUNOUT_SENSOR
+#endif    
 
 //===========================================================================
 //============================= Endstop & Motor Settings ====================
