@@ -143,7 +143,8 @@
       sprintf_P(msg, PSTR("%i / %u"), (int)(manual_probe_index + 1), total_probe_points);
       draw_edit_screen(PSTR(MSG_LEVEL_BED_NEXT_POINT), msg);
     }
-    ui.refresh(LCDVIEW_CALL_NO_REDRAW);
+    //ui.refresh(LCDVIEW_CALL_NO_REDRAW);
+    ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
     if (!ui.wait_for_bl_move) ui.goto_screen(_lcd_level_bed_get_z);
   }
 
