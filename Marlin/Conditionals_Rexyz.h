@@ -313,6 +313,7 @@
     #define REXYZ_INVERT_X_DIR false
     #define REXYZ_INVERT_Y_DIR true
     #define REXYZ_INVERT_Z_DIR true
+    #define REXYZ_INVERT_E0_DIR false
     #define REXYZ_INVERT_E1_DIR true
 
     #define REXYZ_X_HOME_DIR 1
@@ -338,6 +339,7 @@
     #define REXYZ_INVERT_X_DIR false
     #define REXYZ_INVERT_Y_DIR false
     #define REXYZ_INVERT_Z_DIR false
+    #define REXYZ_INVERT_E0_DIR false
     #define REXYZ_INVERT_E1_DIR false
 
     #define REXYZ_X_HOME_DIR -1
@@ -361,6 +363,7 @@
     #define REXYZ_INVERT_X_DIR false
     #define REXYZ_INVERT_Y_DIR false
     #define REXYZ_INVERT_Z_DIR false
+    #define REXYZ_INVERT_E0_DIR true
     #define REXYZ_INVERT_E1_DIR false
 
     #define REXYZ_X_HOME_DIR -1
