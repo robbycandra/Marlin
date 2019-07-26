@@ -159,8 +159,8 @@
 #if defined(REXYZ_A8P)
     #define REXYZ_MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
 
-    #define REXYZ_FIL_RUNOUT_INVERTING false
-    #define REXYZ_FIL_RUNOUT_PIN P1_27//Y_MIN_PIN //14
+    #define REXYZ_FIL_RUNOUT_INVERTING true
+    #define REXYZ_FIL_RUNOUT_PIN P1_26//Y_MIN_PIN //14
 
     #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
