@@ -938,7 +938,7 @@
 #define Z_PROBE_OFFSET_FROM_EXTRUDER REXYZ_Z_PROBE_OFFSET_FROM_EXTRUDER // Z offset: -below +above  [the nozzle]
 
 // Certain types of probes need to stay away from edges
-#define MIN_PROBE_EDGE 30
+#define MIN_PROBE_EDGE REXYZ_LEVEL_CORNERS_INSET
 
 // X and Y axis travel speed (mm/m) between probes
 #define XY_PROBE_SPEED 8000

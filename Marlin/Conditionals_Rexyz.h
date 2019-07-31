@@ -384,6 +384,7 @@
 //============================= Bed Settings ====================
 //===========================================================================
 
+#define REXYZ_LEVEL_CORNERS_Z_HOP 10.0  // (mm) Move nozzle up before moving between corners
 #if defined(REXYZ_S22) || defined(REXYZ_N2)
     #define REXYZ_X_BED_SIZE 220
     #define REXYZ_Y_BED_SIZE 220
@@ -393,7 +394,6 @@
     #define REXYZ_Z_MAX_POS 255
 
     #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
-    #define REXYZ_LEVEL_CORNERS_Z_HOP 10.0  // (mm) Move nozzle up before moving between corners
 
     #define REXYZ_GRID_MAX_POINTS_X 3
     #define REXYZ_GRID_MAX_POINTS_Y 3
@@ -409,7 +409,6 @@
     #define REXYZ_Z_MAX_POS 296
 
     #define REXYZ_LEVEL_CORNERS_INSET 20   // (mm) An inset for corner leveling
-    #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
     #define REXYZ_LEVEL_CENTER_TOO         // Move to the center after the last corner
 
     #define REXYZ_GRID_MAX_POINTS_X 3
@@ -426,7 +425,6 @@
     #define REXYZ_Z_MAX_POS 365
 
     #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
-    #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
 
     #define REXYZ_GRID_MAX_POINTS_X 5
     #define REXYZ_GRID_MAX_POINTS_Y 5
@@ -442,7 +440,6 @@
     #define REXYZ_Z_MAX_POS 350
 
     #define REXYZ_LEVEL_CORNERS_INSET 30   // (mm) An inset for corner leveling
-    #define REXYZ_LEVEL_CORNERS_Z_HOP 4.0  // (mm) Move nozzle up before moving between corners
     //#define REXYZ_LEVEL_CENTER_TOO         // Move to the center after the last corner
 
     #define REXYZ_GRID_MAX_POINTS_X 4
