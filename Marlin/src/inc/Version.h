@@ -50,7 +50,7 @@
    * here we define this default string as the date where the latest release
    * version was tagged.
    */
-  #define STRING_DISTRIBUTION_DATE REXYZ_STRING_DISTRIBUTION_DATE
+  #define STRING_DISTRIBUTION_DATE "2019-07-30"
 
   /**
    * Required minimum Configuration.h and Configuration_adv.h file versions.
