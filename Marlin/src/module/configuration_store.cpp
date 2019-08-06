@@ -2453,7 +2453,7 @@ void MarlinSettings::reset() {
     reset_bed_level();
   #endif
 
-  #if ENABLED(PROBE_MANUALLY)
+  #if ENABLED(PROBE_MANUALLY) || ENABLED(REXYZ_NO_ABL) 
     rexyz_probe_mode = REXYZPROBE_NO_PROBE;
   #else
     rexyz_probe_mode = REXYZ_DEFAULT_PROBE;

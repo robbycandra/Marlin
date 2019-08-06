@@ -119,11 +119,19 @@
  * Setting an 'LCD_RESET_PIN' may cause a flicker when entering the LCD menu
  * because Marlin uses the reset as a failsafe to revive a glitchy LCD.
  */
-//#define LCD_RESET_PIN      PF6
-#define LCD_BACKLIGHT_PIN  PG11
-#define FSMC_CS_PIN        PG12  // NE4
-#define FSMC_RS_PIN        PF0   // A0
+#if ENABLED(FSMC_GRAPHICAL_TFT)
+  #define FSMC_CS_PIN        PG12  // NE4
+  #define FSMC_RS_PIN        PF0   // A0
 
+  //#define LCD_RESET_PIN      PF6
+  #define NO_LCD_REINIT           // Suppress LCD re-initialization
+
+  #define LCD_BACKLIGHT_PIN  PG11
+  #if ENABLED(TOUCH_BUTTONS)
+    #define CS_PIN             PB1
+    #define BTN_ENC            PB3  // Pin is not conencted. Real pin is needed to enable encoder's push button functionality used by touch screen
+  #endif
+#endif
 //
 // Custom SPI pins
 //
@@ -131,7 +139,6 @@
 #define MISO_PIN           PC8
 #define MOSI_PIN           PD2
 #define SS_PIN              -1
-
 //
 // Onboard SD Card
 //
