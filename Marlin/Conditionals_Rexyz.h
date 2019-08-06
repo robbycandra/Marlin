@@ -231,73 +231,6 @@
 #endif
 
 //===========================================================================
-//============================= LCD & Sound Settings ============================
-//===========================================================================
-
-#if defined(REXYZ_LCD12864)
-    #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER    
-
-    #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
-    #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
-
-    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
-    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
-
-#endif
-#if defined(REXYZ_LCD2004)
-    #define REPRAP_DISCOUNT_SMART_CONTROLLER
-
-    #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
-    #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
-
-    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
-    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
-
-#endif
-#if defined(REXYZ_4MAX)
-
-    #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER    
-
-    #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 70
-    #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 4000
-
-    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 75  // (steps/s) Encoder rate for 10x speed
-    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 160  // (steps/s) Encoder rate for 100x speed
-
-#endif
-#if defined(REXYZ_A8P)
-    #define ANET_FULL_GRAPHICS_LCD    
-
-    #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
-    #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
-
-    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
-    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
-
-#endif
-
-#if defined(REXYZ_TOUCH_UI)
-    //#define EXTENSIBLE_UI
-    //#define EXTUI_EXAMPLE
-#endif
-
-
-//===========================================================================
-//============================= Feature Settings ============================
-//===========================================================================
-#if defined(EXTENSIBLE_UI)
-#else
-    #define POWER_LOSS_RECOVERY
-    #define LCD_BED_LEVELING
-#endif
-
-#if defined(REXYZ_A8P)
-  #define FILAMENT_RUNOUT_SENSOR
-#else
-  #define FILAMENT_RUNOUT_SENSOR
-#endif    
-
-//===========================================================================
 //============================= Endstop & Motor Settings ====================
 //===========================================================================
 
@@ -445,6 +378,73 @@
     #define REXYZ_GRID_MAX_POINTS_X 4
     #define REXYZ_GRID_MAX_POINTS_Y 4
 #endif
+
+//===========================================================================
+//============================= LCD & Sound Settings ============================
+//===========================================================================
+
+#if defined(REXYZ_LCD12864)
+    #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER    
+
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
+
+    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
+    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
+
+#endif
+#if defined(REXYZ_LCD2004)
+    #define REPRAP_DISCOUNT_SMART_CONTROLLER
+
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
+
+    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
+    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
+
+#endif
+#if defined(REXYZ_4MAX)
+
+    #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER    
+
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 70
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 4000
+
+    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 75  // (steps/s) Encoder rate for 10x speed
+    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 160  // (steps/s) Encoder rate for 100x speed
+
+#endif
+#if defined(REXYZ_A8P)
+    #define ANET_FULL_GRAPHICS_LCD    
+
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
+    #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
+
+    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
+    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
+
+#endif
+
+#if defined(REXYZ_TOUCH_UI)
+    //#define EXTENSIBLE_UI
+    //#define EXTUI_EXAMPLE
+#endif
+
+
+//===========================================================================
+//============================= Feature Settings ============================
+//===========================================================================
+#if defined(EXTENSIBLE_UI)
+#else
+    #define POWER_LOSS_RECOVERY
+    #define LCD_BED_LEVELING
+#endif
+
+#if defined(REXYZ_A8P)
+  #define FILAMENT_RUNOUT_SENSOR
+#else
+  #define FILAMENT_RUNOUT_SENSOR
+#endif    
 
 //===========================================================================
 //============================= Probe Settings ==============================
