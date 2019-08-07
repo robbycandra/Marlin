@@ -28,7 +28,7 @@
 #if ENABLED(REXYZ_MARKING_INIT) || ENABLED(REXYZ_MARKING_UPDATE)
   #define REXYZ_FW_VERSION ".INIT" // Change this with each update
 #else
-  #define REXYZ_FW_VERSION ".10" // Change this with each update
+  #define REXYZ_FW_VERSION ".11" // Change this with each update
 #endif
 #define REXYZ_DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
 #define REXYZ_SOURCE_CODE_URL "http://rajawali3d.com"
