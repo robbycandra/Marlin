@@ -82,6 +82,7 @@
     #define REXYZ_BOARD_MKSGENL
     #define REXYZ_S_TYPE
     #define REXYZ_LCD2004
+    #define REXYZ_EEPROM_FIRMWARE_PROTECTION
 #endif
 #if defined(REXYZ_S33)
     #define REXYZ_MACHINE_FRAME_TYPE "S33"
@@ -98,16 +99,19 @@
     #define REXYZ_BOARD_SKR13
     #define REXYZ_N_TYPE
     #define REXYZ_LCD2004
+    #define REXYZ_EEPROM_FIRMWARE_PROTECTION
 #endif
 #if defined(REXYZ_N3)
     #define REXYZ_MACHINE_FRAME_TYPE "N3"
     #define REXYZ_BOARD_SKR13
     #define REXYZ_N_TYPE
     #define REXYZ_LCD12864
+    #define REXYZ_EEPROM_FIRMWARE_PROTECTION
 #endif
 #if defined(REXYZ_A8P)
     #define REXYZ_MACHINE_FRAME_TYPE "A8P"
     #define REXYZ_BOARD_SKR13
+    #define REXYZ_EEPROM_FIRMWARE_PROTECTION
 #endif
 #if defined(REXYZ_A1)
     #define REXYZ_MACHINE_FRAME_TYPE "A1"
@@ -202,10 +206,12 @@
 #if defined(REXYZ_BOARD_ROBINMINI)
     #define REXYZ_FIL_RUNOUT_INVERTING false
     #define REXYZ_E0_AUTO_FAN_PIN -1
+    #define REXYZ_TEMP_SENSOR_1 0
 #endif
 #if defined(REXYZ_BOARD_ROBIN)
     #define REXYZ_FIL_RUNOUT_INVERTING false
     #define REXYZ_E0_AUTO_FAN_PIN -1
+    #define REXYZ_TEMP_SENSOR_1 1
 #endif
 
 //===========================================================================
@@ -241,6 +247,8 @@
 
     #define REXYZ_PREHEAT_1_TEMP_BED  60  
     #define REXYZ_PREHEAT_2_TEMP_BED  90
+    #define REXYZ_TEMP_SENSOR_1 0
+    #define REXYZ_EXTRUDERS 1
 #endif
 #if defined(REXYZ_4MAX)
     #define REXYZ_DEFAULT_Kp 16.69
@@ -249,6 +257,8 @@
 
     #define REXYZ_PREHEAT_1_TEMP_BED  60  
     #define REXYZ_PREHEAT_2_TEMP_BED  100
+    #define REXYZ_TEMP_SENSOR_1 0
+    #define REXYZ_EXTRUDERS 1
 #endif
 #if defined(REXYZ_N_TYPE)
     #define REXYZ_DEFAULT_Kp 9.60
@@ -257,6 +267,8 @@
 
     #define REXYZ_PREHEAT_1_TEMP_BED  60  
     #define REXYZ_PREHEAT_2_TEMP_BED  90
+    #define REXYZ_TEMP_SENSOR_1 0
+    #define REXYZ_EXTRUDERS 1
 #endif
 #if defined(REXYZ_A8P)
     #define REXYZ_DEFAULT_Kp 16.69
@@ -265,6 +277,8 @@
 
     #define REXYZ_PREHEAT_1_TEMP_BED  60  
     #define REXYZ_PREHEAT_2_TEMP_BED  80
+    #define REXYZ_TEMP_SENSOR_1 0
+    #define REXYZ_EXTRUDERS 1
 #endif
 #if defined(REXYZ_A1) || defined(REXYZ_A2)
   // Ultimaker
@@ -277,9 +291,16 @@
 
   #define PIDTEMPBED
 
-  #define DEFAULT_bedKp 10.00
-  #define DEFAULT_bedKi .023
-  #define DEFAULT_bedKd 305.4
+  #define REXYZ_DEFAULT_bedKp 10.00
+  #define REXYZ_DEFAULT_bedKi .023
+  #define REXYZ_DEFAULT_bedKd 305.4
+  #if defined(REXYZ_A2)
+    #define REXYZ_TEMP_SENSOR_1 1
+    #define REXYZ_EXTRUDERS 2
+  #else
+    #define REXYZ_TEMP_SENSOR_1 0
+    #define REXYZ_EXTRUDERS 1
+  #endif
 #endif
 
 //===========================================================================
@@ -370,16 +391,16 @@
     #define REXYZ_USE_YMIN_PLUG
     #define REXYZ_USE_ZMIN_PLUG
 
-    #define REXYZ_X_MIN_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
-    #define REXYZ_Y_MIN_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
-    #define REXYZ_Z_MIN_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
+    #define REXYZ_X_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+    #define REXYZ_Y_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+    #define REXYZ_Z_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
     #define REXYZ_X_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
     #define REXYZ_Y_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
     #define REXYZ_Z_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
 
     #define REXYZ_INVERT_X_DIR false
-    #define REXYZ_INVERT_Y_DIR true
-    #define REXYZ_INVERT_Z_DIR false
+    #define REXYZ_INVERT_Y_DIR false
+    #define REXYZ_INVERT_Z_DIR true
     #define REXYZ_INVERT_E0_DIR false
     #define REXYZ_INVERT_E1_DIR false
 
@@ -486,6 +507,8 @@
     #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
     #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
 
+    #define SPEAKER
+    #define STARTUP_TONE
 #endif
 #if defined(REXYZ_LCD2004)
     #define REPRAP_DISCOUNT_SMART_CONTROLLER
@@ -497,6 +520,8 @@
     #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
     #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
 
+    #define SPEAKER
+    #define STARTUP_TONE
 #endif
 #if defined(REXYZ_4MAX)
 
@@ -509,6 +534,8 @@
     #define REXYZ_ENCODER_10X_STEPS_PER_SEC 75  // (steps/s) Encoder rate for 10x speed
     #define REXYZ_ENCODER_100X_STEPS_PER_SEC 160  // (steps/s) Encoder rate for 100x speed
 
+    #define SPEAKER
+    #define STARTUP_TONE
 #endif
 #if defined(REXYZ_A8P)
     #define ANET_FULL_GRAPHICS_LCD    
@@ -520,15 +547,21 @@
     #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
     #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
 
+    #define SPEAKER
+    #define STARTUP_TONE
 #endif
 
 #if defined(REXYZ_A1) || defined(REXYZ_A2)
-  //#define MKS_ROBIN_TFT
-  #define FSMC_GRAPHICAL_TFT
-  //#define PRINTER_EVENT_LEDS
-  #define TOUCH_BUTTONS
+    #define FSMC_GRAPHICAL_TFT
+
+    #define TOUCH_BUTTONS
+    
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
+
+    #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
+    #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
+
 #endif
 
 
@@ -569,7 +602,15 @@
 
 #if defined(REXYZ_NO_ABL)
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "BD"
+    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH   245  
+    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      310
+    #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 15), (Y_MIN_POS + 70), 20 }
+#else
+    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40  
+    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100  
+    #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 10), (Y_MAX_POS - 10), 20 }
 #endif
+
 #if defined(REXYZ_MK8_MANUAL_PROBE)
     #define AUTO_BED_LEVELING_BILINEAR
     #define LCD_BED_LEVELING
