@@ -39,6 +39,11 @@
 #define DISABLE_DEBUG
 
 //
+// Note: MKS Robin board is using SPI2 interface.
+//
+#define SPI_MODULE 2
+
+//
 // Servos
 //
 #define SERVO0_PIN         PC3   // XS1 - 5
@@ -55,6 +60,10 @@
 #define Y_MAX_PIN          PC4
 #define Z_MIN_PIN          PA4
 #define Z_MAX_PIN          PF7
+
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN     PF11  // MT_DET
+#endif
 
 //
 // Steppers
@@ -95,18 +104,24 @@
 
 #define FAN_PIN            PA7   // FAN
 
-/**
- * Note: MKS Robin board is using SPI2 interface. Make sure your stm32duino library is configured accordingly
- */
+//
+// Thermocouples
+//
 //#define MAX6675_SS_PIN     PE5  // TC1 - CS1
 //#define MAX6675_SS_PIN     PE6  // TC2 - CS2
 
+//
+// Misc. Functions
+//
 #define POWER_LOSS_PIN     PA2   // PW_DET
 #define PS_ON_PIN          PA3   // PW_OFF
-#define FIL_RUNOUT_PIN     PF11  // MT_DET
-
-#define BEEPER_PIN         PC13
 #define LED_PIN            PB2
+
+//
+// LCD / Controller
+//
+#define BEEPER_PIN         PC13
+#define SD_DETECT_PIN      PF12
 
 /**
  * Note: MKS Robin TFT screens use various TFT controllers. Supported screens
@@ -129,20 +144,47 @@
   #define LCD_BACKLIGHT_PIN  PG11
   #if ENABLED(TOUCH_BUTTONS)
     #define CS_PIN             PB1
+    #define TOUCH_CS           PB1
+    #define TOUCH_CS_PIN       PB1
     #define BTN_ENC            PB3  // Pin is not conencted. Real pin is needed to enable encoder's push button functionality used by touch screen
+    #define BTN_EN1            -1
+    #define BTN_EN2            -1
   #endif
 #endif
+
+
+
+
+/**
+ * STM32F1 Default SPI Pins
+ *
+ *         SS     SCK     MISO    MOSI
+ *       +-----------------------------+
+ *  SPI1 | PA4    PA5     PA6     PA7  |
+ *  SPI2 | PB12   PB13    PB14    PB15 |
+ *  SPI3 | PA15   PB3     PB4     PB5  |
+ *       +-----------------------------+
+ * Any pin can be used for Chip Select (SS_PIN)
+ * SPI1 is enabled by default
+ */
+#define TOUCH_INT_PIN  -1
+#define TOUCH_MISO_PIN PB14
+#define TOUCH_MOSI_PIN PB15
+#define TOUCH_SCK_PIN  PB13
+#define SS_PIN         PB12
+
 //
 // Custom SPI pins
 //
-#define SCK_PIN            PC12
-#define MISO_PIN           PC8
-#define MOSI_PIN           PD2
-#define SS_PIN              -1
+//#define SCK_PIN            PC12
+//#define MISO_PIN           PC8
+//#define MOSI_PIN           PD2
+//#define SS_PIN              -1
+
 //
 // Onboard SD Card
 //
-#define ONBOARD_SD_CS      PC11
-#define SDSS               PD2
+//#define ONBOARD_SD_CS      PC11
+//#define SDSS               PD2
 
-#define SD_DETECT_PIN       -1   // PF12
+//#define SD_DETECT_PIN       -1   // PF12
