@@ -963,6 +963,7 @@ void setup() {
   // This also updates variables in the planner, elsewhere
   settings.first_load();
 
+  #if ENABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
   if (settings.is_rexyz() == false) {
     #if ENABLED(REXYZ_MARKING_INIT)
       settings.mark_rexyz();
@@ -975,6 +976,7 @@ void setup() {
       while(true);
     #endif
   }
+  #endif
 
   #if ENABLED(TOUCH_BUTTONS)
     touch.init();
