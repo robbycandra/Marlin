@@ -49,9 +49,7 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
   #include "../feature/host_actions.h"
 #endif
 
-#if ANY(Z_PROBE_SLED, Z_PROBE_ALLEN_KEY, PROBE_TRIGGERED_WHEN_STOWED_TEST) || (QUIET_PROBING && ENABLED(PROBING_STEPPERS_OFF))
-  #include "../Marlin.h" // for stop(), disable_e_steppers
-#endif
+#include "../Marlin.h" // for stop(), disable_e_steppers, wait_for_user
 
 #if HAS_LEVELING
   #include "../feature/bedlevel/bedlevel.h"
@@ -67,6 +65,10 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
 
 #if ENABLED(BLTOUCH)
   #include "../feature/bltouch.h"
+#endif
+
+#if ENABLED(HOST_PROMPT_SUPPORT)
+  #include "../feature/host_actions.h" // for PROMPT_USER_CONTINUE
 #endif
 
 #if HAS_Z_SERVO_PROBE
@@ -112,9 +114,7 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
 
   // Move to the magnet to unlock the probe
   void run_deploy_moves_script() {
-    #ifndef TOUCH_MI_DEPLOY_XPOS
-      #define TOUCH_MI_DEPLOY_XPOS X_MIN_POS
-    #elif TOUCH_MI_DEPLOY_XPOS > X_MAX_BED
+    #if TOUCH_MI_DEPLOY_XPOS > X_MAX_BED
       TemporaryGlobalEndstopsState unlock_x(false);
     #endif
 
@@ -132,7 +132,9 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
       ui.reset_status();
       ui.goto_screen(prev_screen);
     #else
-      do_blocking_move_to_x(TOUCH_MI_DEPLOY_XPOS);
+      #ifdef TOUCH_MI_DEPLOY_XPOS
+        do_blocking_move_to_x(TOUCH_MI_DEPLOY_XPOS);
+      #endif
     #endif
   }
 
