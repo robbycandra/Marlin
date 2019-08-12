@@ -1295,7 +1295,6 @@ void MarlinSettings::postprocess() {
 
     int ee_index = EEPROM_OFFSET - sizeof(mach_ver);
     persistentStore.read_data(ee_index, (uint8_t*)mach_ver, sizeof(mach_ver), &w_crc); 
-    UPDATE_TEST_INDEX(mach_ver);
 
     if (mach_ver[0] == 'R' && mach_ver[1] == 'X') {
       eeprom_error = saved_eeprom_error;
