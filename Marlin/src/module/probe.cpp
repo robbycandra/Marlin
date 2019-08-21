@@ -84,6 +84,10 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
   #include "stepper_indirection.h"
 #endif
 
+#if ENABLED(EXTENSIBLE_UI)
+  #include "../lcd/extensible_ui/ui_api.h"
+#endif
+
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
 #include "../core/debug_out.h"
 
@@ -119,6 +123,7 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
     #endif
 
     #if ENABLED(TOUCH_MI_MANUAL_DEPLOY)
+
       const screenFunc_t prev_screen = ui.currentScreen;
       LCD_MESSAGEPGM(MSG_MANUAL_DEPLOY_TOUCHMI);
       ui.return_to_status();
@@ -131,10 +136,11 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
       while (wait_for_user) idle();
       ui.reset_status();
       ui.goto_screen(prev_screen);
-    #else
-      #ifdef TOUCH_MI_DEPLOY_XPOS
-        do_blocking_move_to_x(TOUCH_MI_DEPLOY_XPOS);
-      #endif
+
+    #elif defined(TOUCH_MI_DEPLOY_XPOS)
+
+      do_blocking_move_to_x(TOUCH_MI_DEPLOY_XPOS);
+
     #endif
   }
 
@@ -403,6 +409,9 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
       #endif
       #if ENABLED(HOST_PROMPT_SUPPORT)
         host_prompt_do(PROMPT_USER_CONTINUE, PSTR("Stow Probe"), PSTR("Continue"));
+      #endif
+      #if ENABLED(EXTENSIBLE_UI)
+        ExtUI::onStatusChanged(PSTR("Stow Probe"));
       #endif
       #if HAS_LCD_MENU
         while (wait_for_user) idle();
