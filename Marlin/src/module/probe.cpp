@@ -411,7 +411,7 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
         host_prompt_do(PROMPT_USER_CONTINUE, PSTR("Stow Probe"), PSTR("Continue"));
       #endif
       #if ENABLED(EXTENSIBLE_UI)
-        ExtUI::onStatusChanged(PSTR("Stow Probe"));
+        ExtUI::onUserConfirmRequired(PSTR("Stow Probe"));
       #endif
       #if HAS_LCD_MENU
         while (wait_for_user) idle();
