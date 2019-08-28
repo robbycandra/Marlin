@@ -74,6 +74,50 @@
   #error "Please enable one and only one toolhead model."
 #endif
 
+#if ENABLED(REXYZ_N2)
+  #if DISABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
+    #error "Please enable REXYZ_EEPROM_FIRMWARE_PROTECTION."
+  #endif
+  #if DISABLED(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH)
+    #error "Please enable REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH."
+  #endif
+  #if DISABLED(REXYZ_FILAMENT_MOTION_DETECTOR)
+    #error "Please enable REXYZ_FILAMENT_MOTION_DETECTOR."
+  #endif
+  #if ENABLED(REXYZ_TOUCH_UI)
+    #error "Please disable REXYZ_TOUCH_UI."
+  #endif
+#endif
+
+#if ENABLED(REXYZ_A8P)
+  #if DISABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
+    #error "Please enable REXYZ_EEPROM_FIRMWARE_PROTECTION."
+  #endif
+  #if DISABLED(REXYZ_MK8_MANUAL_PROBE)
+    #error "Please enable REXYZ_MK8_MANUAL_PROBE."
+  #endif
+  #if ENABLED(REXYZ_FILAMENT_MOTION_DETECTOR)
+    #error "Please disable REXYZ_FILAMENT_MOTION_DETECTOR."
+  #endif
+  #if ENABLED(REXYZ_TOUCH_UI)
+    #error "Please disable REXYZ_TOUCH_UI."
+  #endif
+#endif
+
+#if ENABLED(REXYZ_A1) || ENABLED(REXYZ_A2)
+  #if ENABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
+    #error "Please disable REXYZ_EEPROM_FIRMWARE_PROTECTION."
+  #endif
+  #if DISABLED(REXYZ_NO_ABL)
+    #error "Please enable REXYZ_NO_ABL."
+  #endif
+  #if ENABLED(REXYZ_FILAMENT_MOTION_DETECTOR)
+    #error "Please disable REXYZ_FILAMENT_MOTION_DETECTOR."
+  #endif
+  #if ENABLED(REXYZ_TOUCH_UI)
+    #error "Please disable REXYZ_TOUCH_UI."
+  #endif
+#endif
 //===========================================================================
 //============================= PRINTER MODEL Settings ============================
 //===========================================================================
