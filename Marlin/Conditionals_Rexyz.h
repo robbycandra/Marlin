@@ -255,7 +255,6 @@
 #if defined(REXYZ_BOARD_ROBIN)
     #define REXYZ_FIL_RUNOUT_INVERTING false
     #define REXYZ_E0_AUTO_FAN_PIN -1
-    #define REXYZ_TEMP_SENSOR_1 1
 #endif
 
 //===========================================================================
@@ -339,8 +338,8 @@
   #define REXYZ_DEFAULT_bedKi .023
   #define REXYZ_DEFAULT_bedKd 305.4
   #if defined(REXYZ_A2)
-    #define REXYZ_TEMP_SENSOR_1 1
-    #define REXYZ_EXTRUDERS 2
+    #define REXYZ_TEMP_SENSOR_1 0 //1
+    #define REXYZ_EXTRUDERS 1 //2
   #else
     #define REXYZ_TEMP_SENSOR_1 0
     #define REXYZ_EXTRUDERS 1
