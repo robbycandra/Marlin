@@ -650,9 +650,8 @@
 
 #if EITHER(ULTIPANEL, EXTENSIBLE_UI)
 // Rexyz change standard manual feerate	
-// #define MANUAL_FEEDRATE { 50*60, 50*60, 4*60, 60 } // Feedrates for manual moves along X, Y, Z, E from panel
-  #define MANUAL_FEEDRATE { 60*60, 60*60, 30*60, 60} // Feedrates for manual moves along X, Y, Z, E from panel
-  #define SHORT_MANUAL_Z_MOVE 0.025 // (mm) Smallest manual Z move (< 0.1mm)
+  #define MANUAL_FEEDRATE REXYZ_MANUAL_FEEDRATE // Feedrates for manual moves along X, Y, Z, E from panel
+  #define SHORT_MANUAL_Z_MOVE REXYZ_SHORT_MANUAL_Z_MOVE // (mm) Smallest manual Z move (< 0.1mm)
   #if ENABLED(ULTIPANEL)
     #define MANUAL_E_MOVES_RELATIVE // Display extruder move distance rather than "position"
     #define ULTIPANEL_FEEDMULTIPLY  // Encoder sets the feedrate multiplier on the Status Screen
