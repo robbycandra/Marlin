@@ -200,6 +200,7 @@
     #define SERIAL_PORT_2 1
     #define NUM_SERIAL 2
     #define SDIO_SUPPORT
+    #define POWER_LOSS_STATE LOW
     //#define SD_DETECT_INVERTED
 #endif
 #if defined(REXYZ_BOARD_ROBIN)
@@ -248,7 +249,7 @@
     #define REXYZ_E0_AUTO_FAN_PIN FAN1_PIN
 #endif
 #if defined(REXYZ_BOARD_ROBINMINI)
-    #define REXYZ_FIL_RUNOUT_INVERTING false
+    #define REXYZ_FIL_RUNOUT_INVERTING true
     #define REXYZ_E0_AUTO_FAN_PIN -1
     #define REXYZ_TEMP_SENSOR_1 0
 #endif
