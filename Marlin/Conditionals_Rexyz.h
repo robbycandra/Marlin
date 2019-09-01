@@ -325,18 +325,18 @@
 #endif
 #if defined(REXYZ_A1) || defined(REXYZ_A2)
   // Ultimaker
-  #define REXYZ_DEFAULT_Kp 22.2
-  #define REXYZ_DEFAULT_Ki 1.08
-  #define REXYZ_DEFAULT_Kd 114
+  #define REXYZ_DEFAULT_Kp 23.29
+  #define REXYZ_DEFAULT_Ki 2.23
+  #define REXYZ_DEFAULT_Kd 60.68
 
     #define REXYZ_PREHEAT_1_TEMP_BED  60  
     #define REXYZ_PREHEAT_2_TEMP_BED  80
 
   #define PIDTEMPBED
 
-  #define REXYZ_DEFAULT_bedKp 10.00
-  #define REXYZ_DEFAULT_bedKi .023
-  #define REXYZ_DEFAULT_bedKd 305.4
+  #define REXYZ_DEFAULT_bedKp 78.61
+  #define REXYZ_DEFAULT_bedKi 15.08
+  #define REXYZ_DEFAULT_bedKd 273.08
   #if defined(REXYZ_A2)
     #define REXYZ_TEMP_SENSOR_1 0 //1
     #define REXYZ_EXTRUDERS 1 //2
@@ -640,7 +640,7 @@
 //===========================================================================
 //============================= Feature Settings ============================
 //===========================================================================
-#if defined(EXTENSIBLE_UI) || defined(REXYZ_A1) || defined(REXYZ_A2)
+#if defined(EXTENSIBLE_UI) || defined(REXYZ_A2)
 #else
   #define POWER_LOSS_RECOVERY
 #endif
