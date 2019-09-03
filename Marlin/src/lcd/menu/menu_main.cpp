@@ -189,6 +189,10 @@ void menu_main() {
     #endif
   #endif
 
+  #if ENABLED(LCD_INFO_MENU)
+    MENU_ITEM(submenu, MSG_INFO_MENU, menu_info);
+  #endif
+
   #if ENABLED(LED_CONTROL_MENU)
     MENU_ITEM(submenu, MSG_LED_CONTROL, menu_led);
   #endif

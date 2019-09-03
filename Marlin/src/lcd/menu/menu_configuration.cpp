@@ -49,9 +49,6 @@
 
 #define HAS_DEBUG_MENU ENABLED(LCD_PROGRESS_BAR_TEST)
 
-// Rexyz change menu info to configuration sub menu
-void menu_info();
-
 void menu_advanced_settings();
 #if EITHER(DELTA_CALIBRATION_MENU, DELTA_AUTO_CALIBRATION)
   void menu_delta_calibrate();
@@ -345,6 +342,14 @@ void menu_configuration() {
     MENU_ITEM(submenu, MSG_DEBUG_MENU, menu_debug);
   #endif
 
+  MENU_ITEM(submenu, MSG_ADVANCED_SETTINGS, menu_advanced_settings);
+
+  #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
+    MENU_ITEM(submenu, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
+  #elif HAS_BED_PROBE
+    MENU_ITEM_EDIT(float52, MSG_ZPROBE_ZOFFSET, &zprobe_zoffset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+  #endif
+
   const bool busy = printer_busy();
   if (!busy) {
     //
@@ -405,16 +410,10 @@ void menu_configuration() {
     MENU_ITEM_EDIT_CALLBACK(bool, MSG_OUTAGE_RECOVERY, &recovery.enabled, recovery.changed);
   #endif
 
-  MENU_ITEM(submenu, MSG_ADVANCED_SETTINGS, menu_advanced_settings);
-
   #if DISABLED(SLIM_LCD_MENUS)
     // Preheat configurations
     MENU_ITEM(submenu, MSG_PREHEAT_1_SETTINGS, menu_preheat_material1_settings);
     MENU_ITEM(submenu, MSG_PREHEAT_2_SETTINGS, menu_preheat_material2_settings);
-  #endif
-
-  #if ENABLED(LCD_INFO_MENU)
-    MENU_ITEM(submenu, MSG_INFO_MENU, menu_info);
   #endif
 
   #if ENABLED(EEPROM_SETTINGS)
