@@ -81,7 +81,7 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
 #endif
 
 #if QUIET_PROBING
-  #include "stepper_indirection.h"
+  #include "stepper/indirection.h"
 #endif
 
 #if ENABLED(EXTENSIBLE_UI)
