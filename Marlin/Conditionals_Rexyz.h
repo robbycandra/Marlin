@@ -616,6 +616,7 @@
 
 #if defined(REXYZ_A1) || defined(REXYZ_A2)
     #define FSMC_GRAPHICAL_TFT
+    #define REVERSE_MENU_DIRECTION
     #define FULL_SCALE_TFT_320X240
     #if ENABLED(FULL_SCALE_TFT_320X240)
       #define U8G_16BIT 1
