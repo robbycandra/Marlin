@@ -619,13 +619,21 @@
 #if defined(REXYZ_A1) || defined(REXYZ_A2)
     #define FSMC_GRAPHICAL_TFT
     #define REVERSE_MENU_DIRECTION
-    #define FULL_SCALE_TFT_320X240
-    #if ENABLED(FULL_SCALE_TFT_320X240)
-      #define U8G_16BIT 1
-      // jangan lupa untuk aktifkan flag -DU8G_16BIT di platformio
+    #if defined(REXYZ_D2)
+      #define FULL_SCALE_TFT_480X320
+    #else
+      #define FULL_SCALE_TFT_320X240
     #endif
+    #define U8G_16BIT 1 // jangan lupa untuk aktifkan flag -DU8G_16BIT di platformio
+
     #define TOUCH_BUTTONS
-    
+    #define TOUCH_CALIBRATION
+
+    #define REXYZ_XPT2046_X_CALIBRATION   12316
+    #define REXYZ_XPT2046_Y_CALIBRATION  -8981
+    #define REXYZ_XPT2046_X_OFFSET       -43
+    #define REXYZ_XPT2046_Y_OFFSET        257
+
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
 
