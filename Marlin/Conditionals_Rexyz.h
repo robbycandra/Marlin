@@ -196,6 +196,7 @@
 #endif
 #if defined(REXYZ_BOARD_ROBINMINI)
     #define MOTHERBOARD BOARD_MKS_ROBIN_MINI
+    #define ENDSTOP_INTERRUPTS_FEATURE
     #define REXYZ_SERIAL_PORT 3
     #define SERIAL_PORT_2 1
     #define NUM_SERIAL 2
@@ -205,6 +206,7 @@
 #endif
 #if defined(REXYZ_BOARD_ROBIN)
     #define MOTHERBOARD BOARD_MKS_ROBIN
+    #define ENDSTOP_INTERRUPTS_FEATURE
     #define REXYZ_SERIAL_PORT 3
     #define SERIAL_PORT_2 1
     #define NUM_SERIAL 2
