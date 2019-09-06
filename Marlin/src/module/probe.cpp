@@ -121,6 +121,9 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
     #if TOUCH_MI_DEPLOY_XPOS > X_MAX_BED
       TemporaryGlobalEndstopsState unlock_x(false);
     #endif
+    #if TOUCH_MI_DEPLOY_YPOS > Y_MAX_BED
+      TemporaryGlobalEndstopsState unlock_y(false);
+    #endif
 
     #if ENABLED(TOUCH_MI_MANUAL_DEPLOY)
 
@@ -137,10 +140,12 @@ float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y; // Initialized by 
       ui.reset_status();
       ui.goto_screen(prev_screen);
 
+    #elif defined(TOUCH_MI_DEPLOY_XPOS) && defined(TOUCH_MI_DEPLOY_YPOS)
+      do_blocking_move_to_xy(TOUCH_MI_DEPLOY_XPOS, TOUCH_MI_DEPLOY_YPOS);
     #elif defined(TOUCH_MI_DEPLOY_XPOS)
-
       do_blocking_move_to_x(TOUCH_MI_DEPLOY_XPOS);
-
+    #elif defined(TOUCH_MI_DEPLOY_YPOS)
+      do_blocking_move_to_y(TOUCH_MI_DEPLOY_YPOS);
     #endif
   }
 
