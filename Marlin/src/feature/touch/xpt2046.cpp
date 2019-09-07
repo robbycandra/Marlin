@@ -78,13 +78,19 @@ uint8_t XPT2046::read_buttons() {
                  y = uint16_t(((uint32_t(getInTouch(XPT2046_Y))) * tsoffsets[2]) >> 16) + tsoffsets[3];
   if (!isTouched()) return 0; // Fingers must still be on the TS for a valid read.
 
-  if (y < 175 || y > 234) return 0;
+  const uint8_t row_touched = y / 16;
+  const uint8_t col_touched = x / 40;
 
-  return WITHIN(x,  14,  77) ? EN_D
-       : WITHIN(x,  90, 153) ? EN_A
-       : WITHIN(x, 166, 229) ? EN_B
-       : WITHIN(x, 242, 305) ? EN_C
-       : 0;
+  if (row_touched < 12) {
+    return (128 + (row_touched << 3) + col_touched);
+  } 
+  else {
+    return  WITHIN(x,  14,  77) ? EN_D
+          : WITHIN(x,  90, 153) ? EN_A
+          : WITHIN(x, 166, 229) ? EN_B
+          : WITHIN(x, 242, 305) ? EN_C
+          : 0;
+  }
 }
 
 bool XPT2046::isTouched() {

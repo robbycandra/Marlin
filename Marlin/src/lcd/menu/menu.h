@@ -316,6 +316,21 @@ class MenuItem_bool {
  *     MenuItem_int3::action_edit(PSTR(MSG_SPEED), &feedrate_percentage, 10, 999)
  *
  */
+#if HAS_FULL_SCALE_TFT
+#define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, ...) do { \
+    _skipStatic = false; \
+    if (_menuLineNr == _thisItemNr) { \
+      if ((encoderLine == _thisItemNr && ui.use_click()) || ui.menu_is_touched(_thisItemNr - encoderTopLine)) { \
+        _MENU_ITEM_MULTIPLIER_CHECK(USE_MULTIPLIER); \
+        MenuItem_##TYPE ::action ## VARIANT(__VA_ARGS__); \
+        if (screen_changed) return; \
+      } \
+      if (ui.should_draw()) \
+        draw_menu_item ## VARIANT ## _ ## TYPE(encoderLine == _thisItemNr, _lcdLineNr, PLABEL, ## __VA_ARGS__); \
+    } \
+  ++_thisItemNr; \
+}while(0)
+#else
 #define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, ...) do { \
     _skipStatic = false; \
     if (_menuLineNr == _thisItemNr) { \
@@ -329,6 +344,7 @@ class MenuItem_bool {
     } \
   ++_thisItemNr; \
 }while(0)
+#endif
 
 // Used to print static text with no visible cursor.
 // Parameters: label [, bool center [, bool invert [, char *value] ] ]

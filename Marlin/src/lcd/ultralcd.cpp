@@ -208,6 +208,17 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     lcd_clicked = false;
     return click;
   }
+  #if HAS_FULL_SCALE_TFT
+    uint8_t MarlinUI::menu_mode;
+    uint8_t MarlinUI::lcd_menu_touched_coord;
+    bool MarlinUI::menu_is_touched(int8_t tested_item_number) {
+      if ((lcd_menu_touched_coord > 0) && (lcd_menu_touched_coord == tested_item_number + 1)) {
+        lcd_menu_touched_coord = 0;
+        return true;
+      } 
+      return false;
+    }
+  #endif  
 
   #if EITHER(AUTO_BED_LEVELING_UBL, G26_MESH_VALIDATION)
 
@@ -794,8 +805,7 @@ void MarlinUI::update() {
             if (!wait_for_unclick) {                    // If not waiting for a debounce release:
               wait_for_unclick = true;                  //  - Set debounce flag to ignore continous clicks
               wait_for_user = false;                    //  - Any click clears wait for user
-              // TODO for next PR.
-              //uint8_t tpos = touch_buttons & ~(TOUCH_MENU_MASK);  // Safe 7bit touched screen coordinate
+              lcd_menu_touched_coord = touch_buttons;   // Safe 7bit touched screen coordinate
               next_button_update_ms = ms + 500;         // Defer next check for 1/2 second
               #if HAS_LCD_MENU
                 refresh();
@@ -1061,6 +1071,9 @@ void MarlinUI::update() {
 
       #if HAS_LCD_MENU
         lcd_clicked = false;
+        #if HAS_FULL_SCALE_TFT
+          lcd_menu_touched_coord = 0;
+        #endif
       #endif
 
       // Keeping track of the longest time for an individual LCD update.
