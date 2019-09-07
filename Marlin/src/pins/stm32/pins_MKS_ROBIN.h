@@ -146,9 +146,6 @@
     #define CS_PIN             PB1
     #define TOUCH_CS           PB1
     #define TOUCH_CS_PIN       PB1
-    #define BTN_ENC            PB3  // Pin is not conencted. Real pin is needed to enable encoder's push button functionality used by touch screen
-    #define BTN_EN1            -1
-    #define BTN_EN2            -1
   #endif
 #endif
 
