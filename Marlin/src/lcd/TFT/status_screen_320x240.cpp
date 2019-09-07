@@ -50,6 +50,14 @@
   #include "../../sd/cardreader.h"
 #endif
 
+#if HAS_FILAMENT_SENSOR
+  #include "../../feature/runout.h"
+#endif
+
+#if ENABLED(POWER_LOSS_RECOVERY)
+  #include "../../feature/power_loss_recovery.h"
+#endif
+
 #if HAS_PRINT_PROGRESS
   #include "../../module/printcounter.h"
 #endif
@@ -58,12 +66,9 @@
   #include "../../feature/mixing.h"
 #endif
 
-#define X_LABEL_POS      3
-#define X_VALUE_POS     11
-#define XYZ_SPACING     37
-#define XYZ_BASELINE    (30 + INFO_FONT_ASCENT)
-#define EXTRAS_BASELINE (40 + INFO_FONT_ASCENT)
-#define STATUS_BASELINE (LCD_PIXEL_HEIGHT - INFO_FONT_DESCENT)
+#define X_LABEL_POS     5  // STATUS_FONT_WIDTH / 2
+#define X_VALUE_POS     27 // COL_W - X_LABEL_POS - (4 * FONT_WIDTH)
+#define EXTRAS_BASELINE (6 * STATUS_FONT_HEIGHT + STATUS_FONT_ASCENT)
 
 #define DO_DRAW_BED (HAS_HEATED_BED && STATUS_BED_WIDTH && HOTENDS <= 3 && DISABLED(STATUS_COMBINE_HEATERS))
 #define DO_DRAW_FAN (HAS_FAN0 && STATUS_FAN_WIDTH && STATUS_FAN_FRAMES)
@@ -99,10 +104,13 @@
   #define SHOW_ON_STATE false
 #endif
 
+u8g_uint_t off_x = 0, row_h = 0;
+
 FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, const uint8_t ty) {
   const char *str = i16tostr3(temp);
   const uint8_t len = str[0] != ' ' ? 3 : str[1] != ' ' ? 2 : 1;
-  lcd_put_u8str(tx - len * (INFO_FONT_WIDTH) / 2 + 1, ty, &str[3-len]);
+  lcd_moveto(tx - len * (MENU_FONT_WIDTH) / 2 + 1, ty);
+  lcd_put_u8str(&str[3-len]);
   lcd_put_wchar(LCD_STR_DEGREE[0]);
 }
 
@@ -124,7 +132,11 @@ FORCE_INLINE void _draw_heater_status(const heater_ind_t heater, const bool blin
     const bool isHeat = IFBED(BED_ALT(), HOTEND_ALT(heater));
   #endif
 
-  const uint8_t tx = IFBED(STATUS_BED_TEXT_X, STATUS_HOTEND_TEXT_X(heater));
+  #if HOTENDS > 1
+    const uint8_t tx = IFBED(STATUS_BED_TEXT_X, STATUS_HOTEND_TEXT_X(heater));
+  #else
+    const uint8_t tx = IFBED(STATUS_BED_TEXT_X, STATUS_HOTEND_TEXT_X(heater+1));
+  #endif
 
   #if ENABLED(MARLIN_DEV_MODE)
     const float temp = 20 + (millis() >> 8) % IFBED(100, 200);
@@ -151,11 +163,11 @@ FORCE_INLINE void _draw_heater_status(const heater_ind_t heater, const bool blin
   #endif
 
   #if ANIM_HOTEND && ENABLED(STATUS_HOTEND_INVERTED)
-    #define OFF_BMP(N) status_hotend##N##_b_bmp
-    #define ON_BMP(N)  status_hotend##N##_a_bmp
+    #define OFF_BMP(N) status_hotend_24x24_##N##b_bmp
+    #define ON_BMP(N)  status_hotend_24x24_##N##a_bmp
   #else
-    #define OFF_BMP(N) status_hotend##N##_a_bmp
-    #define ON_BMP(N)  status_hotend##N##_b_bmp
+    #define OFF_BMP(N) status_hotend_24x24_##N##a_bmp
+    #define ON_BMP(N)  status_hotend_24x24_##N##b_bmp
   #endif
 
   #if STATUS_HOTEND_BITMAPS > 1
@@ -184,7 +196,11 @@ FORCE_INLINE void _draw_heater_status(const heater_ind_t heater, const bool blin
     #ifdef STATUS_HOTEND_ANIM
       // Draw hotend bitmap, either whole or split by the heating percent
       if (IFBED(0, 1)) {
-        const uint8_t hx = STATUS_HOTEND_X(heater), bw = STATUS_HOTEND_BYTEWIDTH(heater);
+        #if HOTENDS > 1
+          const uint8_t hx = STATUS_HOTEND_X(heater), bw = STATUS_HOTEND_BYTEWIDTH(heater);
+        #else
+          const uint8_t hx = STATUS_HOTEND_X(heater) + STATUS_HEATERS_XSPACE, bw = STATUS_HOTEND_BYTEWIDTH(heater+1);
+        #endif
         #if ENABLED(STATUS_HEAT_PERCENT)
           if (isHeat && tall <= BAR_TALL) {
             const uint8_t ph = STATUS_HEATERS_HEIGHT - 1 - tall;
@@ -214,18 +230,25 @@ FORCE_INLINE void _draw_heater_status(const heater_ind_t heater, const bool blin
 
   } // PAGE_CONTAINS
 
-  if (PAGE_UNDER(7)) {
+  if (PAGE_UNDER(TARGET_TEMP_BASELINE + MENU_FONT_DESCENT)) {
     #if HEATER_IDLE_HANDLER
       const bool is_idle = IFBED(thermalManager.bed_idle.timed_out, thermalManager.hotend_idle[heater].timed_out),
                  dodraw = (blink || !is_idle);
     #else
       constexpr bool dodraw = true;
     #endif
-    if (dodraw) _draw_centered_temp(target + 0.5, tx, 7);
+    //if (dodraw) _draw_centered_temp(target + 0.5, tx, TARGET_TEMP_BASELINE);
+    if (dodraw) {
+      lcd_moveto(tx,TARGET_TEMP_BASELINE);
+      lcd_put_u8str(i16tostr3(target + 0.5));
+    } 
   }
 
-  if (PAGE_CONTAINS(28 - INFO_FONT_ASCENT, 28 - 1))
-    _draw_centered_temp(temp + 0.5f, tx, 28);
+  if (PAGE_CONTAINS(TEMPERATURE_BASELINE - MENU_FONT_ASCENT, TEMPERATURE_BASELINE + MENU_FONT_DESCENT)) {
+    // _draw_centered_temp(temp + 0.5f, tx, TEMPERATURE_BASELINE);
+    lcd_moveto(tx,TEMPERATURE_BASELINE);
+    lcd_put_u8str(i16tostr3(temp + 0.5));
+  }
 
   if (IFBED(STATIC_BED && BED_DOT, STATIC_HOTEND && HOTEND_DOT) && PAGE_CONTAINS(17, 19)) {
     u8g.setColorIndex(0); // set to white on black
@@ -264,14 +287,21 @@ FORCE_INLINE void _draw_heater_status(const heater_ind_t heater, const bool blin
 // Homed and known, display constantly.
 //
 FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const bool blink) {
-  const uint8_t offs = (XYZ_SPACING) * axis;
-  lcd_put_wchar(X_LABEL_POS + offs, XYZ_BASELINE, 'X' + axis);
-  lcd_moveto(X_VALUE_POS + offs, XYZ_BASELINE);
+  const uint8_t offs = off_x * (axis + 1);
+  u8g.setFont(STATUS_FONT_NAME);
+  lcd_moveto(X_LABEL_POS + offs, row_str_base);
+  lcd_put_wchar('X' + axis);
+  u8g.setFont(MENU_FONT_NAME);
+  lcd_moveto(X_LABEL_POS + offs, row_str_base + 21);
+  //lcd_moveto(X_VALUE_POS + offs, row_str_base);
   if (blink)
     lcd_put_u8str(value);
   else {
-    if (!TEST(axis_homed, axis))
+    if (!TEST(axis_homed, axis)) {
+      u8g.setColorIndex(2);
       while (const char c = *value++) lcd_put_wchar(c <= '.' ? c : '?');
+      u8g.setColorIndex(1);
+    }
     else {
       #if NONE(HOME_AFTER_DEACTIVATE, DISABLE_REDUCED_ACCURACY_WARNING)
         if (!TEST(axis_known_position, axis))
@@ -287,6 +317,18 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
   uint16_t count_renders = 0;
   uint32_t total_cycles = 0;
 #endif
+
+void draw_4colom_box () {
+  draw_item_box(false);
+  u8g.setColorIndex(3);
+  u8g.drawVLine(col_x1 + off_x   - 1, row_y1, row_h);
+  u8g.drawVLine(col_x1 + off_x      , row_y1, row_h);
+  u8g.drawVLine(col_x1 + off_x*2 - 1, row_y1, row_h);
+  u8g.drawVLine(col_x1 + off_x*2    , row_y1, row_h);
+  u8g.drawVLine(col_x1 + off_x*3 - 1, row_y1, row_h);
+  u8g.drawVLine(col_x1 + off_x*3    , row_y1, row_h);
+  u8g.setColorIndex(1);
+}
 
 void MarlinUI::draw_status_screen() {
 
@@ -326,12 +368,9 @@ void MarlinUI::draw_status_screen() {
         )
       ));
     #endif
-  }
+  } // first_page
 
   const bool blink = get_blink();
-
-  // Status Menu Font
-  set_font(FONT_STATUSMENU);
 
   #if ENABLED(MARLIN_DEV_MODE)
     TCNT5 = 0;
@@ -350,7 +389,7 @@ void MarlinUI::draw_status_screen() {
 
   #if DO_DRAW_BED
     #if ANIM_BED
-      #define BED_BITMAP(S) ((S) ? status_bed_on_bmp : status_bed_bmp)
+      #define BED_BITMAP(S) ((S) ? status_bed_40x24_on_bmp : status_bed_40x24_bmp)
     #else
       #define BED_BITMAP(S) status_bed_bmp
     #endif
@@ -387,23 +426,34 @@ void MarlinUI::draw_status_screen() {
         STATUS_FAN_X, STATUS_FAN_Y,
         STATUS_FAN_BYTEWIDTH, STATUS_FAN_HEIGHT,
         #if STATUS_FAN_FRAMES > 2
-          fan_frame == 1 ? status_fan1_bmp :
-          fan_frame == 2 ? status_fan2_bmp :
+          fan_frame == 1 ? status_fan_40x36_1_bmp :
+          fan_frame == 2 ? status_fan_40x36_2_bmp :
           #if STATUS_FAN_FRAMES > 3
-            fan_frame == 3 ? status_fan3_bmp :
+            fan_frame == 3 ? status_fan_40x36_3_bmp :
           #endif
         #elif STATUS_FAN_FRAMES > 1
-          blink && thermalManager.fan_speed[0] ? status_fan1_bmp :
+          blink && thermalManager.fan_speed[0] ? status_fan_40x36_1_bmp :
         #endif
-        status_fan0_bmp
+        status_fan_40x36_0_bmp
       );
   #endif
 
   //
   // Temperature Graphics and Info
   //
-
-  if (PAGE_UNDER(6 + 1 + 12 + 1 + 6 + 1)) {
+  off_x  = LCD_PIXEL_WIDTH / 4;
+  row_h  = LCD_PIXEL_HEIGHT / 4;
+  row_y1 = 0; 
+  row_y2 = row_h - 1;
+  col_x1 = 0;
+  col_x2 = LCD_PIXEL_WIDTH - 1;
+   
+  if (PAGE_CONTAINS(row_y1,row_y2)) {
+    draw_4colom_box();
+  }
+  //if (PAGE_UNDER(6 + 1 + 12 + 1 + 6 + 1)) {
+  if (PAGE_UNDER(TEMPERATURE_BASELINE + MENU_FONT_DESCENT)) {
+    u8g.setFont(MENU_FONT_NAME);
     // Extruders
     for (uint8_t e = 0; e < MAX_HOTEND_DRAW; ++e)
       _draw_heater_status((heater_ind_t)e, blink);
@@ -419,8 +469,7 @@ void MarlinUI::draw_status_screen() {
 
     // Fan, if a bitmap was provided
     #if DO_DRAW_FAN
-      if (PAGE_CONTAINS(STATUS_FAN_TEXT_Y - INFO_FONT_ASCENT, STATUS_FAN_TEXT_Y - 1)) {
-        char c = '%';
+      if (PAGE_CONTAINS(TARGET_TEMP_BASELINE - MENU_FONT_ASCENT, TARGET_TEMP_BASELINE + MENU_FONT_DESCENT)) {
         uint16_t spd = thermalManager.fan_speed[0];
         if (spd) {
           #if ENABLED(ADAPTIVE_FAN_SLOWING)
@@ -429,9 +478,23 @@ void MarlinUI::draw_status_screen() {
               c = '*';
             }
           #endif
-          lcd_put_u8str(STATUS_FAN_TEXT_X, STATUS_FAN_TEXT_Y, i16tostr3(thermalManager.fanPercent(spd)));
+          u8g.setFont(MENU_FONT_NAME);
+          lcd_moveto(285, TARGET_TEMP_BASELINE);
+          lcd_put_u8str(i16tostr3(thermalManager.fanPercent(spd)));
+        }
+        u8g.setFont(STATUS_FONT_NAME);
+        lcd_put_u8str(10, TARGET_TEMP_BASELINE, "REXYZ");
+      }
+      if (PAGE_CONTAINS(TEMPERATURE_BASELINE - MENU_FONT_ASCENT,TEMPERATURE_BASELINE + MENU_FONT_DESCENT)) {
+        char c = '%';
+        uint16_t spd = thermalManager.fan_speed[0];
+        if (spd) {
+          u8g.setFont(MENU_FONT_NAME);
+          lcd_moveto(305, TEMPERATURE_BASELINE);
           lcd_put_wchar(c);
         }
+        u8g.setFont(STATUS_FONT_NAME);
+        lcd_put_u8str(28, TEMPERATURE_BASELINE, "A1");
       }
     #endif
   }
@@ -440,217 +503,210 @@ void MarlinUI::draw_status_screen() {
     total_cycles += TCNT5;
   #endif
 
-  #if ENABLED(SDSUPPORT)
-    //
-    // SD Card Symbol
-    //
-    if (card.isFileOpen() && PAGE_CONTAINS(42, 51)) {
-      #if HAS_ABL_OR_UBL
-        u8g.drawBitmapP(37, 42, 2, 5, status_SD);
-      #else
-        // Upper box
-        u8g.drawBox(42, 42, 8, 7);     // 42-48 (or 41-47)
-        // Right edge
-        u8g.drawBox(50, 44, 2, 5);     // 44-48 (or 43-47)
-        // Bottom hollow box
-        u8g.drawFrame(42, 49, 10, 4);  // 49-52 (or 48-51)
-        // Corner pixel
-        u8g.drawPixel(50, 43);         // 43 (or 42)
-      #endif
-    }
-  #endif // SDSUPPORT
+  //
+  // XYZ Coordinates
+  //
+  row_h  = LCD_PIXEL_HEIGHT / 4;
+  row_y1 = row_h; 
+  row_y2 = row_y1 + row_h - 1;
+  col_x1 = 0;
+  col_x2 = LCD_PIXEL_WIDTH - 1;
+  off_x  = LCD_PIXEL_WIDTH / 4;
+  
+  if (PAGE_CONTAINS(row_y1,row_y2)) {
 
-  #if HAS_ABL_OR_UBL
-    if (planner.leveling_active) {
+    u8g.setFont(STATUS_FONT_NAME);
+    row_str_base = row_y1 + 14 + STATUS_FONT_HEIGHT/2 - STATUS_FONT_DESCENT;
+    draw_4colom_box();
+
+    #if DUAL_MIXING_EXTRUDER
+      // Two-component mix / gradient instead of XY
+
+      lcd_moveto(X_LABEL_POS, row_str_base);
+
+      char mixer_messages[12];
+      const char *mix_label;
+      #if ENABLED(GRADIENT_MIX)
+        if (mixer.gradient.enabled) {
+          mixer.update_mix_from_gradient();
+          mix_label = "Gr";
+        }
+        else
+      #endif
+        {
+          mixer.update_mix_from_vtool();
+          mix_label = "Mx";
+        }
+      sprintf_P(mixer_messages, PSTR("%s %d;%d%% "), mix_label, int(mixer.mix[0]), int(mixer.mix[1]));
+      lcd_put_u8str(mixer_messages);
+    #else
+      _draw_axis_value(X_AXIS, xstring, blink);
+      _draw_axis_value(Y_AXIS, ystring, blink);
+    #endif
+
+    _draw_axis_value(Z_AXIS, zstring, blink);
+
+  //
+  // Feedrate
+  //
+    u8g.setFont(STATUS_FONT_NAME);
+    draw_item_box(false); 
+    lcd_moveto(X_LABEL_POS, row_str_base);
+    lcd_put_u8str("Speed");
+    lcd_moveto(X_LABEL_POS, row_str_base + 21);
+    u8g.setFont(MENU_FONT_NAME);
+    lcd_put_u8str(i16tostr3(feedrate_percentage));
+    lcd_put_wchar('%');
+
+  }
+
+  row_y1 = LCD_PIXEL_HEIGHT * 3/6; 
+  row_y2 = LCD_PIXEL_HEIGHT * 5/6 - 1;
+  col_x1 = 0;
+  col_x2 = LCD_PIXEL_WIDTH - 1;
+  if (PAGE_CONTAINS(row_y1,row_y2)) {
+    row_str_base = row_y1+ 16 + STATUS_FONT_HEIGHT/2 - STATUS_FONT_DESCENT;
+  //
+  // ABL_STATUS
+  //
+    #if HAS_ABL_OR_UBL
+      if (planner.leveling_active) 
+        u8g.setColorIndex(2);
+      else 
+        u8g.setColorIndex(3);
       #if ENABLED(AUTO_BED_LEVELING_UBL)
-        u8g.drawBitmapP(37, 48, 2, 5, status_UBL);
+        lcd_put_u8str(22, row_str_base, "UBL");
       #else
-        u8g.drawBitmapP(37, 48, 2, 5, status_ABL);
+        lcd_put_u8str(22, row_str_base, "ABL");
       #endif
-    }
-  #endif
+      u8g.setColorIndex(1);
+    #endif
+  //
+  // SD Card Symbol
+  //
+    #if ENABLED(SDSUPPORT)
+      if (card.isDetected()) {
+        if (card.isFileOpen()) 
+          u8g.setColorIndex(2);
+        else
+          u8g.setColorIndex(1);
+      }
+      else
+        u8g.setColorIndex(3);
+      lcd_put_u8str(90, row_str_base, "MEDIA"); // 160 + (80 - 12 *5) /2
+      u8g.setColorIndex(1);
+    #endif
+  //
+  // Filament Sensor
+  //
+    #if HAS_FILAMENT_SENSOR
+      if (runout.enabled) {
+        if(runout.filament_ran_out)
+          u8g.setColorIndex(2);
+        else
+          u8g.setColorIndex(1);
+      }
+      else
+        u8g.setColorIndex(3);
+      lcd_put_u8str(262, row_str_base, "FIL"); // 160 + (80 - 12 *3) /2
+      u8g.setColorIndex(1);
+    #endif
+    #if ENABLED(POWER_LOSS_RECOVERY)
+      if (recovery.enabled) 
+        u8g.setColorIndex(1);
+      else
+        u8g.setColorIndex(3);
+      lcd_put_u8str(182, row_str_base, "PLR"); // 160 + (80 - 12 *3) /2
+      u8g.setColorIndex(1);
+    #endif
+  }
 
+  //
+  // Progress bar frame
+  //
   #if HAS_PRINT_PROGRESS
+
     //
     // Progress bar frame
     //
-    #define PROGRESS_BAR_X 54
-    #define PROGRESS_BAR_WIDTH (LCD_PIXEL_WIDTH - PROGRESS_BAR_X)
+    #define PROGRESS_BAR_X (STATUS_FONT_WIDTH * 9)
+    #define PROGRESS_BAR_Y 150
+    #define PROGRESS_BAR_WIDTH (LCD_PIXEL_WIDTH - PROGRESS_BAR_X - OFFSET_H)
 
-    if (PAGE_CONTAINS(49, 52))
-      u8g.drawFrame(PROGRESS_BAR_X, 49, PROGRESS_BAR_WIDTH, 4);
+    if (PAGE_CONTAINS(PROGRESS_BAR_Y, PROGRESS_BAR_Y + 3))
+      u8g.drawFrame(PROGRESS_BAR_X, PROGRESS_BAR_Y, PROGRESS_BAR_WIDTH, 4);
+
+    row_y1 += STATUS_FONT_HEIGHT + 5;
+    row_y2 += STATUS_FONT_HEIGHT + 5;
+    row_str_base += STATUS_FONT_HEIGHT + 5;
+    if (PAGE_CONTAINS(row_y1,row_y2)) {
+    //
+    // Elapsed Time
+    //
+      #if DISABLED(DOGM_SD_PERCENT)
+        #define SD_DURATION_X (PROGRESS_BAR_X + (PROGRESS_BAR_WIDTH / 2) - len * (MENU_FONT_WIDTH / 2)) - OFFSET_H
+      #else
+        #define SD_DURATION_X (LCD_PIXEL_WIDTH - len * STATUS_FONT_WIDTH) - OFFSET_H
+      #endif
+
+      if (PAGE_CONTAINS(row_y1,row_y2)) {
+      //if (PAGE_CONTAINS(EXTRAS_BASELINE - STATUS_FONT_ASCENT, EXTRAS_BASELINE + STATUS_FONT_DESCENT)) {
+        u8g.setFont(STATUS_FONT_NAME);
+        char buffer[13];
+        duration_t elapsed = print_job_timer.duration();
+        bool has_days = (elapsed.value >= 60*60*24L);
+        uint8_t len = elapsed.toDigital(buffer, has_days);
+        lcd_put_u8str(SD_DURATION_X, row_str_base, buffer);
+      }
+    }
 
     const uint8_t progress = get_progress();
-
     if (progress > 1) {
 
       //
       // Progress bar solid part
       //
-
-      if (PAGE_CONTAINS(50, 51))     // 50-51 (or just 50)
+      if (PAGE_CONTAINS(PROGRESS_BAR_Y+1, PROGRESS_BAR_Y+2))     // 50-51 (or just 50)
         u8g.drawBox(
-          PROGRESS_BAR_X + 1, 50,
+          PROGRESS_BAR_X + 1, PROGRESS_BAR_Y+1,
           (uint16_t)((PROGRESS_BAR_WIDTH - 2) * progress * 0.01), 2
         );
 
-      //
-      // SD Percent Complete
-      //
-
-      #if ENABLED(DOGM_SD_PERCENT)
-        if (PAGE_CONTAINS(41, 48)) {
-          // Percent complete
-          lcd_put_u8str(55, 48, ui8tostr3(progress));
-          lcd_put_wchar('%');
-        }
-      #endif
+      if (PAGE_CONTAINS(row_y1,row_y2)) {
+        //
+        // SD Percent Complete
+        //
+          #if ENABLED(DOGM_SD_PERCENT)
+            if (PAGE_CONTAINS(row_y1,row_y2)) {
+              // Percent complete
+              lcd_moveto(PROGRESS_BAR_X, row_str_base);
+              lcd_put_u8str(ui8tostr3(progress));
+              lcd_put_wchar('%');
+            }
+          #endif
+      }
     }
-
-    //
-    // Elapsed Time
-    //
-
-    #if DISABLED(DOGM_SD_PERCENT)
-      #define SD_DURATION_X (PROGRESS_BAR_X + (PROGRESS_BAR_WIDTH / 2) - len * (MENU_FONT_WIDTH / 2))
-    #else
-      #define SD_DURATION_X (LCD_PIXEL_WIDTH - len * MENU_FONT_WIDTH)
-    #endif
-
-    if (PAGE_CONTAINS(EXTRAS_BASELINE - INFO_FONT_ASCENT, EXTRAS_BASELINE - 1)) {
-      char buffer[13];
-      duration_t elapsed = print_job_timer.duration();
-      bool has_days = (elapsed.value >= 60*60*24L);
-      uint8_t len = elapsed.toDigital(buffer, has_days);
-      lcd_put_u8str(SD_DURATION_X, EXTRAS_BASELINE, buffer);
-    }
-
   #endif // HAS_PRINT_PROGRESS
-
-  //
-  // XYZ Coordinates
-  //
-
-  #if ENABLED(XYZ_HOLLOW_FRAME)
-    #define XYZ_FRAME_TOP 29
-    #define XYZ_FRAME_HEIGHT INFO_FONT_ASCENT + 3
-  #else
-    #define XYZ_FRAME_TOP 30
-    #define XYZ_FRAME_HEIGHT INFO_FONT_ASCENT + 1
-  #endif
-
-  if (PAGE_CONTAINS(XYZ_FRAME_TOP, XYZ_FRAME_TOP + XYZ_FRAME_HEIGHT - 1)) {
-
-    #if ENABLED(XYZ_HOLLOW_FRAME)
-      u8g.drawFrame(0, XYZ_FRAME_TOP, LCD_PIXEL_WIDTH, XYZ_FRAME_HEIGHT); // 8: 29-40  7: 29-39
-    #else
-      u8g.drawBox(0, XYZ_FRAME_TOP, LCD_PIXEL_WIDTH, XYZ_FRAME_HEIGHT);   // 8: 30-39  7: 30-37
-    #endif
-
-    if (PAGE_CONTAINS(XYZ_BASELINE - (INFO_FONT_ASCENT - 1), XYZ_BASELINE)) {
-
-      #if DISABLED(XYZ_HOLLOW_FRAME)
-        u8g.setColorIndex(0); // white on black
-      #endif
-
-      #if DUAL_MIXING_EXTRUDER
-
-        // Two-component mix / gradient instead of XY
-
-        char mixer_messages[12];
-        const char *mix_label;
-        #if ENABLED(GRADIENT_MIX)
-          if (mixer.gradient.enabled) {
-            mixer.update_mix_from_gradient();
-            mix_label = "Gr";
-          }
-          else
-        #endif
-          {
-            mixer.update_mix_from_vtool();
-            mix_label = "Mx";
-          }
-        sprintf_P(mixer_messages, PSTR("%s %d;%d%% "), mix_label, int(mixer.mix[0]), int(mixer.mix[1]));
-        lcd_put_u8str(X_LABEL_POS, XYZ_BASELINE, mixer_messages);
-
-      #else
-
-        _draw_axis_value(X_AXIS, xstring, blink);
-        _draw_axis_value(Y_AXIS, ystring, blink);
-
-      #endif
-
-      _draw_axis_value(Z_AXIS, zstring, blink);
-
-      #if DISABLED(XYZ_HOLLOW_FRAME)
-        u8g.setColorIndex(1); // black on white
-      #endif
-    }
-  }
-
-  //
-  // Feedrate
-  //
-
-  #define EXTRAS_2_BASELINE (EXTRAS_BASELINE + 3)
-
-  if (PAGE_CONTAINS(EXTRAS_2_BASELINE - INFO_FONT_ASCENT, EXTRAS_2_BASELINE - 1)) {
-    set_font(FONT_MENU);
-    lcd_put_wchar(3, EXTRAS_2_BASELINE, LCD_STR_FEEDRATE[0]);
-
-    set_font(FONT_STATUSMENU);
-    lcd_put_u8str(12, EXTRAS_2_BASELINE, i16tostr3(feedrate_percentage));
-    lcd_put_wchar('%');
-
-    //
-    // Filament sensor display if SD is disabled
-    //
-    #if ENABLED(FILAMENT_LCD_DISPLAY) && DISABLED(SDSUPPORT)
-      lcd_put_u8str(56, EXTRAS_2_BASELINE, wstring);
-      lcd_put_u8str(102, EXTRAS_2_BASELINE, mstring);
-      lcd_put_wchar('%');
-      set_font(FONT_MENU);
-      lcd_put_wchar(47, EXTRAS_2_BASELINE, LCD_STR_FILAM_DIA[0]); // lcd_put_u8str_P(PSTR(LCD_STR_FILAM_DIA));
-      lcd_put_wchar(93, EXTRAS_2_BASELINE, LCD_STR_FILAM_MUL[0]);
-    #endif
-  }
-
   //
   // Status line
   //
-
-  if (PAGE_CONTAINS(STATUS_BASELINE - INFO_FONT_ASCENT, STATUS_BASELINE + INFO_FONT_DESCENT)) {
-    lcd_moveto(0, STATUS_BASELINE);
-
-    #if BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
-      // Alternate Status message and Filament display
-      if (ELAPSED(millis(), next_filament_display)) {
-        lcd_put_u8str_P(PSTR(LCD_STR_FILAM_DIA));
-        lcd_put_wchar(':');
-        lcd_put_u8str(wstring);
-        lcd_put_u8str_P(PSTR("  " LCD_STR_FILAM_MUL));
-        lcd_put_wchar(':');
-        lcd_put_u8str(mstring);
-        lcd_put_wchar('%');
-      }
-      else
-    #endif
-        draw_status_message(blink);
-  }
+  draw_status_message(blink);
 }
 
 void MarlinUI::draw_status_message(const bool blink) {
 
-  #if ENABLED(MARLIN_DEV_MODE)
-    if (PAGE_CONTAINS(64-8, 64-1)) {
-      lcd_put_int(total_cycles);
-      lcd_put_wchar('/');
-      lcd_put_int(count_renders);
-      lcd_put_wchar('=');
-      lcd_put_int(int(total_cycles / count_renders));
-      return;
-    }
-  #endif
+  row_y1 = LCD_PIXEL_HEIGHT * 5/6; 
+  row_y2 = LCD_PIXEL_HEIGHT - 1;
+  col_x1 = 0;
+  col_x2 = LCD_PIXEL_WIDTH - 1;
+   
+  u8g.setFont(MENU_FONT_NAME);
+  row_str_base = row_y1 + 16 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;
+
+  if (!PAGE_CONTAINS(row_y1,row_y2)) return;
+  draw_item_box(false); 
+
+  lcd_moveto(5, row_str_base);
 
   // Get the UTF8 character count of the string
   uint8_t slen = utf8_strlen(status_message);
@@ -659,10 +715,10 @@ void MarlinUI::draw_status_message(const bool blink) {
 
     static bool last_blink = false;
 
-    if (slen <= LCD_WIDTH) {
+    if (slen <= LCD_WIDTH-1) {
       // The string fits within the line. Print with no scrolling
       lcd_put_u8str(status_message);
-      while (slen < LCD_WIDTH) { lcd_put_wchar(' '); ++slen; }
+      while (slen < LCD_WIDTH-1) { lcd_put_wchar(' '); ++slen; }
     }
     else {
       // String is longer than the available space
@@ -674,13 +730,13 @@ void MarlinUI::draw_status_message(const bool blink) {
       lcd_put_u8str_max(stat, LCD_PIXEL_WIDTH);
 
       // If the remaining string doesn't completely fill the screen
-      if (rlen < LCD_WIDTH) {
+      if (rlen < LCD_WIDTH - 1) {
         lcd_put_wchar('.');                     // Always at 1+ spaces left, draw a dot
-        uint8_t chars = LCD_WIDTH - rlen;       // Amount of space left in characters
+        uint8_t chars = LCD_WIDTH - rlen - 1;       // Amount of space left in characters
         if (--chars) {                          // Draw a second dot if there's space
           lcd_put_wchar('.');
           if (--chars) {                        // Print a second copy of the message
-            lcd_put_u8str_max(status_message, LCD_PIXEL_WIDTH - (rlen + 2) * (MENU_FONT_WIDTH));
+            lcd_put_u8str_max(status_message, LCD_PIXEL_WIDTH - (rlen + 2) * (STATUS_FONT_WIDTH));
             lcd_put_wchar(' ');
           }
         }
