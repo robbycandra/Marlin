@@ -56,6 +56,7 @@
 */
 
 #include "../../inc/MarlinConfig.h"
+#include "../../lcd/TFT/ultralcd_TFT.h"
 
 #if HAS_GRAPHICAL_LCD && PIN_EXISTS(FSMC_CS) && ENABLED(FULL_SCALE_TFT_320X240)
 
@@ -71,14 +72,15 @@
   extern void LCD_IO_WriteMultiple(uint16_t color, uint32_t count);
 #endif
 
-#define WIDTH 128
-#define HEIGHT 64
-#define PAGE_HEIGHT 8
+#define WIDTH  LCD_PIXEL_WIDTH
+#define HEIGHT LCD_PIXEL_HEIGHT
+#define FULL_HEIGHT 240
+#define PAGE_HEIGHT 4
 
-#define X_LO 32
-#define Y_LO 32
-#define X_HI (X_LO + 2 * WIDTH  - 1)
-#define Y_HI (Y_LO + 2 * HEIGHT - 1)
+#define X_LO 0
+#define Y_LO 0
+#define X_HI (X_LO + WIDTH  - 1)
+#define Y_HI (Y_LO + HEIGHT - 1)
 
 #define LCD_COLUMN      0x2A   /* Colomn address register */
 #define LCD_ROW         0x2B   /* Row address register */
@@ -86,11 +88,30 @@
 
 // see https://ee-programming-notepad.blogspot.com/2016/10/16-bit-color-generator-picker.html
 
-#define COLOR_BLACK 0x0000
-#define COLOR_WHITE 0xFFFF
-#define COLOR_BLUE  0x21DD
-#define COLOR_RED   0xF800
-#define COLOR_DARK  0x0003 // Some dark color
+#define COLOR_BLACK       0x0000 //#000000
+#define COLOR_WHITE       0xFFFF //#FFFFFF
+#define COLOR_SILVER      0xC618 //#C0C0C0
+#define COLOR_GREY        0x7BEF //#808080
+#define COLOR_DARKGREY    0x4208 //#404040
+#define COLOR_DARKGREY2   0x39E7 //#303030
+
+#define COLOR_RED         0xF800 //#FF0000
+#define COLOR_LIME        0x7E00 //#00FF00
+#define COLOR_BLUE        0x001F //#0000FF
+#define COLOR_YELLOW      0xFFE0 //#FFFF00
+#define COLOR_MAGENTA     0xF81F //#FF00FF 
+#define COLOR_FUCHSIA     0xF81F //#FF00FF 
+#define COLOR_CYAN        0x07FF //#00FFFF 
+#define COLOR_AQUA        0x07FF //#00FFFF 
+
+#define COLOR_MAROON      0x7800 //#800000
+#define COLOR_GREEN       0x03E0 //#008000
+#define COLOR_NAVY        0x000F //#000080
+#define COLOR_OLIVE       0x8400 //#808000
+#define COLOR_PURPLE      0x8010 //#800080
+#define COLOR_TEAL        0x0410 //#008080
+
+#define COLOR_ORANGE      0xFC00 //#FF7F00
 
 #ifndef TFT_MARLINUI_COLOR
   #define TFT_MARLINUI_COLOR COLOR_WHITE
@@ -119,6 +140,8 @@ static const uint8_t page_first_sequence[] = {
   U8G_ESC_END
 };
 
+// WIDTH  = 320 = 0x13F
+// HEIGHT = 240 = 0x0EF
 static const uint8_t clear_screen_sequence[] = {
   U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0x3F,
   U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, 0x00, 0xEF,
@@ -128,37 +151,30 @@ static const uint8_t clear_screen_sequence[] = {
 
 #if ENABLED(TOUCH_BUTTONS)
 
-  static const uint8_t separation_line_sequence_left[] = {
-    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(10), U8G_ESC_DATA(159),
-    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(170), U8G_ESC_DATA(173),
+  static const uint8_t buttonD_sequence[] = {
+    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(14), U8G_ESC_DATA(77),
+    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(197), U8G_ESC_DATA(236),
     U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
     U8G_ESC_END
   };
 
-  static const uint8_t separation_line_sequence_right[] = {
-    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(160), U8G_ESC_DATA(309),
-    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(170), U8G_ESC_DATA(173),
+  static const uint8_t buttonA_sequence[] = {
+    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(90), U8G_ESC_DATA(153),
+    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(197), U8G_ESC_DATA(236),
     U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
     U8G_ESC_END
   };
 
-  static const uint8_t button0_sequence[] = {
-    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(20), U8G_ESC_DATA(99),
-    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(185), U8G_ESC_DATA(224),
+  static const uint8_t buttonB_sequence[] = {
+    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(166), U8G_ESC_DATA(229),
+    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(197), U8G_ESC_DATA(236),
     U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
     U8G_ESC_END
   };
 
-  static const uint8_t button1_sequence[] = {
-    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(120), U8G_ESC_DATA(199),
-    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(185), U8G_ESC_DATA(224),
-    U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
-    U8G_ESC_END
-  };
-
-  static const uint8_t button2_sequence[] = {
-    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(220), U8G_ESC_DATA(299),
-    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(185), U8G_ESC_DATA(224),
+  static const uint8_t buttonC_sequence[] = {
+    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(242), U8G_ESC_DATA(305),
+    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(197), U8G_ESC_DATA(236),
     U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
     U8G_ESC_END
   };
@@ -333,7 +349,7 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
     uint16_t* buffer = &bufferA[0];
     bool allow_async = true;
   #else
-    uint16_t buffer[256]; // 16-bit RGB 565 pixel line buffer
+    uint16_t buffer[WIDTH]; // 16-bit RGB 565 pixel line buffer
   #endif
   switch (msg) {
     case U8G_DEV_MSG_INIT:
@@ -348,44 +364,30 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
 
       if (preinit) {
         preinit = false;
-        return u8g_dev_pb8v1_base_fn(u8g, dev, msg, arg);
+        return u8g_dev_pb8v2_base_fn(u8g, dev, msg, arg);
       }
 
+      // Clear Screen Sequence
       u8g_WriteEscSeqP(u8g, dev, clear_screen_sequence);
       #ifdef LCD_USE_DMA_FSMC
         LCD_IO_WriteMultiple(TFT_MARLINBG_COLOR, (320*240));
       #else
-        memset2(buffer, TFT_MARLINBG_COLOR, 160);
-        for (uint16_t i = 0; i < 960; i++)
-          u8g_WriteSequence(u8g, dev, 160, (uint8_t *)buffer);
+        memset2(buffer, TFT_MARLINBG_COLOR, WIDTH/2);
+        for (uint16_t i = 0; i < FULL_HEIGHT*4; i++)
+          u8g_WriteSequence(u8g, dev, WIDTH/2, (uint8_t *)buffer);
       #endif
 
       // bottom line and buttons
       #if ENABLED(TOUCH_BUTTONS)
 
-        #ifdef LCD_USE_DMA_FSMC
-          u8g_WriteEscSeqP(u8g, dev, separation_line_sequence_left);
-          LCD_IO_WriteMultiple(TFT_DISABLED_COLOR, 300);
-          u8g_WriteEscSeqP(u8g, dev, separation_line_sequence_right);
-          LCD_IO_WriteMultiple(TFT_DISABLED_COLOR, 300);
-        #else
-          memset2(buffer, TFT_DISABLED_COLOR, 150);
-          u8g_WriteEscSeqP(u8g, dev, separation_line_sequence_left);
-          for (uint8_t i = 4; i--;)
-            u8g_WriteSequence(u8g, dev, 150, (uint8_t *)buffer);
-          u8g_WriteEscSeqP(u8g, dev, separation_line_sequence_right);
-          for (uint8_t i = 4; i--;)
-            u8g_WriteSequence(u8g, dev, 150, (uint8_t *)buffer);
-        #endif
-
         u8g_WriteEscSeqP(u8g, dev, button0_sequence);
-        drawImage(button0, u8g, dev, 40, 20, TFT_BTSLEFT_COLOR);
+        drawImage(button0, u8g, dev, 40, 20, COLOR_ORANGE);
 
         u8g_WriteEscSeqP(u8g, dev, button1_sequence);
-        drawImage(button1, u8g, dev, 40, 20, TFT_BTSLEFT_COLOR);
+        drawImage(button1, u8g, dev, 40, 20, COLOR_ORANGE);
 
         u8g_WriteEscSeqP(u8g, dev, button2_sequence);
-        drawImage(button2, u8g, dev, 40, 20, TFT_BTRIGHT_COLOR);
+        drawImage(button2, u8g, dev, 40, 20, COLOR_ORANGE);
 
       #endif // TOUCH_BUTTONS
 
@@ -399,17 +401,22 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
       break;
 
     case U8G_DEV_MSG_PAGE_NEXT:
-      if (++page > 8) return 1;
+      if (++page > (HEIGHT / PAGE_HEIGHT)) return 1;
 
-      for (uint8_t y = 0; y < 8; y++) {
+      for (uint8_t y = 0; y < PAGE_HEIGHT; y++) {
         uint32_t k = 0;
         #ifdef LCD_USE_DMA_FSMC
           buffer = (y & 1) ? bufferB : bufferA;
         #endif
         for (uint16_t i = 0; i < (uint32_t)pb->width; i++) {
           const uint8_t b = *(((uint8_t *)pb->buf) + i);
-          const uint16_t c = TEST(b, y) ? TFT_MARLINUI_COLOR : TFT_MARLINBG_COLOR;
-          buffer[k++] = c; buffer[k++] = c;
+          const uint8_t clr = (b >> (y<<1)) & 0x03;
+          switch(clr) {
+            case 0: buffer[k++] = TFT_MARLINBG_COLOR; break;
+            case 1: buffer[k++] = COLOR_WHITE; break;
+            case 2: buffer[k++] = COLOR_RED; break;
+            case 3: buffer[k++] = COLOR_DARKGREY; break;
+          }
         }
         #ifdef LCD_USE_DMA_FSMC
           memcpy(&buffer[256], &buffer[0], 512);
@@ -423,12 +430,10 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
           else
             LCD_IO_WriteSequence(buffer, 512);
         #else
-          for (uint8_t i = 2; i--;) {
-            u8g_WriteSequence(u8g, dev, 128, (uint8_t*)buffer);
-            u8g_WriteSequence(u8g, dev, 128, (uint8_t*)&(buffer[64]));
-            u8g_WriteSequence(u8g, dev, 128, (uint8_t*)&(buffer[128]));
-            u8g_WriteSequence(u8g, dev, 128, (uint8_t*)&(buffer[192]));
-          }
+          u8g_WriteSequence(u8g, dev, WIDTH / 2, (uint8_t*)buffer);
+          u8g_WriteSequence(u8g, dev, WIDTH / 2, (uint8_t*)&(buffer[WIDTH / 4]));
+          u8g_WriteSequence(u8g, dev, WIDTH / 2, (uint8_t*)&(buffer[WIDTH / 2]));
+          u8g_WriteSequence(u8g, dev, WIDTH / 2, (uint8_t*)&(buffer[WIDTH * 3 / 4]));
         #endif
       }
       break;
@@ -440,7 +445,7 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
       // Sleep Out (11h)
       return 1;
   }
-  return u8g_dev_pb8v1_base_fn(u8g, dev, msg, arg);
+  return u8g_dev_pb8v2_base_fn(u8g, dev, msg, arg);
 }
 
 U8G_PB_DEV(u8g_dev_tft_320x240_touch, WIDTH, HEIGHT, PAGE_HEIGHT, u8g_dev_tft_320x240_touch_fn, U8G_COM_HAL_FSMC_FN);
