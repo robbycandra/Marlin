@@ -78,7 +78,11 @@ static PGM_P change_filament_header(const PauseMode mode) {
 void _menu_temp_filament_op(const PauseMode mode, const int8_t extruder) {
   _change_filament_temp_mode = mode;
   _change_filament_temp_extruder = extruder;
+ #if HAS_FULL_SCALE_TFT
+  START_MENU_MODE(MENU_H_2X3);
+ #else
   START_MENU();
+ #endif 
   if (LCD_HEIGHT >= 4) STATIC_ITEM_P(change_filament_header(mode), true, true);
   MENU_BACK(MSG_BACK);
   MENU_ITEM(function, MSG_PREHEAT_1, _lcd_change_filament_temp_1_func);
@@ -349,7 +353,11 @@ void lcd_pause_extrude_more() {
 }
 
 void menu_pause_option() {
+ #if HAS_FULL_SCALE_TFT
+  START_MENU_MODE(MENU_H_2X3);
+ #else
   START_MENU();
+ #endif 
   #if LCD_HEIGHT > 2
     STATIC_ITEM(MSG_FILAMENT_CHANGE_OPTION_HEADER, true, false);
   #endif

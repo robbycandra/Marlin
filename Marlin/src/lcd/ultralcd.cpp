@@ -212,9 +212,40 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     uint8_t MarlinUI::menu_mode;
     uint8_t MarlinUI::lcd_menu_touched_coord;
     bool MarlinUI::menu_is_touched(int8_t tested_item_number) {
-      if ((lcd_menu_touched_coord > 0) && (lcd_menu_touched_coord == tested_item_number + 1)) {
-        lcd_menu_touched_coord = 0;
-        return true;
+      int8_t touched_item_number;
+      bool menu_area_touched = false;
+      if (lcd_menu_touched_coord & B10000000) {
+        const uint8_t row = (lcd_menu_touched_coord & B01111000) >> 3;
+        const uint8_t col = (lcd_menu_touched_coord & B00000111); 
+        if (ui.menu_mode == MENU_2X4) {
+          touched_item_number = (int)(row / 3) * 2 + (col >> 2);
+          menu_area_touched = true;
+        }
+        else if (ui.menu_mode == MENU_1X6) {
+          touched_item_number = row >> 1;
+          menu_area_touched = true;
+        }
+        else if (ui.menu_mode == MENU_1X4) {
+          touched_item_number = row / 3;
+          menu_area_touched = true;
+        }
+        else if (ui.menu_mode == MENU_H_2X3) {
+          touched_item_number = (int)(row / 3) * 2 + (col >> 2) - 1;
+          menu_area_touched = true;
+        }
+        else if (row > 8) {  // ui.menu_mode = MENU_SELECT & 4th row.
+          touched_item_number = col >> 2; 
+          menu_area_touched = true;
+        }
+        if (menu_area_touched) {
+          if (touched_item_number == tested_item_number) {
+            lcd_menu_touched_coord = 0;
+            #if HAS_BUZZER
+              buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+            #endif
+            return true;
+          }
+        }
       } 
       return false;
     }

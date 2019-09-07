@@ -266,6 +266,34 @@ class MenuItem_bool {
  * START_MENU    Opening code for a screen with menu items.
  *               Scroll as-needed to keep the selected line in view.
  */
+#if HAS_FULL_SCALE_TFT
+
+#define START_MENU() \
+  ui.menu_mode = MENU_2X4; \
+  scroll_screen(1, true); \
+  bool _skipStatic = true; \
+  SCREEN_OR_MENU_LOOP()
+
+#define START_MENU_MODE(MENUMODE) \
+  ui.menu_mode = MENUMODE; \
+  scroll_screen(1, true); \
+  bool _skipStatic = true; \
+  SCREEN_OR_MENU_LOOP()
+
+#define START_SCREEN() \
+  ui.menu_mode = SCREEN_1X6; \
+  scroll_screen(6, false); \
+  bool _skipStatic = false; \
+  SCREEN_OR_MENU_LOOP()
+
+#define START_SCREEN_MODE(MENUMODE) \
+  ui.menu_mode = MENUMODE; \
+  scroll_screen(LCD_HEIGHT, false); \
+  bool _skipStatic = false; \
+  SCREEN_OR_MENU_LOOP()
+
+#else
+
 #define START_SCREEN() \
   scroll_screen(LCD_HEIGHT, false); \
   bool _skipStatic = false; \
@@ -275,6 +303,7 @@ class MenuItem_bool {
   scroll_screen(1, true); \
   bool _skipStatic = true; \
   SCREEN_OR_MENU_LOOP()
+#endif 
 
 #define END_SCREEN() \
   } \

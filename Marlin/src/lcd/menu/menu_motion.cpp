@@ -254,7 +254,12 @@ void menu_move_01mm()   { _goto_manual_move( 0.1f); }
 
 void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int8_t eindex=-1) {
   _manual_move_func_ptr = func;
+
+ #if HAS_FULL_SCALE_TFT
+  START_MENU_MODE(MENU_H_2X3);
+ #else
   START_MENU();
+ #endif 
   if (LCD_HEIGHT >= 4) {
     switch (axis) {
       case X_AXIS: STATIC_ITEM(MSG_MOVE_X, true, true); break;
@@ -270,7 +275,11 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
   }
   #if ENABLED(PREVENT_COLD_EXTRUSION)
     if (axis == E_AXIS && thermalManager.tooColdToExtrude(eindex >= 0 ? eindex : active_extruder))
+     #if HAS_FULL_SCALE_TFT
+      STATIC_ITEM(MSG_HOTEND_TOO_COLD);
+     #else
       MENU_BACK(MSG_HOTEND_TOO_COLD);
+     #endif 
     else
   #endif
   {

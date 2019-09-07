@@ -192,7 +192,11 @@ static inline void _lcd_probe_next_corner() {
 static inline void menu_adjust_corner() {
   char mea_z[10];
   dtostrf(corner_measured_z,1,2,mea_z);
+ #if HAS_FULL_SCALE_TFT
+  START_MENU_MODE(MENU_H_2X3);
+ #else
   START_MENU();
+ #endif 
   STATIC_ITEM("Offset ",false,false, mea_z);
   MENU_ITEM(function, MSG_BACK, _lcd_probe_calibration_back);
   MENU_ITEM(function,"Check Corner", _lcd_probe_corner);
@@ -262,7 +266,11 @@ static inline void _lcd_save_offset() {
 static inline void menu_measure_probe_offset() {
   char mea_z[10];
   dtostrf(corner_measured_z,1,2,mea_z);
+ #if HAS_FULL_SCALE_TFT
+  START_MENU_MODE(MENU_H_2X3);
+ #else
   START_MENU();
+ #endif 
   if (bed_corner == 0)
     STATIC_ITEM("Adjust Bed Height");
   else

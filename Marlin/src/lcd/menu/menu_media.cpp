@@ -127,7 +127,11 @@ void menu_media() {
 
   const uint16_t fileCnt = card.get_num_Files();
 
+ #if HAS_FULL_SCALE_TFT
+  START_MENU_MODE(MENU_1X6);
+ #else
   START_MENU();
+ #endif
   MENU_BACK(MSG_MAIN);
   card.getWorkDirName();
   if (card.filename[0] == '/') {

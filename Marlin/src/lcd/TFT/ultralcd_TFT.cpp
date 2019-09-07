@@ -366,6 +366,12 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
         col_x1 = 0;
         col_x2 = LCD_PIXEL_WIDTH - 1;
         break;
+      case MENU_1X4 :
+        row_y1 = item_num * (LCD_PIXEL_HEIGHT/4);
+        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
+        col_x1 = 0;
+        col_x2 = LCD_PIXEL_WIDTH - 1;
+        break;
       case SCREEN_1X8 :
         row_y1 = item_num * (LCD_PIXEL_HEIGHT/8);
         row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/8) - 1;

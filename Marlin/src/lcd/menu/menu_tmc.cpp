@@ -292,7 +292,11 @@ void menu_tmc_current() {
   #endif
 
   void menu_tmc_step_mode() {
+   #if HAS_FULL_SCALE_TFT
+    START_MENU_MODE(MENU_H_2X3);
+   #else
     START_MENU();
+   #endif 
     STATIC_ITEM(MSG_TMC_STEALTH_ENABLED);
     MENU_BACK(MSG_TMC_DRIVERS);
     #if AXIS_HAS_STEALTHCHOP(X)

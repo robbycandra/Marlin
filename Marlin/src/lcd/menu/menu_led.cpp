@@ -34,7 +34,11 @@
 #if ENABLED(LED_COLOR_PRESETS)
 
   void menu_led_presets() {
+   #if HAS_FULL_SCALE_TFT
+    START_MENU_MODE(MENU_H_2X3);
+   #else
     START_MENU();
+   #endif 
     #if LCD_HEIGHT > 2
       STATIC_ITEM(MSG_LED_PRESETS, true, true);
     #endif
