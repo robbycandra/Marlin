@@ -310,71 +310,152 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
 
 #if HAS_LCD_MENU
 
-  u8g_uint_t row_y1, row_y2;
+  u8g_uint_t row_y1, row_y2, col_x1, col_x2, row_str_base;
+
+  // Draw item box based on row_y1, row_y2,col_x1, col,x2
+  // if sel == true than the box will be bold and colored 
+  void draw_item_box(const bool sel) {
+    const u8g_uint_t w = col_x2 - col_x1 + 1, h = row_y2 - row_y1 + 1;
+    if (sel) {
+      u8g.setColorIndex(2);
+      if (PAGE_CONTAINS(row_y1, row_y1+1)) {
+        u8g.drawHLine(col_x1, row_y1, w);
+        u8g.drawHLine(col_x1, row_y1+1, w);
+      }
+      if (PAGE_CONTAINS(row_y2-1, row_y2)) {
+        u8g.drawHLine(col_x1, row_y2, w);
+        u8g.drawHLine(col_x1, row_y2-1, w);
+      }
+      u8g.drawVLine(col_x1, row_y1, h);
+      u8g.drawVLine(col_x2, row_y1, h);
+      u8g.drawVLine(col_x1+1, row_y1, h);
+      u8g.drawVLine(col_x2-1, row_y1, h);
+    }
+    else {
+      u8g.setColorIndex(3);
+      if (PAGE_CONTAINS(row_y1, row_y1)) u8g.drawHLine(col_x1, row_y1, w);
+      if (PAGE_CONTAINS(row_y2, row_y2)) u8g.drawHLine(col_x1, row_y2, w);
+      u8g.drawVLine(col_x1, row_y1, h);
+      u8g.drawVLine(col_x2, row_y1, h);
+    }
+    u8g.setColorIndex(1);
+  }
+
+  // calculate row_y1, row_y2, col_x1, col_x2, row_str_base
+  //   based on item_num and ui.menu_mode
+  // return true if item at item_num is contained in current page
+  // draw item box based on sel and calculate row_str_base
+  static bool mark_as_selected(uint8_t item_num, const bool sel) {
+    switch(ui.menu_mode) {
+      case MENU_2X4 :
+        row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/4);
+        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
+        if (item_num & 1) {
+          col_x1 = LCD_PIXEL_WIDTH / 2;
+          col_x2 = LCD_PIXEL_WIDTH - 1;
+        }
+        else {
+          col_x1 = 0;
+          col_x2 = LCD_PIXEL_WIDTH / 2 - 1;
+        }
+        break;
+      case MENU_1X6 :
+      case SCREEN_1X6 :
+        row_y1 = item_num * (LCD_PIXEL_HEIGHT/6);
+        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/6) - 1;
+        col_x1 = 0;
+        col_x2 = LCD_PIXEL_WIDTH - 1;
+        break;
+      case SCREEN_1X8 :
+        row_y1 = item_num * (LCD_PIXEL_HEIGHT/8);
+        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/8) - 1;
+        col_x1 = 0;
+        col_x2 = LCD_PIXEL_WIDTH - 1;
+        break;
+      case MENU_H_2X3 :
+        if (!item_num) {
+          row_y1 = 0;
+          row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
+          col_x1 = 0;
+          col_x2 = LCD_PIXEL_WIDTH - 1;
+        }
+        else {
+          item_num++;
+          row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/4);
+          row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
+          if (item_num & 1) {
+            col_x1 = LCD_PIXEL_WIDTH / 2;
+            col_x2 = LCD_PIXEL_WIDTH - 1;
+          }
+          else {
+            col_x1 = 0;
+            col_x2 = LCD_PIXEL_WIDTH / 2 - 1;
+          }
+        }
+        break;
+    }
+    if (!PAGE_CONTAINS(row_y1, row_y2)) return false;
+    row_str_base = (row_y1+row_y2)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;
+    if ((ui.menu_mode != SCREEN_1X6 && ui.menu_mode != SCREEN_1X8) || sel)
+      draw_item_box(sel);
+    return true;
+  }
 
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
 
     void MarlinUI::draw_hotend_status(const uint8_t row, const uint8_t extruder) {
-      row_y1 = row * (MENU_FONT_HEIGHT) + 1;
-      row_y2 = row_y1 + MENU_FONT_HEIGHT - 1;
 
-      if (!PAGE_CONTAINS(row_y1 + 1, row_y2 + 2)) return;
+      if (mark_as_selected(row,false)) {
+        lcd_put_wchar(LCD_PIXEL_WIDTH - 11 * (MENU_FONT_WIDTH), row_str_base, 'E');
+        lcd_put_wchar((char)('1' + extruder));
+        lcd_put_wchar(' ');
+        lcd_put_u8str(i16tostr3(thermalManager.degHotend(extruder)));
+        lcd_put_wchar('/');
 
-      lcd_put_wchar(LCD_PIXEL_WIDTH - 11 * (MENU_FONT_WIDTH), row_y2, 'E');
-      lcd_put_wchar((char)('1' + extruder));
-      lcd_put_wchar(' ');
-      lcd_put_u8str(i16tostr3(thermalManager.degHotend(extruder)));
-      lcd_put_wchar('/');
-
-      if (get_blink() || !thermalManager.hotend_idle[extruder].timed_out)
-        lcd_put_u8str(i16tostr3(thermalManager.degTargetHotend(extruder)));
+        if (get_blink() || !thermalManager.hotend_idle[extruder].timed_out)
+          lcd_put_u8str(i16tostr3(thermalManager.degTargetHotend(extruder)));
+        }
     }
 
   #endif // ADVANCED_PAUSE_FEATURE
 
-  // Set the colors for a menu item based on whether it is selected
-  static bool mark_as_selected(const uint8_t row, const bool sel) {
-    row_y1 = row * (MENU_FONT_HEIGHT) + 1;
-    row_y2 = row_y1 + MENU_FONT_HEIGHT - 1;
+  // Draw pre_char, String, post_char at center of colom.
+  void draw_centered_string(const lcd_uint_t rowPos, const lcd_uint_t colPos, const lcd_uint_t colEnd, PGM_P const pstr, const char pre_char, const char post_char) {
 
-    if (!PAGE_CONTAINS(row_y1 + 1, row_y2 + 2)) return false;
+    // Calculate Max StringLen
+    uint8_t stringLen = strlen(pstr);
+    uint8_t maxStringLen = (int)((colEnd - colPos + 1) / MENU_FONT_WIDTH);
+    NOMORE(stringLen,maxStringLen);
+    // StartPoint of String
+    lcd_uint_t startStrPos = colPos + ((colEnd - colPos + 1) - (stringLen * MENU_FONT_WIDTH)) / 2;
 
-    if (sel) {
-      #if ENABLED(MENU_HOLLOW_FRAME)
-        u8g.drawHLine(0, row_y1 + 1, LCD_PIXEL_WIDTH);
-        u8g.drawHLine(0, row_y2 + 2, LCD_PIXEL_WIDTH);
-      #else
-        u8g.setColorIndex(1); // black on white
-        u8g.drawBox(0, row_y1 + 2, LCD_PIXEL_WIDTH, MENU_FONT_HEIGHT - 1);
-        u8g.setColorIndex(0); // white on black
-      #endif
+    // Draw String
+    if (post_char && post_char != ' ') {
+      lcd_put_wchar(colEnd - MENU_FONT_WIDTH, rowPos, post_char);
+      maxStringLen--;
     }
-    #if DISABLED(MENU_HOLLOW_FRAME)
-      else {
-        u8g.setColorIndex(1); // unmarked text is black on white
-      }
-    #endif
-
-    if (!PAGE_CONTAINS(row_y1, row_y2)) return false;
-
-    lcd_moveto(0, row_y2);
-    return true;
+    if (pre_char && pre_char != ' ') {
+      lcd_put_wchar(colPos, rowPos, pre_char);
+      maxStringLen--;
+      startStrPos += MENU_FONT_WIDTH;
+    }
+    lcd_put_u8str_max_P(startStrPos, rowPos, pstr, maxStringLen * MENU_FONT_WIDTH);
   }
 
   // Draw a static line of text in the same idiom as a menu item
   void draw_menu_item_static(const uint8_t row, PGM_P pstr, const bool center/*=true*/, const bool invert/*=false*/, const char* valstr/*=nullptr*/) {
 
     if (mark_as_selected(row, invert)) {
-
-      u8g_uint_t n = LCD_PIXEL_WIDTH; // pixel width of string allowed
-
       if (center && !valstr) {
-        int8_t pad = (LCD_WIDTH - utf8_strlen_P(pstr)) / 2;
-        while (--pad >= 0) { lcd_put_wchar(' '); n--; }
+        draw_centered_string(row_str_base, 0, LCD_PIXEL_WIDTH-1, pstr, ' ', ' ');
       }
-      n -= lcd_put_u8str_max_P(pstr, n);
-      if (valstr) n -= lcd_put_u8str_max(valstr, n);
-      while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
+      else {
+        u8g_uint_t n = LCD_PIXEL_WIDTH; // pixel width of string allowed
+        lcd_moveto(0,row_str_base);
+        n -= lcd_put_u8str_max_P(pstr, n);
+        if (valstr) n -= lcd_put_u8str_max(valstr, n);
+        while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
+      }
     }
   }
 
@@ -383,52 +464,49 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     UNUSED(pre_char);
 
     if (mark_as_selected(row, sel)) {
-      u8g_uint_t n = (LCD_WIDTH - 2) * (MENU_FONT_WIDTH);
-      n -= lcd_put_u8str_max_P(pstr, n);
-      while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
-      lcd_put_wchar(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH), row_y2, post_char);
-      lcd_put_wchar(' ');
+      char str01[30], str02[30];
+      uint8_t stringLen = strlen(pstr);
+      const uint8_t maxStringLen = (int)((LCD_PIXEL_WIDTH / 2 - 4) / MENU_FONT_WIDTH);
+
+      if (stringLen <= maxStringLen) {
+        draw_centered_string(row_str_base, col_x1+2, col_x2-2, pstr, ' ', post_char);
+      }
+      else {
+        uint8_t i;
+        for (i = maxStringLen - 1; i >= 0; i--) {
+          if (pstr[i] == ' ' )
+            break;
+        } 
+        if (i) {
+          strncpy(str01, pstr, i);
+          str01[i] = '\0';
+          strncpy(str02, pstr+i+1, maxStringLen);
+        }
+        else {
+          strncpy(str01, pstr, maxStringLen);
+          str01[maxStringLen] = '\0';
+          strncpy(str02, pstr+maxStringLen, maxStringLen);
+        }
+        draw_centered_string(row_str_base - 10, col_x1+2, col_x2-2, str01, ' ', ' ');
+        draw_centered_string(row_str_base + 10, col_x1+2, col_x2-2, str02, ' ', post_char);
+      }
     }
   }
 
   // Draw a menu item with an editable value
   void _draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm) {
     if (mark_as_selected(row, sel)) {
-      const uint8_t vallen = (pgm ? utf8_strlen_P(data) : utf8_strlen((char*)data));
-      u8g_uint_t n = (LCD_WIDTH - 2 - vallen) * (MENU_FONT_WIDTH);
-      n -= lcd_put_u8str_max_P(pstr, n);
-      lcd_put_wchar(':');
-      while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
-      lcd_moveto(LCD_PIXEL_WIDTH - (MENU_FONT_WIDTH) * vallen, row_y2);
-      if (pgm) lcd_put_u8str_P(data); else lcd_put_u8str((char*)data);
+      draw_centered_string(row_str_base - 10, col_x1+2, col_x2-2, pstr, ' ', ' ');
+      draw_centered_string(row_str_base + 10, col_x1+2, col_x2-2, data, ' ', ' ');
     }
   }
 
   void draw_edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/) {
     ui.encoder_direction_normal();
 
+    constexpr u8g_uint_t lcd_chr_fit = LCD_PIXEL_WIDTH / EDIT_FONT_WIDTH;
     const u8g_uint_t labellen = utf8_strlen_P(pstr), vallen = utf8_strlen(value);
-    bool extra_row = labellen > LCD_WIDTH - 2 - vallen;
-
-    #if ENABLED(USE_BIG_EDIT_FONT)
-      // Use the menu font if the label won't fit on a single line
-      constexpr u8g_uint_t lcd_edit_width = (LCD_PIXEL_WIDTH) / (EDIT_FONT_WIDTH);
-      u8g_uint_t lcd_chr_fit, one_chr_width;
-      if (labellen <= lcd_edit_width - 1) {
-        if (labellen + vallen + 1 > lcd_edit_width) extra_row = true;
-        lcd_chr_fit = lcd_edit_width + 1;
-        one_chr_width = EDIT_FONT_WIDTH;
-        ui.set_font(FONT_EDIT);
-      }
-      else {
-        lcd_chr_fit = LCD_WIDTH;
-        one_chr_width = MENU_FONT_WIDTH;
-        ui.set_font(FONT_MENU);
-      }
-    #else
-      constexpr u8g_uint_t lcd_chr_fit = LCD_WIDTH,
-                           one_chr_width = MENU_FONT_WIDTH;
-    #endif
+    bool extra_row = labellen + vallen > lcd_chr_fit - 2;
 
     // Center the label and value lines on the middle line
     u8g_uint_t baseline = extra_row ? (LCD_PIXEL_HEIGHT) / 2 - 1
@@ -447,28 +525,29 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
         onpage = PAGE_CONTAINS(baseline - (EDIT_FONT_ASCENT - 1), baseline);
       }
       if (onpage) {
-        lcd_put_wchar(((lcd_chr_fit - 1) - (vallen + 1)) * one_chr_width, baseline, ' '); // Right-justified, padded, add a leading space
+        lcd_put_wchar(((lcd_chr_fit - 1) - (vallen + 1)) * EDIT_FONT_WIDTH, baseline, ' '); // Right-justified, padded, add a leading space
         lcd_put_u8str(value);
       }
     }
   }
 
-  inline void draw_boxed_string(const u8g_uint_t x, const u8g_uint_t y, PGM_P const pstr, const bool inv) {
-    const u8g_uint_t len = utf8_strlen_P(pstr), bw = len * (MENU_FONT_WIDTH),
-                     bx = x * (MENU_FONT_WIDTH), by = (y + 1) * (MENU_FONT_HEIGHT);
-    if (inv) {
-      u8g.setColorIndex(1);
-      u8g.drawBox(bx - 1, by - (MENU_FONT_ASCENT) + 1, bw + 2, MENU_FONT_HEIGHT - 1);
-      u8g.setColorIndex(0);
-    }
-    lcd_put_u8str_P(bx, by, pstr);
-    if (inv) u8g.setColorIndex(1);
+  inline void draw_boxed_string(PGM_P const pstr, const bool selected) {
+    if (!PAGE_CONTAINS(row_y1, row_y2)) return;
+    draw_item_box(selected); 
+    row_str_base = (row_y1+row_y2)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;
+    draw_centered_string(row_str_base, col_x1+2, col_x2-2, pstr, ' ', ' ');
   }
 
   void draw_select_screen(PGM_P const yes, PGM_P const no, const bool yesno, PGM_P const pref, const char * const string, PGM_P const suff) {
     ui.draw_select_screen_prompt(pref, string, suff);
-    draw_boxed_string(1, LCD_HEIGHT - 1, no, !yesno);
-    draw_boxed_string(LCD_WIDTH - (utf8_strlen_P(yes) + 1), LCD_HEIGHT - 1, yes, yesno);
+    row_y1 = LCD_PIXEL_HEIGHT * 3 / 4;
+    row_y2 = LCD_PIXEL_HEIGHT - 1;
+    col_x1 = 0;
+    col_x2 = LCD_PIXEL_WIDTH/2 - 1;
+    draw_boxed_string(no, !yesno);
+    col_x1 = LCD_PIXEL_WIDTH/2;
+    col_x2 = LCD_PIXEL_WIDTH - 1;
+    draw_boxed_string(yes, yesno);
   }
 
   #if ENABLED(SDSUPPORT)
@@ -477,9 +556,10 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
       UNUSED(pstr);
 
       if (mark_as_selected(row, sel)) {
-        if (isDir) lcd_put_wchar(LCD_STR_FOLDER[0]);
-        constexpr uint8_t maxlen = LCD_WIDTH - 1;
-        const u8g_uint_t pixw = maxlen * (MENU_FONT_WIDTH);
+        if (isDir) lcd_put_wchar(col_x1+2, row_str_base,'.');
+        const u8g_uint_t pixw = LCD_PIXEL_WIDTH - 4 - MENU_FONT_WIDTH;
+        constexpr uint8_t maxlen = pixw / MENU_FONT_WIDTH;
+        lcd_moveto(col_x1+2+MENU_FONT_WIDTH, row_str_base);
         u8g_uint_t n = pixw - lcd_put_u8str_max(ui.scrolled_filename(theCard, maxlen, row, sel), pixw);
         while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
       }

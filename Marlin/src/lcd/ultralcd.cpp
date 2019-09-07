@@ -272,8 +272,17 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     uint8_t col = 0, row = 0;
     if (!string && plen + slen <= LCD_WIDTH) {
       col = (LCD_WIDTH - plen - slen) / 2;
+     #if HAS_FULL_SCALE_TFT
+      row = 2; 
+     #else
       row = LCD_HEIGHT > 3 ? 1 : 0;
+     #endif
     }
+    #if HAS_FULL_SCALE_TFT
+      else 
+        row = 2;
+    #endif
+
     wrap_string_P(col, row, pref, true);
     if (string) {
       if (col) { col = 0; row++; } // Move to the start of the next line

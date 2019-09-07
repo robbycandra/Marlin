@@ -352,9 +352,21 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
     ui.encoderPosition = encoderLine * (ENCODER_STEPS_PER_MENU_ITEM);
   }
   if (is_menu) {
+    #if HAS_FULL_SCALE_TFT
+    NOMORE(encoderTopLine, (encoderLine & B11111110) );
+    if (encoderLine >= encoderTopLine + LCD_HEIGHT) {
+      if (encoderLine & 1)
+        encoderTopLine = encoderLine - LCD_HEIGHT + 1;
+      else
+        encoderTopLine = encoderLine - LCD_HEIGHT + 2;
+    }
+    #else
     NOMORE(encoderTopLine, encoderLine);
     if (encoderLine >= encoderTopLine + LCD_HEIGHT)
       encoderTopLine = encoderLine - LCD_HEIGHT + 1;
+
+    #endif
+    
   }
   else
     encoderTopLine = encoderLine;

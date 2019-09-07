@@ -245,6 +245,18 @@
   };
 #endif
 
+#if HAS_FULL_SCALE_TFT
+  enum MarlinMenuMode : uint8_t {
+    MENU_2X4 = 1,
+    MENU_H_2X3,
+    MENU_1X6,
+    MENU_1X4,
+    MENU_SELECT,
+    SCREEN_1X6,
+    SCREEN_1X8
+  };
+#endif
+
 ////////////////////////////////////////////
 //////////// MarlinUI Singleton ////////////
 ////////////////////////////////////////////
@@ -444,6 +456,11 @@ public:
 
     static bool lcd_clicked;
     static bool use_click();
+    #if HAS_FULL_SCALE_TFT
+      static uint8_t menu_mode;
+      static uint8_t lcd_menu_touched_coord;
+      static bool menu_is_touched(int8_t itemNumber);
+    #endif  
 
     static void synchronize(PGM_P const msg=nullptr);
 
@@ -504,6 +521,10 @@ public:
   #elif HAS_SPI_LCD
 
     static constexpr bool lcd_clicked = false;
+    #if HAS_FULL_SCALE_TFT
+      static constexpr uint8_t lcd_menu_touched_coord = 0;
+      static constexpr uint8_t menu_mode = 0;
+    #endif
     static constexpr bool on_status_screen() { return true; }
     static inline void run_current_screen() { status_screen(); }
 

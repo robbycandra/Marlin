@@ -85,3 +85,6 @@
 #define INFO_FONT_WIDTH   6
 
 extern U8G_CLASS u8g;
+
+extern u8g_uint_t row_y1, row_y2, col_x1, col_x2, row_str_base;
+void draw_item_box(const bool sel);
