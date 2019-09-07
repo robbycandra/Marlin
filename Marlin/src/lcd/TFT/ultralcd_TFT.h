@@ -31,10 +31,17 @@
 #include "../dogm/HAL_LCD_class_defines.h"
 
 // No More LCD selection
-#define U8G_CLASS U8GLIB_TFT_320X240_TOUCH
+#if ENABLED(FULL_SCALE_TFT_320X240)
+  #define U8G_CLASS U8GLIB_TFT_320X240_TOUCH
+  #define LCD_PIXEL_WIDTH  320
+  #define LCD_PIXEL_HEIGHT 192
+#elif ENABLED(FULL_SCALE_TFT_480X320)
+  #define U8G_CLASS U8GLIB_TFT_480X320_TOUCH
+  #define LCD_PIXEL_WIDTH  480
+  #define LCD_PIXEL_HEIGHT 240
+#endif
+
 #define U8G_PARAM FSMC_CS_PIN, FSMC_RS_PIN
-#define LCD_PIXEL_WIDTH  320
-#define LCD_PIXEL_HEIGHT 192
 
 // For selective rendering within a Y range
 #define PAGE_OVER(ya)         ((ya) <= u8g.getU8g()->current_page.y1) // Does the current page follow a region top?

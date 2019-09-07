@@ -427,7 +427,7 @@ inline void memset2(const void *ptr, uint16_t fill, size_t cnt) {
 static bool preinit = true;
 static uint8_t page;
 
-uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg) {
+uint8_t u8g_dev_tft_480x320_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg) {
   u8g_pb_t *pb = (u8g_pb_t *)(dev->dev_mem);
   #ifdef LCD_USE_DMA_FSMC
     static uint16_t bufferA[512], bufferB[512];
@@ -538,6 +538,6 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
   return u8g_dev_pb8v2_base_fn(u8g, dev, msg, arg);
 }
 
-U8G_PB_DEV(u8g_dev_tft_320x240_touch, WIDTH, HEIGHT, PAGE_HEIGHT, u8g_dev_tft_320x240_touch_fn, U8G_COM_HAL_FSMC_FN);
+U8G_PB_DEV(u8g_dev_tft_480x320_touch, WIDTH, HEIGHT, PAGE_HEIGHT, u8g_dev_tft_480x320_touch_fn, U8G_COM_HAL_FSMC_FN);
 
-#endif // HAS_GRAPHICAL_LCD && FSMC_CS && FULL_SCALE_TFT_320X240
+#endif // HAS_GRAPHICAL_LCD && FSMC_CS && FULL_SCALE_TFT_480X320
