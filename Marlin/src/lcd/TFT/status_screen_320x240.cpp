@@ -37,6 +37,7 @@
 
 #include "../../module/motion.h"
 #include "../../module/temperature.h"
+#include "../../lcd/menu/menu.h"
 
 #if ENABLED(FILAMENT_LCD_DISPLAY)
   #include "../../feature/filwidth.h"
@@ -105,6 +106,83 @@
 #endif
 
 u8g_uint_t off_x = 0, row_h = 0;
+
+void run_status_screen_touch_command() {
+  int8_t touched_item_number;
+  if (ui.lcd_menu_touched_coord & B10000000) {
+    const uint8_t row = (ui.lcd_menu_touched_coord & B01111000) >> 3;
+    const uint8_t col = (ui.lcd_menu_touched_coord & B00000111); 
+    touched_item_number = (int)(row / 3) * 4 + (col >> 1);
+    switch(touched_item_number) {
+      case 0:
+        #if HAS_BUZZER
+          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #endif
+        MenuItem_gcode::action("G28");   
+        break;
+      case 1:
+        #if HAS_BUZZER
+          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #endif
+        MenuItem_int3::action_edit(PSTR(MSG_NOZZLE),&thermalManager.temp_hotend[0].target, 0, HEATER_0_MAXTEMP - 15, thermalManager.start_watching_E0);
+        break;
+      case 2:
+        #if HAS_BUZZER
+          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #endif
+        MenuItem_int3::action_edit(PSTR(MSG_BED),&thermalManager.temp_bed.target, 0, BED_MAXTEMP - 10, thermalManager.start_watching_bed);
+        break;
+      case 3:
+        #if HAS_BUZZER
+          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #endif
+        MenuItem_percent::action_edit(PSTR(MSG_FAN_SPEED),&thermalManager.lcd_tmpfan_speed[0], 0, 255, thermalManager.lcd_setFanSpeed0);
+        break;
+      case 5:
+        #if HAS_BUZZER
+          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #endif
+        if (!TEST(axis_homed, X_AXIS) || !TEST(axis_known_position, X_AXIS)) {
+          MenuItem_gcode::action(PSTR("G28 X"));   
+        } 
+        move_menu_scale = 10;
+        ui.goto_screen(lcd_move_x);
+        break;
+      case 6:
+        #if HAS_BUZZER
+          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #endif
+        if (!TEST(axis_homed, Y_AXIS) || !TEST(axis_known_position, Y_AXIS)) {
+          MenuItem_gcode::action(PSTR("G28 Y"));   
+        } 
+        move_menu_scale = 10;
+        ui.goto_screen(lcd_move_y);
+        break;
+      case 7:
+        #if HAS_BUZZER
+          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #endif
+        if (!TEST(axis_homed, Z_AXIS) || !TEST(axis_known_position, Z_AXIS)) {
+          MenuItem_gcode::action(PSTR("G28 Z"));   
+        } 
+        move_menu_scale = 10;
+        ui.goto_screen(lcd_move_z);
+        break;
+      case 9:
+        #if HAS_BUZZER
+          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #endif
+        if (card.isDetected()) {
+          if (!card.isFileOpen()) {
+            ui.goto_screen(menu_media);
+          }
+        }
+        break;
+    }
+    ui.lcd_menu_touched_coord = 0;     
+  } 
+}
+
 
 FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, const uint8_t ty) {
   const char *str = i16tostr3(temp);
@@ -691,6 +769,8 @@ void MarlinUI::draw_status_screen() {
   // Status line
   //
   draw_status_message(blink);
+
+  run_status_screen_touch_command();
 }
 
 void MarlinUI::draw_status_message(const bool blink) {

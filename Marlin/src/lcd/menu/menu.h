@@ -434,6 +434,11 @@ void menu_move();
 //////// Menu Item Helper Functions ////////
 ////////////////////////////////////////////
 
+#if HAS_FULL_SCALE_TFT
+  void lcd_move_x();
+  void lcd_move_y();
+#endif
+
 void lcd_move_z();
 void _lcd_draw_homing();
 
