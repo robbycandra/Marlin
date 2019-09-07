@@ -796,6 +796,10 @@ void GcodeSuite::process_parsed_command(const bool no_ok/*=false*/) {
         case 1000: M1000(); break;                                // M1000: Resume from power-loss
       #endif
 
+      #if ENABLED(FSMC_GRAPHICAL_TFT)
+        case 3301: M3301(); break;                                    // M116: REXYZ Hardware Report
+      #endif
+
       default: parser.unknown_command_error(); break;
     }
     break;

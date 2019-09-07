@@ -897,6 +897,10 @@ private:
     static void M1000();
   #endif
 
+   #if ENABLED(FSMC_GRAPHICAL_TFT)
+    static void M3301();
+  #endif
+
   #if ENABLED(MAX7219_GCODE)
     static void M7219();
   #endif
