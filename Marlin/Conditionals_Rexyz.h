@@ -57,7 +57,8 @@
   + ENABLED(REXYZ_N3)   \
   + ENABLED(REXYZ_A8P)  \
   + ENABLED(REXYZ_A1)   \
-  + ENABLED(REXYZ_A2)
+  + ENABLED(REXYZ_A2)   \
+  + ENABLED(REXYZ_D2)
   #error "Please enable one and only one Printer."
 #endif
 
@@ -104,7 +105,7 @@
   #endif
 #endif
 
-#if ENABLED(REXYZ_A1) || ENABLED(REXYZ_A2)
+#if ENABLED(REXYZ_A1) || ENABLED(REXYZ_A2) || ENABLED(REXYZ_D2)
   #if ENABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
     #error "Please disable REXYZ_EEPROM_FIRMWARE_PROTECTION."
   #endif
@@ -165,6 +166,10 @@
     #define REXYZ_MACHINE_FRAME_TYPE "A2"
     #define REXYZ_BOARD_ROBIN
 #endif
+#if defined(REXYZ_D2)
+    #define REXYZ_MACHINE_FRAME_TYPE "D2"
+    #define REXYZ_BOARD_DLION
+#endif
 
 //===========================================================================
 //============================= Board Settings ==============================
@@ -206,6 +211,15 @@
 #endif
 #if defined(REXYZ_BOARD_ROBIN)
     #define MOTHERBOARD BOARD_MKS_ROBIN
+    #define ENDSTOP_INTERRUPTS_FEATURE
+    #define REXYZ_SERIAL_PORT 3
+    #define SERIAL_PORT_2 1
+    #define NUM_SERIAL 2
+    #define SDIO_SUPPORT
+    //#define SD_DETECT_INVERTED
+#endif
+#if defined(REXYZ_BOARD_DLION)
+    #define REXYZ_MOTHERBOARD BOARD_JGAURORA_A5S_A1
     #define ENDSTOP_INTERRUPTS_FEATURE
     #define REXYZ_SERIAL_PORT 3
     #define SERIAL_PORT_2 1
@@ -256,6 +270,10 @@
     #define REXYZ_TEMP_SENSOR_1 0
 #endif
 #if defined(REXYZ_BOARD_ROBIN)
+    #define REXYZ_FIL_RUNOUT_INVERTING false
+    #define REXYZ_E0_AUTO_FAN_PIN -1
+#endif
+#if defined(REXYZ_BOARD_DLION)
     #define REXYZ_FIL_RUNOUT_INVERTING false
     #define REXYZ_E0_AUTO_FAN_PIN -1
 #endif
@@ -326,7 +344,7 @@
     #define REXYZ_TEMP_SENSOR_1 0
     #define REXYZ_EXTRUDERS 1
 #endif
-#if defined(REXYZ_A1) || defined(REXYZ_A2)
+#if defined(REXYZ_A1) || defined(REXYZ_A2) || defined(REXYZ_D2)
   // Ultimaker
   #define REXYZ_DEFAULT_Kp 23.29
   #define REXYZ_DEFAULT_Ki 2.23
@@ -432,7 +450,7 @@
 
 #endif
 
-#if defined(REXYZ_A1) || defined(REXYZ_A2)
+#if defined(REXYZ_A1) || defined(REXYZ_A2) || defined(REXYZ_D2)
     #define REXYZ_USE_XMIN_PLUG
     #define REXYZ_USE_YMIN_PLUG
     #define REXYZ_USE_ZMIN_PLUG
@@ -523,7 +541,7 @@
     #define REXYZ_GRID_MAX_POINTS_X 4
     #define REXYZ_GRID_MAX_POINTS_Y 4
 #endif
-#if defined(REXYZ_A1) || defined(REXYZ_A2)
+#if defined(REXYZ_A1) || defined(REXYZ_A2)  || defined(REXYZ_D2)
     #define REXYZ_X_BED_SIZE 180
     #define REXYZ_Y_BED_SIZE 180
     #define REXYZ_X_MIN_POS 0
@@ -616,7 +634,7 @@
     #define STARTUP_TONE
 #endif
 
-#if defined(REXYZ_A1) || defined(REXYZ_A2)
+#if defined(REXYZ_A1) || defined(REXYZ_A2) || defined(REXYZ_D2)
     #define FSMC_GRAPHICAL_TFT
     #define REVERSE_MENU_DIRECTION
     #if defined(REXYZ_D2)
@@ -652,7 +670,7 @@
 //===========================================================================
 //============================= Feature Settings ============================
 //===========================================================================
-#if defined(EXTENSIBLE_UI) || defined(REXYZ_A2)
+#if defined(EXTENSIBLE_UI) || defined(REXYZ_A2) || defined(REXYZ_D2)
 #else
   #define POWER_LOSS_RECOVERY
 #endif
@@ -683,6 +701,7 @@
     #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH   245  
     #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      310
     #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 15), (Y_MIN_POS + 70), 20 }
+    //#define REXYZ_MANUAL_PROBE_START_Z 0
 #else
     #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40  
     #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100  
