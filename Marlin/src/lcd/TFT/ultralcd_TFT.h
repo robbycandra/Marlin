@@ -22,13 +22,13 @@
 #pragma once
 
 /**
- * ultralcd_DOGM.h
+ * ultralcd_TFT.h
  */
 
 #include "../../inc/MarlinConfigPre.h"
 
 #include <U8glib.h>
-#include "HAL_LCD_class_defines.h"
+#include "../dogm/HAL_LCD_class_defines.h"
 
 // LCD selection
 #if ENABLED(REPRAPWORLD_GRAPHICAL_LCD)

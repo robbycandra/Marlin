@@ -21,16 +21,16 @@
  */
 
 //
-// status_screen_DOGM.cpp
+// status_screen_320x240.cpp
 // Standard Status Screen for Graphical Display
 //
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_GRAPHICAL_LCD && DISABLED(LIGHTWEIGHT_UI)
+#if HAS_GRAPHICAL_LCD && DISABLED(LIGHTWEIGHT_UI) && ENABLED(FULL_SCALE_TFT_320X240)
 
-#include "dogm_Statusscreen.h"
-#include "ultralcd_DOGM.h"
+#include "status_screen_320x240.h"
+#include "ultralcd_TFT.h"
 #include "../ultralcd.h"
 #include "../lcdprint.h"
 #include "../../libs/numtostr.h"
@@ -704,4 +704,4 @@ void MarlinUI::draw_status_message(const bool blink) {
   #endif // !STATUS_MESSAGE_SCROLLING
 }
 
-#endif // HAS_GRAPHICAL_LCD && !LIGHTWEIGHT_UI
+#endif // HAS_GRAPHICAL_LCD && !LIGHTWEIGHT_UI && !FULL_SCALE_TFT_320X240

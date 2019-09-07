@@ -21,7 +21,7 @@
  */
 
 /**
- * ultralcd_DOGM.cpp
+ * ultralcd_TFT.cpp
  *
  * Implementation of the LCD display routines for a DOGM128 graphic display.
  * by STB for ErikZalm/Marlin. Common LCD 128x64 pixel graphic displays.
@@ -37,13 +37,13 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_GRAPHICAL_LCD
+#if HAS_GRAPHICAL_LCD && HAS_FULL_SCALE_TFT
 
-#include "ultralcd_DOGM.h"
-#include "u8g_fontutf8.h"
+#include "ultralcd_TFT.h"
+#include "../dogm/u8g_fontutf8.h"
 
 #if ENABLED(SHOW_BOOTSCREEN)
-  #include "dogm_Bootscreen.h"
+  #include "boot_screen_320x240.h"
 #endif
 
 #include "../lcdprint.h"
@@ -67,9 +67,9 @@
  * Include all needed font files
  * (See http://marlinfw.org/docs/development/fonts.html)
  */
-#include "fontdata/fontdata_ISO10646_1.h"
+#include "../dogm/fontdata/fontdata_ISO10646_1.h"
 #if ENABLED(USE_SMALL_INFOFONT)
-  #include "fontdata/fontdata_6x9_marlin.h"
+  #include "../dogm/fontdata/fontdata_6x9_marlin.h"
   #define FONT_STATUSMENU_NAME u8g_font_6x9
 #else
   #define FONT_STATUSMENU_NAME MENU_FONT_NAME
@@ -77,7 +77,7 @@
 
 U8G_CLASS u8g(U8G_PARAM);
 
-#include LANGUAGE_DATA_INCL(LCD_LANGUAGE)
+#include LANGUAGE_TFT_DATA_INCL(LCD_LANGUAGE)
 
 #if HAS_LCD_CONTRAST
 
@@ -701,4 +701,4 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
 
 #endif // HAS_LCD_MENU
 
-#endif // HAS_GRAPHICAL_LCD
+#endif // HAS_GRAPHICAL_LCD && (FULL_SCALE_TFT_320X240 || FULL_SCALE_TFT_480X320)

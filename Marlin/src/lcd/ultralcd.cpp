@@ -83,8 +83,12 @@
 
 #if HAS_SPI_LCD
 
-#if HAS_GRAPHICAL_LCD
+#if HAS_GRAPHICAL_LCD 
+ #if HAS_FULL_SCALE_TFT
+  #include "TFT/ultralcd_TFT.h "
+ #else
   #include "dogm/ultralcd_DOGM.h"
+ #endif
 #endif
 
 #include "lcdprint.h"

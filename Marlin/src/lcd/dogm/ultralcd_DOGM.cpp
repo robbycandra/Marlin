@@ -37,7 +37,7 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_GRAPHICAL_LCD
+#if HAS_GRAPHICAL_LCD && DISABLED(FULL_SCALE_TFT_320X240) && DISABLED(FULL_SCALE_TFT_480X320)
 
 #include "ultralcd_DOGM.h"
 #include "u8g_fontutf8.h"
@@ -700,4 +700,4 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
 
 #endif // HAS_LCD_MENU
 
-#endif // HAS_GRAPHICAL_LCD
+#endif // HAS_GRAPHICAL_LCD && !FULL_SCALE_TFT_320X240 && !FULL_SCALE_TFT_480X320
