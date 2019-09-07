@@ -660,7 +660,6 @@
 
 #endif
 
-
 #if defined(REXYZ_TOUCH_UI)
     //#define EXTENSIBLE_UI
     //#define EXTUI_EXAMPLE
