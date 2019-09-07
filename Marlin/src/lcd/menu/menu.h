@@ -89,6 +89,11 @@ FORCE_INLINE void draw_menu_item_edit_P(const bool sel, const uint8_t row, PGM_P
 #define DRAW_MENU_ITEM_SETTING_EDIT_GENERIC(VAL)      draw_menu_item_edit(sel, row, pstr, VAL)
 #define DRAW_BOOL_SETTING(sel, row, pstr, data)       draw_menu_item_edit_P(sel, row, pstr, (*(data))?PSTR(MSG_LCD_ON):PSTR(MSG_LCD_OFF))
 
+#if HAS_FULL_SCALE_TFT
+void draw_sdupdir_item(const bool sel, const uint8_t row, PGM_P const pstr);
+#define draw_menu_item_sdupdir(sel, row, pstr, data)  draw_sdupdir_item(sel, row, pstr)
+#endif
+
 #if ENABLED(SDSUPPORT)
   class CardReader;
   void draw_sd_menu_item(const bool sel, const uint8_t row, PGM_P const pstr, CardReader &theCard, const bool isDir);
@@ -167,6 +172,13 @@ class MenuItem_function {
   public:
     static inline void action(const menuAction_t func) { (*func)(); };
 };
+
+#if HAS_FULL_SCALE_TFT
+class MenuItem_sdupdir {
+  public:
+    static inline void action(const menuAction_t func) { (*func)(); };
+};
+#endif
 
 ////////////////////////////////////////////
 /////////// Menu Editing Actions ///////////
@@ -340,7 +352,11 @@ class MenuItem_bool {
 
 #define STATIC_ITEM(LABEL, ...) STATIC_ITEM_P(PSTR(LABEL), ## __VA_ARGS__)
 
-#define MENU_BACK(LABEL) MENU_ITEM(back, LABEL)
+#if HAS_FULL_SCALE_TFT
+  #define MENU_BACK(LABEL) NOOP
+#else
+  #define MENU_BACK(LABEL) MENU_ITEM(back, LABEL)
+#endif
 #define MENU_ITEM_DUMMY() do { _thisItemNr++; }while(0)
 #define MENU_ITEM_P(TYPE, PLABEL, ...)                       _MENU_ITEM_VARIANT_P(TYPE,      , false, PLABEL,                   ## __VA_ARGS__)
 #define MENU_ITEM(TYPE, LABEL, ...)                          _MENU_ITEM_VARIANT_P(TYPE,      , false, PSTR(LABEL),              ## __VA_ARGS__)

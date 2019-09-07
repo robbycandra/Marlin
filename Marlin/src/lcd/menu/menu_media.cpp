@@ -136,8 +136,11 @@ void menu_media() {
     #endif
   }
   else if (card.isDetected())
+   #if HAS_FULL_SCALE_TFT
+    MENU_ITEM(sdupdir, LCD_STR_FOLDER "..", lcd_sd_updir);
+   #else
     MENU_ITEM(function, LCD_STR_FOLDER "..", lcd_sd_updir);
-
+   #endif
   if (ui.should_draw()) for (uint16_t i = 0; i < fileCnt; i++) {
     if (_menuLineNr == _thisItemNr) {
       const uint16_t nr =

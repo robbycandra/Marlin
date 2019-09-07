@@ -565,6 +565,15 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
       }
     }
 
+    void draw_sdupdir_item(const bool sel, const uint8_t row, PGM_P const pstr) {
+      if (mark_as_selected(row, sel)) {
+        const u8g_uint_t pixw = LCD_PIXEL_WIDTH - 4;
+        lcd_moveto(2,row_str_base);
+        u8g_uint_t n = pixw - lcd_put_u8str_max(pstr, pixw);
+        while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
+      }
+    }
+
   #endif // SDSUPPORT
 
   #if ENABLED(AUTO_BED_LEVELING_UBL)
