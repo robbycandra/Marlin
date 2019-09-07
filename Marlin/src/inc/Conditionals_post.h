@@ -1798,7 +1798,11 @@
 // Get LCD character width/height, which may be overridden by pins, configs, etc.
 #ifndef LCD_WIDTH
   #if HAS_GRAPHICAL_LCD
+   #if HAS_FULL_SCALE_TFT
+    #define LCD_WIDTH 32
+   #else
     #define LCD_WIDTH 21
+   #endif 
   #elif ENABLED(ULTIPANEL)
     #define LCD_WIDTH 20
   #elif HAS_SPI_LCD
@@ -1807,7 +1811,11 @@
 #endif
 #ifndef LCD_HEIGHT
   #if HAS_GRAPHICAL_LCD
-    #define LCD_HEIGHT 5
+    #if HAS_FULL_SCALE_TFT
+      #define LCD_HEIGHT 8
+    #else
+      #define LCD_HEIGHT 5
+    #endif
   #elif ENABLED(ULTIPANEL)
     #define LCD_HEIGHT 4
   #elif HAS_SPI_LCD

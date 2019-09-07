@@ -597,7 +597,11 @@
 
 #if defined(REXYZ_A1) || defined(REXYZ_A2)
     #define FSMC_GRAPHICAL_TFT
-
+    #define FULL_SCALE_TFT_320X240
+    #if ENABLED(FULL_SCALE_TFT_320X240)
+      #define U8G_16BIT 1
+      // jangan lupa untuk aktifkan flag -DU8G_16BIT di platformio
+    #endif
     #define TOUCH_BUTTONS
     
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
