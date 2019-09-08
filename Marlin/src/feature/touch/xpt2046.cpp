@@ -40,6 +40,8 @@
   #define TOUCH_CS_PIN   CS_PIN
 #endif
 
+//define DEBUG_TOUCH_POINT
+
 XPT2046 touch;
 extern int8_t encoderDiff;
 
@@ -74,22 +76,55 @@ uint8_t XPT2046::read_buttons() {
   // We rely on XPT2046 compatible mode to ADS7843, hence no Z1 and Z2 measurements possible.
 
   if (!isTouched()) return 0;
-  const uint16_t x = uint16_t(((uint32_t(getInTouch(XPT2046_X))) * tsoffsets[0]) >> 16) + tsoffsets[1],
-                 y = uint16_t(((uint32_t(getInTouch(XPT2046_Y))) * tsoffsets[2]) >> 16) + tsoffsets[3];
+
+  #if defined(DEBUG_TOUCH_POINT)
+    const int32_t gtx = getInTouch(XPT2046_X);
+    const int32_t gty = getInTouch(XPT2046_Y);
+    MYSERIAL0.print("TOUCH COORDINATE : ");
+    MYSERIAL0.print(gtx,DEC);
+    MYSERIAL0.print(" : ");
+    MYSERIAL0.print(gty,DEC);
+    MYSERIAL0.print(" -> ");
+    
+    const int16_t x = uint16_t(((uint32_t(gtx)) * tsoffsets[0]) >> 16) + tsoffsets[1],
+                  y = uint16_t(((uint32_t(gty)) * tsoffsets[2]) >> 16) + tsoffsets[3];
+
+    MYSERIAL0.print(x,DEC);
+    MYSERIAL0.print(" : ");
+    MYSERIAL0.print(y,DEC);
+    MYSERIAL0.println(" . ");
+  #else
+    const uint16_t x = uint16_t(((uint32_t(getInTouch(XPT2046_X))) * tsoffsets[0]) >> 16) + tsoffsets[1],
+                   y = uint16_t(((uint32_t(getInTouch(XPT2046_Y))) * tsoffsets[2]) >> 16) + tsoffsets[3];
+  #endif
+
   if (!isTouched()) return 0; // Fingers must still be on the TS for a valid read.
 
-  const uint8_t row_touched = y / 16;
-  const uint8_t col_touched = x / 40;
+  #if ENABLED(FULL_SCALE_TFT_320X240)
+    const uint8_t row_touched = y / 16;
+    const uint8_t col_touched = x / 40;
+  #else
+    const uint8_t row_touched = y / 20;
+    const uint8_t col_touched = x / 60;
+  #endif  
 
   if (row_touched < 12) {
     return (128 + (row_touched << 3) + col_touched);
   } 
   else {
+   #if ENABLED(FULL_SCALE_TFT_320X240)
     return  WITHIN(x,  14,  77) ? EN_D
           : WITHIN(x,  90, 153) ? EN_A
           : WITHIN(x, 166, 229) ? EN_B
           : WITHIN(x, 242, 305) ? EN_C
           : 0;
+   #else
+    return  WITHIN(x,  14, 117) ? EN_D
+          : WITHIN(x, 130, 233) ? EN_A
+          : WITHIN(x, 246, 349) ? EN_B
+          : WITHIN(x, 362, 465) ? EN_C
+          : 0;
+   #endif  
   }
 }
 
