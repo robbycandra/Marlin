@@ -33,14 +33,19 @@
 
 #define BW(N) ((N + 7) / 8)
 
-#define OFFSET_H  5
-#define OFFSET_V  5
-#define COL_W    LCD_PIXEL_WIDTH / 4
+#define OFFSET_X               5 // MENU_FONT_WIDTH / 2
+#define OFFSET_Y               5
+#define COL_WIDTH              LCD_PIXEL_WIDTH / 4
+#define ROW_HEIGHT             LCD_PIXEL_HEIGHT / 12
 
-#define STATUS_HEATERS_Y       OFFSET_V
-#define HEATER_BITMAP_BASELINE 47 - OFFSET_V          //LCD_PIXEL_HEIGHT / 3 - 10 - 1)
-#define TARGET_TEMP_BASELINE   OFFSET_V + STATUS_FONT_ASCENT
-#define TEMPERATURE_BASELINE   HEATER_BITMAP_BASELINE
+#define STATUS_HEATERS_Y       OFFSET_Y                      // TOP NOZZLE BITMAP
+#define HEATER_BITMAP_BASELINE ROW_HEIGHT * 3 - OFFSET_Y              // BOTTOM HEATBED BITMAP
+#define TARGET_TEMP_BASELINE   OFFSET_Y + STATUS_FONT_ASCENT // TEXT TARGET TEMP
+#define TEMPERATURE_BASELINE   HEATER_BITMAP_BASELINE        // TEXT CURRENT TEMP
+
+#define STATUS_BED_X           COL_WIDTH + COL_WIDTH + OFFSET_X
+#define STATUS_BED_TEXT_X      COL_WIDTH + COL_WIDTH + 40 + OFFSET_X
+#define STATUS_HOTEND_TEXT_X(N) (N) * (STATUS_HEATERS_XSPACE) + 40 + OFFSET_X
 
 #if ENABLED(CUSTOM_STATUS_SCREEN_IMAGE)
 
@@ -314,7 +319,7 @@
 
     #define STATUS_BED_WIDTH  40
     #ifndef STATUS_BED_X
-      #define STATUS_BED_X   165 // (LCD_PIXEL_WIDTH / 2) + OFFSET_H
+      #define STATUS_BED_X (LCD_PIXEL_WIDTH / 2) + OFFSET_X
     #endif
 
     #ifdef STATUS_BED_ANIM
@@ -469,7 +474,7 @@
 
   #if STATUS_FAN_FRAMES <= 2
 
-    #define STATUS_FAN_Y  OFFSET_V
+    #define STATUS_FAN_Y  OFFSET_Y
 
     #if ENABLED(STATUS_ALT_FAN_BITMAP)
 
@@ -1036,14 +1041,14 @@
 #if STATUS_HOTEND1_WIDTH || STATUS_HEATERS_WIDTH
 
   #ifndef STATUS_HEATERS_XSPACE
-    #define STATUS_HEATERS_XSPACE COL_W  // Like the included bitmaps
+    #define STATUS_HEATERS_XSPACE COL_WIDTH  // Like the included bitmaps
   #endif
 
   #ifndef STATUS_HEATERS_X
     #if STATUS_LOGO_BYTEWIDTH
       #define STATUS_HEATERS_X ((STATUS_LOGO_BYTEWIDTH + 0) * 8)
     #else
-      #define STATUS_HEATERS_X OFFSET_V // Like the included bitmaps
+      #define STATUS_HEATERS_X OFFSET_X // Like the included bitmaps
     #endif
   #endif
 
@@ -1265,7 +1270,7 @@
 #if STATUS_BED_WIDTH && !STATUS_HEATERS_WIDTH
 
   #ifndef STATUS_BED_X
-    #define STATUS_BED_X (128 - (STATUS_CHAMBER_BYTEWIDTH + STATUS_FAN_BYTEWIDTH + STATUS_BED_BYTEWIDTH) * 8)
+    #define STATUS_BED_X (STATUS_HEATERS_X + 2 + 3 * (STATUS_HEATERS_XSPACE))
   #endif
 
   #ifndef STATUS_BED_HEIGHT
@@ -1281,10 +1286,8 @@
   #endif
 
   #ifndef STATUS_BED_TEXT_X
-    //#define STATUS_BED_TEXT_X       (STATUS_BED_X + STATUS_BED_WIDTH + STATUS_FONT_WIDTH) 
-    //#define STATUS_HOTEND_TEXT_X(N) (STATUS_HOTEND1_X + STATUS_HOTEND1_WIDTH + STATUS_FONT_WIDTH ) + (N) * (STATUS_HEATERS_XSPACE))
-    #define STATUS_BED_TEXT_X       205  // COL_W * 3 - MENU_FONT_WIDTH * 3 - OFFSET_h
-    #define STATUS_HOTEND_TEXT_X(N) 45 + (N) * (STATUS_HEATERS_XSPACE)
+    #define STATUS_BED_TEXT_X       STATUS_HEATERS_XSPACE * 2 + 40 + OFFSET_X  // COL_WIDTH * 3 - MENU_FONT_WIDTH * 3 - OFFSET_X
+    #define STATUS_HOTEND_TEXT_X(N) (N) * (STATUS_HEATERS_XSPACE) + 40 + OFFSET_X
   #endif
 
   //static_assert(
@@ -1311,13 +1314,13 @@
 #endif
 #if STATUS_FAN_FRAMES
   #ifndef STATUS_FAN_X
-    #define STATUS_FAN_X 243 // COL_X * 3 + OFFSET_H - 2 
+    #define STATUS_FAN_X COL_WIDTH *3 + OFFSET_X - 2 // COL_X * 3 + OFFSET_X - 2 
   #endif
   #ifndef STATUS_FAN_Y
     #define STATUS_FAN_Y 6 // (64 - 36 / 2)
   #endif
   #ifndef STATUS_FAN_TEXT_X
-    #define STATUS_FAN_TEXT_X 285
+    #define STATUS_FAN_TEXT_X COL_WIDTH * 3 + 40 + OFFSET_X
   #endif
   #ifndef STATUS_FAN_TEXT_Y
     #define STATUS_FAN_TEXT_Y TARGET_TEMP_BASELINE
