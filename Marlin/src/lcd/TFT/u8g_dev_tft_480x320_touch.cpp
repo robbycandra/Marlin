@@ -205,41 +205,135 @@ static const uint8_t ili9341_init_sequence[] = { // 0x9341 - ILI9341
   U8G_ESC_ADR(0),
   0x10,
   U8G_ESC_DLY(10),
-  0x01,
+  0x01,                                                              // ? Di jalankan di Reset
   U8G_ESC_DLY(100), U8G_ESC_DLY(100),
-  0x36, U8G_ESC_ADR(1), 0xE8,
-  U8G_ESC_ADR(0), 0x3A, U8G_ESC_ADR(1), 0x55,
-  U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0x3F,
+  0x36, U8G_ESC_ADR(1), 0xE8,                                         // Set Rotation : 0xE8
+  U8G_ESC_ADR(0), 0x3A, U8G_ESC_ADR(1), 0x55,                         // Pixel Format Set : 0x55 = 16 Bit
+  U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0x3F, 
   U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, 0x00, 0xEF,
-  U8G_ESC_ADR(0), 0xC5, U8G_ESC_ADR(1), 0x3E, 0x28,
-  U8G_ESC_ADR(0), 0xC7, U8G_ESC_ADR(1), 0x86,
-  U8G_ESC_ADR(0), 0xB1, U8G_ESC_ADR(1), 0x00, 0x18,
-  U8G_ESC_ADR(0), 0xC0, U8G_ESC_ADR(1), 0x23,
-  U8G_ESC_ADR(0), 0xC1, U8G_ESC_ADR(1), 0x10,
-  U8G_ESC_ADR(0), 0x29,
-  U8G_ESC_ADR(0), 0x11,
+  U8G_ESC_ADR(0), 0xC5, U8G_ESC_ADR(1), 0x3E, 0x28,                   // VCOM Control 1 : 0x3E, 0x28
+  U8G_ESC_ADR(0), 0xC7, U8G_ESC_ADR(1), 0x86,                         // VCOM Control 2 : 0x86
+  U8G_ESC_ADR(0), 0xB1, U8G_ESC_ADR(1), 0x00, 0x18,                   // Frame Control : 0x00, 0x18
+  U8G_ESC_ADR(0), 0xC0, U8G_ESC_ADR(1), 0x23,                         // Power Control 1 : 0x10
+  U8G_ESC_ADR(0), 0xC1, U8G_ESC_ADR(1), 0x10,                         // Power Control 2 : 0x10
+  U8G_ESC_ADR(0), 0x29,                                               // Turn On Display
+  U8G_ESC_ADR(0), 0x11,                                               // Sleep
   U8G_ESC_DLY(100),
   U8G_ESC_END
 };
 
-static const uint8_t ili9488_init_sequence[] = { // 0x8066 - ILI9488
+static const uint8_t ili9486_working_init_sequence[] = { 
   U8G_ESC_ADR(0),
   0x10,
   U8G_ESC_DLY(10),
   0x01,
   U8G_ESC_DLY(100), U8G_ESC_DLY(100),
-  0x36, U8G_ESC_ADR(1), 0xE8,
+
+  // Init Dari Factory PDF
+  U8G_ESC_ADR(0), 0xF2, U8G_ESC_ADR(1), 0x18, 0xA3, 0x12, 0x02, 0xB2, 0x12, 0xFF, 0x10, 0x00,
+  U8G_ESC_ADR(0), 0xF8, U8G_ESC_ADR(1), 0x21, 0x04, 
+  U8G_ESC_ADR(0), 0xF9, U8G_ESC_ADR(1), 0x00, 0x08, 
+
+  // Memory Access Control
+  // BGR Pixel Order = 1<<3 (0x08)
+  // Row Column Exchange = 1<<5 (0x20)
+  // Column Adress Order Swap = 1<<6 (0x40)
+  // Row Address Order Swap 1<<7 (0x80)
+  // Rotate 180 Degress (Column Adress Order Swap | Row Address Order Swap)
+  U8G_ESC_ADR(0), 0x36, U8G_ESC_ADR(1), 0xA8,
+
+  // Pixel Format 16 bit
   U8G_ESC_ADR(0), 0x3A, U8G_ESC_ADR(1), 0x55,
-  U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0xDF,
-  U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0x3F,
-  U8G_ESC_ADR(0), 0xC5, U8G_ESC_ADR(1), 0x3E, 0x28,
-  U8G_ESC_ADR(0), 0xC7, U8G_ESC_ADR(1), 0x86,
-  U8G_ESC_ADR(0), 0xB1, U8G_ESC_ADR(1), 0x00, 0x18,
-  U8G_ESC_ADR(0), 0xC0, U8G_ESC_ADR(1), 0x23,
-  U8G_ESC_ADR(0), 0xC1, U8G_ESC_ADR(1), 0x10,
-  U8G_ESC_ADR(0), 0x29,
+
+  // Inversion Control
+  U8G_ESC_ADR(0), 0xB4, U8G_ESC_ADR(1), 0x01,
+
+  // Display Function Control
+  U8G_ESC_ADR(0), 0xB6, U8G_ESC_ADR(1), 0x02, 0x22,
+
+  // Interface Mode DE polarity=High enable, PCKL polarity=data fetched at rising time, HSYNC polarity=Low level sync clock, VSYNC polarity=Low level sync clock
+  //U8G_ESC_ADR(0), 0xB0, U8G_ESC_ADR(1), 0x00,
+
+  // Color Inversion
+  // Color Inversion ON
+  // U8G_ESC_ADR(0), 0x21, 
+  // Color Inversion OFF
+  // U8G_ESC_ADR(0), 0x20, 
+
+  // Power Control 1  
+  //U8G_ESC_ADR(0), 0xC0, U8G_ESC_ADR(1), 0x0D, 0x0D,                         
+  // Power Control 2
+  U8G_ESC_ADR(0), 0xC1, U8G_ESC_ADR(1), 0x41, 
+  // Power Control 3
+  //U8G_ESC_ADR(0), 0xC2, U8G_ESC_ADR(1), 0x33,
+
+  // VCOM Control
+  U8G_ESC_ADR(0), 0xC5, U8G_ESC_ADR(1), 0x00, 0x07,
+  // V Com COntrol 2 ???
+  //U8G_ESC_ADR(0), 0xC7, U8G_ESC_ADR(1), 0x86,
+
+  // Row and Column -> Do we really need it ?
+  //U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0xDF,
+  //U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0x3F,
+
+  // Gamma Mode accroding to MCUFRIEND
+  //U8G_ESC_ADR(0), 0xE0, U8G_ESC_ADR(1), 0x0F, 0x21, 0x1C, 0x0B, 0x0E, 0x08, 0x49, 0x98, 0x38, 0x09, 0x11, 0x03, 0x14, 0x10, 0x00, 
+  //U8G_ESC_ADR(0), 0xE1, U8G_ESC_ADR(1), 0x0F, 0x2F, 0x2B, 0x0C, 0x0E, 0x06, 0x47, 0x76, 0x37, 0x07, 0x11, 0x04, 0x23, 0x1E, 0x00, 
+  // Gamma Mode accroding to Factory PDF
+  U8G_ESC_ADR(0), 0xE0, U8G_ESC_ADR(1), 0x0F, 0x1B, 0x18, 0x0B, 0x0E, 0x09, 0x47, 0x94, 0x35, 0x0A, 0x13, 0x05, 0x08, 0x03, 0x00, 
+  U8G_ESC_ADR(0), 0xE1, U8G_ESC_ADR(1), 0x0F, 0x3A, 0x37, 0x0B, 0x0C, 0x05, 0x4A, 0x24, 0x39, 0x07, 0x10, 0x04, 0x27, 0x25, 0x00, 
+
+  // Frame Rate Control
+  //U8G_ESC_ADR(0), 0xB1, U8G_ESC_ADR(1), 0x00, 0x18,
+
+  // Sleep Out
   U8G_ESC_ADR(0), 0x11,
-  U8G_ESC_DLY(100),
+  U8G_ESC_DLY(120),
+
+  // Display On
+  U8G_ESC_ADR(0), 0x29,
+  U8G_ESC_END
+};
+
+// factory Manual setting is flickering
+static const uint8_t ili9486_factory_init_sequence[] = { 
+  U8G_ESC_ADR(0),
+  0x10,
+  U8G_ESC_DLY(10),
+  0x01,
+  U8G_ESC_DLY(100), U8G_ESC_DLY(100),
+
+  U8G_ESC_ADR(0), 0xF2, U8G_ESC_ADR(1), 0x18, 0xA3, 0x12, 0x02, 0xB2, 0x12, 0xFF, 0x10, 0x00,
+  U8G_ESC_ADR(0), 0xF8, U8G_ESC_ADR(1), 0x21, 0x04, 
+  U8G_ESC_ADR(0), 0xF9, U8G_ESC_ADR(1), 0x00, 0x08, 
+
+  // Memory Access Control
+  // BGR Pixel Order = 1<<3 (0x08)
+  // Row Column Exchange = 1<<5 (0x20)
+  // Column Adress Order Swap = 1<<6 (0x40)
+  // Row Address Order Swap 1<<7 (0x80)
+  // Rotate 180 Degress (Column Adress Order Swap | Row Address Order Swap)
+  U8G_ESC_ADR(0), 0x36, U8G_ESC_ADR(1), 0xA8,
+
+  // Inversion Control
+  U8G_ESC_ADR(0), 0xB4, U8G_ESC_ADR(1), 0x00,
+
+  // Power Control 2
+  U8G_ESC_ADR(0), 0xC1, U8G_ESC_ADR(1), 0x41, 
+ 
+  // VCOM Control
+  U8G_ESC_ADR(0), 0xC5, U8G_ESC_ADR(1), 0x00, 0x53,
+
+  // Gamma Mode 
+  U8G_ESC_ADR(0), 0xE0, U8G_ESC_ADR(1), 0x0F, 0x1B, 0x18, 0x0B, 0x0E, 0x09, 0x47, 0x94, 0x35, 0x0A, 0x13, 0x05, 0x08, 0x03, 0x00, 
+  U8G_ESC_ADR(0), 0xE1, U8G_ESC_ADR(1), 0x0F, 0x3A, 0x37, 0x0B, 0x0C, 0x05, 0x4A, 0x24, 0x39, 0x07, 0x10, 0x04, 0x27, 0x25, 0x00, 
+
+  // Sleep Out
+  U8G_ESC_ADR(0), 0x11,
+  U8G_ESC_DLY(120),
+
+  // Display On
+  U8G_ESC_ADR(0), 0x29,
   U8G_ESC_END
 };
 
@@ -446,8 +540,8 @@ uint8_t u8g_dev_tft_480x320_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
         u8g_WriteEscSeqP(u8g, dev, st7789v_init_sequence);
       if ((lcd_id & 0xFFFF) == 0x9341)  // ILI9341
         u8g_WriteEscSeqP(u8g, dev, ili9341_init_sequence);
-      if ((lcd_id & 0xFFFF) == 0x8066)  // ILI9488
-        u8g_WriteEscSeqP(u8g, dev, ili9488_init_sequence);
+      if ((lcd_id & 0xFFFF) == 0x8066)  // ILI9488 / ili9486
+        u8g_WriteEscSeqP(u8g, dev, ili9486_working_init_sequence);
 
       if (preinit) {
         preinit = false;
