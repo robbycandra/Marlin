@@ -54,17 +54,31 @@
   #undef USE_SMALL_INFOFONT
 #endif
 
-#define MENU_FONT_NAME    u8g_font_10x20
-#define MENU_FONT_WIDTH   10
-#define MENU_FONT_ASCENT  13
-#define MENU_FONT_DESCENT  4
-#define MENU_FONT_HEIGHT  20
+#if ENABLED(FULL_SCALE_TFT_480X320)
+  #define MENU_FONT_NAME    u8g_font_profont22
+  #define MENU_FONT_WIDTH   12
+  #define MENU_FONT_HEIGHT  20
+  #define MENU_FONT_ASCENT  14
+  #define MENU_FONT_DESCENT  4
 
-#define STATUS_FONT_NAME u8g_font_profont22
-#define STATUS_FONT_ASCENT 14
-#define STATUS_FONT_DESCENT  4
-#define STATUS_FONT_HEIGHT  20
-#define STATUS_FONT_WIDTH   12
+  #define STATUS_FONT_NAME    u8g_font_profont29
+  #define STATUS_FONT_WIDTH   16
+  #define STATUS_FONT_HEIGHT  28
+  #define STATUS_FONT_ASCENT  22
+  #define STATUS_FONT_DESCENT  5
+#else
+  #define MENU_FONT_NAME    u8g_font_10x20
+  #define MENU_FONT_WIDTH   10
+  #define MENU_FONT_HEIGHT  20
+  #define MENU_FONT_ASCENT  13
+  #define MENU_FONT_DESCENT  4
+
+  #define STATUS_FONT_NAME u8g_font_profont22
+  #define STATUS_FONT_WIDTH   12
+  #define STATUS_FONT_HEIGHT  20
+  #define STATUS_FONT_ASCENT  14
+  #define STATUS_FONT_DESCENT  4
+#endif
 
 #if ENABLED(USE_BIG_EDIT_FONT)
   #define EDIT_FONT_NAME    u8g_font_9x18
