@@ -470,6 +470,8 @@
   #include "stm32/pins_BIGTREE_SKR_E3_DIP.h"    // STM32F1                                env:STM32F103R_bigtree
 #elif MB(JGAURORA_A5S_A1)
   #include "stm32/pins_JGAURORA_A5S_A1.h"       // STM32F1                                env:jgaurora_a5s_a1
+#elif MB(REXYZ_DLION_D2)
+  #include "stm32/pins_REXYZ_DLION_D2.h"        // STM32F1                                env:rexyz_dlion_d2
 #elif MB(FYSETC_AIO_II)
   #include "stm32/pins_FYSETC_AIO_II.h"         // STM32F1                                env:STM32F103R_fysetc
 #elif MB(FYSETC_CHEETAH)

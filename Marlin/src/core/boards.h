@@ -273,6 +273,7 @@
 #define BOARD_FYSETC_CHEETAH          4015  // FYSETC Cheetah
 #define BOARD_FYSETC_CHEETAH_V12      4016  // FYSETC Cheetah V1.2
 #define BOARD_LONGER3D_LK             4017  // Alfawise U20/U20+/U30 (Longer3D LK1/2) / STM32F103VET6
+#define BOARD_REXYZ_DLION_D2          4068  // Dlion Rexyz D2 (STM32F103ZET6)
 
 //
 // ARM Cortex-M4F
