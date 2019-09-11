@@ -75,7 +75,7 @@
 #define WIDTH  LCD_PIXEL_WIDTH
 #define HEIGHT LCD_PIXEL_HEIGHT
 #define FULL_HEIGHT 320
-#define PAGE_HEIGHT 4
+#define PAGE_HEIGHT 8
 
 #define X_LO 0
 #define Y_LO 0
@@ -554,7 +554,7 @@ uint8_t u8g_dev_tft_480x320_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
 
       if (preinit) {
         preinit = false;
-        return u8g_dev_pb8v2_base_fn(u8g, dev, msg, arg);
+        return u8g_dev_pb16v2_base_fn(u8g, dev, msg, arg);
       }
 
       // Clear Screen Sequence
@@ -601,14 +601,28 @@ uint8_t u8g_dev_tft_480x320_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
         #ifdef LCD_USE_DMA_FSMC
           buffer = (y & 1) ? bufferB : bufferA;
         #endif
-        for (uint16_t i = 0; i < (uint32_t)pb->width; i++) {
-          const uint8_t b = *(((uint8_t *)pb->buf) + i);
-          const uint8_t clr = (b >> (y<<1)) & 0x03;
-          switch(clr) {
-            case 0: buffer[k++] = TFT_MARLINBG_COLOR; break;
-            case 1: buffer[k++] = TFT_MARLINUI_COLOR; break;
-            case 2: buffer[k++] = COLOR_RED; break;
-            case 3: buffer[k++] = COLOR_NAVY; break;
+        if (y < 4) {
+          for (uint16_t i = 0; i < (uint32_t)pb->width; i++) {
+            const uint8_t b = *(((uint8_t *)pb->buf) + i);
+            const uint8_t clr = (b >> (y<<1)) & 0x03;
+            switch(clr) {
+              case 0: buffer[k++] = TFT_MARLINBG_COLOR; break;
+              case 1: buffer[k++] = TFT_MARLINUI_COLOR; break;
+              case 2: buffer[k++] = COLOR_RED; break;
+              case 3: buffer[k++] = COLOR_NAVY; break;
+            }
+          }
+        }
+        else {
+          for (uint16_t i = 0; i < (uint32_t)pb->width; i++) {
+            const uint8_t b = *((uint32_t)pb->width + ((uint8_t *)pb->buf) + i);
+            const uint8_t clr = (b >> ((y-4)<<1)) & 0x03;
+            switch(clr) {
+              case 0: buffer[k++] = TFT_MARLINBG_COLOR; break;
+              case 1: buffer[k++] = TFT_MARLINUI_COLOR; break;
+              case 2: buffer[k++] = COLOR_RED; break;
+              case 3: buffer[k++] = COLOR_NAVY; break;
+            }
           }
         }
         #ifdef LCD_USE_DMA_FSMC
@@ -638,9 +652,14 @@ uint8_t u8g_dev_tft_480x320_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
       // Sleep Out (11h)
       return 1;
   }
-  return u8g_dev_pb8v2_base_fn(u8g, dev, msg, arg);
+  return u8g_dev_pb16v2_base_fn(u8g, dev, msg, arg);
 }
 
 U8G_PB_DEV(u8g_dev_tft_480x320_touch, WIDTH, HEIGHT, PAGE_HEIGHT, u8g_dev_tft_480x320_touch_fn, U8G_COM_HAL_FSMC_FN);
+//U8G_PB_DEV is for 8 bit
+//lines below is for 16 bit
+//uint8_t u8g_dev_tft_480x320_touch_buf[WIDTH*2] U8G_NOCOMMON ; 
+//u8g_pb_t u8g_dev_tft_480x320_touch_pb = { {PAGE_HEIGHT, HEIGHT, 0, 0, 0},  WIDTH, u8g_dev_tft_480x320_touch_buf}; 
+//u8g_dev_t name = { u8g_dev_tft_480x320_touch_fn, &u8g_dev_tft_480x320_touch_pb, U8G_COM_HAL_FSMC_FN };
 
 #endif // HAS_GRAPHICAL_LCD && FSMC_CS && FULL_SCALE_TFT_480X320
