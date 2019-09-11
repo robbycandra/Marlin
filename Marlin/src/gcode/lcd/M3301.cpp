@@ -41,11 +41,10 @@ void print_controller(uint16_t lcd_id) {
   case 0x0404: sprintf(controller, "NONE");    break;
   default:     sprintf(controller, "Unknown");
   }
-  MYSERIAL0.print("LCD Controller: ");
-  MYSERIAL0.print(controller);
-  MYSERIAL0.print(" ");
-  MYSERIAL0.println(lcd_id, HEX);
-  MYSERIAL0.flush();
+  SERIAL_ECHO("LCD Controller: ");
+  SERIAL_ECHO(controller);
+  sprintf(controller, " %x",lcd_id); 
+  SERIAL_ECHOLN(controller);
 }
 
 void GcodeSuite::M3301() {
@@ -56,7 +55,10 @@ void GcodeSuite::M3301() {
   //lcdBacklightOff();
   //lcdReset();
 
-  MYSERIAL0.println("Simple TFT LCD Information");
+  MYSERIAL0.println("Simple TFT LCD Information - MYSERIAL0");
+  MYSERIAL1.println("Simple TFT LCD Information - MYSERIAL1");
+  UsbSerial.println("Simple TFT LCD Information - UsbSerial");
+  SERIAL_ECHOLN("Simple TFT LCD Information - Serial Echo");
 
   #if ENABLED(LCD_USE_DMA_FSMC)
     dma_init(FSMC_DMA_DEV);
@@ -66,26 +68,30 @@ void GcodeSuite::M3301() {
 
   //lcdBacklightOn();
 
+  char response[50];
   // read 8bit data at 0
   reg = TOUCH_LCD_IO_ReadReg(0x00);
-  MYSERIAL0.print("Reg at 0: ");
-  MYSERIAL0.println(reg, HEX);
+  sprintf(response, "Reg at 0: %x",reg); 
+  SERIAL_ECHOLN(response);
+  SERIAL_ECHOLN();
   reg &= 0xFF;
 
   if (reg == 0 || reg == 0xFF) {
     // read ID1 register to get LCD controller ID, MOST of the time located in register 0x04
     data = TOUCH_LCD_IO_ReadData(0x04, 3);
     lcdId = (uint16_t)(data & 0xFFFF);
-    MYSERIAL0.print("ST5589V LCD ID : ");
-    MYSERIAL0.println((data >> 16) & 0xFF, HEX);
+    sprintf(response, "At pos 0x04 - LCD ID : %x",(data >> 16) & 0xFF); 
+    SERIAL_ECHOLN(response);
     print_controller(lcdId);
+    SERIAL_ECHOLN();
 
     //If ID1 is 0, it means we need to check alternate registers, like 0xD3 in the case of ILI9341
     data = TOUCH_LCD_IO_ReadData(0xD3, 3);
     lcdId = (uint16_t)(data & 0xFFFF);
-    MYSERIAL0.print("ILI lcd ID : ");
-    MYSERIAL0.println((data >> 16) & 0xFF, HEX);
+    sprintf(response, "At pos 0xD3 - LCD ID : %x",(data >> 16) & 0xFF); 
+    SERIAL_ECHOLN(response);
     print_controller(lcdId);
+    SERIAL_ECHOLN();
   }
 }
 
