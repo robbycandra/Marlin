@@ -274,7 +274,7 @@
     #define REXYZ_E0_AUTO_FAN_PIN -1
 #endif
 #if defined(REXYZ_BOARD_DLION)
-    #define REXYZ_FIL_RUNOUT_INVERTING false
+    #define REXYZ_FIL_RUNOUT_INVERTING true
     #define REXYZ_E0_AUTO_FAN_PIN -1
 #endif
 

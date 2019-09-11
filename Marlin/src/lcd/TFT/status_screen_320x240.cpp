@@ -133,11 +133,13 @@ void run_status_screen_touch_command() {
         MenuItem_int3::action_edit(PSTR(MSG_NOZZLE),&thermalManager.temp_hotend[0].target, 0, HEATER_0_MAXTEMP - 15, thermalManager.start_watching_E0);
         break;
       case 2:
-        #if HAS_BUZZER
-          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #if HAS_HEATED_BED
+          #if HAS_BUZZER
+            ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+          #endif
+          MenuItem_int3::action_edit(PSTR(MSG_BED),&thermalManager.temp_bed.target, 0, BED_MAXTEMP - 10, thermalManager.start_watching_bed);
+          break;
         #endif
-        MenuItem_int3::action_edit(PSTR(MSG_BED),&thermalManager.temp_bed.target, 0, BED_MAXTEMP - 10, thermalManager.start_watching_bed);
-        break;
       case 3:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
