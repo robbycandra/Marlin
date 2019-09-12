@@ -353,13 +353,56 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
   }
   if (is_menu) {
     #if HAS_FULL_SCALE_TFT
-    NOMORE(encoderTopLine, (encoderLine & B11111110) );
-    if (encoderLine >= encoderTopLine + LCD_HEIGHT) {
-      if (encoderLine & 1)
-        encoderTopLine = encoderLine - LCD_HEIGHT + 1;
-      else
-        encoderTopLine = encoderLine - LCD_HEIGHT + 2;
-    }
+      uint8_t menu_row = 4;
+      uint8_t menu_col = 2;
+      uint8_t menu_header = 0;
+      switch(ui.menu_mode) {
+        case MENU_1X6 :
+          menu_row = 6;
+          menu_col = 1;
+          menu_header = 0;
+          break;
+        case MENU_1X4 :
+          menu_row = 4;
+          menu_col = 1;
+          menu_header = 0;
+          break;
+        case SCREEN_1X6:
+          menu_row = 6;
+          menu_col = 1;
+          menu_header = 0;
+          break;
+        case SCREEN_1X8:
+          menu_row = 8;
+          menu_col = 1;
+          menu_header = 0;
+          break;
+        case MENU_H_2X3:
+          menu_row = 3;
+          menu_col = 2;
+          menu_header = 1;
+          break;
+        default :
+          menu_row = 4;
+          menu_col = 2;
+          menu_header = 0;
+      }
+      if (menu_col == 2) {
+        NOMORE(encoderTopLine, (encoderLine & B11111110) );
+        if (encoderLine >= encoderTopLine + menu_row * menu_col + menu_header) {
+          if (encoderLine & 1)
+            encoderTopLine = encoderLine - menu_row * menu_col + menu_header + 1;
+          else
+            encoderTopLine = encoderLine - menu_row * menu_col + menu_header + 2;
+        }
+      }
+      else {
+        NOMORE(encoderTopLine, encoderLine);
+        if (encoderLine >= encoderTopLine + menu_row * menu_col + menu_header) {
+          encoderTopLine = encoderLine - menu_row * menu_col + menu_header + 1;
+        }
+      }
+
     #else
     NOMORE(encoderTopLine, encoderLine);
     if (encoderLine >= encoderTopLine + LCD_HEIGHT)
