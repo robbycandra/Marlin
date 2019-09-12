@@ -246,14 +246,16 @@
 #endif
 
 #if HAS_FULL_SCALE_TFT
-  enum MarlinMenuMode : uint8_t {
-    MENU_2X4 = 1,
-    MENU_H_2X3,
-    MENU_1X6,
-    MENU_1X4,
-    MENU_SELECT,
-    SCREEN_1X6,
-    SCREEN_1X8
+  enum MarlinScreenMode : uint8_t {
+    SCRMODE_STATUS = 1,
+    SCRMODE_MENU_2X4,
+    SCRMODE_MENU_H_2X3,
+    SCRMODE_MENU_1X6,
+    SCRMODE_MENU_1X4,
+    SCRMODE_MENU_SELECT,
+    SCRMODE_MENU_EDIT,
+    SCRMODE_SCREEN_1X6,
+    SCRMODE_SCREEN_1X8
   };
 #endif
 
@@ -457,7 +459,7 @@ public:
     static bool lcd_clicked;
     static bool use_click();
     #if HAS_FULL_SCALE_TFT
-      static uint8_t menu_mode;
+      static uint8_t screen_mode;
       static uint8_t lcd_menu_touched_coord;
       static bool menu_is_touched(int8_t itemNumber);
     #endif  
@@ -523,7 +525,7 @@ public:
     static constexpr bool lcd_clicked = false;
     #if HAS_FULL_SCALE_TFT
       static constexpr uint8_t lcd_menu_touched_coord = 0;
-      static constexpr uint8_t menu_mode = 0;
+      static constexpr uint8_t screen_mode = 0;
     #endif
     static constexpr bool on_status_screen() { return true; }
     static inline void run_current_screen() { status_screen(); }

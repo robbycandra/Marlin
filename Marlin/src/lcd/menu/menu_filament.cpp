@@ -79,7 +79,7 @@ void _menu_temp_filament_op(const PauseMode mode, const int8_t extruder) {
   _change_filament_temp_mode = mode;
   _change_filament_temp_extruder = extruder;
  #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(MENU_H_2X3);
+  START_MENU_MODE(SCRMODE_MENU_H_2X3);
  #else
   START_MENU();
  #endif 
@@ -354,7 +354,7 @@ void lcd_pause_extrude_more() {
 
 void menu_pause_option() {
  #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(MENU_H_2X3);
+  START_MENU_MODE(SCRMODE_MENU_H_2X3);
  #else
   START_MENU();
  #endif 

@@ -49,7 +49,7 @@ static void lcd_power_loss_recovery_cancel() {
 void menu_job_recovery() {
   ui.defer_status_screen();
  #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(MENU_H_2X3);
+  START_MENU_MODE(SCRMODE_MENU_H_2X3);
  #else
   START_MENU();
  #endif 

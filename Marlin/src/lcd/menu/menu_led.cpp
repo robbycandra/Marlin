@@ -35,7 +35,7 @@
 
   void menu_led_presets() {
    #if HAS_FULL_SCALE_TFT
-    START_MENU_MODE(MENU_H_2X3);
+    START_MENU_MODE(SCRMODE_MENU_H_2X3);
    #else
     START_MENU();
    #endif 

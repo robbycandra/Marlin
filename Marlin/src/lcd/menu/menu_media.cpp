@@ -136,7 +136,7 @@ void menu_media() {
     card.getWorkDirName();
   #endif  
  #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(MENU_1X6);
+  START_MENU_MODE(SCRMODE_MENU_1X6);
  #else
   START_MENU();
  #endif

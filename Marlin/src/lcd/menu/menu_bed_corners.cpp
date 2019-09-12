@@ -193,7 +193,7 @@ static inline void menu_adjust_corner() {
   char mea_z[10];
   dtostrf(corner_measured_z,1,2,mea_z);
  #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(MENU_H_2X3);
+  START_MENU_MODE(SCRMODE_MENU_H_2X3);
  #else
   START_MENU();
  #endif 
@@ -267,7 +267,7 @@ static inline void menu_measure_probe_offset() {
   char mea_z[10];
   dtostrf(corner_measured_z,1,2,mea_z);
  #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(MENU_H_2X3);
+  START_MENU_MODE(SCRMODE_MENU_H_2X3);
  #else
   START_MENU();
  #endif 

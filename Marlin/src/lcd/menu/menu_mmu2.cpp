@@ -163,7 +163,7 @@ inline void action_mmu2_choose4() { action_mmu2_choose(4); }
 
 void menu_mmu2_choose_filament() {
  #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(MENU_H_2X3);
+  START_MENU_MODE(SCRMODE_MENU_H_2X3);
  #else
   START_MENU();
  #endif 
@@ -190,7 +190,7 @@ inline void action_mmu2_M600_resume()                      { mmuMenuWait = false
 void menu_mmu2_pause() {
   currentTool = mmu2.get_current_tool();
  #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(MENU_H_2X3);
+  START_MENU_MODE(SCRMODE_MENU_H_2X3);
  #else
   START_MENU();
  #endif 

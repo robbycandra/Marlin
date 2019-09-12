@@ -356,28 +356,28 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
       uint8_t menu_row = 4;
       uint8_t menu_col = 2;
       uint8_t menu_header = 0;
-      switch(ui.menu_mode) {
-        case MENU_1X6 :
+      switch(ui.screen_mode) {
+        case SCRMODE_MENU_1X6 :
           menu_row = 6;
           menu_col = 1;
           menu_header = 0;
           break;
-        case MENU_1X4 :
+        case SCRMODE_MENU_1X4 :
           menu_row = 4;
           menu_col = 1;
           menu_header = 0;
           break;
-        case SCREEN_1X6:
+        case SCRMODE_SCREEN_1X6:
           menu_row = 6;
           menu_col = 1;
           menu_header = 0;
           break;
-        case SCREEN_1X8:
+        case SCRMODE_SCREEN_1X8:
           menu_row = 8;
           menu_col = 1;
           menu_header = 0;
           break;
-        case MENU_H_2X3:
+        case SCRMODE_MENU_H_2X3:
           menu_row = 3;
           menu_col = 2;
           menu_header = 1;
@@ -547,7 +547,7 @@ void do_select_screen(PGM_P const yes, PGM_P const no, selectFunc_t yesFunc, sel
  #if HAS_FULL_SCALE_TFT
   bool ui_selection = ui.update_selection(), got_click = ui.use_click();
   if (!got_click) {
-    ui.menu_mode = MENU_SELECT;
+    ui.screen_mode = SCRMODE_MENU_SELECT;
     if (ui.menu_is_touched(0)) {
       got_click = true;
       ui_selection = 0;

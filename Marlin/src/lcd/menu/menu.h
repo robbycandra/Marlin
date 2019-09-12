@@ -269,25 +269,25 @@ class MenuItem_bool {
 #if HAS_FULL_SCALE_TFT
 
 #define START_MENU() \
-  ui.menu_mode = MENU_2X4; \
+  ui.screen_mode = SCRMODE_MENU_2X4; \
   scroll_screen(1, true); \
   bool _skipStatic = true; \
   SCREEN_OR_MENU_LOOP()
 
 #define START_MENU_MODE(MENUMODE) \
-  ui.menu_mode = MENUMODE; \
+  ui.screen_mode = MENUMODE; \
   scroll_screen(1, true); \
   bool _skipStatic = true; \
   SCREEN_OR_MENU_LOOP()
 
 #define START_SCREEN() \
-  ui.menu_mode = SCREEN_1X6; \
+  ui.screen_mode = SCRMODE_SCREEN_1X6; \
   scroll_screen(6, false); \
   bool _skipStatic = false; \
   SCREEN_OR_MENU_LOOP()
 
 #define START_SCREEN_MODE(MENUMODE) \
-  ui.menu_mode = MENUMODE; \
+  ui.screen_mode = MENUMODE; \
   scroll_screen(LCD_HEIGHT, false); \
   bool _skipStatic = false; \
   SCREEN_OR_MENU_LOOP()

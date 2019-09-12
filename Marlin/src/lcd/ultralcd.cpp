@@ -209,7 +209,7 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     return click;
   }
   #if HAS_FULL_SCALE_TFT
-    uint8_t MarlinUI::menu_mode;
+    uint8_t MarlinUI::screen_mode;
     uint8_t MarlinUI::lcd_menu_touched_coord;
     bool MarlinUI::menu_is_touched(int8_t tested_item_number) {
       int8_t touched_item_number;
@@ -217,23 +217,23 @@ millis_t MarlinUI::next_button_update_ms; // = 0
       if (lcd_menu_touched_coord & B10000000) {
         const uint8_t row = (lcd_menu_touched_coord & B01111000) >> 3;
         const uint8_t col = (lcd_menu_touched_coord & B00000111); 
-        if (ui.menu_mode == MENU_2X4) {
+        if (ui.screen_mode == SCRMODE_MENU_2X4) {
           touched_item_number = (int)(row / 3) * 2 + (col >> 2);
           menu_area_touched = true;
         }
-        else if (ui.menu_mode == MENU_1X6) {
+        else if (ui.screen_mode == SCRMODE_MENU_1X6) {
           touched_item_number = row >> 1;
           menu_area_touched = true;
         }
-        else if (ui.menu_mode == MENU_1X4) {
+        else if (ui.screen_mode == SCRMODE_MENU_1X4) {
           touched_item_number = row / 3;
           menu_area_touched = true;
         }
-        else if (ui.menu_mode == MENU_H_2X3) {
+        else if (ui.screen_mode == SCRMODE_MENU_H_2X3) {
           touched_item_number = (int)(row / 3) * 2 + (col >> 2) - 1;
           menu_area_touched = true;
         }
-        else if (row > 8) {  // ui.menu_mode = MENU_SELECT & 4th row.
+        else if (row > 8) {  // ui.screen_mode = SCRMODE_MENU_SELECT & 4th row.
           touched_item_number = col >> 2; 
           menu_area_touched = true;
         }

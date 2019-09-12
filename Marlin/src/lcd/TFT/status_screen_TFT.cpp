@@ -417,6 +417,8 @@ void draw_4colom_box () {
 
 void MarlinUI::draw_status_screen() {
 
+  ui.screen_mode = SCRMODE_MENU_1X6;
+
   #if ENABLED(MARLIN_DEV_MODE)
     if (first_page) count_renders++;
   #endif

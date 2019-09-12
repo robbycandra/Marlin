@@ -256,7 +256,7 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
   _manual_move_func_ptr = func;
 
  #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(MENU_H_2X3);
+  START_MENU_MODE(SCRMODE_MENU_H_2X3);
  #else
   START_MENU();
  #endif 
