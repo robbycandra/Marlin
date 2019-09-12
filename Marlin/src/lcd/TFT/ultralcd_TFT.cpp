@@ -509,9 +509,12 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
 
   void draw_edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/, const uint8_t tdelay/*=50*/) {
     ui.encoder_direction_normal();
-    ui.screen_mode = SCRMODE_MENU_EDIT;
-    ui.touch_delay = tdelay;
 
+    ui.screen_mode = SCRMODE_MENU_EDIT;
+    #if ENABLED(TOUCH_BUTTONS)
+      ui.touch_delay = tdelay;
+    #endif
+    
     constexpr u8g_uint_t lcd_chr_fit = LCD_PIXEL_WIDTH / EDIT_FONT_WIDTH;
     const u8g_uint_t labellen = utf8_strlen_P(pstr), vallen = utf8_strlen(value);
     bool extra_row = labellen + vallen > lcd_chr_fit - 2;

@@ -208,10 +208,14 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     lcd_clicked = false;
     return click;
   }
-  #if HAS_FULL_SCALE_TFT
+  #if ENABLED(FSMC_GRAPHICAL_TFT)
     uint8_t MarlinUI::screen_mode;
-    uint8_t MarlinUI::touch_delay;
-    uint8_t MarlinUI::lcd_menu_touched_coord;
+    #if ENABLED(TOUCH_BUTTONS)
+      uint8_t MarlinUI::touch_delay;
+      uint8_t MarlinUI::lcd_menu_touched_coord;
+    #endif  
+  #endif  
+  #if HAS_FULL_SCALE_TFT
     bool MarlinUI::menu_is_touched(int8_t tested_item_number) {
       int8_t touched_item_number;
       bool menu_area_touched = false;
@@ -852,7 +856,7 @@ void MarlinUI::update() {
 
             if (ui.screen_mode == SCRMODE_STATUS) 
               ui.touch_delay = 50;
-            else if (ui.screen_mode != SCRMODE_MENU_EDIT)
+            else if (ui.screen_mode != SCRMODE_MENU_EDIT) // else ui.touch_delay already defined in draw_edit_screen
               ui.touch_delay = 250;
 
             next_button_update_ms = ms + touch_delay;            // Assume the repeat delay

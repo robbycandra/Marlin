@@ -76,6 +76,9 @@ inline void do_select_screen_yn(selectFunc_t yesFunc, selectFunc_t noFunc, PGM_P
   do_select_screen(PSTR(MSG_YES), PSTR(MSG_NO), yesFunc, noFunc, pref, string, suff);
 }
 
+// tdelay is touch delay, 
+// the parameter needed because we need different delay 
+// between general edit screen and move axis edit screen
 void draw_edit_screen(PGM_P const pstr, const char* const value=nullptr, const uint8_t tdelay=50);
 void draw_menu_item(const bool sel, const uint8_t row, PGM_P const pstr, const char pre_char, const char post_char);
 void draw_menu_item_static(const uint8_t row, PGM_P const pstr, const bool center=true, const bool invert=false, const char *valstr=nullptr);
@@ -265,44 +268,43 @@ class MenuItem_bool {
  *
  * START_MENU    Opening code for a screen with menu items.
  *               Scroll as-needed to keep the selected line in view.
+ * 
+ * if using FSMC_GRAPHICAL_TFT, we set screen mode.
  */
-#if HAS_FULL_SCALE_TFT
+#if ENABLED(FSMC_GRAPHICAL_TFT)
+  #define START_MENU() \
+    ui.screen_mode = SCRMODE_MENU_2X4; \
+    scroll_screen(1, true); \
+    bool _skipStatic = true; \
+    SCREEN_OR_MENU_LOOP()
 
-#define START_MENU() \
-  ui.screen_mode = SCRMODE_MENU_2X4; \
-  scroll_screen(1, true); \
-  bool _skipStatic = true; \
-  SCREEN_OR_MENU_LOOP()
+  #define START_MENU_MODE(MENUMODE) \
+    ui.screen_mode = MENUMODE; \
+    scroll_screen(1, true); \
+    bool _skipStatic = true; \
+    SCREEN_OR_MENU_LOOP()
 
-#define START_MENU_MODE(MENUMODE) \
-  ui.screen_mode = MENUMODE; \
-  scroll_screen(1, true); \
-  bool _skipStatic = true; \
-  SCREEN_OR_MENU_LOOP()
+  #define START_SCREEN() \
+    ui.screen_mode = SCRMODE_SCREEN_1X6; \
+    scroll_screen(6, false); \
+    bool _skipStatic = false; \
+    SCREEN_OR_MENU_LOOP()
 
-#define START_SCREEN() \
-  ui.screen_mode = SCRMODE_SCREEN_1X6; \
-  scroll_screen(6, false); \
-  bool _skipStatic = false; \
-  SCREEN_OR_MENU_LOOP()
-
-#define START_SCREEN_MODE(MENUMODE) \
-  ui.screen_mode = MENUMODE; \
-  scroll_screen(LCD_HEIGHT, false); \
-  bool _skipStatic = false; \
-  SCREEN_OR_MENU_LOOP()
-
+  #define START_SCREEN_MODE(MENUMODE) \
+    ui.screen_mode = MENUMODE; \
+    scroll_screen(LCD_HEIGHT, false); \
+    bool _skipStatic = false; \
+    SCREEN_OR_MENU_LOOP()
 #else
+  #define START_SCREEN() \
+    scroll_screen(LCD_HEIGHT, false); \
+    bool _skipStatic = false; \
+    SCREEN_OR_MENU_LOOP()
 
-#define START_SCREEN() \
-  scroll_screen(LCD_HEIGHT, false); \
-  bool _skipStatic = false; \
-  SCREEN_OR_MENU_LOOP()
-
-#define START_MENU() \
-  scroll_screen(1, true); \
-  bool _skipStatic = true; \
-  SCREEN_OR_MENU_LOOP()
+  #define START_MENU() \
+    scroll_screen(1, true); \
+    bool _skipStatic = true; \
+    SCREEN_OR_MENU_LOOP()
 #endif 
 
 #define END_SCREEN() \
@@ -397,7 +399,7 @@ class MenuItem_bool {
 
 #define STATIC_ITEM(LABEL, ...) STATIC_ITEM_P(PSTR(LABEL), ## __VA_ARGS__)
 
-#if HAS_FULL_SCALE_TFT
+#if ENABLED(TOUCH_BUTTONS)
   #define MENU_BACK(LABEL) NOOP
 #else
   #define MENU_BACK(LABEL) MENU_ITEM(back, LABEL)

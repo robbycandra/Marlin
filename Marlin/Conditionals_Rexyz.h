@@ -637,14 +637,19 @@
 #if defined(REXYZ_A1) || defined(REXYZ_A2) || defined(REXYZ_D2)
     #define FSMC_GRAPHICAL_TFT
     #define REVERSE_MENU_DIRECTION
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
+      #if defined(REXYZ_D2)
+        #define FULL_SCALE_TFT_480X320
+      #else
+        #define FULL_SCALE_TFT_320X240
+      #endif
+    #endif
     #if defined(REXYZ_D2)
-      #define FULL_SCALE_TFT_480X320
       #define REXYZ_XPT2046_X_CALIBRATION   -16626
       #define REXYZ_XPT2046_Y_CALIBRATION   10933
       #define REXYZ_XPT2046_X_OFFSET        486
       #define REXYZ_XPT2046_Y_OFFSET        -13
     #else
-      #define FULL_SCALE_TFT_320X240
       #define REXYZ_XPT2046_X_CALIBRATION   12316
       #define REXYZ_XPT2046_Y_CALIBRATION  -8981
       #define REXYZ_XPT2046_X_OFFSET       -43

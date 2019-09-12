@@ -576,6 +576,13 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
 #endif
 
 /**
+ * Touch Buttons
+ */
+#if ENABLED(TOUCH_BUTTONS) && DISABLED(FSMC_GRAPHICAL_TFT)
+  #error "TOUCH_BUTTONS requires FSMC_GRAPHICAL_TFT."
+#endif
+
+/**
  * SD File Sorting
  */
 #if ENABLED(SDCARD_SORT_ALPHA)

@@ -54,11 +54,11 @@
   ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 */
-
 #include "../../inc/MarlinConfig.h"
-#include "../../lcd/TFT/ultralcd_TFT.h"
 
-#if HAS_GRAPHICAL_LCD && PIN_EXISTS(FSMC_CS) && ENABLED(FULL_SCALE_TFT_320X240)
+#if HAS_GRAPHICAL_LCD && ENABLED(FULL_SCALE_TFT_320X240)
+
+#include "../../lcd/TFT/ultralcd_TFT.h"
 
 #include <U8glib.h>
 #include "../dogm/HAL_LCD_com_defines.h"
