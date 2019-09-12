@@ -210,6 +210,7 @@ millis_t MarlinUI::next_button_update_ms; // = 0
   }
   #if HAS_FULL_SCALE_TFT
     uint8_t MarlinUI::screen_mode;
+    uint8_t MarlinUI::touch_delay;
     uint8_t MarlinUI::lcd_menu_touched_coord;
     bool MarlinUI::menu_is_touched(int8_t tested_item_number) {
       int8_t touched_item_number;
@@ -848,7 +849,13 @@ void MarlinUI::update() {
           if (touch_buttons & (EN_A | EN_B)) {          // A and/or B button?
             encoderDiff = (ENCODER_STEPS_PER_MENU_ITEM) * (ENCODER_PULSES_PER_STEP) * encoderDirection;
             if (touch_buttons & EN_A) encoderDiff *= -1;
-            next_button_update_ms = ms + 50;            // Assume the repeat delay
+
+            if (ui.screen_mode == SCRMODE_STATUS) 
+              ui.touch_delay = 50;
+            else if (ui.screen_mode != SCRMODE_MENU_EDIT)
+              ui.touch_delay = 250;
+
+            next_button_update_ms = ms + touch_delay;            // Assume the repeat delay
             if (!wait_for_unclick && !arrow_pressed) {  // On click prepare for repeat
               next_button_update_ms += 250;             // Longer delay on first press
               arrow_pressed = true;                     // Mark arrow as pressed

@@ -460,6 +460,7 @@ public:
     static bool use_click();
     #if HAS_FULL_SCALE_TFT
       static uint8_t screen_mode;
+      static uint8_t touch_delay;
       static uint8_t lcd_menu_touched_coord;
       static bool menu_is_touched(int8_t itemNumber);
     #endif  
