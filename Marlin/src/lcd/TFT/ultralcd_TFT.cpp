@@ -43,7 +43,7 @@
 #include "../dogm/u8g_fontutf8.h"
 
 #if ENABLED(SHOW_BOOTSCREEN)
-  #include "boot_screen_320x240.h"
+  #include "boot_screen_TFT.h"
 #endif
 
 #include "../lcdprint.h"
