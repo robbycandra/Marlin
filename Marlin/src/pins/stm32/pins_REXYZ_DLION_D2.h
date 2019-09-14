@@ -95,8 +95,10 @@
 #define HEATER_0_PIN       PB0 //PA2
 #define HEATER_BED_PIN     PB1 //PA3
 
-#define FAN_PIN            PA1 //
+#define FAN_PIN            PA1 // MARKED:E0_PIN
+#define MANUAL_FAN_PIN     PE1 // MARKED:ED_PIN
 
+#define FAN_SOFT_PWM
 
 //
 // LCD

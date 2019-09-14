@@ -105,12 +105,27 @@
   #endif
 #endif
 
-#if ENABLED(REXYZ_A1) || ENABLED(REXYZ_A2) || ENABLED(REXYZ_D2)
+#if ENABLED(REXYZ_A1) 
   #if ENABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
     #error "Please disable REXYZ_EEPROM_FIRMWARE_PROTECTION."
   #endif
   #if DISABLED(REXYZ_NO_ABL)
     #error "Please enable REXYZ_NO_ABL."
+  #endif
+  #if ENABLED(REXYZ_FILAMENT_MOTION_DETECTOR)
+    #error "Please disable REXYZ_FILAMENT_MOTION_DETECTOR."
+  #endif
+  #if ENABLED(REXYZ_TOUCH_UI)
+    #error "Please disable REXYZ_TOUCH_UI."
+  #endif
+#endif
+
+#if ENABLED(REXYZ_D2)
+  #if ENABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
+    #error "Please disable REXYZ_EEPROM_FIRMWARE_PROTECTION."
+  #endif
+  #if DISABLED(REXYZ_MK8_MANUAL_PROBE)
+    #error "Please enable REXYZ_MK8_MANUAL_PROBE."
   #endif
   #if ENABLED(REXYZ_FILAMENT_MOTION_DETECTOR)
     #error "Please disable REXYZ_FILAMENT_MOTION_DETECTOR."
@@ -274,8 +289,8 @@
     #define REXYZ_E0_AUTO_FAN_PIN -1
 #endif
 #if defined(REXYZ_BOARD_DLION)
-    #define REXYZ_FIL_RUNOUT_INVERTING true
-    #define REXYZ_E0_AUTO_FAN_PIN -1
+    #define REXYZ_FIL_RUNOUT_INVERTING false
+    #define REXYZ_E0_AUTO_FAN_PIN MANUAL_FAN_PIN //-1// FAN1_PIN
 #endif
 
 //===========================================================================
@@ -303,7 +318,11 @@
     #define EXTRUDER_AUTO_FAN_SPEED_MAX 191    // 255 == full speed
     #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 63   // 255 == full speed
 #endif
-
+#if defined(REXYZ_BOARD_DLION)
+    //#define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
+    #define EXTRUDER_AUTO_FAN_SPEED_MAX 255    // 255 == full speed
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
+#endif
 #if defined(REXYZ_S_TYPE)
     #define REXYZ_DEFAULT_Kp 20.81
     #define REXYZ_DEFAULT_Ki 1.46
@@ -344,7 +363,8 @@
     #define REXYZ_TEMP_SENSOR_1 0
     #define REXYZ_EXTRUDERS 1
 #endif
-#if defined(REXYZ_A1) || defined(REXYZ_A2) || defined(REXYZ_D2)
+
+#if defined(REXYZ_A1) || defined(REXYZ_A2)
   // Ultimaker
   #define REXYZ_DEFAULT_Kp 23.29
   #define REXYZ_DEFAULT_Ki 2.23
@@ -365,6 +385,26 @@
     #define REXYZ_TEMP_SENSOR_1 0
     #define REXYZ_EXTRUDERS 1
   #endif
+#endif
+
+#if defined(REXYZ_D2)
+  // Ultimaker
+  #define REXYZ_DEFAULT_Kp 12.73
+  #define REXYZ_DEFAULT_Ki  0.76
+  #define REXYZ_DEFAULT_Kd 53.07
+
+  #define REXYZ_PREHEAT_1_TEMP_BED  60  
+  #define REXYZ_PREHEAT_2_TEMP_BED  80
+
+  #define PIDTEMPBED
+
+  #define REXYZ_DEFAULT_bedKp  48.10
+  #define REXYZ_DEFAULT_bedKi   8.33
+  #define REXYZ_DEFAULT_bedKd 185.10
+
+  #define REXYZ_TEMP_SENSOR_1 0
+  #define REXYZ_EXTRUDERS 1
+
 #endif
 
 //===========================================================================
@@ -541,7 +581,7 @@
     #define REXYZ_GRID_MAX_POINTS_X 4
     #define REXYZ_GRID_MAX_POINTS_Y 4
 #endif
-#if defined(REXYZ_A1) || defined(REXYZ_A2)  || defined(REXYZ_D2)
+#if defined(REXYZ_A1) || defined(REXYZ_A2)
     #define REXYZ_X_BED_SIZE 180
     #define REXYZ_Y_BED_SIZE 180
     #define REXYZ_X_MIN_POS 0
@@ -556,12 +596,27 @@
     #define REXYZ_GRID_MAX_POINTS_X 3
     #define REXYZ_GRID_MAX_POINTS_Y 3
 #endif
+#if defined(REXYZ_D2)
+    #define REXYZ_X_BED_SIZE 235
+    #define REXYZ_Y_BED_SIZE 235
+    #define REXYZ_X_MIN_POS 0
+    #define REXYZ_Y_MIN_POS 0
+    #define REXYZ_Z_MIN_POS 0
+    #define REXYZ_X_MAX_POS 235
+    #define REXYZ_Y_MAX_POS 235
+    #define REXYZ_Z_MAX_POS 250
+
+    #define REXYZ_LEVEL_CORNERS_INSET 20   // (mm) An inset for corner leveling
+
+    #define REXYZ_GRID_MAX_POINTS_X 3
+    #define REXYZ_GRID_MAX_POINTS_Y 3
+#endif
 
 //===========================================================================
 //============================= Movement Settings ===========================
 //===========================================================================
 
-#if defined(REXYZ_A1)
+#if defined(REXYZ_A1) || defined(REXYZ_D2)
   #define REXYZ_HOMING_FEEDRATE_Z (10*60)
   #define REXYZ_MANUAL_FEEDRATE { 60*60, 60*60, 10*60, 60}
   #define REXYZ_SHORT_MANUAL_Z_MOVE 0 // (mm) Smallest manual Z move (< 0.1mm)
@@ -677,7 +732,7 @@
 //===========================================================================
 //============================= Feature Settings ============================
 //===========================================================================
-#if defined(EXTENSIBLE_UI) || defined(REXYZ_A2) || defined(REXYZ_D2)
+#if defined(EXTENSIBLE_UI) || defined(REXYZ_A2)// || defined(REXYZ_D2)
 #else
   #define POWER_LOSS_RECOVERY
 #endif
@@ -704,15 +759,27 @@
 //    REXYZ_MK8_PROXIMITY_8MM
 
 #if defined(REXYZ_NO_ABL)
+  #if defined(REXYZ_D2)
+    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40  
+    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100  
+    #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 10), (Y_MAX_POS - 10), 20 }
+  #else
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "BD"
     #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH   245  
     #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      310
     #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 15), (Y_MIN_POS + 70), 20 }
     //#define REXYZ_MANUAL_PROBE_START_Z 0
+  #endif  
 #else
+  #if defined(REXYZ_D2)
+    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40  
+    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100  
+    #define REXYZ_NOZZLE_PARK_POINT { (X_MIN_POS + 10), (Y_MAX_POS - 10), 20 }
+  #else
     #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40  
     #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100  
     #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 10), (Y_MAX_POS - 10), 20 }
+  #endif
 #endif
 
 #if defined(REXYZ_MK8_MANUAL_PROBE)
