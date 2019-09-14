@@ -114,13 +114,19 @@
 #define COLOR_ORANGE      0xFA00 //#FF7F00
 
 #ifndef TFT_MARLINUI_COLOR
-  #define TFT_MARLINUI_COLOR COLOR_WHITE
+  #define TFT_MARLINUI_COLOR COLOR_BLACK
 #endif
 #ifndef TFT_MARLINBG_COLOR
-  #define TFT_MARLINBG_COLOR COLOR_BLACK
+  #define TFT_MARLINBG_COLOR COLOR_WHITE
+#endif
+#ifndef TFT_SELECTED_COLOR
+  #define TFT_SELECTED_COLOR COLOR_RED
 #endif
 #ifndef TFT_DISABLED_COLOR
-  #define TFT_DISABLED_COLOR COLOR_DARKGREY
+  #define TFT_DISABLED_COLOR COLOR_BLUE
+#endif
+#ifndef TFT_BUTTON_COLOR
+  #define TFT_BUTTON_COLOR COLOR_ORANGE
 #endif
 
 static uint32_t lcd_id = 0;
@@ -589,16 +595,16 @@ uint8_t u8g_dev_tft_480x320_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
       #if ENABLED(TOUCH_BUTTONS)
 
         u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
-        drawImage(buttonD, u8g, dev, 32, 20, COLOR_ORANGE);
+        drawImage(buttonD, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
 
         u8g_WriteEscSeqP(u8g, dev, buttonA_sequence);
-        drawImage(buttonA, u8g, dev, 32, 20, COLOR_ORANGE);
+        drawImage(buttonA, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
 
         u8g_WriteEscSeqP(u8g, dev, buttonB_sequence);
-        drawImage(buttonB, u8g, dev, 32, 20, COLOR_ORANGE);
+        drawImage(buttonB, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
 
         u8g_WriteEscSeqP(u8g, dev, buttonC_sequence);
-        drawImage(buttonC, u8g, dev, 32, 20, COLOR_ORANGE);
+        drawImage(buttonC, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
 
       #endif // TOUCH_BUTTONS
 
@@ -626,8 +632,8 @@ uint8_t u8g_dev_tft_480x320_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
             switch(clr) {
               case 0: buffer[k++] = TFT_MARLINBG_COLOR; break;
               case 1: buffer[k++] = TFT_MARLINUI_COLOR; break;
-              case 2: buffer[k++] = COLOR_RED; break;
-              case 3: buffer[k++] = COLOR_NAVY; break;
+              case 2: buffer[k++] = TFT_SELECTED_COLOR; break;
+              case 3: buffer[k++] = TFT_DISABLED_COLOR; break;
             }
           }
         }
@@ -638,8 +644,8 @@ uint8_t u8g_dev_tft_480x320_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
             switch(clr) {
               case 0: buffer[k++] = TFT_MARLINBG_COLOR; break;
               case 1: buffer[k++] = TFT_MARLINUI_COLOR; break;
-              case 2: buffer[k++] = COLOR_RED; break;
-              case 3: buffer[k++] = COLOR_NAVY; break;
+              case 2: buffer[k++] = TFT_SELECTED_COLOR; break;
+              case 3: buffer[k++] = TFT_DISABLED_COLOR; break;
             }
           }
         }
