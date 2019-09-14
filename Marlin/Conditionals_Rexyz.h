@@ -721,6 +721,9 @@
     #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
     #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
 
+    #define SDCARD_SORT_ALPHA
+    #define REXYZ_SDSORT_USES_RAM    true
+
 #endif
 
 #if defined(REXYZ_TOUCH_UI)
