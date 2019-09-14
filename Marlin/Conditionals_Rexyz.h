@@ -627,6 +627,12 @@
 #endif
 // #define MANUAL_FEEDRATE { 50*60, 50*60, 4*60, 60 } // Feedrates for manual moves along X, Y, Z, E from panel
 
+#if defined(REXYZ_D2)
+  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 800, 98 }
+#else
+  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
+#endif
+
 //===========================================================================
 //============================= LCD & Sound Settings ========================
 //===========================================================================
