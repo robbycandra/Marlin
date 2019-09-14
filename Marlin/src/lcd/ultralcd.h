@@ -421,9 +421,16 @@ public:
 
   #if HAS_LCD_MENU
 
-    #if ENABLED(TOUCH_BUTTONS)
-      static uint8_t repeat_delay;
-    #endif
+    #if ENABLED(FSMC_GRAPHICAL_TFT)
+      static uint8_t screen_mode;
+      #if ENABLED(TOUCH_BUTTONS)
+        static uint8_t repeat_delay;
+        static uint8_t lcd_menu_touched_coord;
+      #endif  
+    #endif  
+    #if HAS_FULL_SCALE_TFT
+      static bool menu_is_touched(int8_t itemNumber);
+    #endif  
 
     #if ENABLED(ENCODER_RATE_MULTIPLIER)
       static bool encoderRateMultiplierEnabled;
@@ -462,17 +469,6 @@ public:
 
     static bool lcd_clicked;
     static bool use_click();
-
-    #if ENABLED(FSMC_GRAPHICAL_TFT)
-      static uint8_t screen_mode;
-      #if ENABLED(TOUCH_BUTTONS)
-        static uint8_t touch_delay;
-        static uint8_t lcd_menu_touched_coord;
-      #endif  
-    #endif  
-    #if HAS_FULL_SCALE_TFT
-      static bool menu_is_touched(int8_t itemNumber);
-    #endif  
 
     static void synchronize(PGM_P const msg=nullptr);
 

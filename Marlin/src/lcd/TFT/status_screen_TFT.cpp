@@ -418,6 +418,8 @@ void draw_4colom_box () {
 void MarlinUI::draw_status_screen() {
 
   ui.screen_mode = SCRMODE_STATUS;
+  ui.repeat_delay = 50;
+
 
   #if ENABLED(MARLIN_DEV_MODE)
     if (first_page) count_renders++;
