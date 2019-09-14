@@ -504,7 +504,7 @@ temp_range_t Temperature::temp_range[HOTENDS] = ARRAY_BY_HOTENDS(sensor_heater_0
 
       // Did the temperature overshoot very far?
       #ifndef MAX_OVERSHOOT_PID_AUTOTUNE
-        #define MAX_OVERSHOOT_PID_AUTOTUNE 20
+        #define MAX_OVERSHOOT_PID_AUTOTUNE 30
       #endif
       if (current > target + MAX_OVERSHOOT_PID_AUTOTUNE) {
         SERIAL_ECHOLNPGM(MSG_PID_TEMP_TOO_HIGH);
