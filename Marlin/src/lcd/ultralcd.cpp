@@ -200,6 +200,10 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     int8_t MarlinUI::encoderDirection = ENCODERBASE;
   #endif
 
+  #if ENABLED(TOUCH_BUTTONS)
+    uint8_t MarlinUI::repeat_delay;
+  #endif
+
   bool MarlinUI::lcd_clicked;
   float move_menu_scale;
 
@@ -853,13 +857,11 @@ void MarlinUI::update() {
           if (touch_buttons & (EN_A | EN_B)) {          // A and/or B button?
             encoderDiff = (ENCODER_STEPS_PER_MENU_ITEM) * (ENCODER_PULSES_PER_STEP) * encoderDirection;
             if (touch_buttons & EN_A) encoderDiff *= -1;
-
             if (ui.screen_mode == SCRMODE_STATUS) 
-              ui.touch_delay = 50;
+              ui.repeat_delay = 50;
             else if (ui.screen_mode != SCRMODE_MENU_EDIT) // else ui.touch_delay already defined in draw_edit_screen
-              ui.touch_delay = 250;
-
-            next_button_update_ms = ms + touch_delay;            // Assume the repeat delay
+              ui.repeat_delay = 250;
+            next_button_update_ms = ms + repeat_delay;            // Assume the repeat delay
             if (!wait_for_unclick && !arrow_pressed) {  // On click prepare for repeat
               next_button_update_ms += 250;             // Longer delay on first press
               arrow_pressed = true;                     // Mark arrow as pressed
@@ -1568,9 +1570,6 @@ void MarlinUI::update() {
     #endif
     #ifdef ACTION_ON_CANCEL
       host_action_cancel();
-    #endif
-    #if ENABLED(HOST_PROMPT_SUPPORT)
-      host_prompt_open(PROMPT_INFO, PSTR("UI Abort"));
     #endif
     print_job_timer.stop();
     set_status_P(PSTR(MSG_PRINT_ABORTED));
