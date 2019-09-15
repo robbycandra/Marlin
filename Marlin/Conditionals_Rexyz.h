@@ -176,14 +176,17 @@
 #if defined(REXYZ_A1)
     #define REXYZ_MACHINE_FRAME_TYPE "A1"
     #define REXYZ_BOARD_ROBINMINI
+    #define REXYZ_STM32F1
 #endif
 #if defined(REXYZ_A2)
     #define REXYZ_MACHINE_FRAME_TYPE "A2"
     #define REXYZ_BOARD_ROBIN
+    #define REXYZ_STM32F1
 #endif
 #if defined(REXYZ_D2)
     #define REXYZ_MACHINE_FRAME_TYPE "D2"
     #define REXYZ_BOARD_DLION
+    #define REXYZ_STM32F1
 #endif
 
 //===========================================================================
@@ -194,20 +197,17 @@
     #define REXYZ_MOTHERBOARD BOARD_RAMPS_14_EFB
     #define ENDSTOP_INTERRUPTS_FEATURE
     #define REXYZ_SERIAL_PORT 0
-    #define SD_DETECT_INVERTED
 #endif
 #if defined(REXYZ_BOARD_TRIGORILLA14)
     #define REXYZ_MOTHERBOARD BOARD_TRIGORILLA_14
     #define ENDSTOP_INTERRUPTS_FEATURE
     #define REXYZ_SERIAL_PORT 0
-    #define SD_DETECT_INVERTED
 #endif
 #if defined(REXYZ_BOARD_SKR13)
     #define REXYZ_MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
     #define REXYZ_SERIAL_PORT -1
     // Use Onboard SD Card.
     #define SDCARD_CONNECTION ONBOARD
-    #define SD_DETECT_INVERTED
   #if defined(REXYZ_TOUCH_UI)
       // If using TFT (or not using)
       //#define REXYZ_SERIAL_PORT -1
@@ -220,9 +220,7 @@
     #define REXYZ_SERIAL_PORT 3
     #define SERIAL_PORT_2 1
     #define NUM_SERIAL 2
-    #define SDIO_SUPPORT
     #define POWER_LOSS_STATE LOW
-    //#define SD_DETECT_INVERTED
 #endif
 #if defined(REXYZ_BOARD_ROBIN)
     #define MOTHERBOARD BOARD_MKS_ROBIN
@@ -230,8 +228,6 @@
     #define REXYZ_SERIAL_PORT 3
     #define SERIAL_PORT_2 1
     #define NUM_SERIAL 2
-    #define SDIO_SUPPORT
-    //#define SD_DETECT_INVERTED
 #endif
 #if defined(REXYZ_BOARD_DLION)
     #define REXYZ_MOTHERBOARD BOARD_REXYZ_DLION_D2
@@ -239,58 +235,28 @@
     #define REXYZ_SERIAL_PORT 3
     #define SERIAL_PORT_2 1
     #define NUM_SERIAL 2
-    #define SDIO_SUPPORT
-    //#define SD_DETECT_INVERTED
 #endif
 
-#if defined(REXYZ_S_TYPE)
-    #define REXYZ_FIL_RUNOUT_INVERTING false
-    #define FIL_RUNOUT_PIN 14 //Y_MIN_PIN //14
-
-    #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
-    #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
-    #define REXYZ_E0_AUTO_FAN_PIN -1
+//===========================================================================
+//============================= Media Settings ==============================
+//===========================================================================
+//Mega
+#if defined(REXYZ_BOARD_MKSGENL) || defined(REXYZ_BOARD_TRIGORILLA14)
+  #define SD_DETECT_INVERTED
+  #define SPI_SPEED SPI_HALF_SPEED
 #endif
-#if defined(REXYZ_4MAX)
-    #define REXYZ_FIL_RUNOUT_INVERTING true
-
-    // Default 4MAX use X_MIN, Y_MIN, and Z_MIN
-    // FIL_RUNOUT_PIN use Z_MAZ
-    #define FIL_RUNOUT_PIN 15 //Y_MAX_PIN //19
-
-    #define REXYZ_USE_CONTROLLER_FAN 
-    #define REXYZ_CONTROLLER_FAN_PIN FAN1_PIN    // Set a custom pin for the controller fan
-    #define REXYZ_CONTROLLERFAN_SPEED 127        // 255 == full speed
-    #define REXYZ_E0_AUTO_FAN_PIN FAN2_PIN
+// LPC1768
+#if defined(REXYZ_BOARD_SKR13)
+  #define SD_DETECT_INVERTED
+  #define SPI_SPEED SPI_QUARTER_SPEED
 #endif
-#if defined(REXYZ_N_TYPE)
-    #define REXYZ_FIL_RUNOUT_INVERTING false
-    #define FIL_RUNOUT_PIN P1_27    // Y_MIN_PIN 
-
-    #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
-    #define REXYZ_CONTROLLERFAN_SPEED 225 // 255 == full speed
-    #define REXYZ_E0_AUTO_FAN_PIN FAN1_PIN
-#endif
-#if defined(REXYZ_A8P)
-    #define REXYZ_FIL_RUNOUT_INVERTING true
-    #define FIL_RUNOUT_PIN P1_26    // Y_MAX_PIN 
-
-    #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
-    #define REXYZ_CONTROLLERFAN_SPEED 225 // 255 == full speed
-    #define REXYZ_E0_AUTO_FAN_PIN FAN1_PIN
-#endif
-#if defined(REXYZ_BOARD_ROBINMINI)
-    #define REXYZ_FIL_RUNOUT_INVERTING true
-    #define REXYZ_E0_AUTO_FAN_PIN -1
-    #define REXYZ_TEMP_SENSOR_1 0
-#endif
-#if defined(REXYZ_BOARD_ROBIN)
-    #define REXYZ_FIL_RUNOUT_INVERTING false
-    #define REXYZ_E0_AUTO_FAN_PIN -1
-#endif
-#if defined(REXYZ_BOARD_DLION)
-    #define REXYZ_FIL_RUNOUT_INVERTING false
-    #define REXYZ_E0_AUTO_FAN_PIN MANUAL_FAN_PIN //-1// FAN1_PIN
+//#if defined(REXYZ_BOARD_ROBINMINI) || defined(REXYZ_BOARD_ROBIN) || defined(REXYZ_BOARD_DLION)
+#if defined(REXYZ_STM32F1)
+  //#define SD_DETECT_INVERTED
+  #define SPI_SPEED SPI_HALF_SPEED
+  #define SDIO_SUPPORT
+  #define SDCARD_SORT_ALPHA
+  #define REXYZ_SDSORT_USES_RAM    true
 #endif
 
 //===========================================================================
@@ -310,19 +276,6 @@
     #define REXYZ_THERMAL_PROTECTION_BED_PERIOD 40    // Seconds
     #define REXYZ_WATCH_BED_TEMP_PERIOD 120           // Seconds
 
-#if defined(REXYZ_BOARD_MKSGENL)
-    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255  // 255 == full speed
-#endif
-#if defined(REXYZ_BOARD_SKR13)
-    #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
-    #define EXTRUDER_AUTO_FAN_SPEED_MAX 191    // 255 == full speed
-    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 63   // 255 == full speed
-#endif
-#if defined(REXYZ_BOARD_DLION)
-    //#define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
-    #define EXTRUDER_AUTO_FAN_SPEED_MAX 255    // 255 == full speed
-    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
-#endif
 #if defined(REXYZ_S_TYPE)
     #define REXYZ_DEFAULT_Kp 20.81
     #define REXYZ_DEFAULT_Ki 1.46
@@ -405,6 +358,55 @@
   #define REXYZ_TEMP_SENSOR_1 0
   #define REXYZ_EXTRUDERS 1
 
+#endif
+
+//===========================================================================
+//============================= Auto Fan Settings ===========================
+//===========================================================================
+#if defined(REXYZ_S_TYPE)
+    #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
+    #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
+    #define REXYZ_E0_AUTO_FAN_PIN -1
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255  // 255 == full speed
+#endif
+#if defined(REXYZ_4MAX)
+    #define REXYZ_USE_CONTROLLER_FAN 
+    #define REXYZ_CONTROLLER_FAN_PIN FAN1_PIN    // Set a custom pin for the controller fan
+    #define REXYZ_CONTROLLERFAN_SPEED 127        // 255 == full speed
+    #define REXYZ_E0_AUTO_FAN_PIN FAN2_PIN
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255  // 255 == full speed
+#endif
+#if defined(REXYZ_N_TYPE)
+    #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
+    #define REXYZ_CONTROLLERFAN_SPEED 225 // 255 == full speed
+    #define REXYZ_E0_AUTO_FAN_PIN FAN1_PIN
+    #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
+    #define EXTRUDER_AUTO_FAN_SPEED_MAX 191    // 255 == full speed
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 63   // 255 == full speed
+#endif
+#if defined(REXYZ_A8P)
+    #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
+    #define REXYZ_CONTROLLERFAN_SPEED 225 // 255 == full speed
+    #define REXYZ_E0_AUTO_FAN_PIN FAN1_PIN
+    #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
+    #define EXTRUDER_AUTO_FAN_SPEED_MAX 191    // 255 == full speed
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 63   // 255 == full speed
+#endif
+#if defined(REXYZ_BOARD_ROBINMINI)
+    #define REXYZ_E0_AUTO_FAN_PIN -1
+    #define REXYZ_TEMP_SENSOR_1 0
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
+#endif
+#if defined(REXYZ_BOARD_ROBIN)
+    #define REXYZ_E0_AUTO_FAN_PIN -1
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
+#endif
+#if defined(REXYZ_BOARD_DLION)
+    //D lion tidak ada PWM Pin.
+    #define REXYZ_E0_AUTO_FAN_PIN MANUAL_FAN_PIN //-1// FAN1_PIN
+    //#define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
+    #define EXTRUDER_AUTO_FAN_SPEED_MAX 255    // 255 == full speed
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
 #endif
 
 //===========================================================================
@@ -616,6 +618,12 @@
 //============================= Movement Settings ===========================
 //===========================================================================
 
+#if defined(REXYZ_D2)
+  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 800, 98 }
+#else
+  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
+#endif
+
 #if defined(REXYZ_A1) || defined(REXYZ_D2)
   #define REXYZ_HOMING_FEEDRATE_Z (10*60)
   #define REXYZ_MANUAL_FEEDRATE { 60*60, 60*60, 10*60, 60}
@@ -627,11 +635,6 @@
 #endif
 // #define MANUAL_FEEDRATE { 50*60, 50*60, 4*60, 60 } // Feedrates for manual moves along X, Y, Z, E from panel
 
-#if defined(REXYZ_D2)
-  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 800, 98 }
-#else
-  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
-#endif
 
 //===========================================================================
 //============================= LCD & Sound Settings ========================
@@ -698,13 +701,18 @@
 #if defined(REXYZ_A1) || defined(REXYZ_A2) || defined(REXYZ_D2)
     #define FSMC_GRAPHICAL_TFT
     #define REVERSE_MENU_DIRECTION
+
     #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
+      #define U8G_16BIT 1 // jangan lupa untuk aktifkan flag -DU8G_16BIT di platformio
       #if defined(REXYZ_D2)
         #define FULL_SCALE_TFT_480X320
       #else
         #define FULL_SCALE_TFT_320X240
       #endif
     #endif
+
+    #define TOUCH_BUTTONS
+    #define TOUCH_CALIBRATION
     #if defined(REXYZ_D2)
       #define REXYZ_XPT2046_X_CALIBRATION   -16626
       #define REXYZ_XPT2046_Y_CALIBRATION   10933
@@ -716,10 +724,6 @@
       #define REXYZ_XPT2046_X_OFFSET       -43
       #define REXYZ_XPT2046_Y_OFFSET        257
     #endif
-    #define U8G_16BIT 1 // jangan lupa untuk aktifkan flag -DU8G_16BIT di platformio
-
-    #define TOUCH_BUTTONS
-    #define TOUCH_CALIBRATION
 
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_HZ 5000
@@ -727,16 +731,12 @@
     #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
     #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
 
-    #define SDCARD_SORT_ALPHA
-    #define REXYZ_SDSORT_USES_RAM    true
-
 #endif
 
 #if defined(REXYZ_TOUCH_UI)
     //#define EXTENSIBLE_UI
     //#define EXTUI_EXAMPLE
 #endif
-
 
 //===========================================================================
 //============================= Feature Settings ============================
@@ -746,7 +746,38 @@
   #define POWER_LOSS_RECOVERY
 #endif
 
+//===========================================================================
+//============================= Filament Runout Settings ====================
+//===========================================================================
 #define FILAMENT_RUNOUT_SENSOR
+#if defined(REXYZ_S_TYPE)
+    #define REXYZ_FIL_RUNOUT_INVERTING false
+    #define FIL_RUNOUT_PIN 14 //Y_MIN_PIN //14
+#endif
+#if defined(REXYZ_4MAX)
+    #define REXYZ_FIL_RUNOUT_INVERTING true
+    // Default 4MAX use X_MIN, Y_MIN, and Z_MIN
+    // FIL_RUNOUT_PIN use Z_MAX
+    #define FIL_RUNOUT_PIN 15 //Y_MAX_PIN //19
+#endif
+#if defined(REXYZ_N_TYPE)
+    #define REXYZ_FIL_RUNOUT_INVERTING false
+    #define FIL_RUNOUT_PIN P1_27    // Y_MIN_PIN 
+#endif
+#if defined(REXYZ_A8P)
+    #define REXYZ_FIL_RUNOUT_INVERTING true
+    #define FIL_RUNOUT_PIN P1_26    // Y_MAX_PIN 
+#endif
+#if defined(REXYZ_BOARD_ROBINMINI)
+    #define REXYZ_FIL_RUNOUT_INVERTING true
+#endif
+#if defined(REXYZ_BOARD_ROBIN)
+    #define REXYZ_FIL_RUNOUT_INVERTING false
+#endif
+#if defined(REXYZ_BOARD_DLION)
+    //FIL_RUNOUT_PIN defined in pin file.
+    #define REXYZ_FIL_RUNOUT_INVERTING false
+#endif
 
 //===========================================================================
 //============================= Probe Settings ==============================
