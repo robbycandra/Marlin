@@ -666,7 +666,7 @@ const char* CardReader::diveToFile(SdFile*& curDir, const char * const path, con
   startDir = curDir;
   if (echo) {
     SERIAL_ECHOLNPAIR("==== Dive ====\nPath: ", path);
-    curDir->getFilename(echo_fn);
+    curDir->getDosName(echo_fn);
     SERIAL_ECHOLNPAIR("Cur Dir: ", echo_fn);
   }
 
@@ -697,7 +697,7 @@ const char* CardReader::diveToFile(SdFile*& curDir, const char * const path, con
     curDir = sub;
 
     if (echo) {
-      curDir->getFilename(echo_fn);
+      curDir->getDosName(echo_fn);
       SERIAL_ECHOLNPAIR("New Dir: ", echo_fn);
       SERIAL_ECHOLNPAIR("Work Dir Depth: ", workDirDepth);
     }
