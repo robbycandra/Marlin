@@ -22,7 +22,7 @@
 
 /*
 
-  u8g_dev_tft_320x240_touch.cpp
+  u8g_dev_tft_fullScale_touch.cpp
 
   Universal 8bit Graphics Library
 
@@ -56,14 +56,26 @@
 */
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_GRAPHICAL_LCD && ENABLED(FULL_SCALE_TFT_320X240)
-
-#include "../../lcd/TFT/ultralcd_TFT.h"
+#if HAS_GRAPHICAL_LCD
+#include "../ultralcd.h"
+#include "ultralcd_TFT.h"
+#include "TFT_screen.h"
 
 #include <U8glib.h>
 #include "../dogm/HAL_LCD_com_defines.h"
 
 #include <string.h>
+
+#if ENABLED(FULL_SCALE_TFT_480X320)
+  #include "TFT_screen_480x320.h"
+  #define FULL_HEIGHT 320
+  #define PAGE_HEIGHT 8
+#endif
+#if ENABLED(FULL_SCALE_TFT_320X240)
+  #include "TFT_screen_320x240.h"
+  #define FULL_HEIGHT 240
+  #define PAGE_HEIGHT 8
+#endif
 
 #if ENABLED(LCD_USE_DMA_FSMC)
   extern void LCD_IO_WriteSequence(uint16_t *data, uint16_t length);
@@ -74,44 +86,13 @@
 
 #define WIDTH  LCD_PIXEL_WIDTH
 #define HEIGHT LCD_PIXEL_HEIGHT
-#define FULL_HEIGHT 240
-#define PAGE_HEIGHT 4
 
 #define X_LO 0
 #define Y_LO 0
 #define X_HI (X_LO + WIDTH  - 1)
 #define Y_HI (Y_LO + HEIGHT - 1)
 
-#define LCD_COLUMN      0x2A   /* Colomn address register */
-#define LCD_ROW         0x2B   /* Row address register */
-#define LCD_WRITE_RAM   0x2C
-
 // see https://ee-programming-notepad.blogspot.com/2016/10/16-bit-color-generator-picker.html
-
-#define COLOR_BLACK       0x0000 //#000000
-#define COLOR_WHITE       0xFFFF //#FFFFFF
-#define COLOR_SILVER      0xC618 //#C0C0C0
-#define COLOR_GREY        0x7BEF //#808080
-#define COLOR_DARKGREY    0x4208 //#404040
-#define COLOR_DARKGREY2   0x39E7 //#303030
-
-#define COLOR_RED         0xF800 //#FF0000
-#define COLOR_LIME        0x7E00 //#00FF00
-#define COLOR_BLUE        0x001F //#0000FF
-#define COLOR_YELLOW      0xFFE0 //#FFFF00
-#define COLOR_MAGENTA     0xF81F //#FF00FF 
-#define COLOR_FUCHSIA     0xF81F //#FF00FF 
-#define COLOR_CYAN        0x07FF //#00FFFF 
-#define COLOR_AQUA        0x07FF //#00FFFF 
-
-#define COLOR_MAROON      0x7800 //#800000
-#define COLOR_GREEN       0x03E0 //#008000
-#define COLOR_NAVY        0x000F //#000080
-#define COLOR_OLIVE       0x8400 //#808000
-#define COLOR_PURPLE      0x8010 //#800080
-#define COLOR_TEAL        0x0410 //#008080
-
-#define COLOR_ORANGE      0xFC00 //#FF7F00
 
 #ifndef TFT_MARLINUI_COLOR
   #define TFT_MARLINUI_COLOR COLOR_BLACK
@@ -131,8 +112,6 @@
 
 static uint32_t lcd_id = 0;
 
-#define U8G_ESC_DATA(x) (uint8_t)(x >> 8), (uint8_t)(x & 0xFF)
-
 static const uint8_t page_first_sequence[] = {
   U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(X_LO), U8G_ESC_DATA(X_HI),
   U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(Y_LO), U8G_ESC_DATA(Y_HI),
@@ -140,46 +119,15 @@ static const uint8_t page_first_sequence[] = {
   U8G_ESC_END
 };
 
-// WIDTH  = 320 = 0x13F
-// HEIGHT = 240 = 0x0EF
+// 480 = 0x1DF
+// 320 = 0x13F
+// 240 = 0x0EF
 static const uint8_t clear_screen_sequence[] = {
-  U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0x3F,
-  U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, 0x00, 0xEF,
+  U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, U8G_ESC_DATA(WIDTH),
+  U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, U8G_ESC_DATA(FULL_HEIGHT),
   U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
   U8G_ESC_END
 };
-
-#if ENABLED(TOUCH_BUTTONS)
-
-  static const uint8_t buttonD_sequence[] = {
-    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(14), U8G_ESC_DATA(77),
-    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(197), U8G_ESC_DATA(236),
-    U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
-    U8G_ESC_END
-  };
-
-  static const uint8_t buttonA_sequence[] = {
-    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(90), U8G_ESC_DATA(153),
-    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(197), U8G_ESC_DATA(236),
-    U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
-    U8G_ESC_END
-  };
-
-  static const uint8_t buttonB_sequence[] = {
-    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(166), U8G_ESC_DATA(229),
-    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(197), U8G_ESC_DATA(236),
-    U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
-    U8G_ESC_END
-  };
-
-  static const uint8_t buttonC_sequence[] = {
-    U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(242), U8G_ESC_DATA(305),
-    U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), U8G_ESC_DATA(197), U8G_ESC_DATA(236),
-    U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
-    U8G_ESC_END
-  };
-
-#endif
 
 static const uint8_t st7789v_init_sequence[] = { // 0x8552 - ST7789V
   U8G_ESC_ADR(0),
@@ -211,20 +159,161 @@ static const uint8_t ili9341_init_sequence[] = { // 0x9341 - ILI9341
   U8G_ESC_ADR(0),
   0x10,
   U8G_ESC_DLY(10),
-  0x01,
+  0x01,                                                              // ? Di jalankan di Reset
   U8G_ESC_DLY(100), U8G_ESC_DLY(100),
-  0x36, U8G_ESC_ADR(1), 0xE8,
-  U8G_ESC_ADR(0), 0x3A, U8G_ESC_ADR(1), 0x55,
+ 0x36, U8G_ESC_ADR(1), 0xE8,                                         // Set Rotation : 0xE8
+  U8G_ESC_ADR(0), 0x3A, U8G_ESC_ADR(1), 0x55,                         // Pixel Format Set : 0x55 = 16 Bit
   U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0x3F,
   U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, 0x00, 0xEF,
-  U8G_ESC_ADR(0), 0xC5, U8G_ESC_ADR(1), 0x3E, 0x28,
-  U8G_ESC_ADR(0), 0xC7, U8G_ESC_ADR(1), 0x86,
-  U8G_ESC_ADR(0), 0xB1, U8G_ESC_ADR(1), 0x00, 0x18,
-  U8G_ESC_ADR(0), 0xC0, U8G_ESC_ADR(1), 0x23,
-  U8G_ESC_ADR(0), 0xC1, U8G_ESC_ADR(1), 0x10,
-  U8G_ESC_ADR(0), 0x29,
-  U8G_ESC_ADR(0), 0x11,
+  U8G_ESC_ADR(0), 0xC5, U8G_ESC_ADR(1), 0x3E, 0x28,                   // VCOM Control 1 : 0x3E, 0x28
+  U8G_ESC_ADR(0), 0xC7, U8G_ESC_ADR(1), 0x86,                         // VCOM Control 2 : 0x86
+  U8G_ESC_ADR(0), 0xB1, U8G_ESC_ADR(1), 0x00, 0x18,                   // Frame Control : 0x00, 0x18
+  U8G_ESC_ADR(0), 0xC0, U8G_ESC_ADR(1), 0x23,                         // Power Control 1 : 0x10
+  U8G_ESC_ADR(0), 0xC1, U8G_ESC_ADR(1), 0x10,                         // Power Control 2 : 0x10
+  U8G_ESC_ADR(0), 0x29,                                               // Turn On Display
+  U8G_ESC_ADR(0), 0x11,                                               // Sleep
   U8G_ESC_DLY(100),
+  U8G_ESC_END
+};
+
+// factory Manual setting is flickering
+static const uint8_t ili9486_factory_init_sequence[] = { 
+  U8G_ESC_ADR(0),
+  0x10,
+  U8G_ESC_DLY(10),
+  0x01,
+  U8G_ESC_DLY(100), U8G_ESC_DLY(100),
+  // Adjust Control 2
+  U8G_ESC_ADR(0), 0xF2, U8G_ESC_ADR(1), 0x18, 0xA3, 0x12, 0x02, 0xB2, 0x12, 0xFF, 0x10, 0x00,
+  // Adjust Control 4
+  U8G_ESC_ADR(0), 0xF8, U8G_ESC_ADR(1), 0x21, 0x04, 
+  // Adjust Control 5
+  U8G_ESC_ADR(0), 0xF9, U8G_ESC_ADR(1), 0x00, 0x08, 
+
+  // Memory Access Control
+  // BGR Pixel Order = 1<<3 (0x08)
+  // Row Column Exchange = 1<<5 (0x20)
+  // Column Adress Order Swap = 1<<6 (0x40)
+  // Row Address Order Swap 1<<7 (0x80)
+  // Rotate 180 Degress (Column Adress Order Swap | Row Address Order Swap)
+  U8G_ESC_ADR(0), 0x36, U8G_ESC_ADR(1), 0xA8,
+
+  // Inversion Control
+  U8G_ESC_ADR(0), 0xB4, U8G_ESC_ADR(1), 0x00,
+
+  // Power Control 2
+  U8G_ESC_ADR(0), 0xC1, U8G_ESC_ADR(1), 0x41, 
+ 
+  // VCOM Control
+  U8G_ESC_ADR(0), 0xC5, U8G_ESC_ADR(1), 0x00, 0x53,
+
+  // Gamma Mode 
+  U8G_ESC_ADR(0), 0xE0, U8G_ESC_ADR(1), 0x0F, 0x1B, 0x18, 0x0B, 0x0E, 0x09, 0x47, 0x94, 0x35, 0x0A, 0x13, 0x05, 0x08, 0x03, 0x00, 
+  U8G_ESC_ADR(0), 0xE1, U8G_ESC_ADR(1), 0x0F, 0x3A, 0x37, 0x0B, 0x0C, 0x05, 0x4A, 0x24, 0x39, 0x07, 0x10, 0x04, 0x27, 0x25, 0x00, 
+
+  // Sleep Out
+  U8G_ESC_ADR(0), 0x11,
+  U8G_ESC_DLY(120),
+
+  // Display On
+  U8G_ESC_ADR(0), 0x29,
+  U8G_ESC_END
+};
+
+static const uint8_t ili9486_init_sequence[] = { 
+  // Sleep In
+  U8G_ESC_ADR(0), 0x10,
+  U8G_ESC_DLY(10),
+
+  // Software Reset
+  U8G_ESC_ADR(0), 0x01,
+  U8G_ESC_DLY(100), U8G_ESC_DLY(100),
+
+  // Init Dari Factory PDF
+  // Adjust Control 2 - 
+  // Make to much Brightness - better not use it.
+  // U8G_ESC_ADR(0), 0xF2, U8G_ESC_ADR(1), 0x18, 0xA3, 0x12, 0x02, 0xB2, 0x12, 0xFF, 0x10, 0x00,
+  // Adjust Control 4 - Gamma & Dither Control
+  U8G_ESC_ADR(0), 0xF8, U8G_ESC_ADR(1), 0x21, 0x07, 
+  // Adjust Control 5 - Chopper Opt
+  U8G_ESC_ADR(0), 0xF9, U8G_ESC_ADR(1), 0x00, 0x08, 
+
+  // Memory Access Control
+  // BGR Pixel Order = 1<<3 (0x08)
+  // Row Column Exchange = 1<<5 (0x20)
+  // Column Adress Order Swap = 1<<6 (0x40)
+  // Row Address Order Swap 1<<7 (0x80)
+  // Rotate 180 Degress (Column Adress Order Swap | Row Address Order Swap)
+  U8G_ESC_ADR(0), 0x36, U8G_ESC_ADR(1), 0xA8,
+
+  // Pixel Format 16 bit
+  U8G_ESC_ADR(0), 0x3A, U8G_ESC_ADR(1), 0x55,
+
+  // Inversion Control
+  U8G_ESC_ADR(0), 0xB4, U8G_ESC_ADR(1), 0x01,
+
+  // Display Function Control
+  U8G_ESC_ADR(0), 0xB6, U8G_ESC_ADR(1), 0x02, 0x22,
+
+  // Interface Mode DE polarity=High enable, PCKL polarity=data fetched at rising time, HSYNC polarity=Low level sync clock, VSYNC polarity=Low level sync clock
+  //U8G_ESC_ADR(0), 0xB0, U8G_ESC_ADR(1), 0x00,
+
+  // Color Inversion
+  // Color Inversion ON
+  // U8G_ESC_ADR(0), 0x21, 
+  // Color Inversion OFF
+  // U8G_ESC_ADR(0), 0x20, 
+
+  //Power Control 1  
+  //U8G_ESC_ADR(0), 0xC0, U8G_ESC_ADR(1), 0x0D, 0x0D,                         
+  // Power Control 2
+  U8G_ESC_ADR(0), 0xC1, U8G_ESC_ADR(1), 0x41, 
+  // Power Control 3
+  //U8G_ESC_ADR(0), 0xC2, U8G_ESC_ADR(1), 0x33,
+
+  // VCOM Control
+  U8G_ESC_ADR(0), 0xC5, U8G_ESC_ADR(1), 0x00, 0x07,
+  // V Com COntrol 2 ???
+  //U8G_ESC_ADR(0), 0xC7, U8G_ESC_ADR(1), 0x86,
+
+  // Write CTRL Display Value 
+  //U8G_ESC_ADR(0), 0x53, U8G_ESC_ADR(1), 0x28,
+
+  // Write Display Brightness Value 
+  //U8G_ESC_ADR(0), 0x51, U8G_ESC_ADR(1), 0x40,
+
+  // Write Display Brightness Value 
+  //U8G_ESC_ADR(0), 0x55, U8G_ESC_ADR(1), 0x90,
+
+  // Row and Column -> Do we really need it ?
+  //U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0xDF,
+  //U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0x3F,
+
+  // Gamma Mode accroding to MCUFRIEND
+  // 2
+  U8G_ESC_ADR(0), 0xE0, U8G_ESC_ADR(1), 0x0F, 0x1B, 0x18, 0x0B, 0x0E, 0x09, 0x47, 0x94, 0x35, 0x0A, 0x13, 0x05, 0x08, 0x03, 0x00, 
+  U8G_ESC_ADR(0), 0xE1, U8G_ESC_ADR(1), 0x0F, 0x3A, 0x37, 0x0B, 0x0C, 0x05, 0x4A, 0x24, 0x39, 0x07, 0x10, 0x04, 0x27, 0x25, 0x00, 
+
+  // 3
+  //U8G_ESC_ADR(0), 0xE0, U8G_ESC_ADR(1), 0x0F, 0x1F, 0x1C, 0x0C, 0x0F, 0x08, 0x48, 0x98, 0x37, 0x0A, 0x13, 0x04, 0x11, 0x0D, 0x00, 
+  //U8G_ESC_ADR(0), 0xE1, U8G_ESC_ADR(1), 0x0F, 0x32, 0x2E, 0x0B, 0x0D, 0x05, 0x47, 0x75, 0x37, 0x06, 0x10, 0x03, 0x24, 0x20, 0x00, 
+
+  // 4
+  //U8G_ESC_ADR(0), 0xE0, U8G_ESC_ADR(1), 0x0F, 0x21, 0x1C, 0x0B, 0x0E, 0x08, 0x49, 0x98, 0x38, 0x09, 0x11, 0x03, 0x14, 0x10, 0x00, 
+  //U8G_ESC_ADR(0), 0xE1, U8G_ESC_ADR(1), 0x0F, 0x2F, 0x2B, 0x0C, 0x0E, 0x06, 0x47, 0x76, 0x37, 0x07, 0x11, 0x04, 0x23, 0x1E, 0x00, 
+  // Gamma Mode accroding to Factory PDF
+  //U8G_ESC_ADR(0), 0xE0, U8G_ESC_ADR(1), 0x0F, 0x1B, 0x18, 0x0B, 0x0E, 0x09, 0x47, 0x94, 0x35, 0x0A, 0x13, 0x05, 0x08, 0x03, 0x00, 
+  //U8G_ESC_ADR(0), 0xE1, U8G_ESC_ADR(1), 0x0F, 0x3A, 0x37, 0x0B, 0x0C, 0x05, 0x4A, 0x24, 0x39, 0x07, 0x10, 0x04, 0x27, 0x25, 0x00, 
+
+  // Frame Rate Control
+  //U8G_ESC_ADR(0), 0xB1, U8G_ESC_ADR(1), 0x00, 0x18,
+
+  // Sleep Out
+  U8G_ESC_ADR(0), 0x11,
+  U8G_ESC_DLY(120),
+
+  // Display On
+  U8G_ESC_ADR(0), 0x29,
   U8G_ESC_END
 };
 
@@ -245,6 +334,29 @@ static const uint8_t ili9341_init_sequence[] = { // 0x9341 - ILI9341
     B10000000,B00000110,B11000000,B00000001,
     B10000000,B00001100,B01100000,B00000001,
     B10000000,B00011000,B00110000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B01111111,B11111111,B11111111,B11111110,
+  };
+
+  static const uint8_t buttonD2[] = {
+    B01111111,B11111111,B11111111,B11111110,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
+    B10000000,B00000000,B00000000,B00000001,
     B10000000,B00000000,B00000000,B00000001,
     B10000000,B00000000,B00000000,B00000001,
     B10000000,B00000000,B00000000,B00000001,
@@ -412,7 +524,7 @@ inline void memset2(const void *ptr, uint16_t fill, size_t cnt) {
 static bool preinit = true;
 static uint8_t page;
 
-uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg) {
+uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg) {
   u8g_pb_t *pb = (u8g_pb_t *)(dev->dev_mem);
   #ifdef LCD_USE_DMA_FSMC
     static uint16_t bufferA[512], bufferB[512];
@@ -431,6 +543,8 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
         u8g_WriteEscSeqP(u8g, dev, st7789v_init_sequence);
       if ((lcd_id & 0xFFFF) == 0x9341)  // ILI9341
         u8g_WriteEscSeqP(u8g, dev, ili9341_init_sequence);
+      if ((lcd_id & 0xFFFF) == 0x8066)  // ILI9488 / ili9486
+        u8g_WriteEscSeqP(u8g, dev, ili9486_init_sequence);
 
       if (preinit) {
         preinit = false;
@@ -451,18 +565,19 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
       #if ENABLED(TOUCH_BUTTONS)
 
         u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
-        drawImage(buttonD, u8g, dev, 32, 20, COLOR_ORANGE);
+        drawImage(buttonD, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
 
         u8g_WriteEscSeqP(u8g, dev, buttonA_sequence);
-        drawImage(buttonA, u8g, dev, 32, 20, COLOR_ORANGE);
+        drawImage(buttonA, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
 
         u8g_WriteEscSeqP(u8g, dev, buttonB_sequence);
-        drawImage(buttonB, u8g, dev, 32, 20, COLOR_ORANGE);
+        drawImage(buttonB, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
 
         u8g_WriteEscSeqP(u8g, dev, buttonC_sequence);
-        drawImage(buttonC, u8g, dev, 32, 20, COLOR_ORANGE);
+        drawImage(buttonC, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
 
       #endif // TOUCH_BUTTONS
+
 
       return 0;
 
@@ -470,6 +585,15 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
 
     case U8G_DEV_MSG_PAGE_FIRST:
       page = 0;
+      //if (ui.screen_mode != SCRMODE_STATUS) {
+      if (ui.on_status_screen()) {
+        u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
+        drawImage(buttonD2, u8g, dev, 32, 20, COLOR_ORANGE);
+      } 
+      else {
+        u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
+        drawImage(buttonD, u8g, dev, 32, 20, COLOR_ORANGE);
+      }
       u8g_WriteEscSeqP(u8g, dev, page_first_sequence);
       break;
 
@@ -535,7 +659,7 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
   return u8g_dev_pb16v2_base_fn(u8g, dev, msg, arg);
 }
 
-//U8G_PB_DEV(u8g_dev_tft_320x240_touch, WIDTH, HEIGHT, PAGE_HEIGHT, u8g_dev_tft_320x240_touch_fn, U8G_COM_HAL_FSMC_FN);
+//U8G_PB_DEV(u8g_dev_tft_fullScale_touch, WIDTH, HEIGHT, PAGE_HEIGHT, u8g_dev_tft_fullScale_touch_fn, U8G_COM_HAL_FSMC_FN);
 //U8G_PB_DEV is for 8 bit
 //lines below is for 16 bit
 /*
@@ -544,8 +668,8 @@ uint8_t u8g_dev_tft_320x240_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, vo
  * u8g_pb_t name##_pb = { {page_height, height, 0, 0, 0},  width, name##_buf}; \
  * u8g_dev_t name = { dev_fn, &name##_pb, com_fn }
  */
-uint8_t  u8g_dev_tft_320x240_touch_buf[WIDTH*2] U8G_NOCOMMON ; 
-u8g_pb_t u8g_dev_tft_320x240_touch_pb = { {PAGE_HEIGHT, HEIGHT, 0, 0, 0},  WIDTH, u8g_dev_tft_320x240_touch_buf}; 
-u8g_dev_t u8g_dev_tft_320x240_touch = { u8g_dev_tft_320x240_touch_fn, &u8g_dev_tft_320x240_touch_pb, U8G_COM_HAL_FSMC_FN };
+uint8_t  u8g_dev_tft_fullScale_touch_buf[WIDTH*2] U8G_NOCOMMON ; 
+u8g_pb_t u8g_dev_tft_fullScale_touch_pb = { {PAGE_HEIGHT, HEIGHT, 0, 0, 0},  WIDTH, u8g_dev_tft_fullScale_touch_buf}; 
+u8g_dev_t u8g_dev_tft_fullScale_touch = { u8g_dev_tft_fullScale_touch_fn, &u8g_dev_tft_fullScale_touch_pb, U8G_COM_HAL_FSMC_FN };
 
-#endif // HAS_GRAPHICAL_LCD && FSMC_CS && FULL_SCALE_TFT_320X240
+#endif // HAS_GRAPHICAL_LCD
