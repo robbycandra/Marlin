@@ -38,11 +38,6 @@
 #define COL_WIDTH              LCD_PIXEL_WIDTH / 4
 #define ROW_HEIGHT             LCD_PIXEL_HEIGHT / 12
 
-#define STATUS_HEATERS_Y       OFFSET_Y                      // TOP NOZZLE BITMAP
-#define HEATER_BITMAP_BASELINE ROW_HEIGHT * 3 - OFFSET_Y              // BOTTOM HEATBED BITMAP
-#define TARGET_TEMP_BASELINE   OFFSET_Y + STATUS_FONT_ASCENT // TEXT TARGET TEMP
-#define TEMPERATURE_BASELINE   HEATER_BITMAP_BASELINE        // TEXT CURRENT TEMP
-
 #define STATUS_BED_X           COL_WIDTH + COL_WIDTH + OFFSET_X
 #define STATUS_BED_TEXT_X      COL_WIDTH + COL_WIDTH + 40 + OFFSET_X
 #define STATUS_HOTEND_TEXT_X(N) (N) * (STATUS_HEATERS_XSPACE) + 40 + OFFSET_X
@@ -473,8 +468,6 @@
   // Provide a fan animation if none exists
 
   #if STATUS_FAN_FRAMES <= 2
-
-    #define STATUS_FAN_Y  OFFSET_Y
 
     #if ENABLED(STATUS_ALT_FAN_BITMAP)
 
@@ -1167,9 +1160,6 @@
   #ifndef STATUS_HEATERS_HEIGHT
     #define STATUS_HEATERS_HEIGHT (sizeof(TEST_BITMAP_OFF) / (STATUS_HOTEND1_BYTEWIDTH))
   #endif
-  #ifndef STATUS_HEATERS_Y
-    #define STATUS_HEATERS_Y (HEATER_BITMAP_BASELINE - (STATUS_HEATERS_HEIGHT))
-  #endif
 
   #define HOTEND0_BITMAP_SIZE (STATUS_HOTEND1_BYTEWIDTH) * (STATUS_HEATERS_HEIGHT)
   static_assert(
@@ -1202,9 +1192,6 @@
   #endif
   #ifndef STATUS_HEATERS_HEIGHT
     #define STATUS_HEATERS_HEIGHT (sizeof(status_heaters_bmp) / (STATUS_HEATERS_BYTEWIDTH))
-  #endif
-  #ifndef STATUS_HEATERS_Y
-    #define STATUS_HEATERS_Y (HEATER_BITMAP_BASELINE - (STATUS_HEATERS_HEIGHT))
   #endif
 
   static_assert(
@@ -1281,10 +1268,6 @@
     #endif
   #endif
 
-  #ifndef STATUS_BED_Y
-    #define STATUS_BED_Y(S) (HEATER_BITMAP_BASELINE - STATUS_BED_HEIGHT(S))
-  #endif
-
   #ifndef STATUS_BED_TEXT_X
     #define STATUS_BED_TEXT_X       STATUS_HEATERS_XSPACE * 2 + 40 + OFFSET_X  // COL_WIDTH * 3 - MENU_FONT_WIDTH * 3 - OFFSET_X
     #define STATUS_HOTEND_TEXT_X(N) (N) * (STATUS_HEATERS_XSPACE) + 40 + OFFSET_X
@@ -1316,14 +1299,8 @@
   #ifndef STATUS_FAN_X
     #define STATUS_FAN_X COL_WIDTH *3 + OFFSET_X - 2 // COL_X * 3 + OFFSET_X - 2 
   #endif
-  #ifndef STATUS_FAN_Y
-    #define STATUS_FAN_Y 6 // (64 - 36 / 2)
-  #endif
   #ifndef STATUS_FAN_TEXT_X
     #define STATUS_FAN_TEXT_X COL_WIDTH * 3 + 40 + OFFSET_X
-  #endif
-  #ifndef STATUS_FAN_TEXT_Y
-    #define STATUS_FAN_TEXT_Y TARGET_TEMP_BASELINE
   #endif
   #ifndef STATUS_FAN_HEIGHT
     #define STATUS_FAN_HEIGHT (sizeof(status_fan_40x36_0_bmp) / (STATUS_FAN_BYTEWIDTH))
