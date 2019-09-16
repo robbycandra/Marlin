@@ -472,10 +472,13 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     if (mark_as_selected(row, sel)) {
       char str01[30], str02[30];
       uint8_t stringLen = strlen(pstr);
-      const uint8_t maxStringLen = (int)((LCD_PIXEL_WIDTH / 2 - 4) / MENU_FONT_WIDTH);
-
+      uint8_t maxStringLen = (int)((LCD_PIXEL_WIDTH / 2 - 4) / MENU_FONT_WIDTH);
+      if (post_char && post_char != ' ') {
+        lcd_put_wchar(col_x2 - 2 - MENU_FONT_WIDTH, row_str_base, post_char);
+        maxStringLen--;
+      }
       if (stringLen <= maxStringLen) {
-        draw_centered_string(row_str_base, col_x1+2, col_x2-2, pstr, ' ', post_char);
+        draw_centered_string(row_str_base, col_x1+2, col_x2-2, pstr, ' ', ' ');
       }
       else {
         uint8_t i;
@@ -494,7 +497,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
           strncpy(str02, pstr+maxStringLen, maxStringLen);
         }
         draw_centered_string(row_str_base - 10, col_x1+2, col_x2-2, str01, ' ', ' ');
-        draw_centered_string(row_str_base + 10, col_x1+2, col_x2-2, str02, ' ', post_char);
+        draw_centered_string(row_str_base + 10, col_x1+2, col_x2-2, str02, ' ', ' ');
       }
     }
   }
