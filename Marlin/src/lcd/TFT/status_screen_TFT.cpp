@@ -179,7 +179,7 @@ void run_status_screen_touch_command() {
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
-        if (card.isDetected()) {
+        if (card.isMounted()) {
           if (!card.isFileOpen()) {
             ui.goto_screen(menu_media);
           }
@@ -655,7 +655,7 @@ void MarlinUI::draw_status_screen() {
   // SD Card Symbol
   //
     #if ENABLED(SDSUPPORT)
-      if (card.isDetected()) {
+      if (card.isMounted()) {
         if (card.isFileOpen()) 
           u8g.setColorIndex(2);
         else

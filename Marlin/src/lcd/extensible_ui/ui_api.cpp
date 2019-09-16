@@ -170,6 +170,8 @@ namespace ExtUI {
   void enableHeater(const extruder_t extruder) {
     #if HOTENDS && HEATER_IDLE_HANDLER
       thermalManager.reset_heater_idle_timer(extruder - E0);
+    #else
+      UNUSED(extruder);
     #endif
   }
 
@@ -190,6 +192,8 @@ namespace ExtUI {
           #endif
           break;
       }
+    #else
+      UNUSED(heater);
     #endif
   }
 
@@ -197,6 +201,8 @@ namespace ExtUI {
     return false
       #if HOTENDS && HEATER_IDLE_HANDLER
         || thermalManager.hotend_idle[extruder - E0].timed_out
+      #else
+        ; UNUSED(extruder)
       #endif
     ;
   }
@@ -218,6 +224,7 @@ namespace ExtUI {
           #endif
       }
     #else
+      UNUSED(heater);
       return false;
     #endif
   }
@@ -911,7 +918,7 @@ namespace ExtUI {
   }
 
   bool isMediaInserted() {
-    return IFSD(IS_SD_INSERTED() && card.isDetected(), false);
+    return IFSD(IS_SD_INSERTED() && card.isMounted(), false);
   }
 
   void pausePrint() {
@@ -968,8 +975,7 @@ namespace ExtUI {
 
   bool FileList::isAtRootDir() {
     #if ENABLED(SDSUPPORT)
-      card.getWorkDirName();
-      return card.filename[0] == '/';
+      card.flag.workDirIsRoot;
     #else
       return true;
     #endif
@@ -1008,14 +1014,14 @@ void MarlinUI::update() {
     if (sd_status != last_sd_status) {
       last_sd_status = sd_status;
       if (sd_status) {
-        card.initsd();
-        if (card.isDetected())
+        card.mount();
+        if (card.isMounted())
           ExtUI::onMediaInserted();
         else
           ExtUI::onMediaError();
       }
       else {
-        const bool ok = card.isDetected();
+        const bool ok = card.isMounted();
         card.release();
         if (ok) ExtUI::onMediaRemoved();
       }

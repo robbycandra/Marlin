@@ -34,7 +34,7 @@
 #if !PIN_EXISTS(SD_DETECT)
   void lcd_sd_refresh() {
     encoderTopLine = 0;
-    card.initsd();
+    card.mount();
   }
 #endif
 
@@ -127,24 +127,22 @@ void menu_media() {
 
   #if HAS_GRAPHICAL_LCD
     static uint16_t fileCnt;
-    if (ui.first_page) {
-      fileCnt = card.get_num_Files();
-    }
+    if (ui.first_page) fileCnt = card.get_num_Files();
   #else
     const uint16_t fileCnt = card.get_num_Files();
-  #endif  
+  #endif
  #if HAS_FULL_SCALE_TFT
   START_MENU_MODE(SCRMODE_MENU_1X6);
  #else
   START_MENU();
  #endif
   MENU_BACK(MSG_MAIN);
-  if (card.isWorkDirAtRoot) {
+  if (card.flag.workDirIsRoot) {
     #if !PIN_EXISTS(SD_DETECT)
       MENU_ITEM(function, LCD_STR_REFRESH MSG_REFRESH, lcd_sd_refresh);
     #endif
   }
-  else if (card.isDetected())
+  else if (card.isMounted())
    #if HAS_FULL_SCALE_TFT
     MENU_ITEM(sdupdir, LCD_STR_FOLDER "..", lcd_sd_updir);
    #else
