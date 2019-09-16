@@ -257,6 +257,7 @@
   #define SDIO_SUPPORT
   #define SDCARD_SORT_ALPHA
   #define REXYZ_SDSORT_USES_RAM    true
+  #define REXYZ_SDSORT_CACHE_NAMES true
 #endif
 
 //===========================================================================
