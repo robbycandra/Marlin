@@ -719,7 +719,12 @@
       #define REXYZ_XPT2046_Y_CALIBRATION   10933
       #define REXYZ_XPT2046_X_OFFSET        486
       #define REXYZ_XPT2046_Y_OFFSET        -13
-    #else
+    #elif defined(REXYZ_A2)
+      #define REXYZ_XPT2046_X_CALIBRATION   14148
+      #define REXYZ_XPT2046_Y_CALIBRATION   -10430
+      #define REXYZ_XPT2046_X_OFFSET        -70
+      #define REXYZ_XPT2046_Y_OFFSET        278
+    #else  
       #define REXYZ_XPT2046_X_CALIBRATION   12316
       #define REXYZ_XPT2046_Y_CALIBRATION  -8981
       #define REXYZ_XPT2046_X_OFFSET       -43
