@@ -473,7 +473,7 @@ void MarlinUI::draw_status_screen() {
 
     if (PAGE_CONTAINS(row_str1_top, row_str1_botm)) {
       u8g.setFont(STATUS_FONT_NAME);
-      lcd_put_u8str((COL_WIDTH - STATUS_FONT_WIDTH*5)/2 - 1, row_str1_base, "REXYZ");
+      //lcd_put_u8str((COL_WIDTH - STATUS_FONT_WIDTH*5)/2 - 1, row_str1_base, "REXYZ");
       lcd_moveto(X_LABEL_POS + off_x, row_str1_base);
       lcd_put_wchar('X');
       lcd_moveto(X_LABEL_POS + off_x*2, row_str1_base);
@@ -577,7 +577,7 @@ void MarlinUI::draw_status_screen() {
 
     if (PAGE_CONTAINS(row_str1_top, row_str1_botm)) {
       draw_item_box(false); 
-      lcd_moveto((COL_WIDTH-STATUS_FONT_WIDTH*5)/2 - 1, row_str1_base);
+      lcd_moveto((COL_WIDTH-MENU_FONT_WIDTH*5)/2 - 1, row_str1_base);
       lcd_put_u8str("Speed");
     }
 

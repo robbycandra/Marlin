@@ -578,7 +578,6 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
 
       #endif // TOUCH_BUTTONS
 
-
       return 0;
 
     case U8G_DEV_MSG_STOP: preinit = true; break;
@@ -627,6 +626,13 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
               case 2: buffer[k++] = TFT_SELECTED_COLOR; break;
               case 3: buffer[k++] = TFT_DISABLED_COLOR; break;
             }
+          }
+        }
+        if (ui.on_status_screen()) {
+          const u8g_int_t lineNum = (page-1) * PAGE_HEIGHT + y - 5;
+          if (lineNum >= 0 && lineNum < 19) {
+            for(u8g_uint_t j = 4; j < 76; j++)
+              buffer[j] = *(uint16_t*)&Rexyz_LCD_Logo[lineNum][(j-4)*2];
           }
         }
         #ifdef LCD_USE_DMA_FSMC
