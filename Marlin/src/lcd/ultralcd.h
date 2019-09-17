@@ -268,7 +268,7 @@ public:
 
   MarlinUI() {
     #if HAS_LCD_MENU
-      currentScreen = status_screen;
+      currentScreen = nullptr;
     #endif
   }
 

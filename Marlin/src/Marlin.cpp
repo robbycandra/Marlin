@@ -980,6 +980,7 @@ void setup() {
   #if HAS_SPI_LCD && ENABLED(SHOW_BOOTSCREEN)
     ui.show_bootscreen();
   #endif
+  ui.return_to_status();
 
   #if ENABLED(STARTUP_TONE)
     ui.buzz(200,784);
