@@ -718,7 +718,7 @@ G29_TYPE GcodeSuite::G29() {
             ui.status_printf_P(0, PSTR(MSG_PROBING_MESH " %i/%i"), int(pt_index), int(GRID_MAX_POINTS));
           #endif
 
-          measured_z = faux ? 0.001 * random(-100, 101) : probe_pt(xProbe, yProbe, raise_after, verbose_level);
+          measured_z = faux ? 0.001 * random(-100, 101) : probe_at_point(xProbe, yProbe, raise_after, verbose_level);
           probe_xpos = xCount + 1;
           probe_ypos = yCount + 1;
           probe_measured_z = measured_z;
@@ -766,7 +766,7 @@ G29_TYPE GcodeSuite::G29() {
         // Retain the last probe position
         xProbe = points[i].x;
         yProbe = points[i].y;
-        measured_z = faux ? 0.001 * random(-100, 101) : probe_pt(xProbe, yProbe, raise_after, verbose_level);
+        measured_z = faux ? 0.001 * random(-100, 101) : probe_at_point(xProbe, yProbe, raise_after, verbose_level);
         if (isnan(measured_z)) {
           set_bed_leveling_enabled(abl_should_enable);
           break;

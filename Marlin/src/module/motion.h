@@ -35,6 +35,10 @@
   #include "scara.h"
 #endif
 
+#if HAS_BED_PROBE
+  #include "probe.h"
+#endif
+
 // Axis homed and known-position states
 extern uint8_t axis_homed, axis_known_position;
 constexpr uint8_t xyz_bits = _BV(X_AXIS) | _BV(Y_AXIS) | _BV(Z_AXIS);
