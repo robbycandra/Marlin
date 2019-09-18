@@ -65,6 +65,10 @@
   #include "../feature/bedlevel/bedlevel.h"
 #endif
 
+#if ENABLED(TOUCH_CALIBRATION)
+  #include "../feature/touch/xpt2046.h"
+#endif
+
 #if ENABLED(EXTENSIBLE_UI)
   #include "../lcd/extensible_ui/ui_api.h"
 #endif
@@ -321,6 +325,11 @@ typedef struct SettingsDataStruct {
   #if EXTRUDERS
     fil_change_settings_t fc_settings[EXTRUDERS];       // M603 T U L
   #endif
+
+  //
+  // TOUCH_CALIBRATION (XPT2046) (SettingsDataStruct)
+  //
+  int16_t touchscreen_calibration[4];
 
   //
   // Tool-change settings
@@ -1200,6 +1209,26 @@ void MarlinSettings::postprocess() {
     #endif
 
     //
+    // TOUCH_CALIBRATION (XPT2046) (save)
+    //
+    {
+      _FIELD_TEST(touchscreen_calibration);
+      #if ENABLED(TOUCH_CALIBRATION)
+        EEPROM_WRITE(touch.tscalibration);
+      #else
+        // Allways use default to prevent bricked Printer. 
+        // If we can't access menu then we can't calibrate the LCD
+        const int16_t touchscreen_calibration[4] = {
+          XPT2046_X_CALIBRATION, 
+          XPT2046_X_OFFSET, 
+          XPT2046_Y_CALIBRATION, 
+          XPT2046_Y_OFFSET 
+        };
+        EEPROM_WRITE(touchscreen_calibration);
+      #endif
+    }
+
+    //
     // Multiple Extruders
     //
 
@@ -1332,7 +1361,6 @@ void MarlinSettings::postprocess() {
     eeprom_error = saved_eeprom_error;
     return false;
   }
-
 
   /**
    * M501 - Retrieve Configuration
@@ -2071,6 +2099,18 @@ void MarlinSettings::postprocess() {
       #endif
 
       //
+      // TOUCH_CALIBRATION (XPT2046) (load)
+      //
+      {
+        int16_t touchscreen_calibration[4];
+        _FIELD_TEST(touchscreen_calibration);
+        EEPROM_READ(touchscreen_calibration);
+        #if ENABLED(TOUCH_CALIBRATION)
+          memcpy(touch.tscalibration, touchscreen_calibration, sizeof(touchscreen_calibration));
+        #endif
+      }
+
+      //
       // Tool-change settings
       //
       #if EXTRUDERS > 1
@@ -2692,6 +2732,16 @@ void MarlinSettings::reset() {
       fc_settings[e].unload_length = FILAMENT_CHANGE_UNLOAD_LENGTH;
       fc_settings[e].load_length = FILAMENT_CHANGE_FAST_LOAD_LENGTH;
     }
+  #endif
+
+  //
+  // TOUCH_CALIBRATION (XPT2046) (reset)
+  //
+  #if ENABLED(TOUCH_CALIBRATION)
+    touch.tscalibration[0] = XPT2046_X_CALIBRATION;
+    touch.tscalibration[1] = XPT2046_X_OFFSET;
+    touch.tscalibration[2] = XPT2046_Y_CALIBRATION;
+    touch.tscalibration[3] = XPT2046_Y_OFFSET;
   #endif
 
   postprocess();
@@ -3584,6 +3634,18 @@ void MarlinSettings::reset() {
           , " D", LINEAR_UNIT(runout.runout_distance())
         #endif
       );
+    #endif
+
+    /**
+     * Touch Button
+     */
+    #if ENABLED(TOUCH_BUTTONS)
+      CONFIG_ECHO_HEADING("Touch Buttons");
+      CONFIG_ECHO_START();
+      SERIAL_ECHOLNPAIR(" Touch X Calibration ", touch.tscalibration[0]);
+      SERIAL_ECHOLNPAIR(" Touch X Offset ", touch.tscalibration[1]);
+      SERIAL_ECHOLNPAIR(" Touch Y Calibration ", touch.tscalibration[2]);
+      SERIAL_ECHOLNPAIR(" Touch Y Offset ", touch.tscalibration[3]);
     #endif
   }
 
