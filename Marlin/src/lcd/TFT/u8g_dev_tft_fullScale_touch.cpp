@@ -68,14 +68,11 @@
 
 #if ENABLED(FULL_SCALE_TFT_480X320)
   #include "TFT_screen_480x320.h"
-  #define FULL_HEIGHT 320
-  #define PAGE_HEIGHT 8
 #endif
 #if ENABLED(FULL_SCALE_TFT_320X240)
   #include "TFT_screen_320x240.h"
-  #define FULL_HEIGHT 240
-  #define PAGE_HEIGHT 8
 #endif
+#define PAGE_HEIGHT 8
 
 #if ENABLED(LCD_USE_DMA_FSMC)
   extern void LCD_IO_WriteSequence(uint16_t *data, uint16_t length);
@@ -123,8 +120,8 @@ static const uint8_t page_first_sequence[] = {
 // 320 = 0x13F
 // 240 = 0x0EF
 static const uint8_t clear_screen_sequence[] = {
-  U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, U8G_ESC_DATA(WIDTH),
-  U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, U8G_ESC_DATA(FULL_HEIGHT),
+  U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, U8G_ESC_DATA(LCD_FULL_PIXEL_WIDTH),
+  U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, U8G_ESC_DATA(LCD_FULL_PIXEL_HEIGHT),
   U8G_ESC_ADR(0), LCD_WRITE_RAM, U8G_ESC_ADR(1),
   U8G_ESC_END
 };
