@@ -488,6 +488,10 @@ void _lcd_draw_homing();
   void lcd_load_settings();
 #endif
 
+#if ENABLED(TOUCH_CALIBRATION)
+  void menu_touch_calibration();
+#endif
+
 #if ENABLED(POWER_LOSS_RECOVERY)
   void menu_job_recovery();
 #endif
