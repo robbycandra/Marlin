@@ -60,6 +60,7 @@
 #include "../ultralcd.h"
 #include "ultralcd_TFT.h"
 #include "TFT_screen.h"
+#include "../../module/temperature.h"
 
 #include <U8glib.h>
 #include "../dogm/HAL_LCD_com_defines.h"
@@ -108,6 +109,7 @@
 #endif
 
 static uint32_t lcd_id = 0;
+static uint8_t fan_frame = 0;
 
 static const uint8_t page_first_sequence[] = {
   U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), U8G_ESC_DATA(X_LO), U8G_ESC_DATA(X_HI),
@@ -158,7 +160,7 @@ static const uint8_t ili9341_init_sequence[] = { // 0x9341 - ILI9341
   U8G_ESC_DLY(10),
   0x01,                                                              // ? Di jalankan di Reset
   U8G_ESC_DLY(100), U8G_ESC_DLY(100),
- 0x36, U8G_ESC_ADR(1), 0xE8,                                         // Set Rotation : 0xE8
+  0x36, U8G_ESC_ADR(1), 0xE8,                                         // Set Rotation : 0xE8
   U8G_ESC_ADR(0), 0x3A, U8G_ESC_ADR(1), 0x55,                         // Pixel Format Set : 0x55 = 16 Bit
   U8G_ESC_ADR(0), LCD_COLUMN, U8G_ESC_ADR(1), 0x00, 0x00, 0x01, 0x3F,
   U8G_ESC_ADR(0), LCD_ROW,    U8G_ESC_ADR(1), 0x00, 0x00, 0x00, 0xEF,
@@ -316,170 +318,15 @@ static const uint8_t ili9486_init_sequence[] = {
 
 #if ENABLED(TOUCH_BUTTONS)
 
-  static const uint8_t buttonD[] = {
-    B01111111,B11111111,B11111111,B11111110,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00011000,B00110000,B00000001,
-    B10000000,B00001100,B01100000,B00000001,
-    B10000000,B00000110,B11000000,B00000001,
-    B10000000,B00000011,B10000000,B00000001,
-    B10000000,B00000011,B10000000,B00000001,
-    B10000000,B00000110,B11000000,B00000001,
-    B10000000,B00001100,B01100000,B00000001,
-    B10000000,B00011000,B00110000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B01111111,B11111111,B11111111,B11111110,
-  };
-
-  static const uint8_t buttonD2[] = {
-    B01111111,B11111111,B11111111,B11111110,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B01111111,B11111111,B11111111,B11111110,
-  };
-
-#if ENABLED(REVERSE_MENU_DIRECTION)
-  static const uint8_t buttonA[] = {
-    B01111111,B11111111,B11111111,B11111110,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B11100000,B00000000,B00000001,
-    B10000000,B11100000,B00000000,B00000001,
-    B10000000,B11100000,B00000000,B00000001,
-    B10000000,B11100000,B00000000,B00000001,
-    B10000000,B11100000,B00111111,B11100001,
-    B10000111,B11111100,B00111111,B11100001,
-    B10000011,B11111000,B00000000,B00000001,
-    B10000001,B11110000,B00000000,B00000001,
-    B10000000,B11100000,B00000000,B00000001,
-    B10000000,B01000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B01111111,B11111111,B11111111,B11111110,
-  };
-  static const uint8_t buttonB[] = {
-    B01111111,B11111111,B11111111,B11111110,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B01100000,B00000010,B00000001,
-    B10000000,B01100000,B00000111,B00000001,
-    B10000000,B01100000,B00001111,B10000001,
-    B10000000,B01100000,B00011111,B11000001,
-    B10000111,B11111110,B00111111,B11100001,
-    B10000111,B11111110,B00000111,B00000001,
-    B10000000,B01100000,B00000111,B00000001,
-    B10000000,B01100000,B00000111,B00000001,
-    B10000000,B01100000,B00000111,B00000001,
-    B10000000,B01100000,B00000111,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B01111111,B11111111,B11111111,B11111110,
-  };
-#else
-  static const uint8_t buttonA[] = {
-    B01111111,B11111111,B11111111,B11111110,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B01000000,B00000000,B00000001,
-    B10000000,B11100000,B00000000,B00000001,
-    B10000001,B11110000,B00000000,B00000001,
-    B10000011,B11111000,B00000000,B00000001,
-    B10000111,B11111100,B00111111,B11100001,
-    B10000000,B11100000,B00111111,B11100001,
-    B10000000,B11100000,B00000000,B00000001,
-    B10000000,B11100000,B00000000,B00000001,
-    B10000000,B11100000,B00000000,B00000001,
-    B10000000,B11100000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B01111111,B11111111,B11111111,B11111110,
-  };
-
-  static const uint8_t buttonB[] = {
-    B01111111,B11111111,B11111111,B11111110,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B01100000,B00000111,B00000001,
-    B10000000,B01100000,B00000111,B00000001,
-    B10000000,B01100000,B00000111,B00000001,
-    B10000000,B01100000,B00000111,B00000001,
-    B10000111,B11111110,B00000111,B00000001,
-    B10000111,B11111110,B00111111,B11100001,
-    B10000000,B01100000,B00011111,B11000001,
-    B10000000,B01100000,B00001111,B10000001,
-    B10000000,B01100000,B00000111,B00000001,
-    B10000000,B01100000,B00000010,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B01111111,B11111111,B11111111,B11111110,
-  };
-#endif
-
-  static const uint8_t buttonC[] = {
-    B01111111,B11111111,B11111111,B11111110,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00011100,B00000001,
-    B10000000,B00000100,B00011100,B00000001,
-    B10000000,B00001100,B00011100,B00000001,
-    B10000000,B00011111,B11111100,B00000001,
-    B10000000,B00111111,B11111100,B00000001,
-    B10000000,B00011111,B11111100,B00000001,
-    B10000000,B00001100,B00000000,B00000001,
-    B10000000,B00000100,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B10000000,B00000000,B00000000,B00000001,
-    B01111111,B11111111,B11111111,B11111110,
-  };
+  void drawFullScaleImage(const uint8_t *data, u8g_t *u8g, u8g_dev_t *dev, uint16_t width, uint16_t height) {
+    //uint16_t buffer[128];
+    for (uint16_t i = 0; i < height; i++) {
+      u8g_WriteSequence(u8g, dev, width << 1, (uint8_t *)((data)+((i*width)<<1)));
+    }
+  }
 
   void drawImage(const uint8_t *data, u8g_t *u8g, u8g_dev_t *dev, uint16_t length, uint16_t height, uint16_t color) {
-    uint16_t buffer[160];
+    uint16_t buffer[128];
 
     for (uint16_t i = 0; i < height; i++) {
       uint16_t k = 0;
@@ -554,7 +401,10 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
         LCD_IO_WriteMultiple(TFT_MARLINBG_COLOR, (320*240));
       #else
         memset2(buffer, TFT_MARLINBG_COLOR, WIDTH/2);
-        for (uint16_t i = 0; i < FULL_HEIGHT*4; i++)
+        for (uint16_t i = 0; i < LCD_PIXEL_HEIGHT*4; i++)
+          u8g_WriteSequence(u8g, dev, WIDTH/2, (uint8_t *)buffer);
+        memset2(buffer, TFT_MARLINUI_COLOR, WIDTH/2);
+        for (uint16_t i = LCD_PIXEL_HEIGHT*4; i < LCD_FULL_PIXEL_HEIGHT*4; i++)
           u8g_WriteSequence(u8g, dev, WIDTH/2, (uint8_t *)buffer);
       #endif
 
@@ -562,16 +412,16 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
       #if ENABLED(TOUCH_BUTTONS)
 
         u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
-        drawImage(buttonD, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
+        drawFullScaleImage(buttonD_64x40, u8g, dev, 64, 40);
 
         u8g_WriteEscSeqP(u8g, dev, buttonA_sequence);
-        drawImage(buttonA, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
+        drawFullScaleImage(buttonA_64x40, u8g, dev, 64, 40);
 
         u8g_WriteEscSeqP(u8g, dev, buttonB_sequence);
-        drawImage(buttonB, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
+        drawFullScaleImage(buttonB_64x40, u8g, dev, 64, 40);
 
         u8g_WriteEscSeqP(u8g, dev, buttonC_sequence);
-        drawImage(buttonC, u8g, dev, 32, 20, TFT_BUTTON_COLOR);
+        drawFullScaleImage(buttonC_64x40, u8g, dev, 64, 40);
 
       #endif // TOUCH_BUTTONS
 
@@ -581,15 +431,17 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
 
     case U8G_DEV_MSG_PAGE_FIRST:
       page = 0;
-      //if (ui.screen_mode != SCRMODE_STATUS) {
+      /*
       if (ui.on_status_screen()) {
         u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
         drawImage(buttonD2, u8g, dev, 32, 20, COLOR_ORANGE);
       } 
       else {
         u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
-        drawImage(buttonD, u8g, dev, 32, 20, COLOR_ORANGE);
+        drawFullScaleImage(buttonD_64x40, u8g, dev, 64, 40);
       }
+      */
+      if (!thermalManager.fan_speed[0] || ++fan_frame >= 4) fan_frame = 0;
       u8g_WriteEscSeqP(u8g, dev, page_first_sequence);
       break;
 
@@ -606,7 +458,12 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
             const uint8_t b = *(((uint8_t *)pb->buf) + i);
             const uint8_t clr = (b >> (y<<1)) & 0x03;
             switch(clr) {
-              case 0: buffer[k++] = TFT_MARLINBG_COLOR; break;
+              case 0: 
+                if (page > 20)
+                  buffer[k++] = ui.on_status_screen() ? COLOR_LIME : TFT_MARLINBG_COLOR;
+                else
+                  buffer[k++] = TFT_MARLINBG_COLOR; 
+                break;
               case 1: buffer[k++] = TFT_MARLINUI_COLOR; break;
               case 2: buffer[k++] = TFT_SELECTED_COLOR; break;
               case 3: buffer[k++] = TFT_DISABLED_COLOR; break;
@@ -618,7 +475,12 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
             const uint8_t b = *((uint32_t)pb->width + ((uint8_t *)pb->buf) + i);
             const uint8_t clr = (b >> ((y-4)<<1)) & 0x03;
             switch(clr) {
-              case 0: buffer[k++] = TFT_MARLINBG_COLOR; break;
+              case 0: 
+                if (page > 20)
+                  buffer[k++] = ui.on_status_screen() ? COLOR_LIME : TFT_MARLINBG_COLOR;
+                else  
+                  buffer[k++] = TFT_MARLINBG_COLOR; 
+                break;
               case 1: buffer[k++] = TFT_MARLINUI_COLOR; break;
               case 2: buffer[k++] = TFT_SELECTED_COLOR; break;
               case 3: buffer[k++] = TFT_DISABLED_COLOR; break;
@@ -626,10 +488,52 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
           }
         }
         if (ui.on_status_screen()) {
-          const u8g_int_t lineNum = (page-1) * PAGE_HEIGHT + y - 5;
+          u8g_int_t lineNum = (page-1) * PAGE_HEIGHT + y - 4;
           if (lineNum >= 0 && lineNum < 19) {
             for(u8g_uint_t j = 4; j < 76; j++)
-              buffer[j] = *(uint16_t*)&Rexyz_LCD_Logo[lineNum][(j-4)*2];
+              buffer[j] = *(uint16_t*)&Rexyz_LCD_Logo[lineNum][(j-4)<<1];
+          }
+          lineNum -= 49;
+          if (lineNum >= 0 && lineNum < 24) {
+            if (thermalManager.isHeatingHotend(0)) {
+              for(u8g_uint_t j = 90; j < 111; j++)
+                buffer[j] = *(uint16_t*)&nozzle_burned[(lineNum*22+(j-90))<<1];
+            } else {
+              for(u8g_uint_t j = 90; j < 111; j++)
+                buffer[j] = *(uint16_t*)&nozzle_normal[(lineNum*22+(j-90))<<1];
+            }
+          }
+          if (lineNum >= 0 && lineNum < 36) {
+            switch(fan_frame) {
+              case 0:
+                for(u8g_uint_t j = 243; j < 278; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan1[(lineNum*36+(j-243))<<1];
+                break;
+              case 1:
+                for(u8g_uint_t j = 243; j < 278; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan2[(lineNum*36+(j-243))<<1];
+                break;
+              case 2:
+                for(u8g_uint_t j = 243; j < 278; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan3[(lineNum*36+(j-243))<<1];
+                break;
+              case 3:
+                for(u8g_uint_t j = 243; j < 278; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan4[(lineNum*36+(j-243))<<1];
+                break;
+                
+            }
+          }
+          if (thermalManager.isHeatingBed()) {
+            if (lineNum >= 6 && lineNum < 36) {
+              for(u8g_uint_t j = 163; j < 198; j++)
+                buffer[j] = *(uint16_t*)&bed_burned[((lineNum-6)*36+(j-163))<<1];
+            }    
+          } else {
+            if (lineNum >= 24 && lineNum < 36) {
+              for(u8g_uint_t j = 163; j < 198; j++)
+                buffer[j] = *(uint16_t*)&bed_normal[((lineNum-24)*36+(j-163))<<1];
+            }    
           }
         }
         #ifdef LCD_USE_DMA_FSMC

@@ -268,52 +268,6 @@ FORCE_INLINE void _draw_heater_status(const heater_ind_t heater, const bool blin
     #define HOTEND_BITMAP(N,S) status_hotend_a_bmp
   #endif
 
-  if (PAGE_CONTAINS(row_str1_top, row_str1_top + STATUS_HEATERS_HEIGHT - 1)) {
-
-    #define BAR_TALL (STATUS_HEATERS_HEIGHT - 2)
-
-    const float prop = target - 20,
-                perc = prop > 0 && temp >= 20 ? (temp - 20) / prop : 0;
-    uint8_t tall = uint8_t(perc * BAR_TALL + 0.5f);
-    NOMORE(tall, BAR_TALL);
-
-    #ifdef STATUS_HOTEND_ANIM
-      // Draw hotend bitmap, either whole or split by the heating percent
-      if (IFBED(0, 1)) {
-        #if HOTENDS > 1
-          const uint8_t hx = STATUS_HOTEND_X(heater), bw = STATUS_HOTEND_BYTEWIDTH(heater);
-        #else
-          const uint8_t hx = STATUS_HOTEND_X(heater) + STATUS_HEATERS_XSPACE, bw = STATUS_HOTEND_BYTEWIDTH(heater+1);
-        #endif
-        #if ENABLED(STATUS_HEAT_PERCENT)
-          if (isHeat && tall <= BAR_TALL) {
-            const uint8_t ph = STATUS_HEATERS_HEIGHT - 1 - tall;
-            u8g.drawBitmapP(hx, STATUS_HEATERS_Y, bw, ph, HOTEND_BITMAP(heater, false));
-            u8g.drawBitmapP(hx, STATUS_HEATERS_Y + ph, bw, tall + 1, HOTEND_BITMAP(heater, true) + ph * bw);
-          }
-          else
-        #endif
-            u8g.drawBitmapP(hx, row_str1_top, bw, STATUS_HEATERS_HEIGHT, HOTEND_BITMAP(heater, isHeat));
-      }
-    #endif
-
-    // Draw a heating progress bar, if specified
-    #if ENABLED(STATUS_HEAT_PERCENT)
-
-      if (IFBED(true, STATIC_HOTEND) && isHeat) {
-        const uint8_t bx = IFBED(STATUS_BED_X + STATUS_BED_WIDTH, STATUS_HOTEND_X(heater) + STATUS_HOTEND_WIDTH(heater)) + 1;
-        u8g.drawFrame(bx, STATUS_HEATERS_Y, 3, STATUS_HEATERS_HEIGHT);
-        if (tall) {
-          const uint8_t ph = STATUS_HEATERS_HEIGHT - 1 - tall;
-          if (PAGE_OVER(STATUS_HEATERS_Y + ph))
-            u8g.drawVLine(bx + 1, STATUS_HEATERS_Y + ph, tall);
-        }
-      }
-
-    #endif
-
-  } // PAGE_CONTAINS
-
   if (PAGE_CONTAINS(row_str1_top, row_str1_botm)) {
     #if HEATER_IDLE_HANDLER
       const bool is_idle = IFBED(thermalManager.bed_idle.timed_out, thermalManager.hotend_idle[heater].timed_out),
@@ -391,7 +345,7 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
 #endif
 
 void draw_4colom_box () {
-  draw_item_box(false);
+  //draw_item_box(false);
   u8g.setColorIndex(3);
   u8g.drawVLine(col_x1 + off_x   - 1, row_y1, row_h);
   u8g.drawVLine(col_x1 + off_x      , row_y1, row_h);
@@ -399,6 +353,8 @@ void draw_4colom_box () {
   u8g.drawVLine(col_x1 + off_x*2    , row_y1, row_h);
   u8g.drawVLine(col_x1 + off_x*3 - 1, row_y1, row_h);
   u8g.drawVLine(col_x1 + off_x*3    , row_y1, row_h);
+  u8g.drawHLine(0, row_y2, LCD_PIXEL_WIDTH);
+  u8g.drawHLine(0, row_y2-1, LCD_PIXEL_WIDTH);
   u8g.setColorIndex(1);
 }
 
@@ -460,7 +416,7 @@ void MarlinUI::draw_status_screen() {
 
     // tidak perlu Font Descent karena tidak ada font yg punya descent.
     row_str2_top  = row_y2 - OFFSET_Y - STATUS_FONT_ASCENT;
-    row_str2_base = row_y2 - OFFSET_Y;
+    row_str2_base = row_y2 - OFFSET_Y - 2;
     row_str2_botm = row_y2 - OFFSET_Y;
   //
   // Logo
@@ -511,72 +467,15 @@ void MarlinUI::draw_status_screen() {
     row_str1_botm = row_y1 + OFFSET_Y + STATUS_FONT_ASCENT + STATUS_FONT_DESCENT;
 
     row_str2_top  = row_y2 - OFFSET_Y - STATUS_FONT_ASCENT;
-    row_str2_base = row_y2 - OFFSET_Y;
+    row_str2_base = row_y2 - OFFSET_Y - 2;
     row_str2_botm = row_y2 - OFFSET_Y;
 
-    #if STATUS_HEATERS_WIDTH
-      // Draw all heaters (and maybe the bed) in one go
-      if (PAGE_CONTAINS(STATUS_HEATERS_Y, STATUS_HEATERS_Y + STATUS_HEATERS_HEIGHT - 1))
-        u8g.drawBitmapP(STATUS_HEATERS_X, STATUS_HEATERS_Y, STATUS_HEATERS_BYTEWIDTH, STATUS_HEATERS_HEIGHT, status_heaters_bmp);
-    #endif
-
-    #if DO_DRAW_BED
-      #if ANIM_BED
-        #define BED_BITMAP(S) ((S) ? status_bed_40x24_on_bmp : status_bed_40x24_bmp)
-      #else
-        #define BED_BITMAP(S) status_bed_bmp
-      #endif
-      const uint8_t bedy = row_str2_botm - STATUS_BED_HEIGHT(BED_ALT()), bedh = STATUS_BED_HEIGHT(BED_ALT());
-      if (PAGE_CONTAINS(bedy, bedy + bedh - 1))
-        u8g.drawBitmapP(STATUS_BED_X, bedy, STATUS_BED_BYTEWIDTH, bedh, BED_BITMAP(BED_ALT()));
-    #endif
-
-    #if DO_DRAW_CHAMBER
-      #if ANIM_CHAMBER
-        #define CHAMBER_BITMAP(S) ((S) ? status_chamber_on_bmp : status_chamber_bmp)
-      #else
-        #define CHAMBER_BITMAP(S) status_chamber_bmp
-      #endif
-      if (PAGE_CONTAINS(STATUS_CHAMBER_Y, STATUS_CHAMBER_Y + STATUS_CHAMBER_HEIGHT - 1))
-        u8g.drawBitmapP(
-          STATUS_CHAMBER_X, STATUS_CHAMBER_Y,
-          STATUS_CHAMBER_BYTEWIDTH, STATUS_CHAMBER_HEIGHT,
-          CHAMBER_BITMAP(CHAMBER_ALT())
-        );
-    #endif
-
-    #if DO_DRAW_FAN
-      #if STATUS_FAN_FRAMES > 2
-        static bool old_blink;
-        static uint8_t fan_frame;
-        if (old_blink != blink) {
-          old_blink = blink;
-          if (!thermalManager.fan_speed[0] || ++fan_frame >= STATUS_FAN_FRAMES) fan_frame = 0;
-        }
-      #endif
-      if (PAGE_CONTAINS(row_y1 + (row_h - STATUS_FAN_HEIGHT)/2, row_y1 + (row_h - STATUS_FAN_HEIGHT)/2 + STATUS_FAN_HEIGHT))
-        u8g.drawBitmapP(
-          STATUS_FAN_X, row_y1 + (row_h - STATUS_FAN_HEIGHT)/2,
-          STATUS_FAN_BYTEWIDTH, STATUS_FAN_HEIGHT,
-          #if STATUS_FAN_FRAMES > 2
-            fan_frame == 1 ? status_fan_40x36_1_bmp :
-            fan_frame == 2 ? status_fan_40x36_2_bmp :
-            #if STATUS_FAN_FRAMES > 3
-              fan_frame == 3 ? status_fan_40x36_3_bmp :
-            #endif
-          #elif STATUS_FAN_FRAMES > 1
-            blink && thermalManager.fan_speed[0] ? status_fan_40x36_1_bmp :
-          #endif
-          status_fan_40x36_0_bmp
-        );
-    #endif
   //
   // Feedrate
   //
     u8g.setFont(MENU_FONT_NAME);
 
     if (PAGE_CONTAINS(row_str1_top, row_str1_botm)) {
-      draw_item_box(false); 
       lcd_moveto((COL_WIDTH-MENU_FONT_WIDTH*5)/2 - 1, row_str1_base);
       lcd_put_u8str("Speed");
     }
@@ -772,11 +671,15 @@ void MarlinUI::draw_status_message(const bool blink) {
   col_x2 = LCD_PIXEL_WIDTH - 1;
    
   u8g.setFont(MENU_FONT_NAME);
-  row_str1_base = row_y1 + (row_y2-row_y1)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;
+  row_str1_base = row_y1 + (row_y2-row_y1)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT + 2;
 
   if (!PAGE_CONTAINS(row_y1,row_y2)) return;
-  draw_item_box(false); 
-
+  //draw_item_box(false); 
+  u8g.setColorIndex(3);
+  u8g.drawHLine(0, row_y1, LCD_PIXEL_WIDTH);
+  u8g.drawHLine(0, row_y1+1, LCD_PIXEL_WIDTH);
+  u8g.drawHLine(0, row_y2, LCD_PIXEL_WIDTH);
+  u8g.setColorIndex(1);
 
   // Get the UTF8 character count of the string
   uint8_t slen = utf8_strlen(status_message);
