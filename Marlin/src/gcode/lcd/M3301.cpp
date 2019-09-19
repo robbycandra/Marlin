@@ -80,7 +80,7 @@ void GcodeSuite::M3301() {
     // read ID1 register to get LCD controller ID, MOST of the time located in register 0x04
     data = TOUCH_LCD_IO_ReadData(0x04, 3);
     lcdId = (uint16_t)(data & 0xFFFF);
-    sprintf(response, "At pos 0x04 - LCD ID : %x",(data >> 16) & 0xFF); 
+    sprintf(response, "At pos 0x04 - LCD ID : %x",(uint16_t)((data >> 16) & 0xFF)); 
     SERIAL_ECHOLN(response);
     print_controller(lcdId);
     SERIAL_ECHOLN();
@@ -88,7 +88,7 @@ void GcodeSuite::M3301() {
     //If ID1 is 0, it means we need to check alternate registers, like 0xD3 in the case of ILI9341
     data = TOUCH_LCD_IO_ReadData(0xD3, 3);
     lcdId = (uint16_t)(data & 0xFFFF);
-    sprintf(response, "At pos 0xD3 - LCD ID : %x",(data >> 16) & 0xFF); 
+    sprintf(response, "At pos 0xD3 - LCD ID : %x",(uint16_t)((data >> 16) & 0xFF)); 
     SERIAL_ECHOLN(response);
     print_controller(lcdId);
     SERIAL_ECHOLN();
