@@ -416,10 +416,6 @@ void menu_configuration() {
     MENU_ITEM(submenu, MSG_PREHEAT_2_SETTINGS, menu_preheat_material2_settings);
   #endif
 
-  #if ENABLED(TOUCH_CALIBRATION)
-    MENU_ITEM(function, MSG_TOUCHSCREEN_CALIBRATION, menu_touch_calibration);
-  #endif
-  
   #if ENABLED(EEPROM_SETTINGS)
     MENU_ITEM(function, MSG_STORE_EEPROM, lcd_store_settings);
     if (!busy)
