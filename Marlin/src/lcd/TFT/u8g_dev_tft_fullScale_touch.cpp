@@ -58,8 +58,6 @@
 
 #if HAS_GRAPHICAL_LCD && HAS_FULL_SCALE_TFT
 #include "../ultralcd.h"
-//#include "ultralcd_TFT.h"
-#include "TFT_screen_defines.h"
 #include "../../module/temperature.h"
 
 #include <U8glib.h>
@@ -367,6 +365,7 @@ inline void memset2(const void *ptr, uint16_t fill, size_t cnt) {
 
 static bool preinit = true;
 static uint8_t page;
+static bool bootIsDone = false, buttonIsDisplayed = false;
 
 uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg) {
   u8g_pb_t *pb = (u8g_pb_t *)(dev->dev_mem);
@@ -400,53 +399,59 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
       #ifdef LCD_USE_DMA_FSMC
         LCD_IO_WriteMultiple(TFT_MARLINBG_COLOR, (320*240));
       #else
-        memset2(buffer, TFT_MARLINBG_COLOR, WIDTH/2);
+        memset2(buffer, COLOR_BLACK, WIDTH/2);
         for (uint16_t i = 0; i < LCD_PIXEL_HEIGHT*4; i++)
           u8g_WriteSequence(u8g, dev, WIDTH/2, (uint8_t *)buffer);
-        memset2(buffer, TFT_MARLINUI_COLOR, WIDTH/2);
+        memset2(buffer, COLOR_BLACK, WIDTH/2);
         for (uint16_t i = LCD_PIXEL_HEIGHT*4; i < LCD_FULL_PIXEL_HEIGHT*4; i++)
           u8g_WriteSequence(u8g, dev, WIDTH/2, (uint8_t *)buffer);
       #endif
-
-      // bottom line and buttons
-      #if ENABLED(TOUCH_BUTTONS)
-
-        u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
-        drawFullScaleImage(buttonD, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
-
-        u8g_WriteEscSeqP(u8g, dev, buttonA_sequence);
-        drawFullScaleImage(buttonA, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
-
-        u8g_WriteEscSeqP(u8g, dev, buttonB_sequence);
-        drawFullScaleImage(buttonB, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
-
-        u8g_WriteEscSeqP(u8g, dev, buttonC_sequence);
-        drawFullScaleImage(buttonC, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
-
-      #endif // TOUCH_BUTTONS
-
       return 0;
 
     case U8G_DEV_MSG_STOP: preinit = true; break;
 
     case U8G_DEV_MSG_PAGE_FIRST:
       page = 0;
-      /*
-      if (ui.on_status_screen()) {
-        u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
-        drawImage(buttonD2, u8g, dev, 32, 20, COLOR_ORANGE);
+      if (ui.currentScreen != nullptr) bootIsDone = true;
+      if (bootIsDone) {
+      // bottom line and buttons
+        #if ENABLED(TOUCH_BUTTONS)
+          if (buttonIsDisplayed == false) {
+            buttonIsDisplayed = true;
+            u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
+            drawFullScaleImage(buttonD, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+
+            u8g_WriteEscSeqP(u8g, dev, buttonA_sequence);
+            drawFullScaleImage(buttonA, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+
+            u8g_WriteEscSeqP(u8g, dev, buttonB_sequence);
+            drawFullScaleImage(buttonB, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+
+            u8g_WriteEscSeqP(u8g, dev, buttonC_sequence);
+            drawFullScaleImage(buttonC, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+          }
+        #endif // TOUCH_BUTTONS
       } 
-      else {
-        u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
-        drawFullScaleImage(buttonD_64x40, u8g, dev, 64, 40);
-      }
-      */
       if (!thermalManager.fan_speed[0] || ++fan_frame >= 4) fan_frame = 0;
       u8g_WriteEscSeqP(u8g, dev, page_first_sequence);
       break;
 
     case U8G_DEV_MSG_PAGE_NEXT:
       if (++page > (HEIGHT / PAGE_HEIGHT)) return 1;
+
+      uint16_t color_fg, color_bg; 
+
+      if (bootIsDone) {
+        if (page > (10*LCD_CELL_HEIGHT)/8)
+          color_bg = ui.on_status_screen() ? COLOR_LIME : TFT_MARLINBG_COLOR;
+        else
+          color_bg = TFT_MARLINBG_COLOR; 
+        color_fg = TFT_MARLINUI_COLOR;
+      }
+      else {
+        color_fg = TFT_MARLINBG_COLOR; 
+        color_bg = TFT_MARLINUI_COLOR;
+      }
 
       for (uint8_t y = 0; y < PAGE_HEIGHT; y++) {
         uint32_t k = 0;
@@ -458,13 +463,8 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
             const uint8_t b = *(((uint8_t *)pb->buf) + i);
             const uint8_t clr = (b >> (y<<1)) & 0x03;
             switch(clr) {
-              case 0: 
-                if (page > (10*LCD_CELL_HEIGHT)/8)
-                  buffer[k++] = ui.on_status_screen() ? COLOR_LIME : TFT_MARLINBG_COLOR;
-                else
-                  buffer[k++] = TFT_MARLINBG_COLOR; 
-                break;
-              case 1: buffer[k++] = TFT_MARLINUI_COLOR; break;
+              case 0: buffer[k++] = color_bg; break;
+              case 1: buffer[k++] = color_fg; break;
               case 2: buffer[k++] = TFT_SELECTED_COLOR; break;
               case 3: buffer[k++] = TFT_DISABLED_COLOR; break;
             }
@@ -475,18 +475,21 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
             const uint8_t b = *((uint32_t)pb->width + ((uint8_t *)pb->buf) + i);
             const uint8_t clr = (b >> ((y-4)<<1)) & 0x03;
             switch(clr) {
-              case 0: 
-                if (page > (10*LCD_CELL_HEIGHT)/8)
-                  buffer[k++] = ui.on_status_screen() ? COLOR_LIME : TFT_MARLINBG_COLOR;
-                else  
-                  buffer[k++] = TFT_MARLINBG_COLOR; 
-                break;
-              case 1: buffer[k++] = TFT_MARLINUI_COLOR; break;
+              case 0: buffer[k++] = color_bg; break;
+              case 1: buffer[k++] = color_fg; break;
               case 2: buffer[k++] = TFT_SELECTED_COLOR; break;
               case 3: buffer[k++] = TFT_DISABLED_COLOR; break;
             }
           }
         }
+        if (!bootIsDone) { 
+          u8g_int_t lineNum = (page-1)*PAGE_HEIGHT + y - (LCD_FULL_PIXEL_HEIGHT-REXYZ_BOOT_IMAGE_SIZE_Y)/2 + 30;
+          if (lineNum >= 0 && lineNum < REXYZ_BOOT_IMAGE_SIZE_Y) {
+            const uint8_t start_pt = (LCD_FULL_PIXEL_WIDTH-REXYZ_BOOT_IMAGE_SIZE_X) / 2;
+            for(u8g_uint_t j = start_pt; j < start_pt + REXYZ_BOOT_IMAGE_SIZE_X; j++)
+              buffer[j] = *(uint16_t*)&RexyzBootImage[(lineNum*REXYZ_BOOT_IMAGE_SIZE_X+(j-start_pt))<<1];
+          }
+        } 
         if (ui.on_status_screen()) {
           u8g_int_t lineNum = (page-1) * PAGE_HEIGHT + y - 4;
           if (lineNum >= 0 && lineNum < LOGO_IMAGE_SIZE_Y) {
