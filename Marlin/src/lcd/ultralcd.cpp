@@ -661,6 +661,7 @@ void MarlinUI::kill_screen(PGM_P lcd_msg) {
     #endif
   #endif
 
+  ui.screen_mode = SCRMODE_KILLSCREEN;
   draw_kill_screen();
 }
 

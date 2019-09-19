@@ -273,9 +273,9 @@ void MarlinUI::draw_kill_screen() {
   u8g.firstPage();
   do {
     set_font(FONT_MENU);
-    lcd_put_u8str(0, h4 * 1, status_message);
-    lcd_put_u8str_P(0, h4 * 2, PSTR(MSG_HALTED));
-    lcd_put_u8str_P(0, h4 * 3, PSTR(MSG_PLEASE_RESET));
+    lcd_put_u8str(20, h4 * 1, status_message);
+    lcd_put_u8str_P(20, h4 * 2, PSTR(MSG_HALTED));
+    lcd_put_u8str_P(20, h4 * 3, PSTR(MSG_PLEASE_RESET));
   } while (u8g.nextPage());
 }
 

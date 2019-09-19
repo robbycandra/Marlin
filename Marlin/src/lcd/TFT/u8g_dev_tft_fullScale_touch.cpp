@@ -490,7 +490,7 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
               buffer[j] = *(uint16_t*)&RexyzBootImage[(lineNum*REXYZ_BOOT_IMAGE_SIZE_X+(j-start_pt))<<1];
           }
         } 
-        if (ui.on_status_screen()) {
+        if (ui.on_status_screen() && (ui.screen_mode != SCRMODE_KILLSCREEN)) {
           u8g_int_t lineNum = (page-1) * PAGE_HEIGHT + y - 4;
           if (lineNum >= 0 && lineNum < LOGO_IMAGE_SIZE_Y) {
             const uint8_t start_pt = (LCD_CELL_WIDTH*2-LOGO_IMAGE_SIZE_X) / 2;
