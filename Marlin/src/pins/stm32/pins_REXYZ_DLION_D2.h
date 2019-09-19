@@ -114,7 +114,7 @@
 //
 // SD Card
 //
-//#define SD_DETECT_PIN     PC2 
+#define SD_DETECT_PIN     PC2 
 //#define SCK_PIN           PC12
 //#define MISO_PIN          PB8 
 //#define MOSI_PIN          PD2
