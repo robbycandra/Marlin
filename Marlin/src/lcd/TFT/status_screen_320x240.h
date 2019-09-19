@@ -30,6 +30,7 @@
 
 #include "../../inc/MarlinConfig.h"
 #include "ultralcd_TFT.h"
+#include "TFT_screen_defines.h"
 
 #define BW(N) ((N + 7) / 8)
 

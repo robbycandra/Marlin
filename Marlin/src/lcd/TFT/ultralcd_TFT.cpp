@@ -40,6 +40,7 @@
 #if HAS_GRAPHICAL_LCD && HAS_FULL_SCALE_TFT
 
 #include "ultralcd_TFT.h"
+#include "TFT_screen_defines.h"
 #include "../dogm/u8g_fontutf8.h"
 
 #if ENABLED(SHOW_BOOTSCREEN)

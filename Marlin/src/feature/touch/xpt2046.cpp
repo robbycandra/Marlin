@@ -23,6 +23,7 @@
 
 #include "xpt2046.h"
 #include "../../inc/MarlinConfig.h"
+#include "../../lcd/TFT/TFT_screen_defines.h"
 
 #ifndef TOUCH_INT_PIN
   #define TOUCH_INT_PIN  -1
@@ -81,23 +82,18 @@ uint8_t XPT2046::read_buttons() {
 
   if (!isTouched()) return 0; // Fingers must still be on the TS for a valid read.
 
-  #if ENABLED(FULL_SCALE_TFT_480X320)
-    const uint8_t row_touched = pixel_y / 20;
-    const uint8_t col_touched = pixel_x / 60;
-  #else
-    const uint8_t row_touched = pixel_y / 16;
-    const uint8_t col_touched = pixel_x / 40;
-  #endif  
+  const uint8_t row_touched = pixel_y / LCD_CELL_HEIGHT;
+  const uint8_t col_touched = pixel_x / LCD_CELL_WIDTH;
 
   if (row_touched < 12) {
     return (128 + (row_touched << 3) + col_touched);
   } 
   else {
    #if ENABLED(FULL_SCALE_TFT_480X320)
-    return  WITHIN(pixel_x,  14, 117) ? EN_D
-          : WITHIN(pixel_x, 130, 233) ? EN_A
-          : WITHIN(pixel_x, 246, 349) ? EN_B
-          : WITHIN(pixel_x, 362, 465) ? EN_C
+    return  WITHIN(pixel_x,  32, 111) ? EN_D
+          : WITHIN(pixel_x, 144, 223) ? EN_A
+          : WITHIN(pixel_x, 256, 335) ? EN_B
+          : WITHIN(pixel_x, 368, 447) ? EN_C
           : 0;
    #else
     return  WITHIN(pixel_x,  14,  77) ? EN_D

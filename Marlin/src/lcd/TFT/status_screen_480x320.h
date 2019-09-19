@@ -30,17 +30,18 @@
 
 #include "../../inc/MarlinConfig.h"
 #include "ultralcd_TFT.h"
+#include "TFT_screen_defines.h"
 
 #define BW(N) ((N + 7) / 8)
 
 #define OFFSET_X               MENU_FONT_WIDTH / 2
-#define OFFSET_Y               5
-#define COL_WIDTH              LCD_PIXEL_WIDTH / 4
-#define ROW_HEIGHT             LCD_PIXEL_HEIGHT / 12
+#define OFFSET_Y               OFFSET_X
+#define COL_WIDTH              LCD_CELL_WIDTH * 2
+#define ROW_HEIGHT             LCD_CELL_HEIGHT 
 
 #define STATUS_BED_X           COL_WIDTH + COL_WIDTH + OFFSET_X
-#define STATUS_BED_TEXT_X      COL_WIDTH + COL_WIDTH + 40 + OFFSET_X
-#define STATUS_HOTEND_TEXT_X(N) (N) * (STATUS_HEATERS_XSPACE) + 40 + OFFSET_X
+#define STATUS_BED_TEXT_X      COL_WIDTH + COL_WIDTH + BED_IMAGE_SIZE_X + OFFSET_X
+#define STATUS_HOTEND_TEXT_X(N) (N) * (STATUS_HEATERS_XSPACE) + BED_IMAGE_SIZE_X + OFFSET_X
 
 #if ENABLED(CUSTOM_STATUS_SCREEN_IMAGE)
 

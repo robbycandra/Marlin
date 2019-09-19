@@ -31,9 +31,11 @@
 
 #if ENABLED(FULL_SCALE_TFT_480X320)
   #include "status_screen_480x320.h"
+  #include "TFT_screen_480x320.h"
 #endif
 #if ENABLED(FULL_SCALE_TFT_320X240)
   #include "status_screen_320x240.h"
+  #include "TFT_screen_320x240.h"
 #endif
 
 #include "ultralcd_TFT.h"
@@ -210,12 +212,6 @@ FORCE_INLINE void _draw_heater_status(const heater_ind_t heater, const bool blin
     #define IFBED(A,B) (B)
   #endif
 
-  #if ENABLED(MARLIN_DEV_MODE)
-    constexpr bool isHeat = true;
-  #else
-    const bool isHeat = IFBED(BED_ALT(), HOTEND_ALT(heater));
-  #endif
-
   #if HOTENDS > 1
     const u8b_uint_t tx = IFBED(STATUS_BED_TEXT_X, STATUS_HOTEND_TEXT_X(heater));
   #else
@@ -228,30 +224,6 @@ FORCE_INLINE void _draw_heater_status(const heater_ind_t heater, const bool blin
   #else
     const float temp = IFBED(thermalManager.degBed(), thermalManager.degHotend(heater)),
                 target = IFBED(thermalManager.degTargetBed(), thermalManager.degTargetHotend(heater));
-  #endif
-
-  #if DISABLED(STATUS_HOTEND_ANIM)
-    #define STATIC_HOTEND true
-    #define HOTEND_DOT    isHeat
-  #else
-    #define STATIC_HOTEND false
-    #define HOTEND_DOT    false
-  #endif
-
-  #if HAS_HEATED_BED && DISABLED(STATUS_BED_ANIM)
-    #define STATIC_BED    true
-    #define BED_DOT       isHeat
-  #else
-    #define STATIC_BED    false
-    #define BED_DOT       false
-  #endif
-
-  #if ANIM_HOTEND && ENABLED(STATUS_HOTEND_INVERTED)
-    #define OFF_BMP(N) status_hotend_24x24_##N##b_bmp
-    #define ON_BMP(N)  status_hotend_24x24_##N##a_bmp
-  #else
-    #define OFF_BMP(N) status_hotend_24x24_##N##a_bmp
-    #define ON_BMP(N)  status_hotend_24x24_##N##b_bmp
   #endif
 
   #if STATUS_HOTEND_BITMAPS > 1
@@ -463,7 +435,7 @@ void MarlinUI::draw_status_screen() {
   if (PAGE_CONTAINS(row_y1,row_y2)) {
     draw_4colom_box();
     row_str1_top  = row_y1 + OFFSET_Y;
-    row_str1_base = row_y1 + OFFSET_Y + STATUS_FONT_ASCENT;
+    row_str1_base = row_y1 + OFFSET_Y + STATUS_FONT_ASCENT - 2;
     row_str1_botm = row_y1 + OFFSET_Y + STATUS_FONT_ASCENT + STATUS_FONT_DESCENT;
 
     row_str2_top  = row_y2 - OFFSET_Y - STATUS_FONT_ASCENT;
@@ -513,7 +485,7 @@ void MarlinUI::draw_status_screen() {
             }
           #endif
           u8g.setFont(MENU_FONT_NAME);
-          lcd_moveto((LCD_PIXEL_WIDTH/4*3)+45, row_str1_base);
+          lcd_moveto((LCD_PIXEL_WIDTH/4*3)+FAN_IMAGE_SIZE+OFFSET_X , row_str1_base);
           lcd_put_u8str(i16tostr3(thermalManager.fanPercent(spd)));
         }
       }

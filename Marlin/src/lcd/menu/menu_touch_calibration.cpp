@@ -33,6 +33,7 @@
 #include "../../module/configuration_store.h"
 #if HAS_FULL_SCALE_TFT
   #include "../../lcd/TFT/ultralcd_TFT.h"
+  #include "../../lcd/TFT/TFT_screen_defines.h"
 #else
   #include "../../lcd/dogm/ultralcd_DOGM.h"
   #include "../../lcd/dogm/fontdata/fontdata_ISO10646_1.h"

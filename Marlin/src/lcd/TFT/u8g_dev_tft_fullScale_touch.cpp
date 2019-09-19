@@ -58,8 +58,8 @@
 
 #if HAS_GRAPHICAL_LCD && HAS_FULL_SCALE_TFT
 #include "../ultralcd.h"
-#include "ultralcd_TFT.h"
-#include "TFT_screen.h"
+//#include "ultralcd_TFT.h"
+#include "TFT_screen_defines.h"
 #include "../../module/temperature.h"
 
 #include <U8glib.h>
@@ -412,16 +412,16 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
       #if ENABLED(TOUCH_BUTTONS)
 
         u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
-        drawFullScaleImage(buttonD_64x40, u8g, dev, 64, 40);
+        drawFullScaleImage(buttonD, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
 
         u8g_WriteEscSeqP(u8g, dev, buttonA_sequence);
-        drawFullScaleImage(buttonA_64x40, u8g, dev, 64, 40);
+        drawFullScaleImage(buttonA, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
 
         u8g_WriteEscSeqP(u8g, dev, buttonB_sequence);
-        drawFullScaleImage(buttonB_64x40, u8g, dev, 64, 40);
+        drawFullScaleImage(buttonB, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
 
         u8g_WriteEscSeqP(u8g, dev, buttonC_sequence);
-        drawFullScaleImage(buttonC_64x40, u8g, dev, 64, 40);
+        drawFullScaleImage(buttonC, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
 
       #endif // TOUCH_BUTTONS
 
@@ -459,7 +459,7 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
             const uint8_t clr = (b >> (y<<1)) & 0x03;
             switch(clr) {
               case 0: 
-                if (page > 20)
+                if (page > (10*LCD_CELL_HEIGHT)/8)
                   buffer[k++] = ui.on_status_screen() ? COLOR_LIME : TFT_MARLINBG_COLOR;
                 else
                   buffer[k++] = TFT_MARLINBG_COLOR; 
@@ -476,7 +476,7 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
             const uint8_t clr = (b >> ((y-4)<<1)) & 0x03;
             switch(clr) {
               case 0: 
-                if (page > 20)
+                if (page > (10*LCD_CELL_HEIGHT)/8)
                   buffer[k++] = ui.on_status_screen() ? COLOR_LIME : TFT_MARLINBG_COLOR;
                 else  
                   buffer[k++] = TFT_MARLINBG_COLOR; 
@@ -489,51 +489,56 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
         }
         if (ui.on_status_screen()) {
           u8g_int_t lineNum = (page-1) * PAGE_HEIGHT + y - 4;
-          if (lineNum >= 0 && lineNum < 19) {
-            for(u8g_uint_t j = 4; j < 76; j++)
-              buffer[j] = *(uint16_t*)&Rexyz_LCD_Logo[lineNum][(j-4)<<1];
+          if (lineNum >= 0 && lineNum < LOGO_IMAGE_SIZE_Y) {
+            const uint8_t start_pt = (LCD_CELL_WIDTH*2-LOGO_IMAGE_SIZE_X) / 2;
+            for(u8g_uint_t j = start_pt; j < start_pt + LOGO_IMAGE_SIZE_X; j++)
+              buffer[j] = *(uint16_t*)&Rexyz_LCD_Logo[(lineNum*LOGO_IMAGE_SIZE_X+(j-start_pt))<<1];
           }
-          lineNum -= 49;
-          if (lineNum >= 0 && lineNum < 24) {
-            if (thermalManager.isHeatingHotend(0)) {
-              for(u8g_uint_t j = 90; j < 111; j++)
-                buffer[j] = *(uint16_t*)&nozzle_burned[(lineNum*22+(j-90))<<1];
-            } else {
-              for(u8g_uint_t j = 90; j < 111; j++)
-                buffer[j] = *(uint16_t*)&nozzle_normal[(lineNum*22+(j-90))<<1];
+          lineNum -= (LCD_CELL_HEIGHT*3 + 1);
+          // Fan has biggest image size on this row
+          if (lineNum >= 0 && lineNum < FAN_IMAGE_SIZE) {
+            // NOZZLE
+            if (lineNum < NOZZLE_IMAGE_SIZE_Y) {
+              if (thermalManager.isHeatingHotend(0)) {
+                for(u8g_uint_t j = LCD_CELL_WIDTH*2+10; j < LCD_CELL_WIDTH*2+NOZZLE_IMAGE_SIZE_X+9; j++)
+                  buffer[j] = *(uint16_t*)&nozzle_burned[(lineNum*NOZZLE_IMAGE_SIZE_X+(j-LCD_CELL_WIDTH*2-10))<<1];
+              } else {
+                for(u8g_uint_t j = LCD_CELL_WIDTH*2+10; j < LCD_CELL_WIDTH*2+NOZZLE_IMAGE_SIZE_X+9; j++)
+                  buffer[j] = *(uint16_t*)&nozzle_normal[(lineNum*NOZZLE_IMAGE_SIZE_X+(j-LCD_CELL_WIDTH*2-10))<<1];
+              }
             }
-          }
-          if (lineNum >= 0 && lineNum < 36) {
+            // BED
+
+            if (lineNum >= (FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y)) {
+              for(u8g_uint_t j = LCD_CELL_WIDTH*4+3; j < LCD_CELL_WIDTH*4+BED_IMAGE_SIZE_X+2; j++)
+                buffer[j] = *(uint16_t*)&bed_table[((lineNum-(FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y))*BED_IMAGE_SIZE_X+(j-LCD_CELL_WIDTH*4-3))<<1];
+            }    
+            if (thermalManager.isHeatingBed()) {
+              if (lineNum >= (FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y-FLAME_IMAGE_SIZE_Y) && lineNum < (FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y)) {
+                for(u8g_uint_t j = LCD_CELL_WIDTH*4+3; j < LCD_CELL_WIDTH*4+BED_IMAGE_SIZE_X+2; j++)
+                  buffer[j] = *(uint16_t*)&bed_flame[((lineNum-(FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y-FLAME_IMAGE_SIZE_Y))*BED_IMAGE_SIZE_X+(j-LCD_CELL_WIDTH*4-3))<<1];
+              }    
+            } 
+
+            // FAN
             switch(fan_frame) {
               case 0:
-                for(u8g_uint_t j = 243; j < 278; j++)
-                  buffer[j] = *(uint16_t*)&rotating_fan1[(lineNum*36+(j-243))<<1];
+                for(u8g_uint_t j = LCD_CELL_WIDTH*6+3; j < LCD_CELL_WIDTH*6+FAN_IMAGE_SIZE+2; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan1[(lineNum*FAN_IMAGE_SIZE+(j-LCD_CELL_WIDTH*6-3))<<1];
                 break;
               case 1:
-                for(u8g_uint_t j = 243; j < 278; j++)
-                  buffer[j] = *(uint16_t*)&rotating_fan2[(lineNum*36+(j-243))<<1];
+                for(u8g_uint_t j = LCD_CELL_WIDTH*6+3; j < LCD_CELL_WIDTH*6+FAN_IMAGE_SIZE+2; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan2[(lineNum*FAN_IMAGE_SIZE+(j-LCD_CELL_WIDTH*6-3))<<1];
                 break;
               case 2:
-                for(u8g_uint_t j = 243; j < 278; j++)
-                  buffer[j] = *(uint16_t*)&rotating_fan3[(lineNum*36+(j-243))<<1];
+                for(u8g_uint_t j = LCD_CELL_WIDTH*6+3; j < LCD_CELL_WIDTH*6+FAN_IMAGE_SIZE+2; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan3[(lineNum*FAN_IMAGE_SIZE+(j-LCD_CELL_WIDTH*6-3))<<1];
                 break;
               case 3:
-                for(u8g_uint_t j = 243; j < 278; j++)
-                  buffer[j] = *(uint16_t*)&rotating_fan4[(lineNum*36+(j-243))<<1];
+                for(u8g_uint_t j = LCD_CELL_WIDTH*6+3; j < LCD_CELL_WIDTH*6+FAN_IMAGE_SIZE+2; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan4[(lineNum*FAN_IMAGE_SIZE+(j-LCD_CELL_WIDTH*6-3))<<1];
                 break;
-                
             }
-          }
-          if (thermalManager.isHeatingBed()) {
-            if (lineNum >= 6 && lineNum < 36) {
-              for(u8g_uint_t j = 163; j < 198; j++)
-                buffer[j] = *(uint16_t*)&bed_burned[((lineNum-6)*36+(j-163))<<1];
-            }    
-          } else {
-            if (lineNum >= 24 && lineNum < 36) {
-              for(u8g_uint_t j = 163; j < 198; j++)
-                buffer[j] = *(uint16_t*)&bed_normal[((lineNum-24)*36+(j-163))<<1];
-            }    
           }
         }
         #ifdef LCD_USE_DMA_FSMC
