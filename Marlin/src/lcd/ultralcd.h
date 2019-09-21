@@ -426,6 +426,8 @@ public:
     #if ENABLED(FSMC_GRAPHICAL_TFT)
       static uint8_t screen_mode;
       #if ENABLED(TOUCH_BUTTONS)
+        static bool wait_for_untouched;
+        static bool first_touch;
         static uint8_t repeat_delay;
         static uint8_t lcd_menu_touched_coord;
       #endif  

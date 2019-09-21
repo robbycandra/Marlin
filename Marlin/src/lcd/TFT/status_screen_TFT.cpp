@@ -125,6 +125,7 @@ void run_status_screen_touch_command() {
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
+        ui.wait_for_untouched = true;
         MenuItem_gcode::action("G28");   
         break;
       case 1:
@@ -135,6 +136,7 @@ void run_status_screen_touch_command() {
           MenuItem_gcode::action(PSTR("G28 X"));   
         } 
         move_menu_scale = 10;
+        ui.wait_for_untouched = true;
         ui.goto_screen(lcd_move_x);
         break;
       case 2:
@@ -145,6 +147,7 @@ void run_status_screen_touch_command() {
           MenuItem_gcode::action(PSTR("G28 Y"));   
         } 
         move_menu_scale = 10;
+        ui.wait_for_untouched = true;
         ui.goto_screen(lcd_move_y);
         break;
       case 3:
@@ -155,12 +158,14 @@ void run_status_screen_touch_command() {
           MenuItem_gcode::action(PSTR("G28 Z"));   
         } 
         move_menu_scale = 10;
+        ui.wait_for_untouched = true;
         ui.goto_screen(lcd_move_z);
         break;
       case 5:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
+        ui.wait_for_untouched = true;
         MenuItem_int3::action_edit(PSTR(MSG_NOZZLE),&thermalManager.temp_hotend[0].target, 0, HEATER_0_MAXTEMP - 15, thermalManager.start_watching_E0);
         break;
       case 6:
@@ -168,6 +173,7 @@ void run_status_screen_touch_command() {
           #if HAS_BUZZER
             ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
           #endif
+          ui.wait_for_untouched = true;
           MenuItem_int3::action_edit(PSTR(MSG_BED),&thermalManager.temp_bed.target, 0, BED_MAXTEMP - 10, thermalManager.start_watching_bed);
           break;
         #endif
@@ -175,12 +181,14 @@ void run_status_screen_touch_command() {
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
+        ui.wait_for_untouched = true;
         MenuItem_percent::action_edit(PSTR(MSG_FAN_SPEED),&thermalManager.lcd_tmpfan_speed[0], 0, 255, thermalManager.lcd_setFanSpeed0);
         break;
       case 9:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
+        ui.wait_for_untouched = true;
         if (card.isMounted()) {
           if (!card.isFileOpen()) {
             ui.goto_screen(menu_media);
@@ -188,7 +196,8 @@ void run_status_screen_touch_command() {
         }
         break;
     }
-    ui.lcd_menu_touched_coord = 0;     
+    ui.lcd_menu_touched_coord = 0;
+    ui.first_touch = false;
   } 
 }
 

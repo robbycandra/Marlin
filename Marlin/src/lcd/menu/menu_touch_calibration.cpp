@@ -139,6 +139,8 @@ void _lcd_touch_cal_result() {
       ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
     #endif
     ui.lcd_menu_touched_coord = 0;     
+    ui.wait_for_untouched = true;
+    ui.first_touch = false;
     ui.goto_previous_screen();
   }
   */
@@ -216,6 +218,8 @@ void _lcd_touch_point_screen() {
     cal_y[touch_point_index] = touch.raw_y;
     touch_point_index++;
     ui.lcd_menu_touched_coord = 0;     
+    ui.wait_for_untouched = true;
+    ui.first_touch = false;
   }
   if (touch_point_index >= 4) {
     ui.goto_screen(_lcd_touch_cal_result);
@@ -227,6 +231,8 @@ void menu_touch_calibration() {
   ui.screen_mode = SCRMODE_MENU_2X4; 
   touch_point_index = 0;
   ui.lcd_menu_touched_coord = 0;     
+  ui.wait_for_untouched = true;
+  ui.first_touch = false;
   ui.save_previous_screen();
   ui.defer_status_screen();
   ui.goto_screen(_lcd_touch_point_screen);

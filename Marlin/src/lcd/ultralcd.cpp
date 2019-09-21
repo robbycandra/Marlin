@@ -203,6 +203,8 @@ millis_t MarlinUI::next_button_update_ms; // = 0
   #if ENABLED(FSMC_GRAPHICAL_TFT)
     uint8_t MarlinUI::screen_mode;
     #if ENABLED(TOUCH_BUTTONS)
+      bool MarlinUI::wait_for_untouched;
+      bool MarlinUI::first_touch;
       uint8_t MarlinUI::repeat_delay;
       uint8_t MarlinUI::lcd_menu_touched_coord;
     #endif  
@@ -214,32 +216,48 @@ millis_t MarlinUI::next_button_update_ms; // = 0
       if (lcd_menu_touched_coord & B10000000) {
         const uint8_t row = (lcd_menu_touched_coord & B01111000) >> 3;
         const uint8_t col = (lcd_menu_touched_coord & B00000111); 
-        if (ui.screen_mode == SCRMODE_MENU_2X4) {
-          touched_item_number = (int)(row / 3) * 2 + (col >> 2);
-          menu_area_touched = true;
-        }
-        else if (ui.screen_mode == SCRMODE_MENU_1X6) {
-          touched_item_number = row >> 1;
-          menu_area_touched = true;
-        }
-        else if (ui.screen_mode == SCRMODE_MENU_1X4) {
-          touched_item_number = row / 3;
-          menu_area_touched = true;
-        }
-        else if (ui.screen_mode == SCRMODE_MENU_H_2X3) {
-          touched_item_number = (int)(row / 3) * 2 + (col >> 2) - 1;
-          menu_area_touched = true;
-        }
-        else if (row > 8) {  // ui.screen_mode = SCRMODE_MENU_SELECT & 4th row.
-          touched_item_number = col >> 2; 
-          menu_area_touched = true;
+        switch (ui.screen_mode) {
+          case SCRMODE_MENU_2X4:
+            touched_item_number = (int)(row / 3) * 2 + (col >> 2);
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
+          case SCRMODE_MENU_1X6:
+            touched_item_number = row >> 1;
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
+          case SCRMODE_MENU_1X4:
+            touched_item_number = row / 3;
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
+          case SCRMODE_MENU_H_2X3:
+            touched_item_number = (int)(row / 3) * 2 + (col >> 2) - 1;
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
+          case SCRMODE_MENU_SELECT:  
+            if (row > 8) {  //4th row
+              touched_item_number = col >> 2; 
+              menu_area_touched = true;
+            }
+            wait_for_untouched = true;
+            break;
+          default:
+            if (row > 8) {  //4th row
+              touched_item_number = col >> 1; 
+              menu_area_touched = true;
+              repeat_delay = 50;
+            }
         }
         if (menu_area_touched) {
           if (touched_item_number == tested_item_number) {
-            lcd_menu_touched_coord = 0;
             #if HAS_BUZZER
-              buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+              if (first_touch) buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
             #endif
+            lcd_menu_touched_coord = 0;
+            first_touch = false;
             return true;
           }
         }
@@ -833,6 +851,7 @@ void MarlinUI::update() {
       #define TOUCH_MENU_MASK 0x80
 
       static bool arrow_pressed; // = false
+      static bool screen_is_touched; // = false
 
       // Handle touch events which are slow to read
       if (ELAPSED(ms, next_button_update_ms)) {
@@ -840,16 +859,21 @@ void MarlinUI::update() {
         if (touch_buttons) {
           RESET_STATUS_TIMEOUT();
           if (touch_buttons & TOUCH_MENU_MASK) {        // Processing Menu Area touch?
-            if (!wait_for_unclick) {                    // If not waiting for a debounce release:
-              wait_for_unclick = true;                  //  - Set debounce flag to ignore continous clicks
+            if (!wait_for_untouched) {                   // If not waiting for a debounce release:
+              next_button_update_ms = ms + repeat_delay; // Assume the repeat delay
+              if (!screen_is_touched) {                 // If not waiting for a debounce release:
+                next_button_update_ms += 250;           // Longer delay on first press
+                first_touch = true;
+              }  
+              //wait_for_unclick = true;                //  - Set debounce flag to ignore continous clicks
+              screen_is_touched = true;                 //  - Flag for touch screen, work like arrow is pressed
               wait_for_user = false;                    //  - Any click clears wait for user
               lcd_menu_touched_coord = touch_buttons;   // Safe 7bit touched screen coordinate
-              next_button_update_ms = ms + 500;         // Defer next check for 1/2 second
               #if HAS_LCD_MENU
                 refresh();
               #endif
             }
-            touch_buttons = 0;                          // Swallow the touch
+            touch_buttons = 0;                          // Swallow the touch, so it will not used by Encoder
           }
           buttons |= (touch_buttons & (EN_C | EN_D));   // Pass on Click and Back buttons
           if (touch_buttons & (EN_A | EN_B)) {          // A and/or B button?
@@ -864,6 +888,10 @@ void MarlinUI::update() {
               #endif
             }
           }
+        }
+        else {
+          screen_is_touched = false;                  // If screen not touched, reset screen touch flag.
+          wait_for_untouched = false;
         }
         if (!(touch_buttons & (EN_A | EN_B))) arrow_pressed = false;
       }
@@ -1111,6 +1139,7 @@ void MarlinUI::update() {
         lcd_clicked = false;
         #if HAS_FULL_SCALE_TFT
           lcd_menu_touched_coord = 0;
+          first_touch = false;
         #endif
       #endif
 
