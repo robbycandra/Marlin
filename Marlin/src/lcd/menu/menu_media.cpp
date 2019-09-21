@@ -113,7 +113,8 @@ class MenuItem_sdfolder {
     static void action(CardReader &theCard) {
       card.chdir(theCard.filename);
       encoderTopLine = 0;
-      ui.encoderPosition = 2 * (ENCODER_STEPS_PER_MENU_ITEM);
+      //ui.encoderPosition = 2 * (ENCODER_STEPS_PER_MENU_ITEM);
+      ui.encoderPosition = 0;
       screen_changed = true;
       #if HAS_GRAPHICAL_LCD
         ui.drawing_screen = false;
@@ -132,7 +133,7 @@ void menu_media() {
     const uint16_t fileCnt = card.get_num_Files();
   #endif
  #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(SCRMODE_MENU_1X6);
+  START_MENU_MODE(SCRMODE_MENU_1X4);
  #else
   START_MENU();
  #endif

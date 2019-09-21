@@ -1029,8 +1029,15 @@ void MarlinUI::update() {
             constexpr int32_t encoderMultiplier = 1;
 
           #endif // ENCODER_RATE_MULTIPLIER
-
-          encoderPosition += (encoderDiff * encoderMultiplier) / (ENCODER_PULSES_PER_STEP);
+          if(screen_mode == SCRMODE_MENU_1X6) {
+            encoderPosition += (encoderDiff * encoderMultiplier * 4) / (ENCODER_PULSES_PER_STEP);
+          }
+          else if(screen_mode == SCRMODE_MENU_1X4) {
+            encoderPosition += (encoderDiff * encoderMultiplier * 3) / (ENCODER_PULSES_PER_STEP);
+          }
+          else {
+            encoderPosition += (encoderDiff * encoderMultiplier) / (ENCODER_PULSES_PER_STEP);
+          }
           encoderDiff = 0;
         }
 

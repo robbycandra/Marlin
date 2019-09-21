@@ -443,7 +443,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     UNUSED(pre_char);
 
     if (mark_as_selected(row, sel)) {
-      char str01[30], str02[30];
+      char str01[31], str02[31];
       uint8_t stringLen = strlen(pstr);
       uint8_t maxStringLen = (int)((LCD_PIXEL_WIDTH / 2 - 4) / MENU_FONT_WIDTH);
       if (post_char && post_char != ' ') {
@@ -455,7 +455,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
       }
       else {
         uint8_t i;
-        for (i = maxStringLen - 1; i >= 0; i--) {
+        for (i = maxStringLen; i >= 0; i--) {
           if (pstr[i] == ' ' )
             break;
         } 
@@ -481,6 +481,13 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
       draw_centered_string(row_str_base - 10, col_x1+2, col_x2-2, pstr, ' ', ' ');
       draw_centered_string(row_str_base + 10, col_x1+2, col_x2-2, data, ' ', ' ');
     }
+  }
+
+  inline void draw_boxed_string(PGM_P const pstr, const bool selected) {
+    if (!PAGE_CONTAINS(row_y1, row_y2)) return;
+    draw_item_box(selected); 
+    row_str_base = (row_y1+row_y2)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;
+    draw_centered_string(row_str_base, col_x1+2, col_x2-2, pstr, ' ', ' ');
   }
 
   void draw_edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/) {
@@ -513,17 +520,34 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
         lcd_put_u8str(value);
       }
     }
-  }
+    /*
+     * TODO: Gunakan ini jika encoder button ingin di hilangkan
+     *
+    #if HAS_FULL_SCALE_TFT
+      row_y1 = LCD_PIXEL_HEIGHT * 3 / 4;
+      row_y2 = LCD_PIXEL_HEIGHT - 1;
+      col_x1 = 0;
+      col_x2 = LCD_PIXEL_WIDTH/2 - 1;
+      draw_boxed_string("(-) Decrease", false);
+      col_x1 = LCD_PIXEL_WIDTH/2;
+      col_x2 = LCD_PIXEL_WIDTH - 1;
+      draw_boxed_string("(+) Increase", false);
+    #endif
 
-  inline void draw_boxed_string(PGM_P const pstr, const bool selected) {
-    if (!PAGE_CONTAINS(row_y1, row_y2)) return;
-    draw_item_box(selected); 
-    row_str_base = (row_y1+row_y2)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;
-    draw_centered_string(row_str_base, col_x1+2, col_x2-2, pstr, ' ', ' ');
+    if (ui.menu_is_touched(0) || ui.menu_is_touched(1) ) {
+      ui.encoderPosition--;
+    } 
+    else if (ui.menu_is_touched(2) || ui.menu_is_touched(3)) {
+      ui.encoderPosition++;
+    }
+    */
   }
 
   void draw_select_screen(PGM_P const yes, PGM_P const no, const bool yesno, PGM_P const pref, const char * const string, PGM_P const suff) {
     ui.draw_select_screen_prompt(pref, string, suff);
+ /*
+  *  gunakan ini juga ingin menghilangkan encoder touch button
+  * 
     row_y1 = LCD_PIXEL_HEIGHT * 3 / 4;
     row_y2 = LCD_PIXEL_HEIGHT - 1;
     col_x1 = 0;
@@ -532,6 +556,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     col_x1 = LCD_PIXEL_WIDTH/2;
     col_x2 = LCD_PIXEL_WIDTH - 1;
     draw_boxed_string(yes, yesno);
+  */
   }
 
   #if ENABLED(SDSUPPORT)
@@ -540,12 +565,47 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
       UNUSED(pstr);
 
       if (mark_as_selected(row, sel)) {
+        char strfn[LONG_FILENAME_LENGTH];
+
         if (isDir) lcd_put_wchar(col_x1+2, row_str_base,'.');
         const u8g_uint_t pixw = LCD_PIXEL_WIDTH - 4 - MENU_FONT_WIDTH;
         constexpr uint8_t maxlen = pixw / MENU_FONT_WIDTH;
-        lcd_moveto(col_x1+2+MENU_FONT_WIDTH, row_str_base);
-        u8g_uint_t n = pixw - lcd_put_u8str_max(ui.scrolled_filename(theCard, maxlen, row, sel), pixw);
-        while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
+        strcpy(strfn, ui.scrolled_filename(theCard, maxlen, row, sel));
+        uint8_t stringLen = strlen(strfn);
+        if (stringLen <= maxlen) {
+          lcd_moveto(col_x1+2+MENU_FONT_WIDTH, row_str_base);
+          u8g_uint_t n = pixw - lcd_put_u8str_max(strfn, pixw);
+          while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
+        }
+        else {
+          char str01[31], str02[31];
+          uint8_t i;
+          for (i = maxlen; i >= 0; i--) {
+            if (strfn[i] == ' ' || strfn[i] == '.')
+              break;
+          } 
+          if (i) {
+            strncpy(str01, strfn, i);
+            str01[i] = '\0';
+            if (strfn[i] == ' ')
+              strncpy(str02, strfn+i+1, maxlen);
+            else
+              strncpy(str02, strfn+i, maxlen);
+          }
+          else {
+            strncpy(str01, strfn, maxlen);
+            str01[maxlen] = '\0';
+            strncpy(str02, strfn+maxlen, maxlen);
+          }
+
+          lcd_moveto(col_x1+2+MENU_FONT_WIDTH, row_str_base-10);
+          u8g_uint_t n = pixw - lcd_put_u8str_max(str01, pixw);
+          while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
+
+          lcd_moveto(col_x1+2+MENU_FONT_WIDTH, row_str_base+10);
+          n = pixw - lcd_put_u8str_max(str02, pixw);
+          while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
+        }
       }
     }
 

@@ -283,7 +283,9 @@ class MenuItem_bool {
 
   #define START_MENU_MODE(MENUMODE) \
     ui.screen_mode = MENUMODE; \
-    scroll_screen(1, true); \
+    if(ui.screen_mode == SCRMODE_MENU_1X6) scroll_screen(6,false); \
+    if(ui.screen_mode == SCRMODE_MENU_1X4) scroll_screen(4,false); \
+    else scroll_screen(1, true); \
     bool _skipStatic = true; \
     SCREEN_OR_MENU_LOOP()
 
@@ -354,13 +356,17 @@ class MenuItem_bool {
 #define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, ...) do { \
     _skipStatic = false; \
     if (_menuLineNr == _thisItemNr) { \
-      if ((encoderLine == _thisItemNr && ui.use_click()) || ui.menu_is_touched(_thisItemNr - encoderTopLine)) { \
+      if (/*(encoderLine == _thisItemNr && ui.use_click()) || */ui.menu_is_touched(_thisItemNr - encoderTopLine)) { \
+        PORT_REDIRECT(SERIAL_BOTH);\
+        SERIAL_ECHOLNPAIR("This Item Nr : ", _thisItemNr); \
+        SERIAL_ECHOLNPAIR("Encoder Top  : ", encoderTopLine); \
         _MENU_ITEM_MULTIPLIER_CHECK(USE_MULTIPLIER); \
         MenuItem_##TYPE ::action ## VARIANT(__VA_ARGS__); \
         if (screen_changed) return; \
       } \
       if (ui.should_draw()) \
-        draw_menu_item ## VARIANT ## _ ## TYPE(encoderLine == _thisItemNr, _lcdLineNr, PLABEL, ## __VA_ARGS__); \
+        /* draw_menu_item ## VARIANT ## _ ## TYPE(encoderLine == _thisItemNr, _lcdLineNr, PLABEL, ## __VA_ARGS__); \ */ \
+        draw_menu_item ## VARIANT ## _ ## TYPE(false, _lcdLineNr, PLABEL, ## __VA_ARGS__); \
     } \
   ++_thisItemNr; \
 }while(0)
