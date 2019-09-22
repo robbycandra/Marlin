@@ -1218,12 +1218,7 @@ void MarlinSettings::postprocess() {
       #else
         // Allways use default to prevent bricked Printer. 
         // If we can't access menu then we can't calibrate the LCD
-        const int16_t touchscreen_calibration[4] = {
-          XPT2046_X_CALIBRATION, 
-          XPT2046_X_OFFSET, 
-          XPT2046_Y_CALIBRATION, 
-          XPT2046_Y_OFFSET 
-        };
+        const int16_t touchscreen_calibration[4] = {0, 0, 0, 0};
         EEPROM_WRITE(touchscreen_calibration);
       #endif
     }
