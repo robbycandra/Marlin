@@ -20,6 +20,10 @@
  *
  */
 
+#include "../../inc/MarlinConfig.h"
+
+#if ENABLED(FSMC_GRAPHICAL_TFT)
+
 #include "../gcode.h"
 #include "../../lcd/menu/touch/fsmc.h"
 
@@ -95,3 +99,4 @@ void GcodeSuite::M3301() {
   }
 }
 
+#endif // FSMC_GRAPHICAL_LCD

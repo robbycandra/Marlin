@@ -715,17 +715,17 @@ int16_t Temperature::getHeaterPower(const heater_ind_t heater_id) {
 
       uint8_t fan_Auto_Speed = 0;
       #ifdef EXTRUDER_AUTO_FAN_TEMPERATURE_MAX
-        if (temp_hotend[f].current >= EXTRUDER_AUTO_FAN_TEMPERATURE_MAX)
+        if (temp_hotend[f].celsius >= EXTRUDER_AUTO_FAN_TEMPERATURE_MAX)
         {
           fan_Auto_Speed = EXTRUDER_AUTO_FAN_SPEED_MAX;
         }
-        else if (temp_hotend[f].current < EXTRUDER_AUTO_FAN_TEMPERATURE)
+        else if (temp_hotend[f].celsius < EXTRUDER_AUTO_FAN_TEMPERATURE)
         {
           fan_Auto_Speed = EXTRUDER_AUTO_FAN_SPEED;
         }
         else
         {
-          fan_Auto_Speed = EXTRUDER_AUTO_FAN_SPEED + ( EXTRUDER_AUTO_FAN_SPEED_MAX - EXTRUDER_AUTO_FAN_SPEED ) * (temp_hotend[f].current - EXTRUDER_AUTO_FAN_TEMPERATURE) / (EXTRUDER_AUTO_FAN_TEMPERATURE_MAX - EXTRUDER_AUTO_FAN_TEMPERATURE);
+          fan_Auto_Speed = EXTRUDER_AUTO_FAN_SPEED + ( EXTRUDER_AUTO_FAN_SPEED_MAX - EXTRUDER_AUTO_FAN_SPEED ) * (temp_hotend[f].celsius - EXTRUDER_AUTO_FAN_TEMPERATURE) / (EXTRUDER_AUTO_FAN_TEMPERATURE_MAX - EXTRUDER_AUTO_FAN_TEMPERATURE);
         }
       #else
         fan_Auto_Speed = EXTRUDER_AUTO_FAN_SPEED;
