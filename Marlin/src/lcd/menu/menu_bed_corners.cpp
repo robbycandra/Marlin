@@ -162,19 +162,19 @@ static inline void _lcd_probe_corner() {
     switch (bed_corner) {
       case 1:
         if (firstprobe) {
-          corner_measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+          corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
           firstprobe = false;
         }
-        corner_measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+        corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
         break;
       case 2:
-        corner_measured_z = probe_pt(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+        corner_measured_z = probe_at_point(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
         break;
       case 3:
-        corner_measured_z = probe_pt(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+        corner_measured_z = probe_at_point(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
         break;
       case 4:
-        corner_measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+        corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
         break;
     }
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", corner_measured_z);
@@ -244,10 +244,10 @@ static inline void _lcd_measure_offset() {
   if (bed_corner == 0) ++bed_corner;
   if (!DEPLOY_PROBE()) {
     if (firstprobe) {
-      corner_measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
       firstprobe = false;
     }
-    corner_measured_z = probe_pt(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+    corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", corner_measured_z);
     ui.lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
     ui.lcdCurDisplayTimeUpdate = false;
