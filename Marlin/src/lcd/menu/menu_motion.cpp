@@ -251,7 +251,7 @@ screenFunc_t _manual_move_func_ptr;
 void _goto_manual_move(const float scale) {
   ui.defer_status_screen();
   move_menu_scale = scale;
-  ui.goto_screen(_manual_move_func_ptr);
+  ui.goto_screen(_manual_move_func_ptr, SCRMODE_EDIT_SCREEN);
 }
 void menu_move_10mm()   { _goto_manual_move(10); }
 void menu_move_1mm()    { _goto_manual_move( 1); }
@@ -260,11 +260,7 @@ void menu_move_01mm()   { _goto_manual_move( 0.1f); }
 void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int8_t eindex=-1) {
   _manual_move_func_ptr = func;
 
- #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(SCRMODE_MENU_H_2X3);
- #else
   START_MENU();
- #endif 
   if (LCD_HEIGHT >= 4) {
     switch (axis) {
       case X_AXIS: STATIC_ITEM(MSG_MOVE_X, true, true); break;
@@ -359,15 +355,15 @@ void menu_move() {
         true
       #endif
     ) {
-      MENU_ITEM(submenu, MSG_MOVE_X, lcd_move_get_x_amount);
-      MENU_ITEM(submenu, MSG_MOVE_Y, lcd_move_get_y_amount);
+      MENU_ITEM(submenuh, MSG_MOVE_X, lcd_move_get_x_amount);
+      MENU_ITEM(submenuh, MSG_MOVE_Y, lcd_move_get_y_amount);
     }
     #if ENABLED(DELTA)
       else
         MENU_ITEM(function, MSG_FREE_XY, lcd_lower_z_to_clip_height);
     #endif
 
-    MENU_ITEM(submenu, MSG_MOVE_Z, lcd_move_get_z_amount);
+    MENU_ITEM(submenuh, MSG_MOVE_Z, lcd_move_get_z_amount);
   }
   else
     MENU_ITEM(gcode, MSG_AUTO_HOME, PSTR("G28"));
@@ -418,29 +414,29 @@ void menu_move() {
     #if EITHER(SWITCHING_EXTRUDER, SWITCHING_NOZZLE)
 
       // Only the current...
-      MENU_ITEM(submenu, MSG_MOVE_E, lcd_move_get_e_amount);
+      MENU_ITEM(subedit, MSG_MOVE_E, lcd_move_get_e_amount);
       // ...and the non-switching
       #if E_MANUAL == 5
-        MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E5, lcd_move_get_e4_amount);
+        MENU_ITEM(subedit, MSG_MOVE_E MSG_MOVE_E5, lcd_move_get_e4_amount);
       #elif E_MANUAL == 3
-        MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E3, lcd_move_get_e2_amount);
+        MENU_ITEM(subedit, MSG_MOVE_E MSG_MOVE_E3, lcd_move_get_e2_amount);
       #endif
 
     #else
 
       // Independent extruders with one E-stepper per hotend
-      MENU_ITEM(submenu, MSG_MOVE_E, lcd_move_get_e_amount);
+      MENU_ITEM(subedit, MSG_MOVE_E, lcd_move_get_e_amount);
       #if E_MANUAL > 1
-        MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E1, lcd_move_get_e0_amount);
-        MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E2, lcd_move_get_e1_amount);
+        MENU_ITEM(subedit, MSG_MOVE_E MSG_MOVE_E1, lcd_move_get_e0_amount);
+        MENU_ITEM(subedit, MSG_MOVE_E MSG_MOVE_E2, lcd_move_get_e1_amount);
         #if E_MANUAL > 2
-          MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E3, lcd_move_get_e2_amount);
+          MENU_ITEM(subedit, MSG_MOVE_E MSG_MOVE_E3, lcd_move_get_e2_amount);
           #if E_MANUAL > 3
-            MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E4, lcd_move_get_e3_amount);
+            MENU_ITEM(subedit, MSG_MOVE_E MSG_MOVE_E4, lcd_move_get_e3_amount);
             #if E_MANUAL > 4
-              MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E5, lcd_move_get_e4_amount);
+              MENU_ITEM(subedit, MSG_MOVE_E MSG_MOVE_E5, lcd_move_get_e4_amount);
               #if E_MANUAL > 5
-                MENU_ITEM(submenu, MSG_MOVE_E MSG_MOVE_E6, lcd_move_get_e5_amount);
+                MENU_ITEM(subedit, MSG_MOVE_E MSG_MOVE_E6, lcd_move_get_e5_amount);
               #endif // E_MANUAL > 5
             #endif // E_MANUAL > 4
           #endif // E_MANUAL > 3

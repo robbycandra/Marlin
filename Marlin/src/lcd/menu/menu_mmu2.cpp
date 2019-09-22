@@ -162,11 +162,7 @@ inline void action_mmu2_choose3() { action_mmu2_choose(3); }
 inline void action_mmu2_choose4() { action_mmu2_choose(4); }
 
 void menu_mmu2_choose_filament() {
- #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(SCRMODE_MENU_H_2X3);
- #else
   START_MENU();
- #endif 
   #if LCD_HEIGHT > 2
     STATIC_ITEM(MSG_MMU2_CHOOSE_FILAMENT_HEADER, true, true);
   #endif
@@ -189,11 +185,7 @@ inline void action_mmu2_M600_resume()                      { mmuMenuWait = false
 
 void menu_mmu2_pause() {
   currentTool = mmu2.get_current_tool();
- #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(SCRMODE_MENU_H_2X3);
- #else
   START_MENU();
- #endif 
   #if LCD_HEIGHT > 2
     STATIC_ITEM(MSG_MMU2_FILAMENT_CHANGE_HEADER, true, true);
   #endif
@@ -206,14 +198,14 @@ void menu_mmu2_pause() {
 
 void mmu2_M600() {
   ui.defer_status_screen();
-  ui.goto_screen(menu_mmu2_pause);
+  ui.goto_screen(menu_mmu2_pause, SCRMODE_MENU_H_2X3);
   mmuMenuWait = true;
   while (mmuMenuWait) idle();
 }
 
 uint8_t mmu2_choose_filament() {
   ui.defer_status_screen();
-  ui.goto_screen(menu_mmu2_choose_filament);
+  ui.goto_screen(menu_mmu2_choose_filament, SCRMODE_MENU_H_2X3);
   mmuMenuWait = true;
   while (mmuMenuWait) idle();
   ui.return_to_status();

@@ -81,7 +81,7 @@ static void lcd_factory_settings() {
   }
 
   void _progress_bar_test() {
-    ui.goto_screen(progress_bar_test);
+    ui.goto_screen(progress_bar_test, SCRMODE_STATIC);
     ui.set_custom_characters(CHARSET_INFO);
   }
 
@@ -209,17 +209,17 @@ static void lcd_factory_settings() {
     MENU_ITEM(function, MSG_BLTOUCH_STOW, bltouch._stow);
     MENU_ITEM(function, MSG_BLTOUCH_SW_MODE, bltouch._set_SW_mode);
     #if ENABLED(BLTOUCH_LCD_VOLTAGE_MENU)
-      MENU_ITEM(submenu, MSG_BLTOUCH_5V_MODE, []{
+      MENU_ITEM(subselect, MSG_BLTOUCH_5V_MODE, []{
         do_select_screen(PSTR(MSG_BLTOUCH_5V_MODE), PSTR(MSG_BUTTON_CANCEL), bltouch._set_5V_mode, ui.goto_previous_screen, PSTR(MSG_BLTOUCH_MODE_CHANGE));
       });
-      MENU_ITEM(submenu, MSG_BLTOUCH_OD_MODE, []{
+      MENU_ITEM(subselect, MSG_BLTOUCH_OD_MODE, []{
         do_select_screen(PSTR(MSG_BLTOUCH_OD_MODE), PSTR(MSG_BUTTON_CANCEL), bltouch._set_OD_mode, ui.goto_previous_screen, PSTR(MSG_BLTOUCH_MODE_CHANGE));
       });
       MENU_ITEM(function, MSG_BLTOUCH_MODE_STORE, bltouch._mode_store);
-      MENU_ITEM(submenu, MSG_BLTOUCH_MODE_STORE_5V, []{
+      MENU_ITEM(subselect, MSG_BLTOUCH_MODE_STORE_5V, []{
         do_select_screen(PSTR(MSG_BLTOUCH_MODE_STORE_5V), PSTR(MSG_BUTTON_CANCEL), bltouch.mode_conv_5V, ui.goto_previous_screen, PSTR(MSG_BLTOUCH_MODE_CHANGE));
       });
-      MENU_ITEM(submenu, MSG_BLTOUCH_MODE_STORE_OD, []{
+      MENU_ITEM(subselect, MSG_BLTOUCH_MODE_STORE_OD, []{
         do_select_screen(PSTR(MSG_BLTOUCH_MODE_STORE_OD), PSTR(MSG_BUTTON_CANCEL), bltouch.mode_conv_OD, ui.goto_previous_screen, PSTR(MSG_BLTOUCH_MODE_CHANGE));
       });
       MENU_ITEM(function, MSG_BLTOUCH_MODE_ECHO, bltouch_report);
@@ -235,7 +235,7 @@ static void lcd_factory_settings() {
     ui.defer_status_screen();
     MENU_BACK(MSG_CONFIGURATION);
     MENU_ITEM(gcode, MSG_TOUCHMI_INIT, PSTR("M851 Z0\nG28\nG1 F200 Z0"));
-    MENU_ITEM(submenu, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
+    MENU_ITEM(subedit, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
     MENU_ITEM(gcode, MSG_TOUCHMI_SAVE, PSTR("M500\nG1 F200 Z10"));
     MENU_ITEM(gcode, MSG_TOUCHMI_ZTEST, PSTR("G28\nG1 F200 Z0"));
     END_MENU();
@@ -345,7 +345,7 @@ void menu_configuration() {
   MENU_ITEM(submenu, MSG_ADVANCED_SETTINGS, menu_advanced_settings);
 
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-    MENU_ITEM(submenu, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
+    MENU_ITEM(subedit, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
     MENU_ITEM_EDIT(float52, MSG_ZPROBE_ZOFFSET, &zprobe_zoffset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
   #endif

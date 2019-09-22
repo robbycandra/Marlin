@@ -44,7 +44,7 @@ void _man_probe_pt(const float &rx, const float &ry) {
   do_blocking_move_to(rx, ry, Z_CLEARANCE_BETWEEN_PROBES);
   ui.synchronize();
   move_menu_scale = _MAX(PROBE_MANUALLY_STEP, MIN_STEPS_PER_SEGMENT / float(DEFAULT_XYZ_STEPS_PER_UNIT));
-  ui.goto_screen(lcd_move_z);
+  ui.goto_screen(lcd_move_z,SCRMODE_EDIT_SCREEN);
 }
 
 #if ENABLED(DELTA_AUTO_CALIBRATION)
@@ -80,7 +80,7 @@ void _man_probe_pt(const float &rx, const float &ry) {
 
   void _lcd_delta_calibrate_home() {
     queue.inject_P(PSTR("G28"));
-    ui.goto_screen(_lcd_calibrate_homing);
+    ui.goto_screen(_lcd_calibrate_homing, SCRMODE_STATIC);
   }
 
   void _goto_tower_x() { _man_probe_pt(cos(RADIANS(210)) * delta_calibration_radius, sin(RADIANS(210)) * delta_calibration_radius); }

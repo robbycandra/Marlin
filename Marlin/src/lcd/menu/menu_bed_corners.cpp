@@ -119,7 +119,7 @@ static inline void _lcd_level_bed_corners_homing() {
   _lcd_draw_homing();
   if (all_axes_homed()) {
     bed_corner = 0;
-    ui.goto_screen(menu_level_bed_corners);
+    ui.goto_screen(menu_level_bed_corners, SCRMODE_SELECT_SCREEN);
     ui.set_selection(true);
     _lcd_goto_next_corner();
   }
@@ -138,7 +138,7 @@ void _lcd_level_bed_corners() {
     set_bed_leveling_enabled(false);
   #endif
 
-  ui.goto_screen(_lcd_level_bed_corners_homing);
+  ui.goto_screen(_lcd_level_bed_corners_homing, SCRMODE_STATIC);
 }
 
 //================================================
@@ -192,11 +192,7 @@ static inline void _lcd_probe_next_corner() {
 static inline void menu_adjust_corner() {
   char mea_z[10];
   dtostrf(corner_measured_z,1,2,mea_z);
- #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(SCRMODE_MENU_H_2X3);
- #else
   START_MENU();
- #endif 
   STATIC_ITEM("Offset ",false,false, mea_z);
   MENU_ITEM(function, MSG_BACK, _lcd_probe_calibration_back);
   MENU_ITEM(function,"Check Corner", _lcd_probe_corner);
@@ -212,7 +208,7 @@ static inline void _lcd_adjust_corner_homing() {
     previous_zoffset = zprobe_zoffset;
     firstprobe = true;
     setup_for_endstop_or_probe_move();
-    ui.goto_screen(menu_adjust_corner);
+    ui.goto_screen(menu_adjust_corner, SCRMODE_MENU_1X4);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
     current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET - zprobe_xoffset;
     current_position[Y_AXIS] = Y_MIN_BED + LEVEL_CORNERS_INSET - zprobe_yoffset;
@@ -233,7 +229,7 @@ void _lcd_adjust_corner() {
     leveling_was_active = planner.leveling_active;
     set_bed_leveling_enabled(false);
   #endif
-  ui.goto_screen(_lcd_adjust_corner_homing);
+  ui.goto_screen(_lcd_adjust_corner_homing, SCRMODE_STATIC);
 }
 
 //========================================
@@ -266,11 +262,7 @@ static inline void _lcd_save_offset() {
 static inline void menu_measure_probe_offset() {
   char mea_z[10];
   dtostrf(corner_measured_z,1,2,mea_z);
- #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(SCRMODE_MENU_H_2X3);
- #else
   START_MENU();
- #endif 
   if (bed_corner == 0)
     STATIC_ITEM("Adjust Bed Height");
   else
@@ -290,7 +282,7 @@ static inline void _lcd_measure_probe_offset_homing() {
     corner_measured_z = 0;
     firstprobe = true;
     setup_for_endstop_or_probe_move();
-    ui.goto_screen(menu_measure_probe_offset);
+    ui.goto_screen(menu_measure_probe_offset,SCRMODE_MENU_1X4);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
     current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET;
     current_position[Y_AXIS] = Y_MIN_BED + LEVEL_CORNERS_INSET;
@@ -312,7 +304,7 @@ void _lcd_measure_probe_offset() {
     leveling_was_active = planner.leveling_active;
     set_bed_leveling_enabled(false);
   #endif
-  ui.goto_screen(_lcd_measure_probe_offset_homing);
+  ui.goto_screen(_lcd_measure_probe_offset_homing, SCRMODE_STATIC);
 }
 
 #endif // HAS_BED_PROBE

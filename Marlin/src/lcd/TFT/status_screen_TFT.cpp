@@ -137,7 +137,7 @@ void run_status_screen_touch_command() {
         } 
         move_menu_scale = 10;
         ui.wait_for_untouched = true;
-        ui.goto_screen(lcd_move_x);
+        ui.goto_screen(lcd_move_x, SCRMODE_EDIT_SCREEN);
         break;
       case 2:
         #if HAS_BUZZER
@@ -148,7 +148,7 @@ void run_status_screen_touch_command() {
         } 
         move_menu_scale = 10;
         ui.wait_for_untouched = true;
-        ui.goto_screen(lcd_move_y);
+        ui.goto_screen(lcd_move_y, SCRMODE_EDIT_SCREEN);
         break;
       case 3:
         #if HAS_BUZZER
@@ -159,7 +159,7 @@ void run_status_screen_touch_command() {
         } 
         move_menu_scale = 10;
         ui.wait_for_untouched = true;
-        ui.goto_screen(lcd_move_z);
+        ui.goto_screen(lcd_move_z, SCRMODE_EDIT_SCREEN);
         break;
       case 5:
         #if HAS_BUZZER
@@ -191,7 +191,7 @@ void run_status_screen_touch_command() {
         ui.wait_for_untouched = true;
         if (card.isMounted()) {
           if (!card.isFileOpen()) {
-            ui.goto_screen(menu_media);
+            ui.goto_screen(menu_media, SCRMODE_MENU_1X4);
           }
         }
         break;
@@ -341,7 +341,7 @@ void draw_4colom_box () {
 
 void MarlinUI::draw_status_screen() {
 
-  ui.screen_mode = SCRMODE_STATUS;
+  ui.screenMode = SCRMODE_STATUS;
   ui.repeat_delay = 50;
 
   #if ENABLED(MARLIN_DEV_MODE)

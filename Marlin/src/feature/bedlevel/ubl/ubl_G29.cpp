@@ -1056,7 +1056,7 @@
       SERIAL_ECHOLNPGM("Done Editing Mesh");
 
       if (lcd_map_control)
-        ui.goto_screen(_lcd_ubl_output_map_lcd);
+        ui.goto_screen(_lcd_ubl_output_map_lcd, SCRMODE_STATIC);
       else
         ui.return_to_status();
     }

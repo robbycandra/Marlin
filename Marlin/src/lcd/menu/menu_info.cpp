@@ -201,7 +201,7 @@ void menu_info_board() {
 
   #if ENABLED(SHOW_CUSTOM_BOOTSCREEN)
     void menu_show_custom_bootscreen() {
-      if (ui.use_click()) { ui.goto_screen(menu_show_marlin_bootscreen); }
+      if (ui.use_click()) { ui.goto_screen(menu_show_marlin_bootscreen, SCRMODE_STATIC); }
       ui.draw_custom_bootscreen();
     }
   #endif
@@ -254,15 +254,15 @@ void menu_info() {
       #endif
     ));
   #else
-    MENU_ITEM(submenu, MSG_INFO_PRINTER_MENU, menu_info_printer);        // Printer Info >
-    MENU_ITEM(submenu, MSG_INFO_BOARD_MENU, menu_info_board);            // Board Info >
+    MENU_ITEM(subscreen6, MSG_INFO_PRINTER_MENU, menu_info_printer);        // Printer Info >
+    MENU_ITEM(subscreen6, MSG_INFO_BOARD_MENU, menu_info_board);            // Board Info >
     #if EXTRUDERS
-      MENU_ITEM(submenu, MSG_INFO_THERMISTOR_MENU, menu_info_thermistors); // Thermistors >
+      MENU_ITEM(subscreen6, MSG_INFO_THERMISTOR_MENU, menu_info_thermistors); // Thermistors >
     #endif
   #endif
 
   #if ENABLED(PRINTCOUNTER)
-    MENU_ITEM(submenu, MSG_INFO_STATS_MENU, menu_info_stats);          // Printer Stats >
+    MENU_ITEM(subscreen6, MSG_INFO_STATS_MENU, menu_info_stats);          // Printer Stats >
   #endif
 
   #if HAS_GAMES

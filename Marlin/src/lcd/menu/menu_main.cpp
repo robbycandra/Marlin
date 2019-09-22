@@ -111,7 +111,7 @@ void menu_main() {
       MENU_ITEM(function, MSG_PAUSE_PRINT, ui.pause_print);
     #endif
     #if MACHINE_CAN_STOP
-      MENU_ITEM(submenu, MSG_STOP_PRINT, menu_abort_confirm);
+      MENU_ITEM(subselect, MSG_STOP_PRINT, menu_abort_confirm);
     #endif
     MENU_ITEM(submenu, MSG_TUNE, menu_tune);
   }
@@ -126,7 +126,7 @@ void menu_main() {
 
       if (card_detected) {
         if (!card_open) {
-          MENU_ITEM(submenu, MSG_MEDIA_MENU, menu_media);
+          MENU_ITEM(submenu1, MSG_MEDIA_MENU, menu_media);
           MENU_ITEM(gcode,
             #if PIN_EXISTS(SD_DETECT)
               MSG_CHANGE_MEDIA, PSTR("M21")
@@ -183,14 +183,14 @@ void menu_main() {
       if (thermalManager.targetHotEnoughToExtrude(active_extruder))
         MENU_ITEM(gcode, MSG_FILAMENTCHANGE, PSTR("M600 B0"));
       else
-        MENU_ITEM(submenu, MSG_FILAMENTCHANGE, menu_temp_e0_filament_change);
+        MENU_ITEM(submenu1, MSG_FILAMENTCHANGE, menu_temp_e0_filament_change);
     #else
       MENU_ITEM(submenu, MSG_FILAMENTCHANGE, menu_change_filament);
     #endif
   #endif
 
   #if ENABLED(LCD_INFO_MENU)
-    MENU_ITEM(submenu, MSG_INFO_MENU, menu_info);
+    MENU_ITEM(submenu1, MSG_INFO_MENU, menu_info);
   #endif
 
   #if ENABLED(LED_CONTROL_MENU)
@@ -224,7 +224,7 @@ void menu_main() {
             MSG_RELEASE_MEDIA, PSTR("M22")
           #endif
         );
-        MENU_ITEM(submenu, MSG_MEDIA_MENU, menu_media);
+        MENU_ITEM(submenu1, MSG_MEDIA_MENU, menu_media);
       }
     }
     else {
@@ -239,13 +239,13 @@ void menu_main() {
 
   #if HAS_SERVICE_INTERVALS
     #if SERVICE_INTERVAL_1 > 0
-      MENU_ITEM(submenu, SERVICE_NAME_1, menu_service1);
+      MENU_ITEM(subselect, SERVICE_NAME_1, menu_service1);
     #endif
     #if SERVICE_INTERVAL_2 > 0
-      MENU_ITEM(submenu, SERVICE_NAME_2, menu_service2);
+      MENU_ITEM(subselect, SERVICE_NAME_2, menu_service2);
     #endif
     #if SERVICE_INTERVAL_3 > 0
-      MENU_ITEM(submenu, SERVICE_NAME_3, menu_service3);
+      MENU_ITEM(subselect, SERVICE_NAME_3, menu_service3);
     #endif
   #endif
 

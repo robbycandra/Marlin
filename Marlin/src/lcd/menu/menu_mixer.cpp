@@ -226,7 +226,7 @@ void lcd_mixer_mix_edit() {
   //
   inline void _lcd_goto_mix_edit() {
     mixer.refresh_collector(10, v_index);
-    ui.goto_screen(lcd_mixer_mix_edit);
+    ui.goto_screen(lcd_mixer_mix_edit, SCRMODE_MENU_2X4);
     lcd_mixer_mix_edit();
   }
 
@@ -287,7 +287,7 @@ void menu_mixer() {
     MENU_ITEM(submenu, MSG_MIX, _lcd_goto_mix_edit);
   #endif
 
-  MENU_ITEM(submenu, MSG_RESET_VTOOLS, menu_mixer_vtools_reset_confirm);
+  MENU_ITEM(subselect, MSG_RESET_VTOOLS, menu_mixer_vtools_reset_confirm);
 
   #if ENABLED(GRADIENT_MIX)
   {

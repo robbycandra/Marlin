@@ -516,9 +516,9 @@ void menu_advanced_settings() {
   #endif
 
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-    MENU_ITEM(submenu, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
+    MENU_ITEM(subedit, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
-    MENU_ITEM(submenu, "Probe", menu_advanced_probe);
+    MENU_ITEM(subedit, "Probe", menu_advanced_probe);
   #endif
 
   #if DISABLED(DELTA)
@@ -546,7 +546,7 @@ void menu_advanced_settings() {
   #endif
 
   #if ENABLED(EEPROM_SETTINGS) && DISABLED(SLIM_LCD_MENUS)
-    MENU_ITEM(submenu, MSG_INIT_EEPROM, lcd_init_eeprom_confirm);
+    MENU_ITEM(subselect, MSG_INIT_EEPROM, lcd_init_eeprom_confirm);
   #endif
 
   END_MENU();

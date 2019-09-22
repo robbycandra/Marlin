@@ -77,7 +77,7 @@ void _lcd_mesh_edit_NOP() {
 }
 
 float lcd_mesh_edit() {
-  ui.goto_screen(_lcd_mesh_edit_NOP);
+  ui.goto_screen(_lcd_mesh_edit_NOP, SCRMODE_EDIT_SCREEN);
   ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
   _lcd_mesh_fine_tune(PSTR(MSG_MESH_EDITOR));
   return mesh_edit_value;
@@ -85,7 +85,7 @@ float lcd_mesh_edit() {
 
 void lcd_mesh_edit_setup(const float &initial) {
   mesh_edit_value = mesh_edit_accumulator = initial;
-  ui.goto_screen(_lcd_mesh_edit_NOP);
+  ui.goto_screen(_lcd_mesh_edit_NOP, SCRMODE_EDIT_SCREEN);
 }
 
 void _lcd_z_offset_edit() {
@@ -93,13 +93,13 @@ void _lcd_z_offset_edit() {
 }
 
 float lcd_z_offset_edit() {
-  ui.goto_screen(_lcd_z_offset_edit);
+  ui.goto_screen(_lcd_z_offset_edit, SCRMODE_EDIT_SCREEN);
   return mesh_edit_value;
 }
 
 void lcd_z_offset_edit_setup(const float &initial) {
   mesh_edit_value = mesh_edit_accumulator = initial;
-  ui.goto_screen(_lcd_z_offset_edit);
+  ui.goto_screen(_lcd_z_offset_edit, SCRMODE_EDIT_SCREEN););
 }
 
 /**
@@ -411,7 +411,7 @@ void _lcd_ubl_map_homing() {
   _lcd_draw_homing();
   if (all_axes_homed()) {
     ubl.lcd_map_control = true; // Return to the map screen
-    ui.goto_screen(_lcd_ubl_output_map_lcd);
+    ui.goto_screen(_lcd_ubl_output_map_lcd, SCRMODE_STATIC);
   }
 }
 
@@ -529,7 +529,7 @@ void _lcd_ubl_output_map_lcd_cmd() {
     set_all_unhomed();
     queue.inject_P(PSTR("G28"));
   }
-  ui.goto_screen(_lcd_ubl_map_homing);
+  ui.goto_screen(_lcd_ubl_map_homing, SCRMODE_STATIC);
 }
 
 /**

@@ -104,7 +104,7 @@
         // The last G29 records the point and enables bed leveling
         //
         ui.wait_for_bl_move = true;
-        ui.goto_screen(_lcd_level_bed_done);
+        ui.goto_screen(_lcd_level_bed_done, SCRMODE_STATIC);
         #if ENABLED(MESH_BED_LEVELING)
           queue.inject_P(PSTR("G29 S2"));
         #elif ENABLED(PROBE_MANUALLY)
@@ -147,14 +147,14 @@
     }
     //ui.refresh(LCDVIEW_CALL_NO_REDRAW);
     ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
-    if (!ui.wait_for_bl_move) ui.goto_screen(_lcd_level_bed_get_z);
+    if (!ui.wait_for_bl_move) ui.goto_screen(_lcd_level_bed_get_z, SCRMODE_EDIT_SCREEN);
   }
 
   //
   // Step 5: Initiate a move to the next point
   //
   void _lcd_level_goto_next_point() {
-    ui.goto_screen(_lcd_level_bed_moving);
+    ui.goto_screen(_lcd_level_bed_moving, SCRMODE_EDIT_SCREEN);
 
     // G29 Records Z, moves, and signals when it pauses
     ui.wait_for_bl_move = true;
@@ -182,7 +182,7 @@
   //
   void _lcd_level_bed_homing() {
     _lcd_draw_homing();
-    if (all_axes_homed()) ui.goto_screen(_lcd_level_bed_homing_done);
+    if (all_axes_homed()) ui.goto_screen(_lcd_level_bed_homing_done, SCRMODE_EDIT_SCREEN);
   }
 
   #if ENABLED(PROBE_MANUALLY)
@@ -195,7 +195,7 @@
   void _lcd_level_bed_continue() {
     ui.defer_status_screen();
     set_all_unhomed();
-    ui.goto_screen(_lcd_level_bed_homing);
+    ui.goto_screen(_lcd_level_bed_homing, SCRMODE_STATIC);
     queue.inject_P(PSTR("G28"));
   }
 #else
@@ -241,7 +241,7 @@
   void _lcd_level_bed_homing() {
     _lcd_draw_homing();
     if (all_axes_homed()) {
-      ui.goto_screen(_lcd_level_bed_homing_done);
+      ui.goto_screen(_lcd_level_bed_homing_done, SCRMODE_EDIT_SCREEN);
       queue.inject_P(PSTR("G29"));
     }
   }
@@ -252,7 +252,7 @@
       set_all_unhomed();
       queue.inject_P(PSTR("G28"));
     }
-    ui.goto_screen(_lcd_level_bed_homing);
+    ui.goto_screen(_lcd_level_bed_homing, SCRMODE_STATIC);
   }
 
 #endif // PROBE_MANUALLY || MESH_BED_LEVELING
@@ -342,7 +342,7 @@ void menu_bed_leveling() {
   #endif
 
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-    MENU_ITEM(submenu, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
+    MENU_ITEM(subedit, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
     _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe Z Offset"), PSTR("Probe Z Offset"), &zprobe_zoffset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
   #endif

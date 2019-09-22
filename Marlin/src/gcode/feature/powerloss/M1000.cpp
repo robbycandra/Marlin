@@ -53,7 +53,7 @@ void GcodeSuite::M1000() {
 
   if (recovery.valid()) {
     if (parser.seen('S'))
-      ui.goto_screen(menu_job_recovery);
+      ui.goto_screen(menu_job_recovery, SCRMODE_MENU_1X4);
     else
       recovery.resume();
   }

@@ -34,11 +34,7 @@
 #if ENABLED(LED_COLOR_PRESETS)
 
   void menu_led_presets() {
-   #if HAS_FULL_SCALE_TFT
-    START_MENU_MODE(SCRMODE_MENU_H_2X3);
-   #else
     START_MENU();
-   #endif 
     #if LCD_HEIGHT > 2
       STATIC_ITEM(MSG_LED_PRESETS, true, true);
     #endif
@@ -78,7 +74,7 @@ void menu_led() {
   MENU_ITEM_EDIT_CALLBACK(bool, MSG_LEDS, &led_on, leds.toggle);
   MENU_ITEM(function, MSG_SET_LEDS_DEFAULT, leds.set_default);
   #if ENABLED(LED_COLOR_PRESETS)
-    MENU_ITEM(submenu, MSG_LED_PRESETS, menu_led_presets);
+    MENU_ITEM(submenuh, MSG_LED_PRESETS, menu_led_presets);
   #endif
   MENU_ITEM(submenu, MSG_CUSTOM_LEDS, menu_led_custom);
   END_MENU();

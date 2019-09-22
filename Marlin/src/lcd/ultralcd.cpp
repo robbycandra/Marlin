@@ -200,8 +200,8 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     int8_t MarlinUI::encoderDirection = ENCODERBASE;
   #endif
 
+  RexyzScreenMode MarlinUI::screenMode;
   #if ENABLED(FSMC_GRAPHICAL_TFT)
-    uint8_t MarlinUI::screen_mode;
     #if ENABLED(TOUCH_BUTTONS)
       bool MarlinUI::wait_for_untouched;
       bool MarlinUI::first_touch;
@@ -216,14 +216,9 @@ millis_t MarlinUI::next_button_update_ms; // = 0
       if (lcd_menu_touched_coord & B10000000) {
         const uint8_t row = (lcd_menu_touched_coord & B01111000) >> 3;
         const uint8_t col = (lcd_menu_touched_coord & B00000111); 
-        switch (ui.screen_mode) {
+        switch (ui.screenMode) {
           case SCRMODE_MENU_2X4:
             touched_item_number = (int)(row / 3) * 2 + (col >> 2);
-            menu_area_touched = true;
-            wait_for_untouched = true;
-            break;
-          case SCRMODE_MENU_1X6:
-            touched_item_number = row >> 1;
             menu_area_touched = true;
             wait_for_untouched = true;
             break;
@@ -237,7 +232,7 @@ millis_t MarlinUI::next_button_update_ms; // = 0
             menu_area_touched = true;
             wait_for_untouched = true;
             break;
-          case SCRMODE_MENU_SELECT:  
+          case SCRMODE_SELECT_SCREEN:  
             if (row > 8) {  //4th row
               touched_item_number = col >> 2; 
               menu_area_touched = true;
@@ -521,7 +516,7 @@ bool MarlinUI::get_blink() {
 
         #if HAS_LCD_MENU
 
-          if (RRK(EN_KEYPAD_MIDDLE))  goto_screen(menu_move);
+          if (RRK(EN_KEYPAD_MIDDLE))  goto_screen(menu_move, SCRMODE_MENU_2X4);
 
           #if DISABLED(DELTA) && Z_HOME_DIR < 0
             if (RRK(EN_KEYPAD_F2))    _reprapworld_keypad_move(Z_AXIS,  1);
@@ -618,7 +613,7 @@ void MarlinUI::status_screen() {
       #if BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
         next_filament_display = millis() + 5000UL;  // Show status message for 5s
       #endif
-      goto_screen(menu_main);
+      goto_screen(menu_main, SCRMODE_MENU_2X4);
       #if DISABLED(NO_LCD_REINIT)
         init_lcd(); // May revive the LCD if static electricity killed it
       #endif
@@ -679,7 +674,7 @@ void MarlinUI::kill_screen(PGM_P lcd_msg) {
     #endif
   #endif
 
-  ui.screen_mode = SCRMODE_KILLSCREEN;
+  ui.screenMode = SCRMODE_KILLSCREEN;
   draw_kill_screen();
 }
 
@@ -1029,10 +1024,7 @@ void MarlinUI::update() {
             constexpr int32_t encoderMultiplier = 1;
 
           #endif // ENCODER_RATE_MULTIPLIER
-          if(screen_mode == SCRMODE_MENU_1X6) {
-            encoderPosition += (encoderDiff * encoderMultiplier * 4) / (ENCODER_PULSES_PER_STEP);
-          }
-          else if(screen_mode == SCRMODE_MENU_1X4) {
+          if(screenMode == SCRMODE_MENU_1X4) {
             encoderPosition += (encoderDiff * encoderMultiplier * 3) / (ENCODER_PULSES_PER_STEP);
           }
           else {

@@ -302,10 +302,10 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
         ui.save_previous_screen();
         ui.defer_status_screen();
         if (deploy) {
-          ui.goto_screen(_lcd_deploy_message);
+          ui.goto_screen(_lcd_deploy_message, SCRMODE_STATIC);
         }
         else {
-          ui.goto_screen(_lcd_stow_message);
+          ui.goto_screen(_lcd_stow_message, SCRMODE_STATIC);
         }
       #endif
 

@@ -87,8 +87,20 @@ FORCE_INLINE void draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P c
 FORCE_INLINE void draw_menu_item_edit_P(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data) { _draw_menu_item_edit(sel, row, pstr, data, true); }
 #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   #define draw_menu_item_submenu(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenu1(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenuh(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_subedit(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_subselect(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_subscreen6(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_subscreen8(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
 #else
   #define draw_menu_item_submenu(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenu1(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenuh(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_subedit(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_subselect(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_subscreen6(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_subscreen8(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
 #endif
 #define draw_menu_item_gcode(sel, row, pstr, gcode)   draw_menu_item(sel, row, pstr, '>', ' ')
 #define draw_menu_item_function(sel, row, pstr, data) draw_menu_item(sel, row, pstr, '>', ' ')
@@ -164,9 +176,60 @@ class MenuItem_back {
     }
 };
 
+class MenuItem_subselect {
+  public:
+    static inline void action(const screenFunc_t func) { 
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_SELECT_SCREEN);
+    }
+};
+
+class MenuItem_subedit {
+  public:
+    static inline void action(const screenFunc_t func) { 
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_EDIT_SCREEN);
+    }
+};
+
 class MenuItem_submenu {
   public:
-    static inline void action(const screenFunc_t func) { ui.save_previous_screen(); ui.goto_screen(func); }
+    static inline void action(const screenFunc_t func) { 
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_2X4);
+    }
+};
+
+class MenuItem_submenu1 {
+  public:
+    static inline void action(const screenFunc_t func) { 
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_1X4);
+    }
+};
+
+class MenuItem_submenuh {
+  public:
+    static inline void action(const screenFunc_t func) { 
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_H_2X3);
+    }
+};
+
+class MenuItem_subscreen6 {
+  public:
+    static inline void action(const screenFunc_t func) { 
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_SCREEN_1X6);
+    }
+};
+
+class MenuItem_subscreen8 {
+  public:
+    static inline void action(const screenFunc_t func) { 
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_SCREEN_1X8);
+    }
 };
 
 class MenuItem_gcode {
@@ -274,43 +337,15 @@ class MenuItem_bool {
  * 
  * if using FSMC_GRAPHICAL_TFT, we set screen mode.
  */
-#if ENABLED(FSMC_GRAPHICAL_TFT)
-  #define START_MENU() \
-    ui.screen_mode = SCRMODE_MENU_2X4; \
-    scroll_screen(1, true); \
-    bool _skipStatic = true; \
-    SCREEN_OR_MENU_LOOP()
+#define START_SCREEN() \
+  scroll_screen(LCD_HEIGHT, false); \
+  bool _skipStatic = false; \
+  SCREEN_OR_MENU_LOOP()
 
-  #define START_MENU_MODE(MENUMODE) \
-    ui.screen_mode = MENUMODE; \
-    if(ui.screen_mode == SCRMODE_MENU_1X6) scroll_screen(6,false); \
-    if(ui.screen_mode == SCRMODE_MENU_1X4) scroll_screen(4,false); \
-    else scroll_screen(1, true); \
-    bool _skipStatic = true; \
-    SCREEN_OR_MENU_LOOP()
-
-  #define START_SCREEN() \
-    ui.screen_mode = SCRMODE_SCREEN_1X6; \
-    scroll_screen(6, false); \
-    bool _skipStatic = false; \
-    SCREEN_OR_MENU_LOOP()
-
-  #define START_SCREEN_MODE(MENUMODE) \
-    ui.screen_mode = MENUMODE; \
-    scroll_screen(LCD_HEIGHT, false); \
-    bool _skipStatic = false; \
-    SCREEN_OR_MENU_LOOP()
-#else
-  #define START_SCREEN() \
-    scroll_screen(LCD_HEIGHT, false); \
-    bool _skipStatic = false; \
-    SCREEN_OR_MENU_LOOP()
-
-  #define START_MENU() \
-    scroll_screen(1, true); \
-    bool _skipStatic = true; \
-    SCREEN_OR_MENU_LOOP()
-#endif 
+#define START_MENU() \
+  scroll_screen(1, true); \
+  bool _skipStatic = true; \
+  SCREEN_OR_MENU_LOOP()
 
 #define END_SCREEN() \
   } \

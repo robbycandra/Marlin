@@ -292,11 +292,7 @@ void menu_tmc_current() {
   #endif
 
   void menu_tmc_step_mode() {
-   #if HAS_FULL_SCALE_TFT
-    START_MENU_MODE(SCRMODE_MENU_H_2X3);
-   #else
     START_MENU();
-   #endif 
     STATIC_ITEM(MSG_TMC_STEALTH_ENABLED);
     MENU_BACK(MSG_TMC_DRIVERS);
     #if AXIS_HAS_STEALTHCHOP(X)
@@ -354,7 +350,7 @@ void menu_tmc() {
     MENU_ITEM(submenu, MSG_TMC_HOMING_THRS, menu_tmc_homing_thrs);
   #endif
   #if HAS_STEALTHCHOP
-    MENU_ITEM(submenu, MSG_TMC_STEPPING_MODE, menu_tmc_step_mode);
+    MENU_ITEM(submenuh, MSG_TMC_STEPPING_MODE, menu_tmc_step_mode);
   #endif
   END_MENU();
 }

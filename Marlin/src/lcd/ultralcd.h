@@ -245,21 +245,20 @@
   };
 #endif
 
-#if ENABLED(FSMC_GRAPHICAL_TFT)
-  enum MarlinScreenMode : uint8_t {
-    SCRMODE_STATUS = 1,
-    SCRMODE_MENU_2X4,
-    SCRMODE_MENU_H_2X3,
-    SCRMODE_MENU_1X4,
-    SCRMODE_MENU_1X6,
-    SCRMODE_MENU_SELECT,
-    SCRMODE_MENU_EDIT,
-    SCRMODE_SCREEN_1X6,
-    SCRMODE_SCREEN_1X8,
-    SCRMODE_CALIBRATION,
-    SCRMODE_KILLSCREEN
-  };
-#endif
+enum RexyzScreenMode : uint8_t {
+  SCRMODE_BOOT = 0,
+  SCRMODE_STATUS,
+  SCRMODE_EDIT_SCREEN,
+  SCRMODE_SELECT_SCREEN,
+  SCRMODE_MENU_1X4,
+  SCRMODE_MENU_2X4,
+  SCRMODE_MENU_H_2X3,
+  SCRMODE_STATIC,
+  SCRMODE_SCREEN_1X6,
+  SCRMODE_SCREEN_1X8,
+  SCRMODE_CALIBRATION,
+  SCRMODE_KILLSCREEN
+};
 
 ////////////////////////////////////////////
 //////////// MarlinUI Singleton ////////////
@@ -271,6 +270,7 @@ public:
   MarlinUI() {
     #if HAS_LCD_MENU
       currentScreen = nullptr;
+      screenMode = SCRMODE_BOOT;
     #endif
   }
 
@@ -423,8 +423,8 @@ public:
 
   #if HAS_LCD_MENU
 
+    static RexyzScreenMode screenMode;
     #if ENABLED(FSMC_GRAPHICAL_TFT)
-      static uint8_t screen_mode;
       #if ENABLED(TOUCH_BUTTONS)
         static bool wait_for_untouched;
         static bool first_touch;
@@ -477,7 +477,7 @@ public:
     static void synchronize(PGM_P const msg=nullptr);
 
     static screenFunc_t currentScreen;
-    static void goto_screen(const screenFunc_t screen, const uint16_t encoder=0, const uint8_t top=0, const uint8_t items=0);
+    static void goto_screen(const screenFunc_t screen, const RexyzScreenMode screenMode, const uint16_t encoder=0, const uint8_t top=0, const uint8_t items=0);
     static void save_previous_screen();
     static void goto_previous_screen(
       #if ENABLED(TURBO_BACK_MENU_ITEM)
@@ -532,10 +532,10 @@ public:
 
   #elif HAS_SPI_LCD
 
+    staticRexyzScreenMode screenMode = 0;
     static constexpr bool lcd_clicked = false;
     #if HAS_FULL_SCALE_TFT
-      static constexpr uint8_t lcd_menu_touched_coord = 0;
-      static constexpr uint8_t screen_mode = 0;
+      staticuint8_t lcd_menu_touched_coord = 0;
     #endif
     static constexpr bool on_status_screen() { return true; }
     static inline void run_current_screen() { status_screen(); }

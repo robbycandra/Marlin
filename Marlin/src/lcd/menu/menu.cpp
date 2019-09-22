@@ -60,10 +60,11 @@ int8_t encoderTopLine, encoderLine, screen_items;
 
 typedef struct {
   screenFunc_t menu_function;
+  RexyzScreenMode screen_mode;
   uint32_t encoder_position;
   int8_t top_line, items;
 } menuPosition;
-menuPosition screen_history[6];
+menuPosition screen_history[7];
 uint8_t screen_history_depth = 0;
 bool screen_changed;
 
@@ -81,11 +82,11 @@ bool no_reentry = false;
 //////// Menu Navigation & History /////////
 ////////////////////////////////////////////
 
-void MarlinUI::return_to_status() { goto_screen(status_screen); }
+void MarlinUI::return_to_status() { goto_screen(status_screen, SCRMODE_STATUS); }
 
 void MarlinUI::save_previous_screen() {
   if (screen_history_depth < COUNT(screen_history))
-    screen_history[screen_history_depth++] = { currentScreen, encoderPosition, encoderTopLine, screen_items };
+    screen_history[screen_history_depth++] = { currentScreen, screenMode, encoderPosition, encoderTopLine, screen_items};
 }
 
 void MarlinUI::goto_previous_screen(
@@ -99,6 +100,7 @@ void MarlinUI::goto_previous_screen(
   if (screen_history_depth > 0) {
     menuPosition &sh = screen_history[--screen_history_depth];
     goto_screen(sh.menu_function,
+      sh.screen_mode,
       is_back ? 0 : sh.encoder_position,
       is_back ? 0 : sh.top_line,
       sh.items
@@ -212,7 +214,7 @@ bool printer_busy() {
 /**
  * General function to go directly to a screen
  */
-void MarlinUI::goto_screen(screenFunc_t screen, const uint16_t encoder/*=0*/, const uint8_t top/*=0*/, const uint8_t items/*=0*/) {
+void MarlinUI::goto_screen(screenFunc_t screen, RexyzScreenMode scr_mode, const uint16_t encoder/*=0*/, const uint8_t top/*=0*/, const uint8_t items/*=0*/) {
   if (currentScreen != screen) {
 
     #if ENABLED(TOUCH_BUTTONS)
@@ -268,6 +270,7 @@ void MarlinUI::goto_screen(screenFunc_t screen, const uint16_t encoder/*=0*/, co
     #endif
 
     currentScreen = screen;
+    screenMode = scr_mode;
     encoderPosition = encoder;
     encoderTopLine = top;
     screen_items = items;
@@ -277,6 +280,7 @@ void MarlinUI::goto_screen(screenFunc_t screen, const uint16_t encoder/*=0*/, co
         ubl.lcd_map_control = false;
       #endif
       screen_history_depth = 0;
+      screenMode = SCRMODE_STATUS;
     }
 
     clear_lcd();
@@ -321,10 +325,11 @@ void MarlinUI::_synchronize() {
   // Make this the current handler till all moves are done
   no_reentry = true;
   const screenFunc_t old_screen = currentScreen;
-  goto_screen(_synchronize);
+  const RexyzScreenMode old_screen_mode = ui.screenMode;
+  goto_screen(_synchronize,SCRMODE_STATIC);
   planner.synchronize(); // idle() is called until moves complete
   no_reentry = false;
-  goto_screen(old_screen);
+  goto_screen(old_screen, old_screen_mode);
   lcdCurDisplayTimeUpdate = false;
 }
 
@@ -363,12 +368,7 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
       uint8_t menu_row = 4;
       uint8_t menu_col = 2;
       uint8_t menu_header = 0;
-      switch(ui.screen_mode) {
-        case SCRMODE_MENU_1X6 :
-          menu_row = 6;
-          menu_col = 1;
-          menu_header = 0;
-          break;
+      switch(ui.screenMode) {
         case SCRMODE_MENU_1X4 :
           menu_row = 4;
           menu_col = 1;
@@ -557,7 +557,7 @@ void do_select_screen(PGM_P const yes, PGM_P const no, selectFunc_t yesFunc, sel
   * 
   bool ui_selection = ui.update_selection(), got_click = ui.use_click();
   if (!got_click) {
-    ui.screen_mode = SCRMODE_MENU_SELECT;
+    ui.screenMode = SCRMODE_SELECT_SCREEN;
     if (ui.menu_is_touched(0)) {
       got_click = true;
       ui_selection = 0;

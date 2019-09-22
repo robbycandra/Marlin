@@ -314,10 +314,26 @@ static const uint8_t ili9486_init_sequence[] = {
   U8G_ESC_END
 };
 
+// Used to fill RGB565 (16bits) background
+inline void memset2(const void *ptr, uint16_t fill, size_t cnt) {
+  uint16_t* wptr = (uint16_t*) ptr;
+  for (size_t i = 0; i < cnt; i += 2) {
+     *wptr = fill;
+     wptr++;
+  }
+}
+
 #if ENABLED(TOUCH_BUTTONS)
 
+  void drawNoButton(u8g_t *u8g, u8g_dev_t *dev, uint16_t width, uint16_t height) {
+    uint16_t buffer[BUTTON_IMAGE_SIZE_X];
+    memset2(buffer, COLOR_BLACK, BUTTON_IMAGE_SIZE_X*2);
+    for (uint16_t i = 0; i < height; i++) {
+      u8g_WriteSequence(u8g, dev, width << 1, (uint8_t *)(buffer));
+    }
+  }
+
   void drawFullScaleImage(const uint8_t *data, u8g_t *u8g, u8g_dev_t *dev, uint16_t width, uint16_t height) {
-    //uint16_t buffer[128];
     for (uint16_t i = 0; i < height; i++) {
       u8g_WriteSequence(u8g, dev, width << 1, (uint8_t *)((data)+((i*width)<<1)));
     }
@@ -354,18 +370,10 @@ static const uint8_t ili9486_init_sequence[] = {
 
 #endif // TOUCH_BUTTONS
 
-// Used to fill RGB565 (16bits) background
-inline void memset2(const void *ptr, uint16_t fill, size_t cnt) {
-  uint16_t* wptr = (uint16_t*) ptr;
-  for (size_t i = 0; i < cnt; i += 2) {
-     *wptr = fill;
-     wptr++;
-  }
-}
-
 static bool preinit = true;
 static uint8_t page;
-static bool bootIsDone = false, buttonIsDisplayed = false;
+static bool bootIsDone = false;
+static RexyzScreenMode current_screen_mode = SCRMODE_BOOT;
 
 uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, void *arg) {
   u8g_pb_t *pb = (u8g_pb_t *)(dev->dev_mem);
@@ -412,23 +420,47 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
 
     case U8G_DEV_MSG_PAGE_FIRST:
       page = 0;
-      if (ui.currentScreen != nullptr) bootIsDone = true;
+      if (!bootIsDone) {
+        if (ui.currentScreen != nullptr) bootIsDone = true;
+      }
       if (bootIsDone) {
       // bottom line and buttons
         #if ENABLED(TOUCH_BUTTONS)
-          if (buttonIsDisplayed == false) {
-            buttonIsDisplayed = true;
-            u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
-            drawFullScaleImage(buttonD, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
-
-            u8g_WriteEscSeqP(u8g, dev, buttonA_sequence);
-            drawFullScaleImage(buttonA, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
-
-            u8g_WriteEscSeqP(u8g, dev, buttonB_sequence);
-            drawFullScaleImage(buttonB, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
-
-            u8g_WriteEscSeqP(u8g, dev, buttonC_sequence);
-            drawFullScaleImage(buttonC, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+          if (current_screen_mode != ui.screenMode) {
+            switch(ui.screenMode) {
+              case SCRMODE_STATUS:
+                u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
+                drawNoButton(u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                u8g_WriteEscSeqP(u8g, dev, buttonA_sequence);
+                drawFullScaleImage(buttonA, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                u8g_WriteEscSeqP(u8g, dev, buttonB_sequence);
+                drawFullScaleImage(buttonB, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                u8g_WriteEscSeqP(u8g, dev, buttonC_sequence);
+                drawFullScaleImage(buttonC, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                break;
+              case SCRMODE_SELECT_SCREEN:
+              case SCRMODE_CALIBRATION:
+                u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
+                drawFullScaleImage(buttonD, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                u8g_WriteEscSeqP(u8g, dev, buttonA_sequence);
+                drawNoButton(u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                u8g_WriteEscSeqP(u8g, dev, buttonB_sequence);
+                drawNoButton(u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                u8g_WriteEscSeqP(u8g, dev, buttonC_sequence);
+                drawFullScaleImage(buttonC, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                break;
+              default:
+                u8g_WriteEscSeqP(u8g, dev, buttonD_sequence);
+                drawFullScaleImage(buttonD, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                u8g_WriteEscSeqP(u8g, dev, buttonA_sequence);
+                drawFullScaleImage(buttonA, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                u8g_WriteEscSeqP(u8g, dev, buttonB_sequence);
+                drawFullScaleImage(buttonB, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                u8g_WriteEscSeqP(u8g, dev, buttonC_sequence);
+                drawFullScaleImage(buttonC, u8g, dev, BUTTON_IMAGE_SIZE_X, BUTTON_IMAGE_SIZE_Y);
+                break;
+            }
+            current_screen_mode = ui.screenMode;
           }
         #endif // TOUCH_BUTTONS
       } 
@@ -490,7 +522,7 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
               buffer[j] = *(uint16_t*)&RexyzBootImage[(lineNum*REXYZ_BOOT_IMAGE_SIZE_X+(j-start_pt))<<1];
           }
         } 
-        if (ui.on_status_screen() && (ui.screen_mode != SCRMODE_KILLSCREEN)) {
+        if (ui.on_status_screen() && (ui.screenMode != SCRMODE_KILLSCREEN)) {
           u8g_int_t lineNum = (page-1) * PAGE_HEIGHT + y - 4;
           if (lineNum >= 0 && lineNum < LOGO_IMAGE_SIZE_Y) {
             const uint8_t start_pt = (LCD_CELL_WIDTH*2-LOGO_IMAGE_SIZE_X) / 2;

@@ -62,7 +62,7 @@ void lcd_sd_updir() {
     //  ui.drawing_screen = screen_changed = true;
     //#endif
 
-    goto_screen(menu_media, sd_encoder_position, sd_top_line, sd_items);
+    goto_screen(menu_media, SCRMODE_MENU_1X4, sd_encoder_position, sd_top_line, sd_items);
     sd_encoder_position = 0xFFFF;
 
     defer_status_screen();
@@ -101,7 +101,7 @@ class MenuItem_sdfile {
         sd_items = screen_items;
       #endif
       #if ENABLED(SD_MENU_CONFIRM_START)
-        MenuItem_submenu::action(menu_sd_confirm);
+        MenuItem_subselect::action(menu_sd_confirm);
       #else
         sdcard_start_selected_file();
       #endif
@@ -132,11 +132,7 @@ void menu_media() {
   #else
     const uint16_t fileCnt = card.get_num_Files();
   #endif
- #if HAS_FULL_SCALE_TFT
-  START_MENU_MODE(SCRMODE_MENU_1X4);
- #else
   START_MENU();
- #endif
   MENU_BACK(MSG_MAIN);
   if (card.flag.workDirIsRoot) {
     #if !PIN_EXISTS(SD_DETECT)

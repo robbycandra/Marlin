@@ -103,7 +103,7 @@
   }
 
   inline void _lcd_babystep_go(const screenFunc_t screen) {
-    ui.goto_screen(screen);
+    ui.goto_screen(screen, SCRMODE_EDIT_SCREEN);
     ui.defer_status_screen();
     babystep.accum = 0;
   }
@@ -233,7 +233,7 @@ void menu_tune() {
       MENU_ITEM(submenu, MSG_BABYSTEP_Y, lcd_babystep_y);
     #endif
     #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-      MENU_ITEM(submenu, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
+      MENU_ITEM(subedit, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
     #else
       MENU_ITEM(submenu, MSG_BABYSTEP_Z, lcd_babystep_z);
     #endif

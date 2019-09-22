@@ -315,11 +315,11 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   }
 
   // calculate row_y1, row_y2, col_x1, col_x2, row_str_base
-  //   based on item_num and ui.screen_mode
+  //   based on item_num and ui.screenMode
   // return true if item at item_num is contained in current page
   // draw item box based on sel and calculate row_str_base
   static bool mark_as_selected(uint8_t item_num, const bool sel) {
-    switch(ui.screen_mode) {
+    switch(ui.screenMode) {
       case SCRMODE_MENU_2X4 :
         row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/4);
         row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
@@ -332,7 +332,6 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
           col_x2 = LCD_PIXEL_WIDTH / 2 - 1;
         }
         break;
-      case SCRMODE_MENU_1X6 :
       case SCRMODE_SCREEN_1X6 :
         row_y1 = item_num * (LCD_PIXEL_HEIGHT/6);
         row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/6) - 1;
@@ -375,7 +374,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     }
     if (!PAGE_CONTAINS(row_y1, row_y2)) return false;
     row_str_base = (row_y1+row_y2)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;
-    if ((ui.screen_mode != SCRMODE_SCREEN_1X6 && ui.screen_mode != SCRMODE_SCREEN_1X8) || sel)
+    if ((ui.screenMode != SCRMODE_SCREEN_1X6 && ui.screenMode != SCRMODE_SCREEN_1X8) || sel)
       draw_item_box(sel);
     return true;
   }
@@ -493,8 +492,6 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   void draw_edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/) {
     ui.encoder_direction_normal();
 
-    ui.screen_mode = SCRMODE_MENU_EDIT;
-    
     constexpr u8g_uint_t lcd_chr_fit = LCD_PIXEL_WIDTH / EDIT_FONT_WIDTH;
     const u8g_uint_t labellen = utf8_strlen_P(pstr), vallen = utf8_strlen(value);
     bool extra_row = labellen + vallen > lcd_chr_fit - 2;
