@@ -151,7 +151,7 @@ static inline void _lcd_probe_calibration_back() {
     set_bed_leveling_enabled(leveling_was_active);
   #endif
   probe_offset[Z_AXIS] = previous_zoffset;
-  clean_up_after_endstop_or_probe_move();
+  restore_feedrate_and_scaling();
   ui.goto_previous_screen_no_defer();
 }
 
@@ -207,7 +207,7 @@ static inline void _lcd_adjust_corner_homing() {
     corner_measured_z = 0;
     previous_zoffset = probe_offset[Z_AXIS];
     firstprobe = true;
-    setup_for_endstop_or_probe_move();
+    remember_feedrate_and_scaling();
     ui.goto_screen(menu_adjust_corner, SCRMODE_MENU_1X4);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
     current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET - probe_offset[X_AXIS];
@@ -281,7 +281,7 @@ static inline void _lcd_measure_probe_offset_homing() {
     probe_offset[Z_AXIS] = 0;
     corner_measured_z = 0;
     firstprobe = true;
-    setup_for_endstop_or_probe_move();
+    remember_feedrate_and_scaling();
     ui.goto_screen(menu_measure_probe_offset,SCRMODE_MENU_1X4);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
     current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET;
