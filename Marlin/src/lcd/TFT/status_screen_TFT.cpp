@@ -116,10 +116,11 @@ u8g_uint_t row_str1_base, row_str2_base, row_str1_top, row_str2_top, row_str1_bo
 
 void run_status_screen_touch_command() {
   int8_t touched_item_number;
-  if (ui.lcd_menu_touched_coord & B10000000) {
-    const uint8_t row = (ui.lcd_menu_touched_coord & B01111000) >> 3;
-    const uint8_t col = (ui.lcd_menu_touched_coord & B00000111); 
-    touched_item_number = (int)(row / 3) * 4 + (col >> 1);
+  if (ui.lcd_menu_touched_coord & 0xF0) {
+    //row = 0 is for default buttons.
+    const uint8_t row = ((ui.lcd_menu_touched_coord & 0xF0) >> 4) - 1;
+    const uint8_t col =  (ui.lcd_menu_touched_coord & 0x0F); 
+    touched_item_number = (int)(row / 3) * 4 + (col / 3);
     switch(touched_item_number) {
       case 0:
         #if HAS_BUZZER
@@ -161,6 +162,14 @@ void run_status_screen_touch_command() {
         ui.wait_for_untouched = true;
         ui.goto_screen(lcd_move_z, SCRMODE_EDIT_SCREEN);
         break;
+
+      case 4:
+        #if HAS_BUZZER
+          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #endif
+        ui.wait_for_untouched = true;
+        MenuItem_int3::action_edit(PSTR(MSG_SPEED), &feedrate_percentage, 10, 999);
+        break;
       case 5:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
@@ -182,9 +191,13 @@ void run_status_screen_touch_command() {
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         ui.wait_for_untouched = true;
+        ui.screenMode = SCRMODE_EDIT_SCREEN;
         MenuItem_percent::action_edit(PSTR(MSG_FAN_SPEED),&thermalManager.lcd_tmpfan_speed[0], 0, 255, thermalManager.lcd_setFanSpeed0);
         break;
+      case 8:
       case 9:
+      case 10:
+      case 11:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
@@ -327,7 +340,7 @@ FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const
 
 void draw_4colom_box () {
   //draw_item_box(false);
-  u8g.setColorIndex(3);
+  u8g.setColorIndex(1);
   u8g.drawVLine(col_x1 + off_x   - 1, row_y1, row_h);
   u8g.drawVLine(col_x1 + off_x      , row_y1, row_h);
   u8g.drawVLine(col_x1 + off_x*2 - 1, row_y1, row_h);
@@ -431,9 +444,9 @@ void MarlinUI::draw_status_screen() {
     total_cycles += TCNT5;
   #endif
 
-  //
-  // Second Row
-  //
+//
+// Second Row
+//
   row_h  = LCD_PIXEL_HEIGHT / 4;
   row_y1 = row_h;
   row_y2 = row_y1 + row_h - 1;
@@ -481,8 +494,9 @@ void MarlinUI::draw_status_screen() {
     #if HAS_HEATED_CHAMBER
       _draw_chamber_status(blink);
     #endif
-
-    // Fan, if a bitmap was provided
+  //
+  // Fan
+  //
     #if DO_DRAW_FAN
       if (PAGE_CONTAINS(row_str1_top, row_str2_botm)) {
         uint16_t spd = thermalManager.fan_speed[0];
@@ -510,12 +524,15 @@ void MarlinUI::draw_status_screen() {
     #endif
   }
 
+//
+// Third Row
+//
   row_y1 = LCD_PIXEL_HEIGHT * 3/6; 
   row_y2 = LCD_PIXEL_HEIGHT * 5/6 - 1;
   col_x1 = 0;
   col_x2 = LCD_PIXEL_WIDTH - 1;
   if (PAGE_CONTAINS(row_y1,row_y2)) {
-    row_str1_base = row_y1+ ROW_HEIGHT + STATUS_FONT_HEIGHT/2 - STATUS_FONT_DESCENT;
+    row_str1_base = row_y1 + ROW_HEIGHT; //+ MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;
   //
   // ABL_STATUS
   //

@@ -161,6 +161,7 @@ void MenuItemBase::edit(strfunc_t strfunc, loadfunc_t loadfunc) {
 
 void MenuItemBase::init(PGM_P const el, void * const ev, const int32_t minv, const int32_t maxv, const uint16_t ep, const screenFunc_t cs, const screenFunc_t cb, const bool le) {
   ui.save_previous_screen();
+  ui.screenMode = SCRMODE_EDIT_SCREEN;
   ui.refresh();
   editLabel = el;
   editValue = ev;
@@ -372,6 +373,11 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
         case SCRMODE_MENU_1X4 :
           menu_row = 4;
           menu_col = 1;
+          menu_header = 0;
+          break;
+        case SCRMODE_MENU_2X2 :
+          menu_row = 2;
+          menu_col = 2;
           menu_header = 0;
           break;
         case SCRMODE_SCREEN_1X6:

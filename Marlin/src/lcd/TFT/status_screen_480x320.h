@@ -36,7 +36,7 @@
 
 #define OFFSET_X               MENU_FONT_WIDTH / 2
 #define OFFSET_Y               OFFSET_X
-#define COL_WIDTH              LCD_CELL_WIDTH * 2
+#define COL_WIDTH              LCD_PIXEL_WIDTH / 4
 #define ROW_HEIGHT             LCD_CELL_HEIGHT 
 
 #define STATUS_BED_X           COL_WIDTH + COL_WIDTH + OFFSET_X

@@ -332,6 +332,18 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
           col_x2 = LCD_PIXEL_WIDTH / 2 - 1;
         }
         break;
+      case SCRMODE_MENU_2X2 :
+        row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/2);
+        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/2) - 1;
+        if (item_num & 1) {
+          col_x1 = LCD_PIXEL_WIDTH / 2;
+          col_x2 = LCD_PIXEL_WIDTH - 1;
+        }
+        else {
+          col_x1 = 0;
+          col_x2 = LCD_PIXEL_WIDTH / 2 - 1;
+        }
+        break;
       case SCRMODE_SCREEN_1X6 :
         row_y1 = item_num * (LCD_PIXEL_HEIGHT/6);
         row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/6) - 1;

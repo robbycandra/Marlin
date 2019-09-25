@@ -525,7 +525,7 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
         if (ui.on_status_screen() && (ui.screenMode != SCRMODE_KILLSCREEN)) {
           u8g_int_t lineNum = (page-1) * PAGE_HEIGHT + y - 4;
           if (lineNum >= 0 && lineNum < LOGO_IMAGE_SIZE_Y) {
-            const uint8_t start_pt = (LCD_CELL_WIDTH*2-LOGO_IMAGE_SIZE_X) / 2;
+            const uint8_t start_pt = (LCD_COLUMN4_WIDTH-LOGO_IMAGE_SIZE_X) / 2;
             for(u8g_uint_t j = start_pt; j < start_pt + LOGO_IMAGE_SIZE_X; j++)
               buffer[j] = *(uint16_t*)&Rexyz_LCD_Logo[(lineNum*LOGO_IMAGE_SIZE_X+(j-start_pt))<<1];
           }
@@ -535,43 +535,43 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
             // NOZZLE
             if (lineNum < NOZZLE_IMAGE_SIZE_Y) {
               if (thermalManager.isHeatingHotend(0)) {
-                for(u8g_uint_t j = LCD_CELL_WIDTH*2+10; j < LCD_CELL_WIDTH*2+NOZZLE_IMAGE_SIZE_X+9; j++)
-                  buffer[j] = *(uint16_t*)&nozzle_burned[(lineNum*NOZZLE_IMAGE_SIZE_X+(j-LCD_CELL_WIDTH*2-10))<<1];
+                for(u8g_uint_t j = LCD_COLUMN4_WIDTH+10; j < LCD_COLUMN4_WIDTH+NOZZLE_IMAGE_SIZE_X+9; j++)
+                  buffer[j] = *(uint16_t*)&nozzle_burned[(lineNum*NOZZLE_IMAGE_SIZE_X+(j-LCD_COLUMN4_WIDTH-10))<<1];
               } else {
-                for(u8g_uint_t j = LCD_CELL_WIDTH*2+10; j < LCD_CELL_WIDTH*2+NOZZLE_IMAGE_SIZE_X+9; j++)
-                  buffer[j] = *(uint16_t*)&nozzle_normal[(lineNum*NOZZLE_IMAGE_SIZE_X+(j-LCD_CELL_WIDTH*2-10))<<1];
+                for(u8g_uint_t j = LCD_COLUMN4_WIDTH+10; j < LCD_COLUMN4_WIDTH+NOZZLE_IMAGE_SIZE_X+9; j++)
+                  buffer[j] = *(uint16_t*)&nozzle_normal[(lineNum*NOZZLE_IMAGE_SIZE_X+(j-LCD_COLUMN4_WIDTH-10))<<1];
               }
             }
             // BED
 
             if (lineNum >= (FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y)) {
-              for(u8g_uint_t j = LCD_CELL_WIDTH*4+3; j < LCD_CELL_WIDTH*4+BED_IMAGE_SIZE_X+2; j++)
-                buffer[j] = *(uint16_t*)&bed_table[((lineNum-(FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y))*BED_IMAGE_SIZE_X+(j-LCD_CELL_WIDTH*4-3))<<1];
+              for(u8g_uint_t j = LCD_COLUMN4_WIDTH*2+3; j < LCD_COLUMN4_WIDTH*2+BED_IMAGE_SIZE_X+2; j++)
+                buffer[j] = *(uint16_t*)&bed_table[((lineNum-(FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y))*BED_IMAGE_SIZE_X+(j-LCD_COLUMN4_WIDTH*2-3))<<1];
             }    
             if (thermalManager.isHeatingBed()) {
               if (lineNum >= (FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y-FLAME_IMAGE_SIZE_Y) && lineNum < (FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y)) {
-                for(u8g_uint_t j = LCD_CELL_WIDTH*4+3; j < LCD_CELL_WIDTH*4+BED_IMAGE_SIZE_X+2; j++)
-                  buffer[j] = *(uint16_t*)&bed_flame[((lineNum-(FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y-FLAME_IMAGE_SIZE_Y))*BED_IMAGE_SIZE_X+(j-LCD_CELL_WIDTH*4-3))<<1];
+                for(u8g_uint_t j = LCD_COLUMN4_WIDTH*2+3; j < LCD_COLUMN4_WIDTH*2+BED_IMAGE_SIZE_X+2; j++)
+                  buffer[j] = *(uint16_t*)&bed_flame[((lineNum-(FAN_IMAGE_SIZE-BED_IMAGE_SIZE_Y-FLAME_IMAGE_SIZE_Y))*BED_IMAGE_SIZE_X+(j-LCD_COLUMN4_WIDTH*2-3))<<1];
               }    
             } 
 
             // FAN
             switch(fan_frame) {
               case 0:
-                for(u8g_uint_t j = LCD_CELL_WIDTH*6+3; j < LCD_CELL_WIDTH*6+FAN_IMAGE_SIZE+2; j++)
-                  buffer[j] = *(uint16_t*)&rotating_fan1[(lineNum*FAN_IMAGE_SIZE+(j-LCD_CELL_WIDTH*6-3))<<1];
+                for(u8g_uint_t j = LCD_COLUMN4_WIDTH*3+3; j < LCD_COLUMN4_WIDTH*3+FAN_IMAGE_SIZE+2; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan1[(lineNum*FAN_IMAGE_SIZE+(j-LCD_COLUMN4_WIDTH*3-3))<<1];
                 break;
               case 1:
-                for(u8g_uint_t j = LCD_CELL_WIDTH*6+3; j < LCD_CELL_WIDTH*6+FAN_IMAGE_SIZE+2; j++)
-                  buffer[j] = *(uint16_t*)&rotating_fan2[(lineNum*FAN_IMAGE_SIZE+(j-LCD_CELL_WIDTH*6-3))<<1];
+                for(u8g_uint_t j = LCD_COLUMN4_WIDTH*3+3; j < LCD_COLUMN4_WIDTH*3+FAN_IMAGE_SIZE+2; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan2[(lineNum*FAN_IMAGE_SIZE+(j-LCD_COLUMN4_WIDTH*3-3))<<1];
                 break;
               case 2:
-                for(u8g_uint_t j = LCD_CELL_WIDTH*6+3; j < LCD_CELL_WIDTH*6+FAN_IMAGE_SIZE+2; j++)
-                  buffer[j] = *(uint16_t*)&rotating_fan3[(lineNum*FAN_IMAGE_SIZE+(j-LCD_CELL_WIDTH*6-3))<<1];
+                for(u8g_uint_t j = LCD_COLUMN4_WIDTH*3+3; j < LCD_COLUMN4_WIDTH*3+FAN_IMAGE_SIZE+2; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan3[(lineNum*FAN_IMAGE_SIZE+(j-LCD_COLUMN4_WIDTH*3-3))<<1];
                 break;
               case 3:
-                for(u8g_uint_t j = LCD_CELL_WIDTH*6+3; j < LCD_CELL_WIDTH*6+FAN_IMAGE_SIZE+2; j++)
-                  buffer[j] = *(uint16_t*)&rotating_fan4[(lineNum*FAN_IMAGE_SIZE+(j-LCD_CELL_WIDTH*6-3))<<1];
+                for(u8g_uint_t j = LCD_COLUMN4_WIDTH*3+3; j < LCD_COLUMN4_WIDTH*3+FAN_IMAGE_SIZE+2; j++)
+                  buffer[j] = *(uint16_t*)&rotating_fan4[(lineNum*FAN_IMAGE_SIZE+(j-LCD_COLUMN4_WIDTH*3-3))<<1];
                 break;
             }
           }

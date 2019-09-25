@@ -213,12 +213,12 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     bool MarlinUI::menu_is_touched(int8_t tested_item_number) {
       int8_t touched_item_number;
       bool menu_area_touched = false;
-      if (lcd_menu_touched_coord & B10000000) {
-        const uint8_t row = (lcd_menu_touched_coord & B01111000) >> 3;
-        const uint8_t col = (lcd_menu_touched_coord & B00000111); 
+      if (lcd_menu_touched_coord & 0xF0) {
+        const uint8_t row = ((ui.lcd_menu_touched_coord & 0xF0) >> 4) - 1;
+        const uint8_t col =  (ui.lcd_menu_touched_coord & 0x0F); 
         switch (ui.screenMode) {
           case SCRMODE_MENU_2X4:
-            touched_item_number = (int)(row / 3) * 2 + (col >> 2);
+            touched_item_number = (int)(row / 3) * 2 + (col / 6);
             menu_area_touched = true;
             wait_for_untouched = true;
             break;
@@ -227,21 +227,26 @@ millis_t MarlinUI::next_button_update_ms; // = 0
             menu_area_touched = true;
             wait_for_untouched = true;
             break;
+          case SCRMODE_MENU_2X2:
+            touched_item_number = (int)(row / 6) * 2 + (col / 6 );
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
           case SCRMODE_MENU_H_2X3:
-            touched_item_number = (int)(row / 3) * 2 + (col >> 2) - 1;
+            touched_item_number = (int)(row / 3) * 2 + (col / 6) - 1;
             menu_area_touched = true;
             wait_for_untouched = true;
             break;
           case SCRMODE_SELECT_SCREEN:  
             if (row > 8) {  //4th row
-              touched_item_number = col >> 2; 
+              touched_item_number = col / 6; 
               menu_area_touched = true;
             }
             wait_for_untouched = true;
             break;
           default:
             if (row > 8) {  //4th row
-              touched_item_number = col >> 1; 
+              touched_item_number = col / 3; 
               menu_area_touched = true;
               repeat_delay = 50;
             }
@@ -843,7 +848,7 @@ void MarlinUI::update() {
 
     #if ENABLED(TOUCH_BUTTONS)
 
-      #define TOUCH_MENU_MASK 0x80
+      #define TOUCH_MENU_MASK 0xF0
 
       static bool arrow_pressed; // = false
       static bool screen_is_touched; // = false

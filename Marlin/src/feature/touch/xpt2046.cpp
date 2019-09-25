@@ -71,35 +71,75 @@ void XPT2046::init() {
 
 #include "../../lcd/ultralcd.h" // For EN_C bit mask
 
+inline uint16_t middleOfThree(uint16_t a, uint16_t b, uint16_t c) 
+{ 
+    // Compare each three number to find middle  
+    // number. Enter only if a > b 
+    if (a > b)  
+    { 
+        if (b > c) 
+            return b; 
+        else if (a > c) 
+            return c; 
+        else
+            return a; 
+    } 
+    else 
+    { 
+        // Decided a is not greater than b. 
+        if (a > c) 
+            return a; 
+        else if (b > c) 
+            return c; 
+        else
+            return b; 
+    } 
+} 
+
 uint8_t XPT2046::read_buttons() {
+  
+  uint16_t raw_x1, raw_x2, raw_x3, raw_y1, raw_y2, raw_y3;
 
   if (!isTouched()) return 0;
 
-  raw_x = getInTouch(XPT2046_X);
-  raw_y = getInTouch(XPT2046_Y);
+  raw_x1 = getInTouch(XPT2046_X);
+  raw_y1 = getInTouch(XPT2046_Y);
+
+  if (!isTouched()) return 0;
+
+  raw_x2 = getInTouch(XPT2046_X);
+  raw_y2 = getInTouch(XPT2046_Y);
+
+  if (!isTouched()) return 0;
+
+  raw_x3 = getInTouch(XPT2046_X);
+  raw_y3 = getInTouch(XPT2046_Y);
+
+  raw_x = middleOfThree(raw_x1, raw_x2, raw_x3);
+  raw_y = middleOfThree(raw_y1, raw_y2, raw_y3);
   pixel_x = uint16_t(((uint32_t(raw_x)) * tscalibration[0]) >> 16) + tscalibration[1],
   pixel_y = uint16_t(((uint32_t(raw_y)) * tscalibration[2]) >> 16) + tscalibration[3];
 
   if (!isTouched()) return 0; // Fingers must still be on the TS for a valid read.
 
   const uint8_t row_touched = pixel_y / LCD_CELL_HEIGHT;
-  const uint8_t col_touched = pixel_x / LCD_CELL_WIDTH;
+  const uint8_t col_touched = (pixel_x * 12 + 4) / LCD_PIXEL_WIDTH;
 
   if (row_touched < 12) {
-    return (128 + (row_touched << 3) + col_touched);
+    return (((row_touched+1) << 4) + col_touched);
   } 
   else {
    #if ENABLED(FULL_SCALE_TFT_480X320)
-    return  WITHIN(pixel_x,  32, 111) ? EN_D
-          : WITHIN(pixel_x, 144, 223) ? EN_A
-          : WITHIN(pixel_x, 256, 335) ? EN_B
-          : WITHIN(pixel_x, 368, 447) ? EN_C
+    return  WITHIN(pixel_x,  12, 119) ? EN_D
+          : WITHIN(pixel_x, 128, 235) ? EN_A
+          : WITHIN(pixel_x, 244, 351) ? EN_B
+          : WITHIN(pixel_x, 360, 467) ? EN_C
           : 0;
    #else
-    return  WITHIN(pixel_x,  14,  77) ? EN_D
-          : WITHIN(pixel_x,  90, 153) ? EN_A
-          : WITHIN(pixel_x, 166, 229) ? EN_B
-          : WITHIN(pixel_x, 242, 305) ? EN_C
+    return  WITHIN(pixel_x,   7,  78) ? EN_D
+          : WITHIN(pixel_x,  85, 156) ? EN_A
+          : WITHIN(pixel_x, 163, 234) ? EN_B
+          : WITHIN(pixel_x, 241, 312) ? EN_C
           : 0;
    #endif  
   }

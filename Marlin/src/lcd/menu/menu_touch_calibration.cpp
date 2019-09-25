@@ -41,8 +41,8 @@
 #include "../../feature/touch/xpt2046.h"
 
 #if HAS_FULL_SCALE_TFT
-  #define TOUCH_TEXT_OFFSET 10
-  #define TOUCH_POINT_OFFSET 20
+  #define TOUCH_TEXT_OFFSET 20
+  #define TOUCH_POINT_OFFSET 30
 #else
   #define TOUCH_TEXT_OFFSET 0
   #define TOUCH_POINT_OFFSET 5
@@ -132,18 +132,6 @@ void _lcd_touch_cal_result() {
       ui.goto_previous_screen();
     }
   }
-
-  /*
-  if (ui.lcd_menu_touched_coord & B10000000) {
-    #if HAS_BUZZER
-      ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
-    #endif
-    ui.lcd_menu_touched_coord = 0;     
-    ui.wait_for_untouched = true;
-    ui.first_touch = false;
-    ui.goto_previous_screen();
-  }
-  */
 }
 
 void _lcd_touch_point_screen() {
@@ -210,7 +198,7 @@ void _lcd_touch_point_screen() {
       }
     }
   #endif  
-  if (ui.lcd_menu_touched_coord & B10000000) {
+  if (ui.lcd_menu_touched_coord & 0xF0) {
     #if HAS_BUZZER
       ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
     #endif
