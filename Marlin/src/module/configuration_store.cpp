@@ -329,7 +329,7 @@ typedef struct SettingsDataStruct {
   //
   // TOUCH_CALIBRATION (XPT2046) (SettingsDataStruct)
   //
-  int16_t touchscreen_calibration[4];
+  int16_t touchscreen_calibration[6];
 
   //
   // Tool-change settings
@@ -1218,7 +1218,7 @@ void MarlinSettings::postprocess() {
       #else
         // Allways use default to prevent bricked Printer. 
         // If we can't access menu then we can't calibrate the LCD
-        const int16_t touchscreen_calibration[4] = {0, 0, 0, 0};
+        const int16_t touchscreen_calibration[6] = {0, 0, 0, 0,0 ,0};
         EEPROM_WRITE(touchscreen_calibration);
       #endif
     }
@@ -2094,7 +2094,7 @@ void MarlinSettings::postprocess() {
       // TOUCH_CALIBRATION (XPT2046) (load)
       //
       {
-        int16_t touchscreen_calibration[4];
+        int16_t touchscreen_calibration[6];
         _FIELD_TEST(touchscreen_calibration);
         EEPROM_READ(touchscreen_calibration);
         #if ENABLED(TOUCH_CALIBRATION)
@@ -2726,9 +2726,11 @@ void MarlinSettings::reset() {
   //
   #if ENABLED(TOUCH_CALIBRATION)
     touch.tscalibration[0] = XPT2046_X_CALIBRATION;
-    touch.tscalibration[1] = XPT2046_X_OFFSET;
-    touch.tscalibration[2] = XPT2046_Y_CALIBRATION;
-    touch.tscalibration[3] = XPT2046_Y_OFFSET;
+    touch.tscalibration[1] = 0;
+    touch.tscalibration[2] = XPT2046_X_OFFSET;
+    touch.tscalibration[3] = 0;
+    touch.tscalibration[4] = XPT2046_Y_CALIBRATION;
+    touch.tscalibration[5] = XPT2046_Y_OFFSET;
   #endif
 
   postprocess();
@@ -3630,9 +3632,9 @@ void MarlinSettings::reset() {
       CONFIG_ECHO_HEADING("Touch Buttons");
       CONFIG_ECHO_START();
       SERIAL_ECHOLNPAIR(" Touch X Calibration ", touch.tscalibration[0]);
-      SERIAL_ECHOLNPAIR(" Touch X Offset ", touch.tscalibration[1]);
-      SERIAL_ECHOLNPAIR(" Touch Y Calibration ", touch.tscalibration[2]);
-      SERIAL_ECHOLNPAIR(" Touch Y Offset ", touch.tscalibration[3]);
+      SERIAL_ECHOLNPAIR(" Touch X Offset ", touch.tscalibration[2]);
+      SERIAL_ECHOLNPAIR(" Touch Y Calibration ", touch.tscalibration[4]);
+      SERIAL_ECHOLNPAIR(" Touch Y Offset ", touch.tscalibration[5]);
     #endif
   }
 

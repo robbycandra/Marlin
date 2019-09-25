@@ -92,32 +92,36 @@ void _lcd_touch_cal_result() {
     lcd_put_u8str((LCD_PIXEL_WIDTH - MENU_FONT_WIDTH * 19 )/2, (LCD_PIXEL_HEIGHT+MENU_FONT_ASCENT)/2,"Fail, Please Retry!");
   } else {
     #if HAS_FULL_SCALE_TFT
-      int16_t x_cal = (((int32_t)(LCD_PIXEL_WIDTH - TOUCH_POINT_OFFSET*2)) << 16) / (x2 - x1);
+      int16_t x_calx = (((int32_t)(LCD_PIXEL_WIDTH - TOUCH_POINT_OFFSET*2)) << 16) / (x2 - x1);
+      int16_t x_caly = 0;
       int16_t x_off = TOUCH_POINT_OFFSET - x1 * (LCD_PIXEL_WIDTH - TOUCH_POINT_OFFSET*2) / (x2 - x1); 
-      int16_t y_cal = (((int32_t)(LCD_PIXEL_HEIGHT - TOUCH_POINT_OFFSET*2)) << 16) / (y2 - y1);
+      int16_t y_calx = 0;
+      int16_t y_caly = (((int32_t)(LCD_PIXEL_HEIGHT - TOUCH_POINT_OFFSET*2)) << 16) / (y2 - y1);
       int16_t y_off = TOUCH_POINT_OFFSET - y1 * (LCD_PIXEL_HEIGHT - TOUCH_POINT_OFFSET*2) / (y2 - y1); 
     #else
-      int16_t x_cal = (((int32_t)(LCD_PIXEL_WIDTH - TOUCH_POINT_OFFSET*2)) << 17) / (x2 - x1);
+      int16_t x_calx = (((int32_t)(LCD_PIXEL_WIDTH - TOUCH_POINT_OFFSET*2)) << 17) / (x2 - x1);
+      int16_t x_caly = 0;
       int16_t x_off = 32 + TOUCH_POINT_OFFSET * 2 - x1 * (LCD_PIXEL_WIDTH - TOUCH_POINT_OFFSET*2)*2 / (x2 - x1); 
-      int16_t y_cal = (((int32_t)(LCD_PIXEL_HEIGHT - TOUCH_POINT_OFFSET*2)) << 17) / (y2 - y1);
+      int16_t y_calx = 0;
+      int16_t y_caly = (((int32_t)(LCD_PIXEL_HEIGHT - TOUCH_POINT_OFFSET*2)) << 17) / (y2 - y1);
       int16_t y_off = 32 + TOUCH_POINT_OFFSET * 2 - y1 * (LCD_PIXEL_HEIGHT - TOUCH_POINT_OFFSET*2)*2 / (y2 - y1); 
     #endif  
 
     #if HAS_FULL_SCALE_TFT
-      sprintf(pointStr,"X-Cal:%d", x_cal);
+      sprintf(pointStr,"X-Cal:%d", x_calx);
       lcd_put_u8str((LCD_PIXEL_WIDTH - MENU_FONT_WIDTH * 11 )/2, (LCD_PIXEL_HEIGHT/2) - (MENU_FONT_HEIGHT), pointStr);
       sprintf(pointStr,"X-Off:%d", x_off);
       lcd_put_u8str((LCD_PIXEL_WIDTH - MENU_FONT_WIDTH * 11 )/2, (LCD_PIXEL_HEIGHT/2), pointStr);
-      sprintf(pointStr,"Y-Cal:%d", y_cal);
+      sprintf(pointStr,"Y-Cal:%d", y_caly);
       lcd_put_u8str((LCD_PIXEL_WIDTH - MENU_FONT_WIDTH * 11 )/2, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_HEIGHT), pointStr);
       sprintf(pointStr,"Y-Off:%d", y_off);
       lcd_put_u8str((LCD_PIXEL_WIDTH - MENU_FONT_WIDTH * 11 )/2, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_HEIGHT) * 2, pointStr);
     #else
-      sprintf(pointStr,"X-Cal:%d", x_cal);
+      sprintf(pointStr,"X-Cal:%d", x_calx);
       lcd_put_u8str((LCD_PIXEL_WIDTH - MENU_FONT_WIDTH * 11 )/2, (LCD_PIXEL_HEIGHT/2) - (MENU_FONT_ASCENT), pointStr);
       sprintf(pointStr,"X-Off:%d", x_off);
       lcd_put_u8str((LCD_PIXEL_WIDTH - MENU_FONT_WIDTH * 11 )/2, (LCD_PIXEL_HEIGHT/2), pointStr);
-      sprintf(pointStr,"Y-Cal:%d", y_cal);
+      sprintf(pointStr,"Y-Cal:%d", y_caly);
       lcd_put_u8str((LCD_PIXEL_WIDTH - MENU_FONT_WIDTH * 11 )/2, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_ASCENT), pointStr);
       sprintf(pointStr,"Y-Off:%d", y_off);
       lcd_put_u8str((LCD_PIXEL_WIDTH - MENU_FONT_WIDTH * 11 )/2, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_ASCENT) * 2, pointStr);
@@ -125,10 +129,12 @@ void _lcd_touch_cal_result() {
 
     bool got_click = ui.use_click();
     if (got_click) {
-      touch.tscalibration[0] = x_cal;
-      touch.tscalibration[1] = x_off;
-      touch.tscalibration[2] = y_cal;
-      touch.tscalibration[3] = y_off;
+      touch.tscalibration[0] = x_calx;
+      touch.tscalibration[1] = x_caly;
+      touch.tscalibration[2] = x_off;
+      touch.tscalibration[3] = y_calx;
+      touch.tscalibration[4] = y_caly;
+      touch.tscalibration[5] = y_off;
       ui.goto_previous_screen();
     }
   }

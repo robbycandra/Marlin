@@ -46,7 +46,7 @@
 XPT2046 touch;
 extern int8_t encoderDiff;
 uint16_t XPT2046::raw_x, XPT2046::raw_y, XPT2046::pixel_x, XPT2046::pixel_y;
-int16_t XPT2046::tscalibration[4];
+int16_t XPT2046::tscalibration[6];
 
 void XPT2046::init() {
   SET_INPUT(TOUCH_MISO_PIN);
@@ -60,9 +60,11 @@ void XPT2046::init() {
   #endif
 
   //tscalibration[0] = XPT2046_X_CALIBRATION;
-  //tscalibration[1] = XPT2046_X_OFFSET;
-  //tscalibration[2] = XPT2046_Y_CALIBRATION;
-  //tscalibration[3] = XPT2046_Y_OFFSET;
+  //tscalibration[1] = 0;
+  //tscalibration[2] = XPT2046_X_OFFSET;
+  //tscalibration[3] = 0;
+  //tscalibration[4] = XPT2046_Y_CALIBRATION;
+  //tscalibration[5] = XPT2046_Y_OFFSET;
   // We rely on XPT2046 compatible mode to ADS7843, hence no Z1 and Z2 measurements possible.
 
   // Read once to enable pendrive status pin
@@ -117,8 +119,8 @@ uint8_t XPT2046::read_buttons() {
 
   raw_x = middleOfThree(raw_x1, raw_x2, raw_x3);
   raw_y = middleOfThree(raw_y1, raw_y2, raw_y3);
-  pixel_x = uint16_t(((uint32_t(raw_x)) * tscalibration[0]) >> 16) + tscalibration[1],
-  pixel_y = uint16_t(((uint32_t(raw_y)) * tscalibration[2]) >> 16) + tscalibration[3];
+  pixel_x = uint16_t(((uint32_t(raw_x)) * tscalibration[0]) >> 16) + tscalibration[2],
+  pixel_y = uint16_t(((uint32_t(raw_y)) * tscalibration[4]) >> 16) + tscalibration[5];
 
   if (!isTouched()) return 0; // Fingers must still be on the TS for a valid read.
 
