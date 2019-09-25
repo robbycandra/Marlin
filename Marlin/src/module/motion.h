@@ -207,8 +207,9 @@ FORCE_INLINE void do_blocking_move_to(const float (&raw)[XYZE], const float &fr_
   do_blocking_move_to(raw[X_AXIS], raw[Y_AXIS], raw[Z_AXIS], fr_mm_s);
 }
 
-void setup_for_endstop_or_probe_move();
-void clean_up_after_endstop_or_probe_move();
+void remember_feedrate_and_scaling();
+void remember_feedrate_scaling_off();
+void restore_feedrate_and_scaling();
 
 //
 // Homing
@@ -264,11 +265,6 @@ void homeaxis(const AxisEnum axis);
  */
 
 #if IS_KINEMATIC // (DELTA or SCARA)
-
-  #if IS_SCARA
-    extern const float L1, L2;
-  #endif
-
   #if HAS_SCARA_OFFSET
     extern float scara_home_offset[ABC]; // A and B angular offsets, Z mm offset
   #endif

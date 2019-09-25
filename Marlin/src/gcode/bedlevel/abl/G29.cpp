@@ -450,7 +450,7 @@ G29_TYPE GcodeSuite::G29() {
       }
     #endif
 
-    if (!faux) setup_for_endstop_or_probe_move();
+    if (!faux) remember_feedrate_scaling_off();
 
     #if ENABLED(AUTO_BED_LEVELING_BILINEAR)
 
@@ -987,7 +987,7 @@ G29_TYPE GcodeSuite::G29() {
   } // !isnan(measured_z)
 
   // Restore state after probing
-  if (!faux) clean_up_after_endstop_or_probe_move();
+  if (!faux) restore_feedrate_and_scaling();
 
   if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPGM("<<< G29");
 
