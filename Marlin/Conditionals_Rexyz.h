@@ -103,6 +103,9 @@
   #if ENABLED(REXYZ_TOUCH_UI)
     #error "Please disable REXYZ_TOUCH_UI."
   #endif
+  #if DISABLED(PIOENV_MKS_ROBIN)
+    #error "Please use MKS Robin Environment"
+  #endif
 #endif
 
 #if ENABLED(REXYZ_A1) 
@@ -118,6 +121,9 @@
   #if ENABLED(REXYZ_TOUCH_UI)
     #error "Please disable REXYZ_TOUCH_UI."
   #endif
+  #if DISABLED(PIOENV_ROBIN_MINI)
+    #error "Please use Robin Mini Environment"
+  #endif
 #endif
 
 #if ENABLED(REXYZ_D2)
@@ -132,6 +138,9 @@
   #endif
   #if ENABLED(REXYZ_TOUCH_UI)
     #error "Please disable REXYZ_TOUCH_UI."
+  #endif
+  #if DISABLED(PIOENV_REXYZ_DLION_D2)
+    #error "Please use Rexyz Dlion D2 Environment"
   #endif
 #endif
 //===========================================================================
