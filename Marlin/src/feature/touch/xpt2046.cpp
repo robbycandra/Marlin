@@ -75,27 +75,9 @@ void XPT2046::init() {
 
 inline uint16_t middleOfThree(uint16_t a, uint16_t b, uint16_t c) 
 { 
-    // Compare each three number to find middle  
-    // number. Enter only if a > b 
     if (a > b)  
-    { 
-        if (b > c) 
-            return b; 
-        else if (a > c) 
-            return c; 
-        else
-            return a; 
-    } 
-    else 
-    { 
-        // Decided a is not greater than b. 
-        if (a > c) 
-            return a; 
-        else if (b > c) 
-            return c; 
-        else
-            return b; 
-    } 
+      return (b > c) ? b : ((a > c) ? c : a); 
+    return   (a > c) ? a : ((b > c) ? c : b); 
 } 
 
 uint8_t XPT2046::read_buttons() {
@@ -119,8 +101,8 @@ uint8_t XPT2046::read_buttons() {
 
   raw_x = middleOfThree(raw_x1, raw_x2, raw_x3);
   raw_y = middleOfThree(raw_y1, raw_y2, raw_y3);
-  pixel_x = uint16_t(((uint32_t(raw_x)) * tscalibration[0]) >> 16) + tscalibration[2],
-  pixel_y = uint16_t(((uint32_t(raw_y)) * tscalibration[4]) >> 16) + tscalibration[5];
+  pixel_x = uint16_t(((uint32_t(raw_x)) * tscalibration[0] + (uint32_t(raw_y)) * tscalibration[1]) >> 16) + tscalibration[2],
+  pixel_y = uint16_t(((uint32_t(raw_x)) * tscalibration[3] + (uint32_t(raw_y)) * tscalibration[4]) >> 16) + tscalibration[5];
 
   if (!isTouched()) return 0; // Fingers must still be on the TS for a valid read.
 

@@ -1218,7 +1218,7 @@ void MarlinSettings::postprocess() {
       #else
         // Allways use default to prevent bricked Printer. 
         // If we can't access menu then we can't calibrate the LCD
-        const int16_t touchscreen_calibration[6] = {0, 0, 0, 0,0 ,0};
+        const int16_t touchscreen_calibration[6] = {0, 0, 0, 0, 0 ,0};
         EEPROM_WRITE(touchscreen_calibration);
       #endif
     }
@@ -3631,10 +3631,12 @@ void MarlinSettings::reset() {
     #if ENABLED(TOUCH_BUTTONS)
       CONFIG_ECHO_HEADING("Touch Buttons");
       CONFIG_ECHO_START();
-      SERIAL_ECHOLNPAIR(" Touch X Calibration ", touch.tscalibration[0]);
-      SERIAL_ECHOLNPAIR(" Touch X Offset ", touch.tscalibration[2]);
-      SERIAL_ECHOLNPAIR(" Touch Y Calibration ", touch.tscalibration[4]);
-      SERIAL_ECHOLNPAIR(" Touch Y Offset ", touch.tscalibration[5]);
+      SERIAL_ECHOLNPAIR(" Touch X Cal.Scale X ", touch.tscalibration[0]);
+      SERIAL_ECHOLNPAIR(" Touch X Cal.Scale Y ", touch.tscalibration[1]);
+      SERIAL_ECHOLNPAIR(" Touch X Cal.Offset  ", touch.tscalibration[2]);
+      SERIAL_ECHOLNPAIR(" Touch Y Cal.Scale X ", touch.tscalibration[3]);
+      SERIAL_ECHOLNPAIR(" Touch Y Cal.Scale Y ", touch.tscalibration[4]);
+      SERIAL_ECHOLNPAIR(" Touch Y Cal.Offset  ", touch.tscalibration[5]);
     #endif
   }
 
