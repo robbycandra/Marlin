@@ -2474,15 +2474,15 @@ void MarlinSettings::reset() {
     reset_bed_level();
   #endif
 
-  #if ENABLED(PROBE_MANUALLY) || ENABLED(REXYZ_NO_ABL) 
-    rexyz_probe_mode = REXYZPROBE_NO_PROBE;
-  #else
-    rexyz_probe_mode = REXYZ_DEFAULT_PROBE;
-  #endif
   #if HAS_BED_PROBE
     zprobe_xoffset = X_PROBE_OFFSET_FROM_EXTRUDER;
     zprobe_yoffset = Y_PROBE_OFFSET_FROM_EXTRUDER;
     zprobe_zoffset = Z_PROBE_OFFSET_FROM_EXTRUDER;
+  #endif
+  #if ENABLED(PROBE_MANUALLY) || ENABLED(REXYZ_NO_ABL) 
+    rexyz_probe_mode = REXYZPROBE_NO_PROBE;
+  #else
+    rexyz_probe_mode = REXYZ_DEFAULT_PROBE;
   #endif
 
   //
@@ -3242,11 +3242,6 @@ void MarlinSettings::reset() {
     #endif // FWRETRACT
 
     /**
-     * Probe Mode
-     */
-    SERIAL_ECHOLNPAIR("Probe Mode : ", rexyz_probe_mode);
-
-    /**
      * Probe Offset
      */
     #if HAS_BED_PROBE
@@ -3260,6 +3255,11 @@ void MarlinSettings::reset() {
       SERIAL_ECHOLNPAIR("  M851 Y", LINEAR_UNIT(zprobe_yoffset));
       SERIAL_ECHOLNPAIR("  M851 Z", LINEAR_UNIT(zprobe_zoffset));
     #endif
+
+    /**
+     * Probe Mode
+     */
+    SERIAL_ECHOLNPAIR("Probe Mode : ", rexyz_probe_mode);
 
     /**
      * Bed Skew Correction
