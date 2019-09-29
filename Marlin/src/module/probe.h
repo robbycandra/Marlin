@@ -33,11 +33,10 @@ enum ProbeMode : uint8_t {
   REXYZPROBE_MANUAL_DEPLOY,
   REXYZPROBE_BLTOUCH
 };
-extern float zprobe_xoffset, zprobe_yoffset, zprobe_zoffset;
-extern uint8_t rexyz_probe_mode;
-extern float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y;
-
 #if HAS_BED_PROBE
+
+  extern uint8_t rexyz_probe_mode;
+  extern float zprobe_offset[XYZ];
   bool set_probe_deployed(const bool deploy);
   #ifdef Z_AFTER_PROBING
     void move_z_after_probing();
@@ -54,9 +53,16 @@ extern float zprobe_min_x, zprobe_min_y, zprobe_max_x, zprobe_max_y;
   #if HAS_HEATED_BED && ENABLED(WAIT_FOR_BED_HEATER)
     extern const char msg_wait_for_bed_heating[25];
   #endif
+
+  float probe_min_x(), probe_max_x(), probe_min_y(), probe_max_y();
+
 #else
+
+  constexpr float zprobe_offset[XYZ] = { 0 };
+  constexpr uint8_t rexyz_probe_mode = REXYZPROBE_NO_PROBE;
   #define DEPLOY_PROBE()
   #define STOW_PROBE()
+
 #endif
 
 #if HAS_Z_SERVO_PROBE

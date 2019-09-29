@@ -315,6 +315,8 @@ void menu_bed_leveling() {
     MENU_ITEM(submenu, MSG_LEVEL_BED, _lcd_level_bed_continue);
   #else
     // Automatic leveling can just run the G-code
+    // MENU_ITEM(gcode, MSG_LEVEL_BED, is_homed ? PSTR("G29") : PSTR("G28\nG29"));
+    // Removed because no feedback at LCD
     MENU_ITEM(submenu, MSG_LEVEL_BED, _lcd_level_bed_continue);
   #endif
 
@@ -344,7 +346,11 @@ void menu_bed_leveling() {
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     MENU_ITEM(subedit, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
-    _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe Z Offset"), PSTR("Probe Z Offset"), &zprobe_zoffset, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+    MENU_ITEM_EDIT(float52, MSG_ZPROBE_ZOFFSET, &zprobe_offset[Z_AXIS], Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+  #endif
+
+  #if ENABLED(LEVEL_BED_CORNERS)
+    MENU_ITEM(submenu, MSG_LEVEL_CORNERS, _lcd_level_bed_corners);
   #endif
 
   #if ENABLED(EEPROM_SETTINGS)

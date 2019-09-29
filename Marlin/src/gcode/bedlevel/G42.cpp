@@ -27,7 +27,6 @@
 #include "../gcode.h"
 #include "../../Marlin.h" // for IsRunning()
 #include "../../module/motion.h"
-#include "../../module/probe.h"
 #include "../../feature/bedlevel/bedlevel.h"
 
 /**
@@ -48,10 +47,12 @@ void GcodeSuite::G42() {
     set_destination_from_current();
     if (hasI) destination[X_AXIS] = _GET_MESH_X(ix);
     if (hasJ) destination[Y_AXIS] = _GET_MESH_Y(iy);
-    if (parser.boolval('P')) {
-      if (hasI) destination[X_AXIS] -= zprobe_xoffset;
-      if (hasJ) destination[Y_AXIS] -= zprobe_yoffset;
-    }
+    #if HAS_BED_PROBE
+      if (parser.boolval('P')) {
+        if (hasI) destination[X_AXIS] -= zprobe_offset[X_AXIS];
+        if (hasJ) destination[Y_AXIS] -= zprobe_offset[Y_AXIS];
+      }
+    #endif
 
     const float fval = parser.linearval('F');
     if (fval > 0.0) feedrate_mm_s = MMM_TO_MMS(fval);
