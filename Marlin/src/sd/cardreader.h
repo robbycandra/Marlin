@@ -143,7 +143,6 @@ public:
 
 public:
   static card_flags_t flag;
-  static bool isWorkDirAtRoot;
   static char filename[FILENAME_LENGTH], longFilename[LONG_FILENAME_LENGTH];
   static int8_t autostart_index;
   static SdFile getroot() { return root; }

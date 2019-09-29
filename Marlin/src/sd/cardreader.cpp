@@ -49,7 +49,6 @@
 // public:
 
 card_flags_t CardReader::flag;
-bool CardReader::isWorkDirAtRoot;
 char CardReader::filename[FILENAME_LENGTH], CardReader::longFilename[LONG_FILENAME_LENGTH];
 int8_t CardReader::autostart_index;
 
