@@ -36,7 +36,7 @@ enum ProbeMode : uint8_t {
 #if HAS_BED_PROBE
 
   extern uint8_t rexyz_probe_mode;
-  extern float zprobe_offset[XYZ];
+  extern float probe_offset[XYZ];
   bool set_probe_deployed(const bool deploy);
   #ifdef Z_AFTER_PROBING
     void move_z_after_probing();
@@ -58,7 +58,7 @@ enum ProbeMode : uint8_t {
 
 #else
 
-  constexpr float zprobe_offset[XYZ] = { 0 };
+  constexpr float probe_offset[XYZ] = { 0 };
   constexpr uint8_t rexyz_probe_mode = REXYZPROBE_NO_PROBE;
   #define DEPLOY_PROBE()
   #define STOW_PROBE()
