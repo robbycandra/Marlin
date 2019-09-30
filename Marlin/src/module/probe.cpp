@@ -282,17 +282,17 @@ inline void do_probe_raise(const float z_raise) {
 #if HAS_LCD_MENU
   static inline void _lcd_deploy_message() {
     START_SCREEN();
-    STATIC_ITEM_P(PSTR(MSG_MANUAL_DEPLOY), true, true);
+    STATIC_ITEM_P(PSTR(MSG_MANUAL_DEPLOY), SS_CENTER||SS_INVERT);
     if ( LCD_HEIGHT > 3) STATIC_ITEM(" ");
-    STATIC_ITEM_P(PSTR(MSG_USERWAIT), true, true);
+    STATIC_ITEM_P(PSTR(MSG_USERWAIT), SS_CENTER||SS_INVERT);
     END_SCREEN();
   }
 
   static inline void _lcd_stow_message() {
     START_SCREEN();
-    STATIC_ITEM_P(PSTR(MSG_MANUAL_STOW), true, true);
+    STATIC_ITEM_P(PSTR(MSG_MANUAL_STOW), SS_CENTER||SS_INVERT);
     if ( LCD_HEIGHT > 3) STATIC_ITEM(" ");
-    STATIC_ITEM_P(PSTR(MSG_USERWAIT), true, true);
+    STATIC_ITEM_P(PSTR(MSG_USERWAIT), SS_CENTER||SS_INVERT);
     END_SCREEN();
   }
 #endif

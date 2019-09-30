@@ -193,7 +193,7 @@ static inline void menu_adjust_corner() {
   char mea_z[10];
   dtostrf(corner_measured_z,1,2,mea_z);
   START_MENU();
-  STATIC_ITEM("Offset ",false,false, mea_z);
+  STATIC_ITEM("Offset ",SS_LEFT, mea_z);
   MENU_ITEM(function, MSG_BACK, _lcd_probe_calibration_back);
   MENU_ITEM(function,"Check Corner", _lcd_probe_corner);
   MENU_ITEM(function, MSG_NEXT_CORNER, _lcd_probe_next_corner);
@@ -266,7 +266,7 @@ static inline void menu_measure_probe_offset() {
   if (bed_corner == 0)
     STATIC_ITEM("Adjust Bed Height");
   else
-    STATIC_ITEM("Offset ",false,false, mea_z);
+    STATIC_ITEM("Offset ",SS_LEFT, mea_z);
   MENU_ITEM(function, MSG_BACK, _lcd_probe_calibration_back);
   MENU_ITEM(function, "Measure Offset", _lcd_measure_offset);
   MENU_ITEM(function, "Save Offset", _lcd_save_offset);
