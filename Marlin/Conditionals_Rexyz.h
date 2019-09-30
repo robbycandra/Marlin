@@ -88,6 +88,9 @@
   #if ENABLED(REXYZ_TOUCH_UI)
     #error "Please disable REXYZ_TOUCH_UI."
   #endif
+  #if DISABLED(TARGET_LPC1768)
+    #error "Please use LPC1768"
+  #endif
 #endif
 
 #if ENABLED(REXYZ_A8P)
@@ -103,8 +106,8 @@
   #if ENABLED(REXYZ_TOUCH_UI)
     #error "Please disable REXYZ_TOUCH_UI."
   #endif
-  #if DISABLED(PIOENV_MKS_ROBIN)
-    #error "Please use MKS Robin Environment"
+  #if DISABLED(TARGET_LPC1768)
+    #error "Please use LPC1768"
   #endif
 #endif
 
