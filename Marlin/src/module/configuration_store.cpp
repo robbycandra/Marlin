@@ -635,10 +635,10 @@ void MarlinSettings::postprocess() {
     }
 
     //
-    // Probe Z Offset
+    // Probe XYZ Offsets
     //
     {
-      _FIELD_TEST(probe_offset.z);
+      _FIELD_TEST(probe_offset);
       EEPROM_WRITE(probe_offset);
       EEPROM_WRITE(rexyz_probe_mode);
     }
