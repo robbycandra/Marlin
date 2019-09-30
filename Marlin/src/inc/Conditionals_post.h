@@ -200,6 +200,10 @@
   #undef SLOWDOWN
 #endif
 
+#ifndef MESH_INSET
+  #define MESH_INSET 0
+#endif
+
 /**
  * Safe Homing Options
  */
@@ -530,13 +534,13 @@
 /**
  * ARRAY_BY_EXTRUDERS based on EXTRUDERS
  */
-#define ARRAY_BY_EXTRUDERS(...) ARRAY_N(EXTRUDERS, __VA_ARGS__)
+#define ARRAY_BY_EXTRUDERS(V...) ARRAY_N(EXTRUDERS, V)
 #define ARRAY_BY_EXTRUDERS1(v1) ARRAY_BY_EXTRUDERS(v1, v1, v1, v1, v1, v1)
 
 /**
  * ARRAY_BY_HOTENDS based on HOTENDS
  */
-#define ARRAY_BY_HOTENDS(...) ARRAY_N(HOTENDS, __VA_ARGS__)
+#define ARRAY_BY_HOTENDS(V...) ARRAY_N(HOTENDS, V)
 #define ARRAY_BY_HOTENDS1(v1) ARRAY_BY_HOTENDS(v1, v1, v1, v1, v1, v1)
 
 /**
@@ -1444,10 +1448,22 @@
 #ifndef MIN_PROBE_EDGE
   #define MIN_PROBE_EDGE 0
 #endif
+#ifndef MIN_PROBE_EDGE_LEFT
+  #define MIN_PROBE_EDGE_LEFT MIN_PROBE_EDGE
+#endif
+#ifndef MIN_PROBE_EDGE_RIGHT
+  #define MIN_PROBE_EDGE_RIGHT MIN_PROBE_EDGE
+#endif
+#ifndef MIN_PROBE_EDGE_FRONT
+  #define MIN_PROBE_EDGE_FRONT MIN_PROBE_EDGE
+#endif
+#ifndef MIN_PROBE_EDGE_BACK
+  #define MIN_PROBE_EDGE_BACK MIN_PROBE_EDGE
+#endif
+
 #ifndef NOZZLE_TO_PROBE_OFFSET
   #define NOZZLE_TO_PROBE_OFFSET { 0, 0, 0 }
 #endif
-constexpr float nozzle_to_probe_offset[XYZ] = NOZZLE_TO_PROBE_OFFSET;
 
 #if ENABLED(DELTA)
   /**
@@ -1486,19 +1502,10 @@ constexpr float nozzle_to_probe_offset[XYZ] = NOZZLE_TO_PROBE_OFFSET;
 
   #define SCARA_PRINTABLE_RADIUS (SCARA_LINKAGE_1 + SCARA_LINKAGE_2)
   #define _PROBE_RADIUS (SCARA_PRINTABLE_RADIUS - (MIN_PROBE_EDGE))
-  #define PROBE_X_MIN (X_CENTER - (SCARA_PRINTABLE_RADIUS) + MIN_PROBE_EDGE)
-  #define PROBE_Y_MIN (Y_CENTER - (SCARA_PRINTABLE_RADIUS) + MIN_PROBE_EDGE)
-  #define PROBE_X_MAX (X_CENTER +  SCARA_PRINTABLE_RADIUS - (MIN_PROBE_EDGE))
-  #define PROBE_Y_MAX (Y_CENTER +  SCARA_PRINTABLE_RADIUS - (MIN_PROBE_EDGE))
-
-#else
-
-  // Boundaries for Cartesian probing based on bed limits
-  #define PROBE_X_MIN (_MAX(X_MIN_BED + MIN_PROBE_EDGE, X_MIN_POS + nozzle_to_probe_offset[X_AXIS]))
-  #define PROBE_Y_MIN (_MAX(Y_MIN_BED + MIN_PROBE_EDGE, Y_MIN_POS + nozzle_to_probe_offset[Y_AXIS]))
-  #define PROBE_X_MAX (_MIN(X_MAX_BED - (MIN_PROBE_EDGE), X_MAX_POS + nozzle_to_probe_offset[X_AXIS]))
-  #define PROBE_Y_MAX (_MIN(Y_MAX_BED - (MIN_PROBE_EDGE), Y_MAX_POS + nozzle_to_probe_offset[Y_AXIS]))
-
+  #define PROBE_X_MIN (X_CENTER - (SCARA_PRINTABLE_RADIUS) + MIN_PROBE_EDGE_LEFT)
+  #define PROBE_Y_MIN (Y_CENTER - (SCARA_PRINTABLE_RADIUS) + MIN_PROBE_EDGE_FRONT)
+  #define PROBE_X_MAX (X_CENTER +  SCARA_PRINTABLE_RADIUS - (MIN_PROBE_EDGE_RIGHT))
+  #define PROBE_Y_MAX (Y_CENTER +  SCARA_PRINTABLE_RADIUS - (MIN_PROBE_EDGE_BACK))
 #endif
 
 #if ENABLED(SEGMENT_LEVELED_MOVES) && !defined(LEVELED_SEGMENT_LENGTH)
@@ -1508,7 +1515,7 @@ constexpr float nozzle_to_probe_offset[XYZ] = NOZZLE_TO_PROBE_OFFSET;
 /**
  * Default mesh area is an area with an inset margin on the print area.
  */
-#if EITHER(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL)
+#if HAS_LEVELING
   #if IS_KINEMATIC
     // Probing points may be verified at compile time within the radius
     // using static_assert(HYPOT2(X2-X1,Y2-Y1)<=sq(DELTA_PRINTABLE_RADIUS),"bad probe point!")
@@ -1519,7 +1526,7 @@ constexpr float nozzle_to_probe_offset[XYZ] = NOZZLE_TO_PROBE_OFFSET;
     #define _MESH_MAX_Y (Y_MAX_BED - (MESH_INSET))
   #else
     // Boundaries for Cartesian probing based on set limits
-    #if ENABLED(AUTO_BED_LEVELING_UBL)
+    #if EITHER(MESH_BED_LEVELING, AUTO_BED_LEVELING_UBL)
       #define _MESH_MIN_X (_MAX(X_MIN_BED + MESH_INSET, X_MIN_POS))  // UBL is careful not to probe off the bed.  It does not
       #define _MESH_MIN_Y (_MAX(Y_MIN_BED + MESH_INSET, Y_MIN_POS))  // need NOZZLE_TO_PROBE_OFFSET in the mesh dimensions
       #define _MESH_MAX_X (_MIN(X_MAX_BED - (MESH_INSET), X_MAX_POS))
@@ -1548,8 +1555,12 @@ constexpr float nozzle_to_probe_offset[XYZ] = NOZZLE_TO_PROBE_OFFSET;
 
 #endif // MESH_BED_LEVELING || AUTO_BED_LEVELING_UBL
 
-#if EITHER(AUTO_BED_LEVELING_UBL, AUTO_BED_LEVELING_3POINT)
-  #if IS_KINEMATIC
+#if ALL(PROBE_PT_1_X, PROBE_PT_2_X, PROBE_PT_3_X, PROBE_PT_1_Y, PROBE_PT_2_Y, PROBE_PT_3_Y)
+  #define HAS_FIXED_3POINT;
+#endif
+
+#if EITHER(AUTO_BED_LEVELING_UBL, AUTO_BED_LEVELING_3POINT) && IS_KINEMATIC
+    #define HAS_FIXED_3POINT
     #define SIN0    0.0
     #define SIN120  0.866025
     #define SIN240 -0.866025
@@ -1574,26 +1585,6 @@ constexpr float nozzle_to_probe_offset[XYZ] = NOZZLE_TO_PROBE_OFFSET;
     #ifndef PROBE_PT_3_Y
       #define PROBE_PT_3_Y (Y_CENTER + (_PROBE_RADIUS) * SIN240)
     #endif
-  #else
-    #ifndef PROBE_PT_1_X
-      #define PROBE_PT_1_X PROBE_X_MIN
-    #endif
-    #ifndef PROBE_PT_1_Y
-      #define PROBE_PT_1_Y PROBE_Y_MIN
-    #endif
-    #ifndef PROBE_PT_2_X
-      #define PROBE_PT_2_X PROBE_X_MAX
-    #endif
-    #ifndef PROBE_PT_2_Y
-      #define PROBE_PT_2_Y PROBE_Y_MIN
-    #endif
-    #ifndef PROBE_PT_3_X
-      #define PROBE_PT_3_X X_CENTER
-    #endif
-    #ifndef PROBE_PT_3_Y
-      #define PROBE_PT_3_Y PROBE_Y_MAX
-    #endif
-  #endif
 #endif
 
 /**

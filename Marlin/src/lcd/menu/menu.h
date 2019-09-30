@@ -31,7 +31,7 @@ extern int8_t encoderLine, encoderTopLine, screen_items;
 extern bool screen_changed;
 
 #if HOTENDS
-  constexpr int16_t heater_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP);
+  constexpr int16_t heater_maxtemp[HOTENDS] = ARRAY_BY_HOTENDS(HEATER_0_MAXTEMP, HEATER_1_MAXTEMP, HEATER_2_MAXTEMP, HEATER_3_MAXTEMP, HEATER_4_MAXTEMP, HEATER_5_MAXTEMP);
 #endif
 
 void scroll_screen(const uint8_t limit, const bool is_menu);
@@ -78,9 +78,13 @@ inline void do_select_screen_yn(selectFunc_t yesFunc, selectFunc_t noFunc, PGM_P
   do_select_screen(PSTR(MSG_YES), PSTR(MSG_NO), yesFunc, noFunc, pref, string, suff);
 }
 
+#define SS_LEFT   0x00
+#define SS_CENTER 0x01
+#define SS_INVERT 0x02
+
 void draw_edit_screen(PGM_P const pstr, const char* const value=nullptr);
 void draw_menu_item(const bool sel, const uint8_t row, PGM_P const pstr, const char pre_char, const char post_char);
-void draw_menu_item_static(const uint8_t row, PGM_P const pstr, const bool center=true, const bool invert=false, const char *valstr=nullptr);
+void draw_menu_item_static(const uint8_t row, PGM_P const pstr, const uint8_t style=SS_CENTER, const char * const valstr=nullptr);
 void _draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm);
 FORCE_INLINE void draw_menu_item_back(const bool sel, const uint8_t row, PGM_P const pstr) { draw_menu_item(sel, row, pstr, LCD_STR_UPLEVEL[0], LCD_STR_UPLEVEL[0]); }
 FORCE_INLINE void draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data) { _draw_menu_item_edit(sel, row, pstr, data, false); }
@@ -388,7 +392,7 @@ class MenuItem_bool {
  *
  */
 #if HAS_FULL_SCALE_TFT
-#define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, ...) do { \
+#define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, V...) do { \
     _skipStatic = false; \
     if (_menuLineNr == _thisItemNr) { \
       if (/*(encoderLine == _thisItemNr && ui.use_click()) || */ui.menu_is_touched(_thisItemNr - encoderTopLine)) { \
@@ -396,26 +400,26 @@ class MenuItem_bool {
         SERIAL_ECHOLNPAIR("This Item Nr : ", _thisItemNr); \
         SERIAL_ECHOLNPAIR("Encoder Top  : ", encoderTopLine); \
         _MENU_ITEM_MULTIPLIER_CHECK(USE_MULTIPLIER); \
-        MenuItem_##TYPE ::action ## VARIANT(__VA_ARGS__); \
+        MenuItem_##TYPE ::action ## VARIANT(V); \
         if (screen_changed) return; \
       } \
       if (ui.should_draw()) \
         /* draw_menu_item ## VARIANT ## _ ## TYPE(encoderLine == _thisItemNr, _lcdLineNr, PLABEL, ## __VA_ARGS__); \ */ \
-        draw_menu_item ## VARIANT ## _ ## TYPE(false, _lcdLineNr, PLABEL, ## __VA_ARGS__); \
+        draw_menu_item ## VARIANT ## _ ## TYPE(false, _lcdLineNr, PLABEL, ##V); \
     } \
   ++_thisItemNr; \
 }while(0)
 #else
-#define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, ...) do { \
+#define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, V...) do { \
     _skipStatic = false; \
     if (_menuLineNr == _thisItemNr) { \
       if (encoderLine == _thisItemNr && ui.use_click()) { \
         _MENU_ITEM_MULTIPLIER_CHECK(USE_MULTIPLIER); \
-        MenuItem_##TYPE ::action ## VARIANT(__VA_ARGS__); \
+        MenuItem_##TYPE ::action ## VARIANT(V); \
         if (screen_changed) return; \
       } \
       if (ui.should_draw()) \
-        draw_menu_item ## VARIANT ## _ ## TYPE(encoderLine == _thisItemNr, _lcdLineNr, PLABEL, ## __VA_ARGS__); \
+        draw_menu_item ## VARIANT ## _ ## TYPE(encoderLine == _thisItemNr, _lcdLineNr, PLABEL, ##V); \
     } \
   ++_thisItemNr; \
 }while(0)
@@ -423,14 +427,14 @@ class MenuItem_bool {
 
 // Used to print static text with no visible cursor.
 // Parameters: label [, bool center [, bool invert [, char *value] ] ]
-#define STATIC_ITEM_P(PLABEL, ...) do{ \
+#define STATIC_ITEM_P(PLABEL, V...) do{ \
   if (_menuLineNr == _thisItemNr) { \
     if (_skipStatic && encoderLine <= _thisItemNr) { \
       ui.encoderPosition += ENCODER_STEPS_PER_MENU_ITEM; \
       ++encoderLine; \
     } \
     if (ui.should_draw()) \
-      draw_menu_item_static(_lcdLineNr, PLABEL, ## __VA_ARGS__); \
+      draw_menu_item_static(_lcdLineNr, PLABEL, ##V); \
   } \
   ++_thisItemNr; \
 } while(0)
@@ -441,7 +445,7 @@ class MenuItem_bool {
 
 #define MENU_ITEM_ADDON_END() } }while(0)
 
-#define STATIC_ITEM(LABEL, ...) STATIC_ITEM_P(PSTR(LABEL), ## __VA_ARGS__)
+#define STATIC_ITEM(LABEL, V...) STATIC_ITEM_P(PSTR(LABEL), ##V)
 
 #if ENABLED(TOUCH_BUTTONS)
   #define MENU_BACK(LABEL) NOOP
@@ -449,12 +453,12 @@ class MenuItem_bool {
   #define MENU_BACK(LABEL) MENU_ITEM(back, LABEL)
 #endif
 #define MENU_ITEM_DUMMY() do { _thisItemNr++; }while(0)
-#define MENU_ITEM_P(TYPE, PLABEL, ...)                       _MENU_ITEM_VARIANT_P(TYPE,      , false, PLABEL,                   ## __VA_ARGS__)
-#define MENU_ITEM(TYPE, LABEL, ...)                          _MENU_ITEM_VARIANT_P(TYPE,      , false, PSTR(LABEL),              ## __VA_ARGS__)
-#define MENU_ITEM_EDIT(TYPE, LABEL, ...)                     _MENU_ITEM_VARIANT_P(TYPE, _edit, false, PSTR(LABEL), PSTR(LABEL), ## __VA_ARGS__)
-#define MENU_ITEM_EDIT_CALLBACK(TYPE, LABEL, ...)            _MENU_ITEM_VARIANT_P(TYPE, _edit, false, PSTR(LABEL), PSTR(LABEL), ## __VA_ARGS__)
-#define MENU_MULTIPLIER_ITEM_EDIT(TYPE, LABEL, ...)          _MENU_ITEM_VARIANT_P(TYPE, _edit,  true, PSTR(LABEL), PSTR(LABEL), ## __VA_ARGS__)
-#define MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(TYPE, LABEL, ...) _MENU_ITEM_VARIANT_P(TYPE, _edit,  true, PSTR(LABEL), PSTR(LABEL), ## __VA_ARGS__)
+#define MENU_ITEM_P(TYPE, PLABEL, V...)                       _MENU_ITEM_VARIANT_P(TYPE,      , false, PLABEL,                   ##V)
+#define MENU_ITEM(TYPE, LABEL, V...)                          _MENU_ITEM_VARIANT_P(TYPE,      , false, PSTR(LABEL),              ##V)
+#define MENU_ITEM_EDIT(TYPE, LABEL, V...)                     _MENU_ITEM_VARIANT_P(TYPE, _edit, false, PSTR(LABEL), PSTR(LABEL), ##V)
+#define MENU_ITEM_EDIT_CALLBACK(TYPE, LABEL, V...)            _MENU_ITEM_VARIANT_P(TYPE, _edit, false, PSTR(LABEL), PSTR(LABEL), ##V)
+#define MENU_MULTIPLIER_ITEM_EDIT(TYPE, LABEL, V...)          _MENU_ITEM_VARIANT_P(TYPE, _edit,  true, PSTR(LABEL), PSTR(LABEL), ##V)
+#define MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(TYPE, LABEL, V...) _MENU_ITEM_VARIANT_P(TYPE, _edit,  true, PSTR(LABEL), PSTR(LABEL), ##V)
 
 ////////////////////////////////////////////
 /////////////// Menu Screens ///////////////
