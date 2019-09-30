@@ -48,8 +48,6 @@
   float lcd_runout_distance_mm;
 #endif
 
-
-
 #if HAS_M206_COMMAND
   //
   // Set the home offset based on the current_position

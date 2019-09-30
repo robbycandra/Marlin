@@ -35,9 +35,9 @@ enum ProbeMode : uint8_t {
 };
 #if HAS_BED_PROBE
 
-  constexpr float nozzle_to_probe_offset[XYZ] = NOZZLE_TO_PROBE_OFFSET;
+  constexpr xyz_pos_t nozzle_to_probe_offset = NOZZLE_TO_PROBE_OFFSET;
 
-  extern float probe_offset[XYZ];
+  extern xyz_pos_t probe_offset;
 
   extern uint8_t rexyz_probe_mode;
 
@@ -52,6 +52,9 @@ enum ProbeMode : uint8_t {
     PROBE_PT_BIG_RAISE  // Raise to big clearance after run_z_probe
   };
   float probe_at_point(const float &rx, const float &ry, const ProbePtRaise raise_after=PROBE_PT_NONE, const uint8_t verbose_level=0, const bool probe_relative=true);
+  inline float probe_at_point(const xy_pos_t &pos, const ProbePtRaise raise_after=PROBE_PT_NONE, const uint8_t verbose_level=0, const bool probe_relative=true) {
+    return probe_at_point(pos.x, pos.y, raise_after, verbose_level, probe_relative);
+  }
   #define DEPLOY_PROBE() set_probe_deployed(true)
   #define STOW_PROBE() set_probe_deployed(false)
   #if HAS_HEATED_BED && ENABLED(WAIT_FOR_BED_HEATER)
@@ -60,7 +63,7 @@ enum ProbeMode : uint8_t {
 
 #else
 
-  constexpr float probe_offset[XYZ] = { 0 };
+  constexpr xyz_pos_t probe_offset{0};
   constexpr uint8_t rexyz_probe_mode = REXYZPROBE_NO_PROBE;
   #define DEPLOY_PROBE()
   #define STOW_PROBE()
@@ -73,7 +76,7 @@ enum ProbeMode : uint8_t {
       #if IS_KINEMATIC
         PROBE_X_MIN, MESH_MIN_X
       #else
-        (X_MIN_BED) + (MIN_PROBE_EDGE_LEFT), (X_MIN_POS) + probe_offset[X_AXIS]
+        (X_MIN_BED) + (MIN_PROBE_EDGE_LEFT), (X_MIN_POS) + probe_offset.x
       #endif
     );
   }
@@ -82,7 +85,7 @@ enum ProbeMode : uint8_t {
       #if IS_KINEMATIC
         PROBE_X_MAX, MESH_MAX_X
       #else
-        (X_MAX_BED) - (MIN_PROBE_EDGE_RIGHT), (X_MAX_POS) + probe_offset[X_AXIS]
+        (X_MAX_BED) - (MIN_PROBE_EDGE_RIGHT), (X_MAX_POS) + probe_offset.x
       #endif
     );
   }
@@ -91,7 +94,7 @@ enum ProbeMode : uint8_t {
       #if IS_KINEMATIC
         PROBE_Y_MIN, MESH_MIN_Y
       #else
-        (Y_MIN_BED) + (MIN_PROBE_EDGE_FRONT), (Y_MIN_POS) + probe_offset[Y_AXIS]
+        (Y_MIN_BED) + (MIN_PROBE_EDGE_FRONT), (Y_MIN_POS) + probe_offset.y
       #endif
     );
   }
@@ -100,7 +103,7 @@ enum ProbeMode : uint8_t {
       #if IS_KINEMATIC
         PROBE_Y_MAX, MESH_MAX_Y
       #else
-        (Y_MAX_BED) - (MIN_PROBE_EDGE_BACK), (Y_MAX_POS) + probe_offset[Y_AXIS]
+        (Y_MAX_BED) - (MIN_PROBE_EDGE_BACK), (Y_MAX_POS) + probe_offset.y
       #endif
     );
   }
