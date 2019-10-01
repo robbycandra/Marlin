@@ -71,7 +71,7 @@
   + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) \
   + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) \
   + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH) \
-  + ENABLED(REXYZ_MK8_PROXIMITY_8MM) 
+  + ENABLED(REXYZ_MK8_PROXIMITY_8MM)
   #error "Please enable one and only one toolhead model."
 #endif
 
@@ -111,7 +111,7 @@
   #endif
 #endif
 
-#if ENABLED(REXYZ_A1) 
+#if ENABLED(REXYZ_A1)
   #if ENABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
     #error "Please disable REXYZ_EEPROM_FIRMWARE_PROTECTION."
   #endif
@@ -294,7 +294,7 @@
     #define REXYZ_DEFAULT_Ki 1.46
     #define REXYZ_DEFAULT_Kd 74.17
 
-    #define REXYZ_PREHEAT_1_TEMP_BED  60  
+    #define REXYZ_PREHEAT_1_TEMP_BED  60
     #define REXYZ_PREHEAT_2_TEMP_BED  90
     #define REXYZ_TEMP_SENSOR_1 0
     #define REXYZ_EXTRUDERS 1
@@ -304,7 +304,7 @@
     #define REXYZ_DEFAULT_Ki 0.94
     #define REXYZ_DEFAULT_Kd 73.85
 
-    #define REXYZ_PREHEAT_1_TEMP_BED  60  
+    #define REXYZ_PREHEAT_1_TEMP_BED  60
     #define REXYZ_PREHEAT_2_TEMP_BED  100
     #define REXYZ_TEMP_SENSOR_1 0
     #define REXYZ_EXTRUDERS 1
@@ -314,7 +314,7 @@
     #define REXYZ_DEFAULT_Ki 0.56
     #define REXYZ_DEFAULT_Kd 41.53
 
-    #define REXYZ_PREHEAT_1_TEMP_BED  60  
+    #define REXYZ_PREHEAT_1_TEMP_BED  60
     #define REXYZ_PREHEAT_2_TEMP_BED  90
     #define REXYZ_TEMP_SENSOR_1 0
     #define REXYZ_EXTRUDERS 1
@@ -324,7 +324,7 @@
     #define REXYZ_DEFAULT_Ki 0.94
     #define REXYZ_DEFAULT_Kd 73.85
 
-    #define REXYZ_PREHEAT_1_TEMP_BED  60  
+    #define REXYZ_PREHEAT_1_TEMP_BED  60
     #define REXYZ_PREHEAT_2_TEMP_BED  80
     #define REXYZ_TEMP_SENSOR_1 0
     #define REXYZ_EXTRUDERS 1
@@ -336,7 +336,7 @@
   #define REXYZ_DEFAULT_Ki 2.23
   #define REXYZ_DEFAULT_Kd 60.68
 
-    #define REXYZ_PREHEAT_1_TEMP_BED  60  
+    #define REXYZ_PREHEAT_1_TEMP_BED  60
     #define REXYZ_PREHEAT_2_TEMP_BED  80
 
   #define PIDTEMPBED
@@ -359,7 +359,7 @@
   #define REXYZ_DEFAULT_Ki  0.76
   #define REXYZ_DEFAULT_Kd 53.07
 
-  #define REXYZ_PREHEAT_1_TEMP_BED  60  
+  #define REXYZ_PREHEAT_1_TEMP_BED  60
   #define REXYZ_PREHEAT_2_TEMP_BED  80
 
   #define PIDTEMPBED
@@ -383,7 +383,7 @@
     #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255  // 255 == full speed
 #endif
 #if defined(REXYZ_4MAX)
-    #define REXYZ_USE_CONTROLLER_FAN 
+    #define REXYZ_USE_CONTROLLER_FAN
     #define REXYZ_CONTROLLER_FAN_PIN FAN1_PIN    // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 127        // 255 == full speed
     #define REXYZ_E0_AUTO_FAN_PIN FAN2_PIN
@@ -654,7 +654,7 @@
 //===========================================================================
 
 #if defined(REXYZ_LCD12864)
-    #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER    
+    #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
     #define REVERSE_ENCODER_DIRECTION
 
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
@@ -683,7 +683,7 @@
 #endif
 #if defined(REXYZ_4MAX)
 
-    #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER    
+    #define REPRAP_DISCOUNT_FULL_GRAPHIC_SMART_CONTROLLER
     #define REVERSE_ENCODER_DIRECTION
 
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 70
@@ -697,7 +697,7 @@
     #define STARTUP_TONE
 #endif
 #if defined(REXYZ_A8P)
-    #define ANET_FULL_GRAPHICS_LCD    
+    #define ANET_FULL_GRAPHICS_LCD
     #define REVERSE_ENCODER_DIRECTION
 
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
@@ -727,20 +727,26 @@
     #define TOUCH_BUTTONS
     #define TOUCH_CALIBRATION
     #if defined(REXYZ_D2)
-      #define REXYZ_XPT2046_X_CALIBRATION   -16626
-      #define REXYZ_XPT2046_Y_CALIBRATION   10933
-      #define REXYZ_XPT2046_X_OFFSET        486
-      #define REXYZ_XPT2046_Y_OFFSET        -13
+      #define REXYZ_XPT2046_X_CAL_SCALE_X  -16626
+      #define REXYZ_XPT2046_X_CAL_SCALE_Y       0
+      #define REXYZ_XPT2046_X_OFFSET          486
+      #define REXYZ_XPT2046_Y_CAL_SCALE_X       0
+      #define REXYZ_XPT2046_Y_CAL_SCALE_Y   10933
+      #define REXYZ_XPT2046_Y_OFFSET          -13
     #elif defined(REXYZ_A2)
-      #define REXYZ_XPT2046_X_CALIBRATION   14148
-      #define REXYZ_XPT2046_Y_CALIBRATION   -10430
-      #define REXYZ_XPT2046_X_OFFSET        -70
-      #define REXYZ_XPT2046_Y_OFFSET        278
-    #else  
-      #define REXYZ_XPT2046_X_CALIBRATION   12316
-      #define REXYZ_XPT2046_Y_CALIBRATION  -8981
-      #define REXYZ_XPT2046_X_OFFSET       -43
-      #define REXYZ_XPT2046_Y_OFFSET        257
+      #define REXYZ_XPT2046_X_CAL_SCALE_X   14202
+      #define REXYZ_XPT2046_X_CAL_SCALE_Y     785
+      #define REXYZ_XPT2046_X_OFFSET          -83
+      #define REXYZ_XPT2046_Y_CAL_SCALE_X     359
+      #define REXYZ_XPT2046_Y_CAL_SCALE_Y  -10686
+      #define REXYZ_XPT2046_Y_OFFSET          275
+    #else
+      #define REXYZ_XPT2046_X_CAL_SCALE_X   12316
+      #define REXYZ_XPT2046_X_CAL_SCALE_Y       0
+      #define REXYZ_XPT2046_X_OFFSET          -43
+      #define REXYZ_XPT2046_Y_CAL_SCALE_X       0
+      #define REXYZ_XPT2046_Y_CAL_SCALE_Y   -8981
+      #define REXYZ_XPT2046_Y_OFFSET          257
     #endif
 
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
@@ -780,11 +786,11 @@
 #endif
 #if defined(REXYZ_N_TYPE)
     #define REXYZ_FIL_RUNOUT_INVERTING false
-    #define FIL_RUNOUT_PIN P1_27    // Y_MIN_PIN 
+    #define FIL_RUNOUT_PIN P1_27    // Y_MIN_PIN
 #endif
 #if defined(REXYZ_A8P)
     #define REXYZ_FIL_RUNOUT_INVERTING true
-    #define FIL_RUNOUT_PIN P1_26    // Y_MAX_PIN 
+    #define FIL_RUNOUT_PIN P1_26    // Y_MAX_PIN
 #endif
 #if defined(REXYZ_BOARD_ROBINMINI)
     #define REXYZ_FIL_RUNOUT_INVERTING true
@@ -804,38 +810,38 @@
 //  1. D = Direct Extruder
 //  2. D = Direct Drive
 //  3. M = Manual Probe
-//     P8= Proximity 8mm  
+//     P8= Proximity 8mm
 //     F = Fixed Probe
 //     T = 3D Touch Probe
 //  Yg pernah terjual :
 //    REXYZ_MK8_MANUAL_PROBE - Yohanes
 //    REXYZ_MK8_MULTI_FIXPROBE_PROXYMITY - Panji Enjoy dll
 //    REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH
-//  
-//  Tidak pernah terjual :  
+//
+//  Tidak pernah terjual :
 //    REXYZ_MK8_MULTI_FIXPROBE_MANUAL
 //    REXYZ_MK8_PROXIMITY_8MM
 
 #if defined(REXYZ_NO_ABL)
   #if defined(REXYZ_D2)
-    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40  
-    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100  
+    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40
+    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100
     #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 10), (Y_MAX_POS - 10), 20 }
   #else
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "BD"
-    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH   245  
+    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH   245
     #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      310
     #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 15), (Y_MIN_POS + 70), 20 }
     //#define REXYZ_MANUAL_PROBE_START_Z 0
-  #endif  
+  #endif
 #else
   #if defined(REXYZ_D2)
-    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40  
-    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100  
+    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40
+    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100
     #define REXYZ_NOZZLE_PARK_POINT { (X_MIN_POS + 10), (Y_MAX_POS - 10), 20 }
   #else
-    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40  
-    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100  
+    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40
+    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100
     #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 10), (Y_MAX_POS - 10), 20 }
   #endif
 #endif
@@ -857,7 +863,7 @@
     #define REXYZ_FIX_MOUNTED_PROBE
     #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 28.5, -23.5, -0.5 }
 #endif
-#if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) || defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) 
+#if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) || defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL)
     #define AUTO_BED_LEVELING_BILINEAR
     #define LCD_BED_LEVELING
     #ifdef REXYZ_FILAMENT_MOTION_DETECTOR
@@ -870,16 +876,16 @@
     #define REXYZ_FIX_MOUNTED_PROBE
     #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
     #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
-    #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) 
+    #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY)
       #define REXYZ_DEFAULT_PROBE 1
       #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 29, -20, -0.5 }
-    #endif   
-    #if defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) 
+    #endif
+    #if defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL)
       #define REXYZ_DEFAULT_PROBE 2
       #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 23, -27, -2.7 }
-    #endif   
+    #endif
 #endif
-#if defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH)  
+#if defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH)
     #define AUTO_BED_LEVELING_BILINEAR
     #define LCD_BED_LEVELING
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDT"

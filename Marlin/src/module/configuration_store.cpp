@@ -2689,11 +2689,11 @@ void MarlinSettings::reset() {
   // TOUCH_CALIBRATION (XPT2046) (reset)
   //
   #if ENABLED(TOUCH_CALIBRATION)
-    touch.tscalibration[0] = XPT2046_X_CALIBRATION;
-    touch.tscalibration[1] = 0;
+    touch.tscalibration[0] = XPT2046_X_CAL_SCALE_X;
+    touch.tscalibration[1] = XPT2046_X_CAL_SCALE_Y;
     touch.tscalibration[2] = XPT2046_X_OFFSET;
-    touch.tscalibration[3] = 0;
-    touch.tscalibration[4] = XPT2046_Y_CALIBRATION;
+    touch.tscalibration[3] = XPT2046_Y_CAL_SCALE_X;
+    touch.tscalibration[4] = XPT2046_Y_CAL_SCALE_Y;
     touch.tscalibration[5] = XPT2046_Y_OFFSET;
   #endif
 

@@ -160,8 +160,6 @@ void _lcd_touch_cal_result() {
 
 void _lcd_touch_point_screen() {
   ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
-  //u8g.setColorIndex(0);
-  //u8g.drawBox(0,0,LCD_PIXEL_WIDTH,8);
   u8g.setColorIndex(1);
   switch(touch_point_index % 3) {
     case 0:
@@ -239,6 +237,7 @@ void _lcd_touch_point_screen() {
     isfail = false;
     const int16_t delta_x = ((int32_t(touched_x[1] + touched_x[2]) - int32_t(touched_x[0]<<1))<<7) / (int32_t(touched_x[1]) - int32_t(touched_x[2])),
                   delta_y = ((int32_t(touched_y[2] + touched_y[0]) - int32_t(touched_y[1]<<1))<<7) / (int32_t(touched_y[2]) - int32_t(touched_y[0]));
+
     #if ENABLED(DEBUG_TOUCH_CALIBRATION)
       SERIAL_ECHOLNPAIR("Delta X = ", delta_x);
       SERIAL_ECHOLNPAIR("Delta Y = ", delta_y);
@@ -248,7 +247,6 @@ void _lcd_touch_point_screen() {
     if (abs(delta_y) > 15) isfail = true;
 
     ui.goto_screen(_lcd_touch_cal_result, SCRMODE_CALIBRATION);
-    //ui.goto_previous_screen();
   }
 }
 
@@ -266,8 +264,6 @@ void menu_touch_calibration() {
 
 void _lcd_touch_test_screen() {
   ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
-  //u8g.setColorIndex(0);
-  //u8g.drawBox(0,0,LCD_PIXEL_WIDTH,8);
   u8g.setColorIndex(1);
   for (int i = 0; i < 3; i++) {
     if (touched_x[i] > 0 and touched_y[i] > 0) {
@@ -301,4 +297,4 @@ void menu_touch_testing() {
   ui.defer_status_screen();
   ui.goto_screen(_lcd_touch_test_screen, SCRMODE_CALIBRATION);
 }
-#endif // HAS_LCD_MENU
+#endif // HAS_LCD_MENU && ENABLED(TOUCH_CALIBRATION)

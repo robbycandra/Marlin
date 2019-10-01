@@ -59,14 +59,6 @@ void XPT2046::init() {
     SET_INPUT(TOUCH_INT_PIN);
   #endif
 
-  //tscalibration[0] = XPT2046_X_CALIBRATION;
-  //tscalibration[1] = 0;
-  //tscalibration[2] = XPT2046_X_OFFSET;
-  //tscalibration[3] = 0;
-  //tscalibration[4] = XPT2046_Y_CALIBRATION;
-  //tscalibration[5] = XPT2046_Y_OFFSET;
-  // We rely on XPT2046 compatible mode to ADS7843, hence no Z1 and Z2 measurements possible.
-
   // Read once to enable pendrive status pin
   getInTouch(XPT2046_X);
 }

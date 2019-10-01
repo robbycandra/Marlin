@@ -407,7 +407,7 @@
  * :{ '0':"Not used", '1':"100k / 4.7k - EPCOS", '331':"(3.3V thermistor 1)", '2':"200k / 4.7k - ATC Semitec 204GT-2", '3':"Mendel-parts / 4.7k", '4':"10k !! do not use for a hotend. Bad resolution at high temp. !!", '5':"100K / 4.7k - ATC Semitec 104GT-2 (Used in ParCan & J-Head)", '501':"100K Zonestar (Tronxy X3A)", '512':"100k RPW-Ultra hotend thermistor", '6':"100k / 4.7k EPCOS - Not as accurate as Table 1", '7':"100k / 4.7k Honeywell 135-104LAG-J01", '8':"100k / 4.7k 0603 SMD Vishay NTCS0603E3104FXT", '9':"100k / 4.7k GE Sensing AL03006-58.2K-97-G1", '10':"100k / 4.7k RS 198-961", '11':"100k / 4.7k beta 3950 1%", '12':"100k / 4.7k 0603 SMD Vishay NTCS0603E3104FXT (calibrated for Makibox hot bed)", '13':"100k Hisens 3950  1% up to 300°C for hotend 'Simple ONE ' & hotend 'All In ONE'", '18':"ATC Semitec 204GT-2 (4.7k pullup) Dagoma.Fr - MKS_Base_DKU001327" '20':"Pt100 (Ultimainboard V2.x)", '201':"Pt100 (Overlord)", '51':"100k / 1k - EPCOS", '52':"200k / 1k - ATC Semitec 204GT-2", '55':"100k / 1k - ATC Semitec 104GT-2 (Used in ParCan & J-Head)", '60':"100k Maker's Tool Works Kapton Bed Thermistor beta=3950", '61':"100k Formbot / Vivedino 3950 350C thermistor 4.7k pullup", '66':"Dyze Design 4.7M High Temperature thermistor", '67':"Slice Engineering 450C High Temperature thermistor", '70':"the 100K thermistor found in the bq Hephestos 2", '71':"100k / 4.7k Honeywell 135-104LAF-J01", '147':"Pt100 / 4.7k", '1047':"Pt1000 / 4.7k", '110':"Pt100 / 1k (non-standard)", '1010':"Pt1000 / 1k (non standard)", '-4':"Thermocouple + AD8495", '-3':"Thermocouple + MAX31855 (only for sensor 0)", '-2':"Thermocouple + MAX6675 (only for sensor 0)", '-1':"Thermocouple + AD595", '998':"Dummy 1", '999':"Dummy 2", '1000':"Custom thermistor params" }
  */
 #define TEMP_SENSOR_0 1
-#define TEMP_SENSOR_1 REXYZ_TEMP_SENSOR_1 
+#define TEMP_SENSOR_1 REXYZ_TEMP_SENSOR_1
 #define TEMP_SENSOR_2 0
 #define TEMP_SENSOR_3 0
 #define TEMP_SENSOR_4 0
@@ -476,7 +476,7 @@
 
   // If you are using a pre-configured hotend then you can use one of the value sets by uncommenting it
 
-  // Rexyz 
+  // Rexyz
   #define DEFAULT_Kp REXYZ_DEFAULT_Kp
   #define DEFAULT_Ki REXYZ_DEFAULT_Ki
   #define DEFAULT_Kd REXYZ_DEFAULT_Kd
@@ -533,7 +533,7 @@
 
   //120V 250W silicone heater into 4mm borosilicate (MendelMax 1.5+)
   //from FOPDT model - kp=.39 Tp=405 Tdead=66, Tc set to 79.2, aggressive factor of .15 (vs .1, 1, 10)
-  #define DEFAULT_bedKp REXYZ_DEFAULT_bedKp 
+  #define DEFAULT_bedKp REXYZ_DEFAULT_bedKp
   #define DEFAULT_bedKi REXYZ_DEFAULT_bedKi
   #define DEFAULT_bedKd REXYZ_DEFAULT_bedKd
 
@@ -567,7 +567,7 @@
   #define EXTRUDE_MAXLENGTH REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH
 #else
   #define EXTRUDE_MAXLENGTH 200
-#endif  
+#endif
 
 //===========================================================================
 //======================== Thermal Runaway Protection =======================
@@ -614,12 +614,12 @@
 // Specify here all the endstop connectors that are connected to any endstop or probe.
 // Almost all printers will be using one per axis. Probes will use one or more of the
 // extra connectors. Leave undefined any used for non-endstop and non-probe purposes.
-#define USE_XMIN_PLUG REXYZ_USE_XMIN_PLUG  
-#define USE_YMIN_PLUG REXYZ_USE_YMIN_PLUG 
-#define USE_ZMIN_PLUG REXYZ_USE_ZMIN_PLUG 
-#define USE_XMAX_PLUG REXYZ_USE_XMAX_PLUG 
-#define USE_YMAX_PLUG REXYZ_USE_YMAX_PLUG 
-#define USE_ZMAX_PLUG REXYZ_USE_ZMAX_PLUG 
+#define USE_XMIN_PLUG REXYZ_USE_XMIN_PLUG
+#define USE_YMIN_PLUG REXYZ_USE_YMIN_PLUG
+#define USE_ZMIN_PLUG REXYZ_USE_ZMIN_PLUG
+#define USE_XMAX_PLUG REXYZ_USE_XMAX_PLUG
+#define USE_YMAX_PLUG REXYZ_USE_YMAX_PLUG
+#define USE_ZMAX_PLUG REXYZ_USE_ZMAX_PLUG
 
 // Enable pullup for all endstops to prevent a floating state
 #define ENDSTOPPULLUPS
@@ -1020,9 +1020,9 @@
 // @section machine
 
 // Invert the stepper direction. Change (or reverse the motor connector) if an axis goes the wrong way.
-#define INVERT_X_DIR REXYZ_INVERT_X_DIR 
-#define INVERT_Y_DIR REXYZ_INVERT_Y_DIR 
-#define INVERT_Z_DIR REXYZ_INVERT_Z_DIR 
+#define INVERT_X_DIR REXYZ_INVERT_X_DIR
+#define INVERT_Y_DIR REXYZ_INVERT_Y_DIR
+#define INVERT_Z_DIR REXYZ_INVERT_Z_DIR
 
 // @section extruder
 
@@ -1061,7 +1061,7 @@
 #define Z_MIN_POS REXYZ_Z_MIN_POS
 #define X_MAX_POS REXYZ_X_MAX_POS
 #define Y_MAX_POS REXYZ_Y_MAX_POS
-#define Z_MAX_POS REXYZ_Z_MAX_POS 
+#define Z_MAX_POS REXYZ_Z_MAX_POS
 
 /**
  * Software Endstops
@@ -1445,12 +1445,12 @@
 // Preheat Constants
 #define PREHEAT_1_LABEL       "PLA"
 #define PREHEAT_1_TEMP_HOTEND 180
-#define PREHEAT_1_TEMP_BED     REXYZ_PREHEAT_1_TEMP_BED 
+#define PREHEAT_1_TEMP_BED     REXYZ_PREHEAT_1_TEMP_BED
 #define PREHEAT_1_FAN_SPEED     0 // Value from 0 to 255
 
 #define PREHEAT_2_LABEL       "ABS"
 #define PREHEAT_2_TEMP_HOTEND 240
-#define PREHEAT_2_TEMP_BED     REXYZ_PREHEAT_2_TEMP_BED 
+#define PREHEAT_2_TEMP_BED     REXYZ_PREHEAT_2_TEMP_BED
 #define PREHEAT_2_FAN_SPEED     0 // Value from 0 to 255
 
 /**
@@ -2069,9 +2069,11 @@
   #define BUTTON_DELAY_EDIT  50 // (ms) Button repeat delay for edit screens
   #define BUTTON_DELAY_MENU 250 // (ms) Button repeat delay for menus
 
-  #define XPT2046_X_CALIBRATION REXYZ_XPT2046_X_CALIBRATION   
-  #define XPT2046_Y_CALIBRATION REXYZ_XPT2046_Y_CALIBRATION
+  #define XPT2046_X_CAL_SCALE_X REXYZ_XPT2046_X_CAL_SCALE_X
+  #define XPT2046_X_CAL_SCALE_Y REXYZ_XPT2046_X_CAL_SCALE_Y
   #define XPT2046_X_OFFSET      REXYZ_XPT2046_X_OFFSET
+  #define XPT2046_Y_CAL_SCALE_X REXYZ_XPT2046_Y_CAL_SCALE_X
+  #define XPT2046_Y_CAL_SCALE_Y REXYZ_XPT2046_Y_CAL_SCALE_Y
   #define XPT2046_Y_OFFSET      REXYZ_XPT2046_Y_OFFSET
 #endif
 
