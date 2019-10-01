@@ -697,7 +697,7 @@ void MarlinSettings::postprocess() {
         EEPROM_WRITE(ubl_active);
       #endif // HAS_ABL_OR_UBL && REMEMBER_LEVELING_STATE_AFTER_REBOOT
 
-      #if ENABLED(AUTO_BED_LEVELING_UBL) 
+      #if ENABLED(AUTO_BED_LEVELING_UBL)
         EEPROM_WRITE(ubl.storage_slot);
       #else
         const int8_t storage_slot = -1;
@@ -1208,7 +1208,7 @@ void MarlinSettings::postprocess() {
       #if ENABLED(TOUCH_CALIBRATION)
         EEPROM_WRITE(touch.tscalibration);
       #else
-        // Allways use default to prevent bricked Printer. 
+        // Allways use default to prevent bricked Printer.
         // If we can't access menu then we can't calibrate the LCD
         const int16_t touchscreen_calibration[6] = {0, 0, 0, 0, 0 ,0};
         EEPROM_WRITE(touchscreen_calibration);
@@ -1293,7 +1293,7 @@ void MarlinSettings::postprocess() {
 
     return !eeprom_error;
   }
-  
+
   void MarlinSettings::mark_rexyz() {
     uint16_t working_crc = 0;
     mach_ver[0] = 'R';
@@ -1314,7 +1314,7 @@ void MarlinSettings::postprocess() {
     eeprom_error = false;
 
     int ee_index = EEPROM_OFFSET - sizeof(mach_ver);
-    persistentStore.read_data(ee_index, (uint8_t*)mach_ver, sizeof(mach_ver), &w_crc); 
+    persistentStore.read_data(ee_index, (uint8_t*)mach_ver, sizeof(mach_ver), &w_crc);
 
     if (mach_ver[0] == 'R' && mach_ver[1] == 'X') {
       eeprom_error = saved_eeprom_error;
@@ -2925,6 +2925,10 @@ void MarlinSettings::reset() {
       );
     #endif
 
+    CONFIG_ECHO_HEADING("Z Max:");
+    CONFIG_ECHO_START();
+    SERIAL_ECHOLNPAIR(" Z_MAX_POS = ", int(zv_max_pos));
+
     #if HAS_HOTEND_OFFSET
       CONFIG_ECHO_HEADING("Hotend offsets:");
       CONFIG_ECHO_START();
@@ -2937,7 +2941,6 @@ void MarlinSettings::reset() {
       }
     #endif
 
-    SERIAL_ECHOLNPAIR("Z MAX POS", int(zv_max_pos));
 
     #if HAS_FILAMENT_SENSOR
       CONFIG_ECHO_HEADING("Filament Runout Sensor:");
@@ -3219,11 +3222,6 @@ void MarlinSettings::reset() {
                               " Y", LINEAR_UNIT(probe_offset.y),
                               " Z", LINEAR_UNIT(probe_offset.z));
     #endif
-
-    /**
-     * Probe Mode
-     */
-    SERIAL_ECHOLNPAIR("Probe Mode : ", rexyz_probe_mode);
 
     /**
      * Bed Skew Correction
@@ -3590,17 +3588,25 @@ void MarlinSettings::reset() {
     #endif
 
     /**
+     * Probe Mode
+     */
+    CONFIG_ECHO_HEADING("Probe Mode:");
+    CONFIG_ECHO_START();
+    SERIAL_ECHOLNPAIR(" Mode : ", rexyz_probe_mode);
+
+    /**
      * Touch Button
      */
     #if ENABLED(TOUCH_BUTTONS)
       CONFIG_ECHO_HEADING("Touch Buttons");
       CONFIG_ECHO_START();
-      SERIAL_ECHOLNPAIR(" Touch X Cal.Scale X ", touch.tscalibration[0]);
-      SERIAL_ECHOLNPAIR(" Touch X Cal.Scale Y ", touch.tscalibration[1]);
-      SERIAL_ECHOLNPAIR(" Touch X Cal.Offset  ", touch.tscalibration[2]);
-      SERIAL_ECHOLNPAIR(" Touch Y Cal.Scale X ", touch.tscalibration[3]);
-      SERIAL_ECHOLNPAIR(" Touch Y Cal.Scale Y ", touch.tscalibration[4]);
-      SERIAL_ECHOLNPAIR(" Touch Y Cal.Offset  ", touch.tscalibration[5]);
+      SERIAL_ECHOPAIR(" Touch X Cal. Scale X ", touch.tscalibration[0]);
+      SERIAL_ECHOPAIR(", Scale Y ", touch.tscalibration[1]);
+      SERIAL_ECHOLNPAIR(", Offset ", touch.tscalibration[2]);
+      CONFIG_ECHO_START();
+      SERIAL_ECHOPAIR(" Touch Y Cal. Scale X ", touch.tscalibration[3]);
+      SERIAL_ECHOPAIR(", Scale Y ", touch.tscalibration[4]);
+      SERIAL_ECHOLNPAIR(", Offset ", touch.tscalibration[5]);
     #endif
   }
 
