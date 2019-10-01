@@ -73,15 +73,14 @@ void XPT2046::init() {
 
 #include "../../lcd/ultralcd.h" // For EN_C bit mask
 
-inline uint16_t middleOfThree(uint16_t a, uint16_t b, uint16_t c) 
-{ 
-    if (a > b)  
-      return (b > c) ? b : ((a > c) ? c : a); 
-    return   (a > c) ? a : ((b > c) ? c : b); 
-} 
+inline uint16_t middleOfThree(uint16_t a, uint16_t b, uint16_t c) {
+    if (a > b)
+      return (b > c) ? b : ((a > c) ? c : a);
+    return   (a > c) ? a : ((b > c) ? c : b);
+}
 
 uint8_t XPT2046::read_buttons() {
-  
+
   uint16_t raw_x1, raw_x2, raw_x3, raw_y1, raw_y2, raw_y3;
 
   if (!isTouched()) return 0;
@@ -111,7 +110,7 @@ uint8_t XPT2046::read_buttons() {
 
   if (row_touched < 12) {
     return (((row_touched+1) << 4) + col_touched);
-  } 
+  }
   else {
    #if ENABLED(FULL_SCALE_TFT_480X320)
     return  WITHIN(pixel_x,  12, 119) ? EN_D
@@ -125,7 +124,7 @@ uint8_t XPT2046::read_buttons() {
           : WITHIN(pixel_x, 163, 234) ? EN_B
           : WITHIN(pixel_x, 241, 312) ? EN_C
           : 0;
-   #endif  
+   #endif
   }
 }
 

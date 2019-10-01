@@ -525,6 +525,7 @@ void menu_advanced_settings() {
 
   #if ENABLED(TOUCH_CALIBRATION)
     MENU_ITEM(function, MSG_TOUCHSCREEN_CALIBRATION, menu_touch_calibration);
+    MENU_ITEM(function, "TouchScreen Testing", menu_touch_testing);
   #endif
 
   #if ENABLED(SD_FIRMWARE_UPDATE)
