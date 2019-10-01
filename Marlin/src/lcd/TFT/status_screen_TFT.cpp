@@ -119,7 +119,7 @@ void run_status_screen_touch_command() {
   if (ui.lcd_menu_touched_coord & 0xF0) {
     //row = 0 is for default buttons.
     const uint8_t row = ((ui.lcd_menu_touched_coord & 0xF0) >> 4) - 1;
-    const uint8_t col =  (ui.lcd_menu_touched_coord & 0x0F); 
+    const uint8_t col =  (ui.lcd_menu_touched_coord & 0x0F);
     touched_item_number = (int)(row / 3) * 4 + (col / 3);
     switch(touched_item_number) {
       case 0:
@@ -127,15 +127,15 @@ void run_status_screen_touch_command() {
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         ui.wait_for_untouched = true;
-        MenuItem_gcode::action("G28");   
+        MenuItem_gcode::action("Home","G28");
         break;
       case 1:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         if (!TEST(axis_homed, X_AXIS) || !TEST(axis_known_position, X_AXIS)) {
-          MenuItem_gcode::action(PSTR("G28 X"));   
-        } 
+          MenuItem_gcode::action("Home X", PSTR("G28 X"));
+        }
         move_menu_scale = 10;
         ui.wait_for_untouched = true;
         ui.goto_screen(lcd_move_x, SCRMODE_EDIT_SCREEN);
@@ -145,8 +145,8 @@ void run_status_screen_touch_command() {
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         if (!TEST(axis_homed, Y_AXIS) || !TEST(axis_known_position, Y_AXIS)) {
-          MenuItem_gcode::action(PSTR("G28 Y"));   
-        } 
+          MenuItem_gcode::action("Home Y", PSTR("G28 Y"));
+        }
         move_menu_scale = 10;
         ui.wait_for_untouched = true;
         ui.goto_screen(lcd_move_y, SCRMODE_EDIT_SCREEN);
@@ -156,8 +156,8 @@ void run_status_screen_touch_command() {
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         if (!TEST(axis_homed, Z_AXIS) || !TEST(axis_known_position, Z_AXIS)) {
-          MenuItem_gcode::action(PSTR("G28 Z"));   
-        } 
+          MenuItem_gcode::action("Home Z", PSTR("G28 Z"));
+        }
         move_menu_scale = 10;
         ui.wait_for_untouched = true;
         ui.goto_screen(lcd_move_z, SCRMODE_EDIT_SCREEN);
@@ -211,7 +211,7 @@ void run_status_screen_touch_command() {
     }
     ui.lcd_menu_touched_coord = 0;
     ui.first_touch = false;
-  } 
+  }
 }
 
 FORCE_INLINE void _draw_centered_temp(const int16_t temp, const uint8_t tx, const uint8_t ty) {
@@ -273,7 +273,7 @@ FORCE_INLINE void _draw_heater_status(const heater_ind_t heater, const bool blin
     if (dodraw) {
       lcd_moveto(tx, row_str1_base);
       lcd_put_u8str(i16tostr3(target + 0.5));
-    } 
+    }
   }
   if (PAGE_CONTAINS(row_str2_top, row_str2_botm)) {
     // _draw_centered_temp(temp + 0.5f, tx, row_str2_base);
@@ -397,11 +397,11 @@ void MarlinUI::draw_status_screen() {
 //
   off_x  = LCD_PIXEL_WIDTH / 4;
   row_h  = LCD_PIXEL_HEIGHT / 4;
-  row_y1 = 0; 
+  row_y1 = 0;
   row_y2 = row_y1 + row_h - 1;
   col_x1 = 0;
   col_x2 = LCD_PIXEL_WIDTH - 1;
-   
+
   if (PAGE_CONTAINS(row_y1,row_y2)) {
     draw_4colom_box();
     row_str1_top  = row_y1 + OFFSET_Y;
@@ -453,7 +453,7 @@ void MarlinUI::draw_status_screen() {
   col_x1 = 0;
   col_x2 = LCD_PIXEL_WIDTH - 1;
   off_x  = LCD_PIXEL_WIDTH / 4;
-  
+
   if (PAGE_CONTAINS(row_y1,row_y2)) {
     draw_4colom_box();
     row_str1_top  = row_y1 + OFFSET_Y;
@@ -478,7 +478,7 @@ void MarlinUI::draw_status_screen() {
       lcd_moveto((COL_WIDTH-MENU_FONT_WIDTH*4)/2, row_str2_base);
       lcd_put_u8str(i16tostr3(feedrate_percentage));
       lcd_put_wchar('%');
-    }  
+    }
   //
   // Temperature Graphics and Info
   //
@@ -527,7 +527,7 @@ void MarlinUI::draw_status_screen() {
 //
 // Third Row
 //
-  row_y1 = LCD_PIXEL_HEIGHT * 3/6; 
+  row_y1 = LCD_PIXEL_HEIGHT * 3/6;
   row_y2 = LCD_PIXEL_HEIGHT * 5/6 - 1;
   col_x1 = 0;
   col_x2 = LCD_PIXEL_WIDTH - 1;
@@ -537,9 +537,9 @@ void MarlinUI::draw_status_screen() {
   // ABL_STATUS
   //
     #if HAS_ABL_OR_UBL
-      if (planner.leveling_active) 
+      if (planner.leveling_active)
         u8g.setColorIndex(2);
-      else 
+      else
         u8g.setColorIndex(3);
       #if ENABLED(AUTO_BED_LEVELING_UBL)
         lcd_put_u8str((COL_WIDTH - MENU_FONT_WIDTH*3)/2 - 1, row_str1_base, "UBL");
@@ -553,7 +553,7 @@ void MarlinUI::draw_status_screen() {
   //
     #if ENABLED(SDSUPPORT)
       if (card.isMounted()) {
-        if (card.isFileOpen()) 
+        if (card.isFileOpen())
           u8g.setColorIndex(2);
         else
           u8g.setColorIndex(1);
@@ -579,7 +579,7 @@ void MarlinUI::draw_status_screen() {
       u8g.setColorIndex(1);
     #endif
     #if ENABLED(POWER_LOSS_RECOVERY)
-      if (recovery.enabled) 
+      if (recovery.enabled)
         u8g.setColorIndex(1);
       else
         u8g.setColorIndex(3);
@@ -663,16 +663,16 @@ void MarlinUI::draw_status_screen() {
 
 void MarlinUI::draw_status_message(const bool blink) {
 
-  row_y1 = LCD_PIXEL_HEIGHT * 5/6; 
+  row_y1 = LCD_PIXEL_HEIGHT * 5/6;
   row_y2 = LCD_PIXEL_HEIGHT - 1;
   col_x1 = 0;
   col_x2 = LCD_PIXEL_WIDTH - 1;
-   
+
   u8g.setFont(MENU_FONT_NAME);
   row_str1_base = row_y1 + (row_y2-row_y1)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT + 2;
 
   if (!PAGE_CONTAINS(row_y1,row_y2)) return;
-  //draw_item_box(false); 
+  //draw_item_box(false);
   u8g.setColorIndex(3);
   u8g.drawHLine(0, row_y1, LCD_PIXEL_WIDTH);
   u8g.drawHLine(0, row_y1+1, LCD_PIXEL_WIDTH);
@@ -727,7 +727,7 @@ void MarlinUI::draw_status_message(const bool blink) {
     // Just print the string to the LCD
     if (slen <= LCD_WIDTH-1) {
       lcd_moveto((LCD_PIXEL_WIDTH-slen*MENU_FONT_WIDTH)/2-1, row_str1_base);
-    else 
+    else
       lcd_moveto(OFFSET_X, row_str1_base);
     lcd_put_u8str_max(status_message, LCD_PIXEL_WIDTH);
 

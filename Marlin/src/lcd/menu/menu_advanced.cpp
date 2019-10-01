@@ -236,18 +236,18 @@ void menu_advanced_homePos() {
     START_MENU();
     MENU_BACK(MSG_ADVANCED_SETTINGS);
     /*
-    do { 
-      _skipStatic = false; 
-      if (_menuLineNr == _thisItemNr) { 
-        if (encoderLine == _thisItemNr && ui.use_click()) { 
-          _MENU_ITEM_MULTIPLIER_CHECK(false); 
+    do {
+      _skipStatic = false;
+      if (_menuLineNr == _thisItemNr) {
+        if (encoderLine == _thisItemNr && ui.use_click()) {
+          _MENU_ITEM_MULTIPLIER_CHECK(false);
           ui.save_previous_screen();
           ui.refresh();
           ui.encoderPosition = rexyz_probe_mode;
           ui.currentScreen = lcd_menu_choose_probe;
-          if (screen_changed) return; 
-        } 
-        if (ui.should_draw()) 
+          if (screen_changed) return;
+        }
+        if (ui.should_draw())
           switch (rexyz_probe_mode) {
           case REXYZPROBE_NO_PROBE:
             draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "No Probe");
@@ -262,14 +262,14 @@ void menu_advanced_homePos() {
             draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "BL/3D Touch");
             break;
           }
-      } 
-      ++_thisItemNr; 
+      }
+      ++_thisItemNr;
     }while(0);
      */
 
-    _MENU_ITEM_VARIANT_P(float3, _edit, true, PSTR("Probe X Offset"), PSTR("Probe X Offset"),&probe_offset[X_AXIS], 0, 30);
-    _MENU_ITEM_VARIANT_P(float3, _edit, true, PSTR("Probe Y Offset"), PSTR("Probe Y Offset"),&probe_offset[Y_AXIS], -30, 30);
-    _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe Z Offset"), PSTR("Probe Z Offset"),&probe_offset[Z_AXIS], Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+    _MENU_ITEM_VARIANT_P(float3, _edit, true, PSTR("Probe X Offset"), &probe_offset[X_AXIS], 0, 30);
+    _MENU_ITEM_VARIANT_P(float3, _edit, true, PSTR("Probe Y Offset"), &probe_offset[Y_AXIS], -30, 30);
+    _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe Z Offset"), &probe_offset[Z_AXIS], Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
     END_MENU();
   }
 #endif // !BABYSTEP_ZPROBE_OFFSET && HAS_BED_PROBE

@@ -169,7 +169,7 @@ DEFINE_DRAW_MENU_ITEM_SETTING_EDIT(long5_25);         // 12345      right-justif
 
 class MenuItem_back {
   public:
-    static inline void action(PGM_P const=nullptr) {
+    static inline void action(PGM_P const, PGM_P const=nullptr) {
       ui.goto_previous_screen(
         #if ENABLED(TURBO_BACK_MENU_ITEM)
           true
@@ -180,7 +180,7 @@ class MenuItem_back {
 
 class MenuItem_subselect {
   public:
-    static inline void action(const screenFunc_t func) { 
+    static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
       ui.goto_screen(func, SCRMODE_SELECT_SCREEN);
     }
@@ -188,7 +188,7 @@ class MenuItem_subselect {
 
 class MenuItem_subedit {
   public:
-    static inline void action(const screenFunc_t func) { 
+    static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
       ui.goto_screen(func, SCRMODE_EDIT_SCREEN);
     }
@@ -196,7 +196,7 @@ class MenuItem_subedit {
 
 class MenuItem_submenu {
   public:
-    static inline void action(PGM_P const, const screenFunc_t func) { 
+    static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
       ui.goto_screen(func, SCRMODE_MENU_2X4);
     }
@@ -204,7 +204,7 @@ class MenuItem_submenu {
 
 class MenuItem_submenu1 {
   public:
-    static inline void action(PGM_P const, const screenFunc_t func) { 
+    static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
       ui.goto_screen(func, SCRMODE_MENU_1X4);
     }
@@ -212,7 +212,7 @@ class MenuItem_submenu1 {
 
 class MenuItem_submenuh {
   public:
-    static inline void action(PGM_P const, const screenFunc_t func) { 
+    static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
       ui.goto_screen(func, SCRMODE_MENU_H_2X3);
     }
@@ -220,7 +220,7 @@ class MenuItem_submenuh {
 
 class MenuItem_subscreen6 {
   public:
-    static inline void action(PGM_P const, const screenFunc_t func) { 
+    static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
       ui.goto_screen(func, SCRMODE_SCREEN_1X6);
     }
@@ -228,7 +228,7 @@ class MenuItem_subscreen6 {
 
 class MenuItem_subscreen8 {
   public:
-    static inline void action(PGM_P const, const screenFunc_t func) { 
+    static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
       ui.goto_screen(func, SCRMODE_SCREEN_1X8);
     }
@@ -247,7 +247,7 @@ class MenuItem_function {
 #if HAS_FULL_SCALE_TFT
 class MenuItem_sdupdir {
   public:
-    static inline void action(const menuAction_t func) { (*func)(); };
+    static inline void action(PGM_P const, const menuAction_t func) { (*func)(); };
 };
 #endif
 
@@ -336,7 +336,7 @@ class MenuItem_bool {
  *
  * START_MENU    Opening code for a screen with menu items.
  *               Scroll as-needed to keep the selected line in view.
- * 
+ *
  * if using FSMC_GRAPHICAL_TFT, we set screen mode.
  */
 #define START_SCREEN() \
@@ -391,22 +391,19 @@ class MenuItem_bool {
  */
 #if HAS_FULL_SCALE_TFT
 #define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, V...) do { \
-    _skipStatic = false; \
-    if (_menuLineNr == _thisItemNr) { \
-      if (/*(encoderLine == _thisItemNr && ui.use_click()) || */ui.menu_is_touched(_thisItemNr - encoderTopLine)) { \
-        PORT_REDIRECT(SERIAL_BOTH);\
-        SERIAL_ECHOLNPAIR("This Item Nr : ", _thisItemNr); \
-        SERIAL_ECHOLNPAIR("Encoder Top  : ", encoderTopLine); \
-        _MENU_ITEM_MULTIPLIER_CHECK(USE_MULTIPLIER); \
-        MenuItem_##TYPE ::action ## VARIANT(V); \
-        if (screen_changed) return; \
-      } \
-      if (ui.should_draw()) \
-        /* draw_menu_item ## VARIANT ## _ ## TYPE(encoderLine == _thisItemNr, _lcdLineNr, PLABEL, ## __VA_ARGS__); \ */ \
-        draw_menu_item ## VARIANT ## _ ## TYPE
-          (false, _lcdLineNr, PLABEL, ##V); \
-    } \
-  ++_thisItemNr; \
+    _skipStatic = false;                                          \
+    if (_menuLineNr == _thisItemNr) {                             \
+      PGM_P const plabel = PLABEL;                                \
+      if (ui.menu_is_touched(_thisItemNr - encoderTopLine)) {     \
+        _MENU_ITEM_MULTIPLIER_CHECK(USE_MULTIPLIER);              \
+        MenuItem_##TYPE ::action ## VARIANT(plabel, ##V);         \
+        if (screen_changed) return;                               \
+      }                                                           \
+      if (ui.should_draw())                                       \
+        draw_menu_item ## VARIANT ## _ ## TYPE                    \
+          (false, _lcdLineNr, plabel, ##V);                       \
+    }                                                             \
+  ++_thisItemNr;                                                  \
 }while(0)
 #else
 #define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, V...) do {  \
