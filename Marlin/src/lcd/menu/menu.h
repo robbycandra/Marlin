@@ -535,6 +535,7 @@ void _lcd_draw_homing();
 #if ENABLED(EEPROM_SETTINGS)
   void lcd_store_settings();
   void lcd_load_settings();
+  void rmenu_loadsave();
 #endif
 
 #if ENABLED(TOUCH_CALIBRATION)
