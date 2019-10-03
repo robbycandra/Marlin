@@ -487,7 +487,6 @@ void menu_move();
   void lcd_move_y();
 #endif
 
-void menu_adv_motion();
 void lcd_move_z();
 void _lcd_draw_homing();
 
