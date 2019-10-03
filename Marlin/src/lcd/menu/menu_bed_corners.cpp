@@ -148,7 +148,7 @@ static inline void _lcd_probe_calibration_back() {
   #if HAS_LEVELING
     set_bed_leveling_enabled(leveling_was_active);
   #endif
-  probe_offset[Z_AXIS] = previous_zoffset;
+  probe_offset.z = previous_zoffset;
   restore_feedrate_and_scaling();
   ui.goto_previous_screen_no_defer();
 }
@@ -203,14 +203,14 @@ static inline void _lcd_adjust_corner_homing() {
   if (all_axes_homed()) {
     bed_corner = 1;
     corner_measured_z = 0;
-    previous_zoffset = probe_offset[Z_AXIS];
+    previous_zoffset = probe_offset.z;
     firstprobe = true;
     remember_feedrate_and_scaling();
     ui.goto_screen(menu_adjust_corner, SCRMODE_MENU_1X4);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
-    current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET - probe_offset[X_AXIS];
-    current_position[Y_AXIS] = Y_MIN_BED + LEVEL_CORNERS_INSET - probe_offset[Y_AXIS];
-    planner.buffer_line(current_position, MMM_TO_MMS(manual_feedrate_mm_m[X_AXIS]), active_extruder);
+    current_position.x = X_MIN_BED + LEVEL_CORNERS_INSET - probe_offset.x;
+    current_position.y = Y_MIN_BED + LEVEL_CORNERS_INSET - probe_offset.y;
+    planner.buffer_line(current_position, MMM_TO_MMS(manual_feedrate_mm_m.x), active_extruder);
   }
 }
 
@@ -249,11 +249,11 @@ static inline void _lcd_measure_offset() {
 }
 
 static inline void _lcd_save_offset() {
-  //note: corner_measured_z = run_z_probe() + probe_offset[Z_AXIS];
-  probe_offset[Z_AXIS] -= corner_measured_z;
-  previous_zoffset = probe_offset[Z_AXIS];
+  //note: corner_measured_z = run_z_probe() + probe_offset.z;
+  probe_offset.z -= corner_measured_z;
+  previous_zoffset = probe_offset.z;
   corner_measured_z = 0;
-  ui.lcdDrawUpdate = LCDVIEW_REDRAW_NOW; 
+  ui.lcdDrawUpdate = LCDVIEW_REDRAW_NOW;
   _lcd_probe_calibration_back();
 }
 
@@ -275,16 +275,16 @@ static inline void _lcd_measure_probe_offset_homing() {
   _lcd_draw_homing();
   if (all_axes_homed()) {
     bed_corner = 0;
-    previous_zoffset = probe_offset[Z_AXIS];
-    probe_offset[Z_AXIS] = 0;
+    previous_zoffset = probe_offset.z;
+    probe_offset.z = 0;
     corner_measured_z = 0;
     firstprobe = true;
     remember_feedrate_and_scaling();
     ui.goto_screen(menu_measure_probe_offset,SCRMODE_MENU_1X4);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
-    current_position[X_AXIS] = X_MIN_BED + LEVEL_CORNERS_INSET;
-    current_position[Y_AXIS] = Y_MIN_BED + LEVEL_CORNERS_INSET;
-    planner.buffer_line(current_position, MMM_TO_MMS(manual_feedrate_mm_m[X_AXIS]), active_extruder);
+    current_position.x = X_MIN_BED + LEVEL_CORNERS_INSET;
+    current_position.y = Y_MIN_BED + LEVEL_CORNERS_INSET;
+    planner.buffer_line(current_position, MMM_TO_MMS(manual_feedrate_mm_m.x), active_extruder);
     line_to_z(LEVEL_CORNERS_HEIGHT);
   }
 }
