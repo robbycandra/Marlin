@@ -27,7 +27,7 @@
 
 #include "../inc/MarlinConfig.h"
 
-enum ProbeMode : uint8_t {
+enum RexyzProbeMode : uint8_t {
   REXYZPROBE_NO_PROBE,
   REXYZPROBE_PROXYMITY,
   REXYZPROBE_MANUAL_DEPLOY,

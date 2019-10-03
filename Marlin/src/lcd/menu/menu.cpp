@@ -55,6 +55,8 @@
 ///////////// Global Variables /////////////
 ////////////////////////////////////////////
 
+uint8_t rexyz_menu_mode;
+
 // Menu Navigation
 int8_t encoderTopLine, encoderLine, screen_items;
 
@@ -422,7 +424,7 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
       encoderTopLine = encoderLine - LCD_HEIGHT + 1;
 
     #endif
-    
+
   }
   else
     encoderTopLine = encoderLine;
@@ -560,14 +562,14 @@ void do_select_screen(PGM_P const yes, PGM_P const no, selectFunc_t yesFunc, sel
  #if HAS_FULL_SCALE_TFT
  /*
   *  gunakan ini juga ingin menghilangkan encoder touch button
-  * 
+  *
   bool ui_selection = ui.update_selection(), got_click = ui.use_click();
   if (!got_click) {
     ui.screenMode = SCRMODE_SELECT_SCREEN;
     if (ui.menu_is_touched(0)) {
       got_click = true;
       ui_selection = 0;
-    } 
+    }
     else if (ui.menu_is_touched(1)) {
       got_click = true;
       ui_selection = 1;
@@ -575,7 +577,7 @@ void do_select_screen(PGM_P const yes, PGM_P const no, selectFunc_t yesFunc, sel
   }
  */
   const bool ui_selection = true, got_click = ui.use_click();
- #else 
+ #else
   const bool ui_selection = ui.update_selection(), got_click = ui.use_click();
  #endif
   if (got_click || ui.should_draw()) {

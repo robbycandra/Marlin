@@ -309,6 +309,31 @@ void menu_backlash();
   }
 #endif // !BABYSTEP_ZPROBE_OFFSET && HAS_BED_PROBE
 
+void lcd_menu_choose_menu() {
+  ui.encoder_direction_normal();
+  //ui.encoderPosition = rexyz_menu_mode;
+  if (ui.encoderPosition > 0x8000) ui.encoderPosition = 0;
+  if (ui.should_draw()) {
+    if (ui.encoderPosition < MENUMODE_BASIC) {
+      ui.encoderPosition = MENUMODE_BASIC;
+    }
+    if (ui.encoderPosition > MENUMODE_ADVANCE) {
+      ui.encoderPosition = MENUMODE_ADVANCE;
+    }
+    switch (ui.encoderPosition) {
+    case MENUMODE_BASIC:
+      draw_edit_screen(PSTR("Choose Probe"), "Basic Menu");
+      break;
+    case MENUMODE_ADVANCE:
+      draw_edit_screen(PSTR("Choose Probe"), "Advance Menu");
+      break;
+    }
+  }
+  if (ui.lcd_clicked) {
+    rexyz_menu_mode = (uint8_t)ui.encoderPosition;
+    if (ui.use_click()) ui.goto_previous_screen();
+  }
+}
 
 //
 // Advanced Settings > Temperature helpers
@@ -849,6 +874,31 @@ void menu_advanced_settings() {
   #if ENABLED(EEPROM_SETTINGS) && DISABLED(SLIM_LCD_MENUS)
     MENU_ITEM(subselect, MSG_INIT_EEPROM, lcd_init_eeprom_confirm);
   #endif
+
+  do {
+    _skipStatic = false;
+    if (_menuLineNr == _thisItemNr) {
+      if ((encoderLine == _thisItemNr && ui.use_click()) || ui.menu_is_touched(_thisItemNr - encoderTopLine)) {     \
+        _MENU_ITEM_MULTIPLIER_CHECK(false);
+        ui.save_previous_screen();
+        ui.refresh();
+        ui.encoderPosition = rexyz_menu_mode;
+        ui.screenMode = SCRMODE_EDIT_SCREEN;
+        ui.currentScreen = lcd_menu_choose_menu;
+        if (screen_changed) return;
+      }
+      if (ui.should_draw())
+        switch (rexyz_menu_mode) {
+        case MENUMODE_BASIC:
+          draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Menu Mode"), "Basic");
+          break;
+        case MENUMODE_ADVANCE:
+          draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Menu Mode"), "Advance");
+          break;
+        }
+    }
+    ++_thisItemNr;
+  }while(0);
 
   END_MENU();
 }

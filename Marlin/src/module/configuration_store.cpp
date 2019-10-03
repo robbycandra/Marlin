@@ -62,6 +62,7 @@
 #endif
 
 #include "probe.h"
+#include "../lcd/menu/menu.h"
 
 #if HAS_LEVELING
   #include "../feature/bedlevel/bedlevel.h"
@@ -190,9 +191,13 @@ typedef struct SettingsDataStruct {
   //
   // HAS_BED_PROBE
   //
-
   xyz_pos_t probe_offset;
   uint8_t rexyz_probe_mode;
+
+  //
+  // Menu Mode
+  //
+  uint8_t rexyz_menu_mode;
 
   //
   // ABL_PLANAR
@@ -641,6 +646,13 @@ void MarlinSettings::postprocess() {
       _FIELD_TEST(probe_offset);
       EEPROM_WRITE(probe_offset);
       EEPROM_WRITE(rexyz_probe_mode);
+    }
+
+    //
+    // Menu Mode
+    //
+    {
+      EEPROM_WRITE(rexyz_menu_mode);
     }
 
     //
@@ -1529,6 +1541,12 @@ void MarlinSettings::postprocess() {
           uint8_t dummy_probe_mode;
           EEPROM_READ(dummy_probe_mode);
         #endif
+      }
+      //
+      // Menu Mode
+      //
+      {
+        EEPROM_READ(rexyz_menu_mode);
       }
       //
       // Planar Bed Leveling matrix
@@ -2448,6 +2466,8 @@ void MarlinSettings::reset() {
   #if HAS_BED_PROBE
     rexyz_probe_mode = REXYZ_DEFAULT_PROBE;
   #endif
+
+  rexyz_menu_mode = MENUMODE_BASIC;
 
   //
   // Servo Angles
@@ -3586,9 +3606,20 @@ void MarlinSettings::reset() {
     /**
      * Probe Mode
      */
-    CONFIG_ECHO_HEADING("Probe Mode:");
+    CONFIG_ECHO_HEADING("Mode:");
     CONFIG_ECHO_START();
-    SERIAL_ECHOLNPAIR(" Mode : ", rexyz_probe_mode);
+    SERIAL_ECHOLNPAIR(" Probe Mode : ", rexyz_probe_mode);
+    SERIAL_ECHO(" Menu Mode : ");
+    switch(rexyz_menu_mode) {
+      case MENUMODE_BASIC:
+        SERIAL_ECHOLN("Basic");
+        break;
+      case MENUMODE_ADVANCE:
+        SERIAL_ECHOLN("Advance");
+        break;
+      default:
+        SERIAL_ECHOLN("Unknown");
+    }
 
     /**
      * Touch Button
