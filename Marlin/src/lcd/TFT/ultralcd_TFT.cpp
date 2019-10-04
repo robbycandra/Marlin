@@ -64,6 +64,8 @@
   #include "../../feature/bedlevel/ubl/ubl.h"
 #endif
 
+#include "../menu/menu.h"
+
 /**
  * Include all needed font files
  * (See http://marlinfw.org/docs/development/fonts.html)
@@ -167,9 +169,9 @@ bool MarlinUI::detected() { return true; }
     constexpr u8g_uint_t text_width_1 = u8g_uint_t((sizeof(SHORT_BUILD_VERSION) - 1) * (MENU_FONT_WIDTH)),
                          text_width_2 = u8g_uint_t((sizeof(REXYZ_WEBSITE_URL) - 1) * (MENU_FONT_WIDTH));
 
-    constexpr u8g_int_t txt_offx_1 = (LCD_FULL_PIXEL_WIDTH - text_width_1) / 2, 
-                        txt_offx_2 = (LCD_FULL_PIXEL_WIDTH - text_width_2) / 2, 
-                        txt_base_1 = (LCD_FULL_PIXEL_HEIGHT + REXYZ_BOOT_IMAGE_SIZE_Y) / 2, 
+    constexpr u8g_int_t txt_offx_1 = (LCD_FULL_PIXEL_WIDTH - text_width_1) / 2,
+                        txt_offx_2 = (LCD_FULL_PIXEL_WIDTH - text_width_2) / 2,
+                        txt_base_1 = (LCD_FULL_PIXEL_HEIGHT + REXYZ_BOOT_IMAGE_SIZE_Y) / 2,
                         txt_base_2 = txt_base_1 + MENU_FONT_HEIGHT;
 
     set_font(FONT_MENU);
@@ -286,7 +288,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   u8g_uint_t row_y1, row_y2, col_x1, col_x2, row_str_base;
 
   // Draw item box based on row_y1, row_y2,col_x1, col,x2
-  // if sel == true than the box will be bold and colored 
+  // if sel == true than the box will be bold and colored
   void draw_item_box(const bool sel) {
     const u8g_uint_t w = col_x2 - col_x1 + 1, h = row_y2 - row_y1 + 1;
     if (sel) {
@@ -433,10 +435,10 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   }
 
   // Draw a static line of text in the same idiom as a menu item
-  void draw_menu_item_static(const uint8_t row, PGM_P pstr, const bool center/*=true*/, const bool invert/*=false*/, const char* valstr/*=nullptr*/) {
+  void draw_menu_item_static(const uint8_t row, PGM_P const pstr, const uint8_t style/*=SS_CENTER*/, const char * const valstr/*=nullptr*/) {
 
-    if (mark_as_selected(row, invert)) {
-      if (center && !valstr) {
+    if (mark_as_selected(row, (style & SS_INVERT))) {
+      if ((style & SS_CENTER) && !valstr) {
         draw_centered_string(row_str_base, 0, LCD_PIXEL_WIDTH-1, pstr, ' ', ' ');
       }
       else {
@@ -469,7 +471,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
         for (i = maxStringLen; i >= 0; i--) {
           if (pstr[i] == ' ' )
             break;
-        } 
+        }
         if (i) {
           strncpy(str01, pstr, i);
           str01[i] = '\0';
@@ -496,7 +498,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
 
   inline void draw_boxed_string(PGM_P const pstr, const bool selected) {
     if (!PAGE_CONTAINS(row_y1, row_y2)) return;
-    draw_item_box(selected); 
+    draw_item_box(selected);
     row_str_base = (row_y1+row_y2)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;
     draw_centered_string(row_str_base, col_x1+2, col_x2-2, pstr, ' ', ' ');
   }
@@ -545,7 +547,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
 
     if (ui.menu_is_touched(0) || ui.menu_is_touched(1) ) {
       ui.encoderPosition--;
-    } 
+    }
     else if (ui.menu_is_touched(2) || ui.menu_is_touched(3)) {
       ui.encoderPosition++;
     }
@@ -556,7 +558,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     ui.draw_select_screen_prompt(pref, string, suff);
  /*
   *  gunakan ini juga ingin menghilangkan encoder touch button
-  * 
+  *
     row_y1 = LCD_PIXEL_HEIGHT * 3 / 4;
     row_y2 = LCD_PIXEL_HEIGHT - 1;
     col_x1 = 0;
@@ -592,7 +594,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
           for (i = maxlen; i >= 0; i--) {
             if (strfn[i] == ' ' || strfn[i] == '.')
               break;
-          } 
+          }
           if (i) {
             strncpy(str01, strfn, i);
             str01[i] = '\0';
