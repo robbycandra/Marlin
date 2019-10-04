@@ -98,6 +98,7 @@ FORCE_INLINE void draw_menu_item_edit_P(const bool sel, const uint8_t row, PGM_P
 #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   #define draw_menu_item_submenu(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_submenu1(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenu22(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_submenuh(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_subedit(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_subselect(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
@@ -213,6 +214,14 @@ class MenuItem_submenu1 {
     static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
       ui.goto_screen(func, SCRMODE_MENU_1X4);
+    }
+};
+
+class MenuItem_submenu22 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_2X2);
     }
 };
 
@@ -395,7 +404,9 @@ class MenuItem_bool {
  *     MenuItem_int3::action_edit(PSTR(MSG_SPEED), &feedrate_percentage, 10, 999)
  *
  */
-#if HAS_FULL_SCALE_TFT
+
+#if HAS_FULL_SCALE_TFT && ENABLED(TOUCH_ENCODER)
+
 #define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, V...) do { \
     _skipStatic = false;                                          \
     if (_menuLineNr == _thisItemNr) {                             \
@@ -411,7 +422,28 @@ class MenuItem_bool {
     }                                                             \
   ++_thisItemNr;                                                  \
 }while(0)
+
+#elif HAS_FULL_SCALE_TFT
+
+#define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, V...) do { \
+    _skipStatic = false;                                          \
+    if (_menuLineNr == _thisItemNr) {                             \
+      PGM_P const plabel = PLABEL;                                \
+      if ((encoderLine == _thisItemNr && ui.use_click())          \
+       || ui.menu_is_touched(_thisItemNr - encoderTopLine)) {     \
+        _MENU_ITEM_MULTIPLIER_CHECK(USE_MULTIPLIER);              \
+        MenuItem_##TYPE ::action ## VARIANT(plabel, ##V);         \
+        if (screen_changed) return;                               \
+      }                                                           \
+      if (ui.should_draw())                                       \
+        draw_menu_item ## VARIANT ## _ ## TYPE                    \
+          (encoderLine == _thisItemNr, _lcdLineNr, plabel, ##V);  \
+    }                                                             \
+  ++_thisItemNr;                                                  \
+}while(0)
+
 #else
+
 #define _MENU_ITEM_VARIANT_P(TYPE, VARIANT, USE_MULTIPLIER, PLABEL, V...) do {  \
     _skipStatic = false;                                          \
     if (_menuLineNr == _thisItemNr) {                             \
@@ -427,6 +459,7 @@ class MenuItem_bool {
     }                                                             \
   ++_thisItemNr;                                                  \
 }while(0)
+
 #endif
 
 // Used to print static text with no visible cursor.

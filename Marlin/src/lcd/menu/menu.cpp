@@ -354,7 +354,22 @@ void MarlinUI::synchronize(PGM_P const msg/*=nullptr*/) {
  *   _thisItemNr is the index of each MENU_ITEM or STATIC_ITEM
  *   screen_items is the total number of items in the menu (after one call)
  */
+
+//#define DEBUG_SCROLL_SCREEN
+
 void scroll_screen(const uint8_t limit, const bool is_menu) {
+
+  #if ENABLED(DEBUG_SCROLL_SCREEN)
+    static uint16_t lastEncoderPosition;
+    static bool hasChange;
+    if (lastEncoderPosition != ui.encoderPosition) {
+      lastEncoderPosition = ui.encoderPosition;
+      hasChange = true;
+      SERIAL_ECHOLN("====================");
+      SERIAL_ECHOLNPAIR("new encoderPosition = ", ui.encoderPosition);
+    }
+  #endif
+
   ui.encoder_direction_menus();
   ENCODER_RATE_MULTIPLY(false);
   if (ui.encoderPosition > 0x8000) ui.encoderPosition = 0;
@@ -362,12 +377,24 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
     encoderLine = ui.encoderPosition / (ENCODER_STEPS_PER_MENU_ITEM);
     screen_changed = false;
   }
+  // Maximum encoder line = screen items - limit
   if (screen_items > 0 && encoderLine >= screen_items - limit) {
     encoderLine = _MAX(0, screen_items - limit);
     ui.encoderPosition = encoderLine * (ENCODER_STEPS_PER_MENU_ITEM);
   }
+
+  #if ENABLED(DEBUG_SCROLL_SCREEN)
+    if (ui.first_page && hasChange) {
+      SERIAL_ECHOLN("------------");
+      SERIAL_ECHOLNPAIR("screen items = ", screen_items);
+      SERIAL_ECHOLNPAIR("limit = ", limit);
+      SERIAL_ECHOLNPAIR("encoderPosition = ", ui.encoderPosition);
+      SERIAL_ECHOLNPAIR("encoderLine = ", encoderLine);
+    }
+  #endif
+
   if (is_menu) {
-    #if HAS_FULL_SCALE_TFT
+   #if HAS_FULL_SCALE_TFT
       uint8_t menu_row = 4;
       uint8_t menu_col = 2;
       uint8_t menu_header = 0;
@@ -402,32 +429,48 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
           menu_col = 2;
           menu_header = 0;
       }
-      if (menu_col == 2) {
-        NOMORE(encoderTopLine, (encoderLine & B11111110) );
-        if (encoderLine >= encoderTopLine + menu_row * menu_col + menu_header) {
-          if (encoderLine & 1)
-            encoderTopLine = encoderLine - menu_row * menu_col + menu_header + 1;
-          else
-            encoderTopLine = encoderLine - menu_row * menu_col + menu_header + 2;
-        }
+      const uint8_t leftEncoderLine = ((int8_t)(encoderLine / menu_col)) * menu_col;
+      NOMORE(encoderTopLine, leftEncoderLine);
+
+     #if ENABLED(TOUCH_ENCODER)
+
+      if (encoderLine >= encoderTopLine + menu_col + menu_header) {
+        if (screen_items > (leftEncoderLine + (menu_row-1) * menu_col + menu_header))
+          encoderTopLine = leftEncoderLine;
+        else
+          encoderTopLine = ((int8_t)((screen_items-1) / menu_col)) * menu_col - (menu_row-1) * menu_col + menu_header;
       }
-      else {
-        NOMORE(encoderTopLine, encoderLine);
-        if (encoderLine >= encoderTopLine + menu_row * menu_col + menu_header) {
-          encoderTopLine = encoderLine - menu_row * menu_col + menu_header + 1;
-        }
+      if (encoderTopLine < 0) encoderTopLine = 0;
+      encoderLine = encoderTopLine;
+      ui.encoderPosition = encoderLine * (ENCODER_STEPS_PER_MENU_ITEM);
+
+     #else // !TOUCH_ENCODER
+
+      if (encoderLine >= encoderTopLine + menu_row * menu_col + menu_header) {
+        encoderTopLine = leftEncoderLine - (menu_row-1) * menu_col + menu_header;
       }
 
-    #else
+     #endif // TOUCH_ENCODER
+
+   #else //! HAS_FULL_SCALE_TFT
     NOMORE(encoderTopLine, encoderLine);
     if (encoderLine >= encoderTopLine + LCD_HEIGHT)
       encoderTopLine = encoderLine - LCD_HEIGHT + 1;
-
-    #endif
-
+   #endif // HAS_FULL_SCALE_TFT
   }
-  else
+  else // !is_menu
     encoderTopLine = encoderLine;
+
+  #if ENABLED(DEBUG_SCROLL_SCREEN)
+    if (ui.first_page && hasChange) {
+      SERIAL_ECHOLN("+++++++++++++++");
+      SERIAL_ECHOLNPAIR("encoderPosition = ", ui.encoderPosition);
+      SERIAL_ECHOLNPAIR("encoderLine = ", encoderLine);
+      SERIAL_ECHOLNPAIR("encoderTopLine = ", encoderTopLine);
+      hasChange = false;
+    }
+  #endif
+
 }
 
 #if HAS_BUZZER

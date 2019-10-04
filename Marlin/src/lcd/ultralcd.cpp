@@ -83,7 +83,7 @@
 
 #if HAS_SPI_LCD
 
-#if HAS_GRAPHICAL_LCD 
+#if HAS_GRAPHICAL_LCD
  #if HAS_FULL_SCALE_TFT
   #include "TFT/ultralcd_TFT.h "
  #else
@@ -207,15 +207,15 @@ millis_t MarlinUI::next_button_update_ms; // = 0
       bool MarlinUI::first_touch;
       uint8_t MarlinUI::repeat_delay;
       uint8_t MarlinUI::lcd_menu_touched_coord;
-    #endif  
-  #endif  
+    #endif
+  #endif
   #if HAS_FULL_SCALE_TFT
     bool MarlinUI::menu_is_touched(int8_t tested_item_number) {
       int8_t touched_item_number;
       bool menu_area_touched = false;
       if (lcd_menu_touched_coord & 0xF0) {
         const uint8_t row = ((ui.lcd_menu_touched_coord & 0xF0) >> 4) - 1;
-        const uint8_t col =  (ui.lcd_menu_touched_coord & 0x0F); 
+        const uint8_t col =  (ui.lcd_menu_touched_coord & 0x0F);
         switch (ui.screenMode) {
           case SCRMODE_MENU_2X4:
             touched_item_number = (int)(row / 3) * 2 + (col / 6);
@@ -237,16 +237,16 @@ millis_t MarlinUI::next_button_update_ms; // = 0
             menu_area_touched = true;
             wait_for_untouched = true;
             break;
-          case SCRMODE_SELECT_SCREEN:  
+          case SCRMODE_SELECT_SCREEN:
             if (row > 8) {  //4th row
-              touched_item_number = col / 6; 
+              touched_item_number = col / 6;
               menu_area_touched = true;
             }
             wait_for_untouched = true;
             break;
           default:
             if (row > 8) {  //4th row
-              touched_item_number = col / 3; 
+              touched_item_number = col / 3;
               menu_area_touched = true;
               repeat_delay = 50;
             }
@@ -261,10 +261,10 @@ millis_t MarlinUI::next_button_update_ms; // = 0
             return true;
           }
         }
-      } 
+      }
       return false;
     }
-  #endif  
+  #endif
 
   bool MarlinUI::lcd_clicked;
   float move_menu_scale;
@@ -339,13 +339,13 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     if (!string && plen + slen <= LCD_WIDTH) {
       col = (LCD_WIDTH - plen - slen) / 2;
      #if HAS_FULL_SCALE_TFT
-      row = 2; 
+      row = 2;
      #else
       row = LCD_HEIGHT > 3 ? 1 : 0;
      #endif
     }
     #if HAS_FULL_SCALE_TFT
-      else 
+      else
         row = 2;
     #endif
 
@@ -861,7 +861,7 @@ void MarlinUI::update() {
               if (!screen_is_touched) {                 // If not waiting for a debounce release:
                 next_button_update_ms += 250;           // Longer delay on first press
                 first_touch = true;
-              }  
+              }
               //wait_for_unclick = true;                //  - Set debounce flag to ignore continous clicks
               screen_is_touched = true;                 //  - Flag for touch screen, work like arrow is pressed
               wait_for_user = false;                    //  - Any click clears wait for user
@@ -1026,12 +1026,19 @@ void MarlinUI::update() {
             constexpr int32_t encoderMultiplier = 1;
 
           #endif // ENCODER_RATE_MULTIPLIER
+         #if ENABLED(TOUCH_ENCODER)
           if(screenMode == SCRMODE_MENU_1X4) {
             encoderPosition += (encoderDiff * encoderMultiplier * 3) / (ENCODER_PULSES_PER_STEP);
+          }
+          else if(screenMode == SCRMODE_MENU_2X4) {
+            encoderPosition += (encoderDiff * encoderMultiplier * 6) / (ENCODER_PULSES_PER_STEP);
           }
           else {
             encoderPosition += (encoderDiff * encoderMultiplier) / (ENCODER_PULSES_PER_STEP);
           }
+         #else
+          encoderPosition += (encoderDiff * encoderMultiplier) / (ENCODER_PULSES_PER_STEP);
+         #endif
           encoderDiff = 0;
         }
 
@@ -1075,7 +1082,7 @@ void MarlinUI::update() {
     // then we want to use 1/2 of the time only.
     uint16_t bbr2 = planner.block_buffer_runtime() >> 1;
 
-    if (DEBUGGING(INFO)) 
+    if (DEBUGGING(INFO))
       if (lcdDrawUpdate == LCDVIEW_CLEAR_CALL_REDRAW) {
         SERIAL_ECHOLNPAIR("bbr2 = ", bbr2);
         SERIAL_ECHOLNPAIR("max_display_update_time = ", max_display_update_time);
@@ -1150,13 +1157,13 @@ void MarlinUI::update() {
         NOLESS(max_display_update_time, millis() - ms);
       else {
         lcdCurDisplayTimeUpdate = true;
-        if (DEBUGGING(INFO)) 
+        if (DEBUGGING(INFO))
             SERIAL_ECHOLNPAIR("Max_display_update_time not updated = ", max_display_update_time);
 
       }
 
-      if (DEBUGGING(INFO)) 
-        if (max_display_update_time > 1000) 
+      if (DEBUGGING(INFO))
+        if (max_display_update_time > 1000)
           SERIAL_ECHOLNPAIR("Long max_display_update_time = ", max_display_update_time);
     }
 

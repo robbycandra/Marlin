@@ -726,6 +726,8 @@
 
     #define TOUCH_BUTTONS
     #define TOUCH_CALIBRATION
+    #define TOUCH_ENCODER
+
     #if defined(REXYZ_D2)
       #define REXYZ_XPT2046_X_CAL_SCALE_X  -16626
       #define REXYZ_XPT2046_X_CAL_SCALE_Y       0
