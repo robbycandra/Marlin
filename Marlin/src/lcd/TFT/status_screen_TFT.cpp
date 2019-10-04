@@ -168,14 +168,14 @@ void run_status_screen_touch_command() {
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         ui.wait_for_untouched = true;
-        MenuItem_int3::action_edit(PSTR(MSG_SPEED), &feedrate_percentage, 10, 999);
+        MenuItem_int3::action(PSTR(MSG_SPEED), &feedrate_percentage, 10, 999);
         break;
       case 5:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         ui.wait_for_untouched = true;
-        MenuItem_int3::action_edit(PSTR(MSG_NOZZLE),&thermalManager.temp_hotend[0].target, 0, HEATER_0_MAXTEMP - 15, thermalManager.start_watching_E0);
+        MenuItem_int3::action(PSTR(MSG_NOZZLE),&thermalManager.temp_hotend[0].target, 0, HEATER_0_MAXTEMP - 15, thermalManager.start_watching_E0);
         break;
       case 6:
         #if HAS_HEATED_BED
@@ -183,7 +183,7 @@ void run_status_screen_touch_command() {
             ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
           #endif
           ui.wait_for_untouched = true;
-          MenuItem_int3::action_edit(PSTR(MSG_BED),&thermalManager.temp_bed.target, 0, BED_MAXTEMP - 10, thermalManager.start_watching_bed);
+          MenuItem_int3::action(PSTR(MSG_BED),&thermalManager.temp_bed.target, 0, BED_MAXTEMP - 10, thermalManager.start_watching_bed);
           break;
         #endif
       case 7:
@@ -192,7 +192,7 @@ void run_status_screen_touch_command() {
         #endif
         ui.wait_for_untouched = true;
         ui.screenMode = SCRMODE_EDIT_SCREEN;
-        MenuItem_percent::action_edit(PSTR(MSG_FAN_SPEED),&thermalManager.lcd_tmpfan_speed[0], 0, 255, thermalManager.lcd_setFanSpeed0);
+        MenuItem_percent::action(PSTR(MSG_FAN_SPEED),&thermalManager.lcd_tmpfan_speed[0], 0, 255, thermalManager.lcd_setFanSpeed0);
         break;
       case 8:
       case 9:

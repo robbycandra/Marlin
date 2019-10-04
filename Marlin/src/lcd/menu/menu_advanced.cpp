@@ -302,9 +302,9 @@ void menu_backlash();
     }while(0);
      */
 
-    _MENU_ITEM_VARIANT_P(float3, _edit, true, PSTR("Probe X Offset"), &probe_offset.x, 0, 30);
-    _MENU_ITEM_VARIANT_P(float3, _edit, true, PSTR("Probe Y Offset"), &probe_offset.y, -30, 30);
-    _MENU_ITEM_VARIANT_P(float52, _edit, true, PSTR("Probe Z Offset"), &probe_offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
+    _MENU_ITEM_P(float3, true, PSTR("Probe X Offset"), &probe_offset.x, 0, 30);
+    _MENU_ITEM_P(float3, true, PSTR("Probe Y Offset"), &probe_offset.y, -30, 30);
+    _MENU_ITEM_P(float52, true, PSTR("Probe Z Offset"), &probe_offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
     END_MENU();
   }
 #endif // !BABYSTEP_ZPROBE_OFFSET && HAS_BED_PROBE
