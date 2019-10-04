@@ -231,7 +231,7 @@
         #endif
         ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
       }
-    } 
+    }
     else {
       ui.defer_status_screen(false);
       ui.goto_previous_screen_no_defer();
@@ -302,10 +302,10 @@ void menu_bed_leveling() {
   #endif
 
   #if ENABLED(LEVEL_BED_CORNERS)
-    MENU_ITEM(submenu, MSG_LEVEL_CORNERS, _lcd_level_bed_corners);
+    SUBMENU(MSG_LEVEL_CORNERS, _lcd_level_bed_corners);
     #if HAS_BED_PROBE
-      MENU_ITEM(submenu, "Measure Probe Offset", _lcd_measure_probe_offset);
-      MENU_ITEM(submenu, "Adjust Corner", _lcd_adjust_corner);
+      SUBMENU("Measure Probe Offset", _lcd_measure_probe_offset);
+      SUBMENU("Adjust Corner", _lcd_adjust_corner);
     #endif
   #endif
 
@@ -315,7 +315,6 @@ void menu_bed_leveling() {
     SUBMENU(MSG_LEVEL_BED, _lcd_level_bed_continue);
   #else
     // Automatic leveling can just run the G-code
-    // MENU_ITEM(gcode, MSG_LEVEL_BED, is_homed ? PSTR("G29") : PSTR("G28\nG29"));
     //GCODES_ITEM(MSG_LEVEL_BED, is_homed ? PSTR("G29") : PSTR("G28\nG29"));
     // Removed because no feedback at LCD
     SUBMENU(MSG_LEVEL_BED, _lcd_level_bed_continue);

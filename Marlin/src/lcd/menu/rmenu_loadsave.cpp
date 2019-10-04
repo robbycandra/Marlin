@@ -95,16 +95,16 @@ void rmenu_loadsave() {
   const bool busy = printer_busy();
   START_MENU();
   #if ENABLED(EEPROM_SETTINGS)
-    MENU_ITEM(subselect, MSG_STORE_EEPROM, lcd_store_settings_confirm);
+    SUBSELECT(MSG_STORE_EEPROM, lcd_store_settings_confirm);
     if (!busy)
-      MENU_ITEM(subselect, MSG_LOAD_EEPROM, lcd_load_settings_confirm);
+      SUBSELECT(MSG_LOAD_EEPROM, lcd_load_settings_confirm);
   #endif
 
   if (!busy)
-    MENU_ITEM(subselect, MSG_RESTORE_FAILSAFE, lcd_factory_settings_confirm);
+    SUBSELECT(MSG_RESTORE_FAILSAFE, lcd_factory_settings_confirm);
 
   #if ENABLED(EEPROM_SETTINGS)
-    MENU_ITEM(subselect, MSG_INIT_EEPROM, lcd_init_eeprom_confirm);
+    SUBSELECT(MSG_INIT_EEPROM, lcd_init_eeprom_confirm);
   #endif
 
   END_MENU();

@@ -99,7 +99,7 @@ void menu_main() {
   START_MENU();
   BACK_ITEM(MSG_WATCH);
 
-  const bool busy = IS_SD_PRINTING() || print_job_timer.isRunning()
+  const bool busy = printingIsActive()
     #if ENABLED(SDSUPPORT)
       , card_detected = card.isMounted()
       , card_open = card_detected && card.isFileOpen()
@@ -127,7 +127,7 @@ void menu_main() {
       if (card_detected) {
         if (!card_open) {
           SUBMENU14(MSG_MEDIA_MENU, menu_media);
-          MENU_ITEM(gcode,
+          GCODES_ITEM(
             #if PIN_EXISTS(SD_DETECT)
               MSG_CHANGE_MEDIA, PSTR("M21")
             #else
@@ -147,12 +147,7 @@ void menu_main() {
     #endif // !HAS_ENCODER_WHEEL && SDSUPPORT
 
     #if MACHINE_CAN_PAUSE
-      const bool paused = (print_job_timer.isPaused()
-        #if ENABLED(SDSUPPORT)
-          || card.isPaused()
-        #endif
-      );
-      if (paused) ACTION_ITEM(MSG_RESUME_PRINT, ui.resume_print);
+      if (printingIsPaused()) ACTION_ITEM(MSG_RESUME_PRINT, ui.resume_print);
     #endif
 
     SUBMENU(MSG_MOTION, menu_motion);
@@ -217,7 +212,7 @@ void menu_main() {
 
     if (card_detected) {
       if (!card_open) {
-        MENU_ITEM(gcode,
+        GCODES_ITEM(
           #if PIN_EXISTS(SD_DETECT)
             MSG_CHANGE_MEDIA, PSTR("M21")
           #else

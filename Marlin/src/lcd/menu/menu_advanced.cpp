@@ -845,14 +845,14 @@ void menu_advanced_settings() {
   #endif
 
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-    MENU_ITEM(subedit, MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
+    SUBEDIT(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
-    MENU_ITEM(subedit, "Probe", menu_advanced_probe);
+    SUBEDIT("Probe", menu_advanced_probe);
   #endif
 
   #if ENABLED(TOUCH_CALIBRATION)
-    MENU_ITEM(function, MSG_TOUCHSCREEN_CALIBRATION, menu_touch_calibration);
-    MENU_ITEM(function, "TouchScreen Testing", menu_touch_testing);
+    ACTION_ITEM(MSG_TOUCHSCREEN_CALIBRATION, menu_touch_calibration);
+    ACTION_ITEM("TouchScreen Testing", menu_touch_testing);
   #endif
 
   #if ENABLED(SD_FIRMWARE_UPDATE)
