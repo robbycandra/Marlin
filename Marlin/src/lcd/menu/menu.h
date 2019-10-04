@@ -97,7 +97,7 @@ FORCE_INLINE void draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P c
 FORCE_INLINE void draw_menu_item_edit_P(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data) { _draw_menu_item_edit(sel, row, pstr, data, true); }
 #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   #define draw_menu_item_submenu(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
-  #define draw_menu_item_submenu1(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenu14(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_submenu22(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_submenuh(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_subedit(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
@@ -106,7 +106,8 @@ FORCE_INLINE void draw_menu_item_edit_P(const bool sel, const uint8_t row, PGM_P
   #define draw_menu_item_subscreen8(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
 #else
   #define draw_menu_item_submenu(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
-  #define draw_menu_item_submenu1(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenu14(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenu22(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_submenuh(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_subedit(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_subselect(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
@@ -209,7 +210,7 @@ class MenuItem_submenu {
     }
 };
 
-class MenuItem_submenu1 {
+class MenuItem_submenu14 {
   public:
     static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
@@ -389,17 +390,17 @@ class MenuItem_bool {
  *   MenuItem_<type>::action[_variant](arg3...)
  *
  * Examples:
- *   MENU_ITEM(back, MSG_WATCH, 0 [dummy parameter] )
- *   or
- *   MENU_BACK(MSG_WATCH)
+ *   BACK_ITEM(MSG_WATCH)
+ *   MENU_ITEM(back, MSG_WATCH)
  *     draw_menu_item_back(sel, row, PSTR(MSG_WATCH))
  *     MenuItem_back::action()
  *
+ *   ACTION_ITEM(MSG_PAUSE_PRINT, lcd_sdcard_pause)
  *   MENU_ITEM(function, MSG_PAUSE_PRINT, lcd_sdcard_pause)
  *     draw_menu_item_function(sel, row, PSTR(MSG_PAUSE_PRINT), lcd_sdcard_pause)
  *     MenuItem_function::action(lcd_sdcard_pause)
  *
- *   MENU_ITEM_EDIT(int3, MSG_SPEED, &feedrate_percentage, 10, 999)
+ *   EDIT_ITEM(int3, MSG_SPEED, &feedrate_percentage, 10, 999)
  *     draw_menu_item_edit_int3(sel, row, PSTR(MSG_SPEED), &feedrate_percentage, 10, 999)
  *     MenuItem_int3::action_edit(PSTR(MSG_SPEED), &feedrate_percentage, 10, 999)
  *
@@ -484,18 +485,29 @@ class MenuItem_bool {
 
 #define STATIC_ITEM(LABEL, V...) STATIC_ITEM_P(PSTR(LABEL), ##V)
 
+#define MENU_ITEM_P(TYPE, PLABEL, V...)   _MENU_ITEM_VARIANT_P(TYPE,      , false, PLABEL,      ##V)
+#define MENU_ITEM(TYPE, LABEL, V...)      _MENU_ITEM_VARIANT_P(TYPE,      , false, PSTR(LABEL), ##V)
+#define EDIT_ITEM(TYPE, LABEL, V...)      _MENU_ITEM_VARIANT_P(TYPE, _edit, false, PSTR(LABEL), ##V)
+#define EDIT_ITEM_FAST(TYPE, LABEL, V...) _MENU_ITEM_VARIANT_P(TYPE, _edit,  true, PSTR(LABEL), ##V)
+
+#define SKIP_ITEM()                 (_thisItemNr++)
+
 #if ENABLED(TOUCH_BUTTONS)
-  #define MENU_BACK(LABEL) NOOP
+  #define BACK_ITEM(LABEL)          NOOP
 #else
-  #define MENU_BACK(LABEL) MENU_ITEM(back, LABEL)
+  #define BACK_ITEM(LABEL)          MENU_ITEM(back,LABEL)
 #endif
-#define MENU_ITEM_DUMMY() do { _thisItemNr++; }while(0)
-#define MENU_ITEM_P(TYPE, PLABEL, V...)                       _MENU_ITEM_VARIANT_P(TYPE,      , false, PLABEL,      ##V)
-#define MENU_ITEM(TYPE, LABEL, V...)                          _MENU_ITEM_VARIANT_P(TYPE,      , false, PSTR(LABEL), ##V)
-#define MENU_ITEM_EDIT(TYPE, LABEL, V...)                     _MENU_ITEM_VARIANT_P(TYPE, _edit, false, PSTR(LABEL), ##V)
-#define MENU_ITEM_EDIT_CALLBACK(TYPE, LABEL, V...)            _MENU_ITEM_VARIANT_P(TYPE, _edit, false, PSTR(LABEL), ##V)
-#define MENU_MULTIPLIER_ITEM_EDIT(TYPE, LABEL, V...)          _MENU_ITEM_VARIANT_P(TYPE, _edit,  true, PSTR(LABEL), ##V)
-#define MENU_MULTIPLIER_ITEM_EDIT_CALLBACK(TYPE, LABEL, V...) _MENU_ITEM_VARIANT_P(TYPE, _edit,  true, PSTR(LABEL), ##V)
+#define SUBSCREEN6(LABEL, DEST)     MENU_ITEM(subscreen6, LABEL, DEST)
+#define SUBEDIT(LABEL, DEST)        MENU_ITEM(subedit, LABEL, DEST)
+#define SUBSELECT(LABEL, DEST)      MENU_ITEM(subselect, LABEL, DEST)
+//#define SUBMENU12(LABEL, DEST)      MENU_ITEM(submenu12, LABEL, DEST)
+//#define SUBMENU13(LABEL, DEST)      MENU_ITEM(submenu13, LABEL, DEST)
+#define SUBMENU14(LABEL, DEST)      MENU_ITEM(submenu14, LABEL, DEST)
+#define SUBMENU22(LABEL, DEST)      MENU_ITEM(submenu22, LABEL, DEST)
+#define SUBMENUH(LABEL, DEST)       MENU_ITEM(submenuh, LABEL, DEST)
+#define SUBMENU(LABEL, DEST)        MENU_ITEM(submenu, LABEL, DEST)
+#define GCODES_ITEM(LABEL, GCODES)  MENU_ITEM(gcode, LABEL, GCODES)
+#define ACTION_ITEM(LABEL, ACTION)  MENU_ITEM(function, LABEL, ACTION)
 
 ////////////////////////////////////////////
 /////////////// Menu Screens ///////////////
