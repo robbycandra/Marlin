@@ -45,7 +45,9 @@
 
 XPT2046 touch;
 extern int8_t encoderDiff;
-uint16_t XPT2046::raw_x, XPT2046::raw_y, XPT2046::pixel_x, XPT2046::pixel_y;
+uint16_t XPT2046::raw_x, XPT2046::raw_y;
+// pixel must be signed to receive touch outside screen area
+int16_t XPT2046::pixel_x, XPT2046::pixel_y;
 int16_t XPT2046::tscalibration[6];
 
 void XPT2046::init() {
@@ -96,6 +98,11 @@ uint8_t XPT2046::read_buttons() {
   pixel_y = uint16_t(((uint32_t(raw_x)) * tscalibration[3] + (uint32_t(raw_y)) * tscalibration[4]) >> 16) + tscalibration[5];
 
   if (!isTouched()) return 0; // Fingers must still be on the TS for a valid read.
+
+  if (pixel_x < 0) pixel_x = 0;
+  if (pixel_x >= LCD_FULL_PIXEL_WIDTH) pixel_x = LCD_FULL_PIXEL_WIDTH - 1;
+  if (pixel_y < 0) pixel_y = 0;
+  if (pixel_y >= LCD_FULL_PIXEL_HEIGHT) pixel_y = LCD_FULL_PIXEL_HEIGHT - 1;
 
   const uint8_t row_touched = pixel_y / LCD_CELL_HEIGHT;
   const uint8_t col_touched = (pixel_x * 12 + 4) / LCD_PIXEL_WIDTH;

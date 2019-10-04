@@ -40,8 +40,8 @@ enum XPTCoordinate : uint8_t {
 
 class XPT2046 {
 public:
-  static uint16_t raw_x, raw_y;     
-  static uint16_t pixel_x, pixel_y; 
+  static uint16_t raw_x, raw_y;
+  static int16_t pixel_x, pixel_y;
   static int16_t tscalibration[6];
   static void init();
   static uint8_t read_buttons();
