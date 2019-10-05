@@ -280,7 +280,7 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
       STATIC_ITEM(MSG_HOTEND_TOO_COLD);
      #else
       BACK_ITEM(MSG_HOTEND_TOO_COLD);
-     #endif 
+     #endif
     else
   #endif
   {
@@ -355,15 +355,15 @@ void menu_move() {
         true
       #endif
     ) {
-      SUBMENUH(MSG_MOVE_X, lcd_move_get_x_amount);
-      SUBMENUH(MSG_MOVE_Y, lcd_move_get_y_amount);
+      SUBMENUH23(MSG_MOVE_X, lcd_move_get_x_amount);
+      SUBMENUH23(MSG_MOVE_Y, lcd_move_get_y_amount);
     }
     #if ENABLED(DELTA)
       else
         ACTION_ITEM(MSG_FREE_XY, lcd_lower_z_to_clip_height);
     #endif
 
-    SUBMENUH(MSG_MOVE_Z, lcd_move_get_z_amount);
+    SUBMENUH23(MSG_MOVE_Z, lcd_move_get_z_amount);
   }
   else
     GCODES_ITEM(MSG_AUTO_HOME, PSTR("G28"));

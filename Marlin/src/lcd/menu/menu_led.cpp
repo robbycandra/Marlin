@@ -74,7 +74,7 @@ void menu_led() {
   EDIT_ITEM(bool, MSG_LEDS, &led_on, leds.toggle);
   ACTION_ITEM(MSG_SET_LEDS_DEFAULT, leds.set_default);
   #if ENABLED(LED_COLOR_PRESETS)
-    SUBMENUH(MSG_LED_PRESETS, menu_led_presets);
+    SUBMENUH23(MSG_LED_PRESETS, menu_led_presets);
   #endif
   SUBMENU(MSG_CUSTOM_LEDS, menu_led_custom);
   END_MENU();

@@ -98,8 +98,14 @@ FORCE_INLINE void draw_menu_item_edit_P(const bool sel, const uint8_t row, PGM_P
 #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   #define draw_menu_item_submenu(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_submenu14(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenu21(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_submenu22(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
-  #define draw_menu_item_submenuh(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenu23(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenu24(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenu31(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenu32(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenu33(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenuh23(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_subedit(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_subselect(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_subscreen6(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
@@ -107,8 +113,14 @@ FORCE_INLINE void draw_menu_item_edit_P(const bool sel, const uint8_t row, PGM_P
 #else
   #define draw_menu_item_submenu(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_submenu14(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenu21(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_submenu22(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
-  #define draw_menu_item_submenuh(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenu23(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenu24(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenu31(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenu32(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenu33(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenuh23(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_subedit(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_subselect(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_subscreen6(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
@@ -202,6 +214,9 @@ class MenuItem_subedit {
     }
 };
 
+// dibuat double dengan 2x4
+// submenu adalah menu default / belum tahu berapa item
+// submenu24 adalah menu dengan format yg sudah di ketahui
 class MenuItem_submenu {
   public:
     static inline void action(PGM_P const, const screenFunc_t func) {
@@ -218,6 +233,14 @@ class MenuItem_submenu14 {
     }
 };
 
+class MenuItem_submenu21 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_2X1);
+    }
+};
+
 class MenuItem_submenu22 {
   public:
     static inline void action(PGM_P const, const screenFunc_t func) {
@@ -226,7 +249,46 @@ class MenuItem_submenu22 {
     }
 };
 
-class MenuItem_submenuh {
+class MenuItem_submenu23 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_2X3);
+    }
+};
+
+class MenuItem_submenu24 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_2X4);
+    }
+};
+
+class MenuItem_submenu31 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_3X1);
+    }
+};
+class MenuItem_submenu32 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_3X2);
+    }
+};
+
+class MenuItem_submenu33 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_3X3);
+    }
+};
+
+class MenuItem_submenuh23 {
   public:
     static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
@@ -506,13 +568,18 @@ class MenuItem_bool {
   #define BACK_ITEM(LABEL)          MENU_ITEM(back,LABEL)
 #endif
 #define SUBSCREEN6(LABEL, DEST)     MENU_ITEM(subscreen6, LABEL, DEST)
+#define SUBSCREEN8(LABEL, DEST)     MENU_ITEM(subscreen8, LABEL, DEST)
 #define SUBEDIT(LABEL, DEST)        MENU_ITEM(subedit, LABEL, DEST)
 #define SUBSELECT(LABEL, DEST)      MENU_ITEM(subselect, LABEL, DEST)
-//#define SUBMENU12(LABEL, DEST)      MENU_ITEM(submenu12, LABEL, DEST)
-//#define SUBMENU13(LABEL, DEST)      MENU_ITEM(submenu13, LABEL, DEST)
 #define SUBMENU14(LABEL, DEST)      MENU_ITEM(submenu14, LABEL, DEST)
+#define SUBMENU21(LABEL, DEST)      MENU_ITEM(submenu21, LABEL, DEST)
 #define SUBMENU22(LABEL, DEST)      MENU_ITEM(submenu22, LABEL, DEST)
-#define SUBMENUH(LABEL, DEST)       MENU_ITEM(submenuh, LABEL, DEST)
+#define SUBMENU23(LABEL, DEST)      MENU_ITEM(submenu23, LABEL, DEST)
+#define SUBMENU24(LABEL, DEST)      MENU_ITEM(submenu24, LABEL, DEST)
+#define SUBMENU31(LABEL, DEST)      MENU_ITEM(submenu31, LABEL, DEST)
+#define SUBMENU32(LABEL, DEST)      MENU_ITEM(submenu32, LABEL, DEST)
+#define SUBMENU33(LABEL, DEST)      MENU_ITEM(submenu33, LABEL, DEST)
+#define SUBMENUH23(LABEL, DEST)     MENU_ITEM(submenuh23, LABEL, DEST)
 #define SUBMENU(LABEL, DEST)        MENU_ITEM(submenu, LABEL, DEST)
 #define GCODES_ITEM(LABEL, GCODES)  MENU_ITEM(gcode, LABEL, GCODES)
 #define ACTION_ITEM(LABEL, ACTION)  MENU_ITEM(function, LABEL, ACTION)
@@ -594,8 +661,12 @@ void _lcd_draw_homing();
 #if ENABLED(TOUCH_CALIBRATION)
   void menu_touch_calibration();
   void menu_touch_testing();
+  void rmenu_setting_touchscreen();
 #endif
 
 #if ENABLED(POWER_LOSS_RECOVERY)
   void menu_job_recovery();
 #endif
+
+void rmenu_main();
+void rmenu_setting();

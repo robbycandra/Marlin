@@ -350,7 +350,7 @@ void menu_tmc() {
     SUBMENU(MSG_TMC_HOMING_THRS, menu_tmc_homing_thrs);
   #endif
   #if HAS_STEALTHCHOP
-    SUBMENUH(MSG_TMC_STEPPING_MODE, menu_tmc_step_mode);
+    SUBMENUH23(MSG_TMC_STEPPING_MODE, menu_tmc_step_mode);
   #endif
   END_MENU();
 }

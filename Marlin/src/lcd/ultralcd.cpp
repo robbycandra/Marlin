@@ -217,18 +217,43 @@ millis_t MarlinUI::next_button_update_ms; // = 0
         const uint8_t row = ((ui.lcd_menu_touched_coord & 0xF0) >> 4) - 1;
         const uint8_t col =  (ui.lcd_menu_touched_coord & 0x0F);
         switch (ui.screenMode) {
-          case SCRMODE_MENU_2X4:
-            touched_item_number = (int)(row / 3) * 2 + (col / 6);
-            menu_area_touched = true;
-            wait_for_untouched = true;
-            break;
           case SCRMODE_MENU_1X4:
             touched_item_number = row / 3;
             menu_area_touched = true;
             wait_for_untouched = true;
             break;
+          case SCRMODE_MENU_2X1:
+            touched_item_number = (int)(col / 6);
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
           case SCRMODE_MENU_2X2:
             touched_item_number = (int)(row / 6) * 2 + (col / 6 );
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
+          case SCRMODE_MENU_2X3:
+            touched_item_number = (int)(row / 4) * 2 + (col / 6 );
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
+          case SCRMODE_MENU_2X4:
+            touched_item_number = (int)(row / 3) * 2 + (col / 6);
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
+          case SCRMODE_MENU_3X1:
+            touched_item_number = (int)(col / 4);
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
+          case SCRMODE_MENU_3X2:
+            touched_item_number = (int)(row / 6) * 3 + (col / 4);
+            menu_area_touched = true;
+            wait_for_untouched = true;
+            break;
+          case SCRMODE_MENU_3X3:
+            touched_item_number = (int)(row / 4) * 3 + (col / 4);
             menu_area_touched = true;
             wait_for_untouched = true;
             break;
@@ -1032,6 +1057,18 @@ void MarlinUI::update() {
           }
           else if(screenMode == SCRMODE_MENU_2X4) {
             encoderPosition += (encoderDiff * encoderMultiplier * 6) / (ENCODER_PULSES_PER_STEP);
+          }
+          else if(screenMode == SCRMODE_MENU_2X3) {
+            encoderPosition += (encoderDiff * encoderMultiplier * 4) / (ENCODER_PULSES_PER_STEP);
+          }
+          else if(screenMode == SCRMODE_MENU_2X2) {
+            encoderPosition += (encoderDiff * encoderMultiplier * 2) / (ENCODER_PULSES_PER_STEP);
+          }
+          else if(screenMode == SCRMODE_MENU_3X3) {
+            encoderPosition += (encoderDiff * encoderMultiplier * 6) / (ENCODER_PULSES_PER_STEP);
+          }
+          else if(screenMode == SCRMODE_MENU_3X2) {
+            encoderPosition += (encoderDiff * encoderMultiplier * 3) / (ENCODER_PULSES_PER_STEP);
           }
           else {
             encoderPosition += (encoderDiff * encoderMultiplier) / (ENCODER_PULSES_PER_STEP);

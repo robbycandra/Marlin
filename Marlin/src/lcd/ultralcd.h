@@ -250,8 +250,13 @@ enum RexyzScreenMode : uint8_t {
   SCRMODE_EDIT_SCREEN,
   SCRMODE_SELECT_SCREEN,
   SCRMODE_MENU_1X4,
+  SCRMODE_MENU_2X1,
   SCRMODE_MENU_2X2,
+  SCRMODE_MENU_2X3,
   SCRMODE_MENU_2X4,
+  SCRMODE_MENU_3X1,
+  SCRMODE_MENU_3X2,
+  SCRMODE_MENU_3X3,
   SCRMODE_MENU_H_2X3,
   SCRMODE_STATIC,
   SCRMODE_SCREEN_1X6,
@@ -430,11 +435,11 @@ public:
         static bool first_touch;
         static uint8_t repeat_delay;
         static uint8_t lcd_menu_touched_coord;
-      #endif  
-    #endif  
+      #endif
+    #endif
     #if HAS_FULL_SCALE_TFT
       static bool menu_is_touched(int8_t itemNumber);
-    #endif  
+    #endif
 
     #if ENABLED(ENCODER_RATE_MULTIPLIER)
       static bool encoderRateMultiplierEnabled;

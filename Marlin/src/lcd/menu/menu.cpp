@@ -407,11 +407,6 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
           menu_col = 1;
           menu_header = 0;
           break;
-        case SCRMODE_MENU_2X2 :
-          menu_row = 2;
-          menu_col = 2;
-          menu_header = 0;
-          break;
         case SCRMODE_SCREEN_1X6:
           menu_row = 6;
           menu_col = 1;
@@ -420,6 +415,41 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
         case SCRMODE_SCREEN_1X8:
           menu_row = 8;
           menu_col = 1;
+          menu_header = 0;
+          break;
+        case SCRMODE_MENU_2X1 :
+          menu_row = 1;
+          menu_col = 2;
+          menu_header = 0;
+          break;
+        case SCRMODE_MENU_2X2 :
+          menu_row = 2;
+          menu_col = 2;
+          menu_header = 0;
+          break;
+        case SCRMODE_MENU_2X3 :
+          menu_row = 3;
+          menu_col = 2;
+          menu_header = 0;
+          break;
+        case SCRMODE_MENU_2X4 :
+          menu_row = 4;
+          menu_col = 2;
+          menu_header = 0;
+          break;
+        case SCRMODE_MENU_3X1 :
+          menu_row = 1;
+          menu_col = 3;
+          menu_header = 0;
+          break;
+        case SCRMODE_MENU_3X2 :
+          menu_row = 2;
+          menu_col = 3;
+          menu_header = 0;
+          break;
+        case SCRMODE_MENU_3X3 :
+          menu_row = 3;
+          menu_col = 3;
           menu_header = 0;
           break;
         case SCRMODE_MENU_H_2X3:

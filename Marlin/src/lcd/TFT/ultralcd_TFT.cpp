@@ -322,39 +322,15 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   // draw item box based on sel and calculate row_str_base
   static bool mark_as_selected(uint8_t item_num, const bool sel) {
     switch(ui.screenMode) {
-      case SCRMODE_MENU_2X4 :
-        row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/4);
+      case SCRMODE_MENU_1X4 :
+        row_y1 = item_num * (LCD_PIXEL_HEIGHT/4);
         row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
-        if (item_num & 1) {
-          col_x1 = LCD_PIXEL_WIDTH / 2;
-          col_x2 = LCD_PIXEL_WIDTH - 1;
-        }
-        else {
-          col_x1 = 0;
-          col_x2 = LCD_PIXEL_WIDTH / 2 - 1;
-        }
-        break;
-      case SCRMODE_MENU_2X2 :
-        row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/2);
-        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/2) - 1;
-        if (item_num & 1) {
-          col_x1 = LCD_PIXEL_WIDTH / 2;
-          col_x2 = LCD_PIXEL_WIDTH - 1;
-        }
-        else {
-          col_x1 = 0;
-          col_x2 = LCD_PIXEL_WIDTH / 2 - 1;
-        }
+        col_x1 = 0;
+        col_x2 = LCD_PIXEL_WIDTH - 1;
         break;
       case SCRMODE_SCREEN_1X6 :
         row_y1 = item_num * (LCD_PIXEL_HEIGHT/6);
         row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/6) - 1;
-        col_x1 = 0;
-        col_x2 = LCD_PIXEL_WIDTH - 1;
-        break;
-      case SCRMODE_MENU_1X4 :
-        row_y1 = item_num * (LCD_PIXEL_HEIGHT/4);
-        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
         col_x1 = 0;
         col_x2 = LCD_PIXEL_WIDTH - 1;
         break;
@@ -363,6 +339,48 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
         row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/8) - 1;
         col_x1 = 0;
         col_x2 = LCD_PIXEL_WIDTH - 1;
+        break;
+      case SCRMODE_MENU_2X1 :
+        row_y1 = 0;
+        row_y2 = LCD_PIXEL_HEIGHT - 1;
+        col_x1 = (item_num & 1) * LCD_PIXEL_WIDTH / 2;
+        col_x2 = ((item_num & 1) + 1) * LCD_PIXEL_WIDTH/2 - 1;
+        break;
+      case SCRMODE_MENU_2X2 :
+        row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/2);
+        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/2) - 1;
+        col_x1 = (item_num & 1) * LCD_PIXEL_WIDTH / 2;
+        col_x2 = ((item_num & 1) + 1) * LCD_PIXEL_WIDTH/2 - 1;
+        break;
+      case SCRMODE_MENU_2X3 :
+        row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/3);
+        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/3) - 1;
+        col_x1 = (item_num & 1) * LCD_PIXEL_WIDTH / 2;
+        col_x2 = ((item_num & 1) + 1) * LCD_PIXEL_WIDTH/2 - 1;
+        break;
+      case SCRMODE_MENU_2X4 :
+        row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/4);
+        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
+        col_x1 = (item_num & 1) * LCD_PIXEL_WIDTH / 2;
+        col_x2 = ((item_num & 1) + 1) * LCD_PIXEL_WIDTH/2 - 1;
+        break;
+      case SCRMODE_MENU_3X1 :
+        row_y1 = 0;
+        row_y2 = LCD_PIXEL_HEIGHT - 1;
+        col_x1 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)) + 1) / 3;
+        col_x2 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)+1) + 1) / 3 - 1;
+        break;
+      case SCRMODE_MENU_3X2 :
+        row_y1 = (int)(item_num / 3) * (LCD_PIXEL_HEIGHT/2);
+        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/2) - 1;
+        col_x1 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)) + 1) / 3;
+        col_x2 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)+1) + 1) / 3 - 1;
+        break;
+      case SCRMODE_MENU_3X3 :
+        row_y1 = (int)(item_num / 3) * (LCD_PIXEL_HEIGHT/3);
+        row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/3) - 1;
+        col_x1 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)) + 1) / 3;
+        col_x2 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)+1) + 1) / 3 - 1;
         break;
       case SCRMODE_MENU_H_2X3 :
         if (!item_num) {
@@ -375,14 +393,8 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
           item_num++;
           row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/4);
           row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
-          if (item_num & 1) {
-            col_x1 = LCD_PIXEL_WIDTH / 2;
-            col_x2 = LCD_PIXEL_WIDTH - 1;
-          }
-          else {
-            col_x1 = 0;
-            col_x2 = LCD_PIXEL_WIDTH / 2 - 1;
-          }
+          col_x1 = (item_num & 1) * LCD_PIXEL_WIDTH / 2;
+          col_x2 = ((item_num & 1) + 1) * LCD_PIXEL_WIDTH - 1;
         }
         break;
     }
@@ -458,7 +470,8 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     if (mark_as_selected(row, sel)) {
       char str01[31], str02[31];
       uint8_t stringLen = strlen(pstr);
-      uint8_t maxStringLen = (int)((LCD_PIXEL_WIDTH / 2 - 4) / MENU_FONT_WIDTH);
+      uint8_t maxStringLen = (int)((col_x2 - col_x1 - 3) / MENU_FONT_WIDTH);
+      //uint8_t maxStringLen = (int)((LCD_PIXEL_WIDTH / 2 - 4) / MENU_FONT_WIDTH);
       if (post_char && post_char != ' ') {
         lcd_put_wchar(col_x2 - 2 - MENU_FONT_WIDTH, row_str_base, post_char);
         maxStringLen--;
@@ -468,7 +481,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
       }
       else {
         uint8_t i;
-        for (i = maxStringLen; i >= 0; i--) {
+        for (i = maxStringLen; i > 0; i--) {
           if (pstr[i] == ' ' )
             break;
         }
@@ -492,7 +505,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   void _draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm) {
     if (mark_as_selected(row, sel)) {
       draw_centered_string(row_str_base - 10, col_x1+2, col_x2-2, pstr, ' ', ' ');
-      draw_centered_string(row_str_base + 10, col_x1+2, col_x2-2, data, ' ', ' ');
+      draw_centered_string(row_str_base + 10, col_x1+2, col_x2-2, data, '>', ' ');
     }
   }
 
