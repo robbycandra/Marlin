@@ -26,7 +26,7 @@
 
 #include "../../inc/MarlinConfigPre.h"
 
-#if HAS_LCD_MENU
+#if HAS_LCD_MENU && ENABLED(REXYZ_TOUCH_MENU)
 
 #include "menu.h"
 
@@ -110,4 +110,4 @@ void rmenu_loadsave() {
   END_MENU();
 }
 
-#endif // HAS_LCD_MENU
+#endif // HAS_LCD_MENU & REXYZ_TOUCH_MENU

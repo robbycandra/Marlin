@@ -104,6 +104,19 @@ void menu_backlash();
     queue.inject_P(PSTR("M428"));
     ui.return_to_status();
   }
+  void _lcd_set_home_offsets_confirm() {
+    do_select_screen(
+      PSTR("Set Offset"), PSTR(MSG_BUTTON_CANCEL),
+      []{
+        queue.inject_P(PSTR("M428"));
+        #if HAS_BUZZER
+          ui.completion_feedback(true);
+        #endif
+      },
+      ui.goto_previous_screen,
+      PSTR("Set Home Offset"), nullptr, PSTR("?")
+    );
+  }
 #endif
 
 #if ENABLED(SD_FIRMWARE_UPDATE)
@@ -308,32 +321,6 @@ void menu_backlash();
     END_MENU();
   }
 #endif // !BABYSTEP_ZPROBE_OFFSET && HAS_BED_PROBE
-
-void lcd_menu_choose_menu() {
-  ui.encoder_direction_normal();
-  //ui.encoderPosition = rexyz_menu_mode;
-  if (ui.encoderPosition > 0x8000) ui.encoderPosition = 0;
-  if (ui.should_draw()) {
-    if (ui.encoderPosition < MENUMODE_BASIC) {
-      ui.encoderPosition = MENUMODE_BASIC;
-    }
-    if (ui.encoderPosition > MENUMODE_ADVANCE) {
-      ui.encoderPosition = MENUMODE_ADVANCE;
-    }
-    switch (ui.encoderPosition) {
-    case MENUMODE_BASIC:
-      draw_edit_screen(PSTR("Choose Probe"), "Basic Menu");
-      break;
-    case MENUMODE_ADVANCE:
-      draw_edit_screen(PSTR("Choose Probe"), "Advance Menu");
-      break;
-    }
-  }
-  if (ui.lcd_clicked) {
-    rexyz_menu_mode = (uint8_t)ui.encoderPosition;
-    if (ui.use_click()) ui.goto_previous_screen();
-  }
-}
 
 //
 // Advanced Settings > Temperature helpers
@@ -788,7 +775,15 @@ void menu_advanced_settings() {
     SUBMENU(MSG_ACCELERATION, menu_advanced_acceleration);
 
     // M205 - Max Jerk
-    SUBMENU(MSG_JERK, menu_advanced_jerk);
+    #if ENABLED(JUNCTION_DEVIATION)
+      #if ENABLED(LIN_ADVANCE)
+        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f, planner.recalculate_max_e_jerk);
+      #else
+        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f);
+      #endif
+    #else
+      SUBMENU(MSG_JERK, menu_advanced_jerk);
+    #endif
 
     if (!printer_busy()) {
       // M92 - Steps Per mm
@@ -875,6 +870,112 @@ void menu_advanced_settings() {
     SUBSELECT(MSG_INIT_EEPROM, lcd_init_eeprom_confirm);
   #endif
 
+  END_MENU();
+}
+
+#if ENABLED(REXYZ_TOUCH_MENU)
+
+//
+// LCD Menu
+//
+void rlcd_menu_choose_menu() {
+  ui.encoder_direction_normal();
+  //ui.encoderPosition = rexyz_menu_mode;
+  if (ui.encoderPosition > 0x8000) ui.encoderPosition = 0;
+  if (ui.should_draw()) {
+    if (ui.encoderPosition < MENUMODE_BASIC) {
+      ui.encoderPosition = MENUMODE_BASIC;
+    }
+    if (ui.encoderPosition > MENUMODE_ADVANCE) {
+      ui.encoderPosition = MENUMODE_ADVANCE;
+    }
+    switch (ui.encoderPosition) {
+    case MENUMODE_BASIC:
+      draw_edit_screen(PSTR("Choose Probe"), "Basic Menu");
+      break;
+    case MENUMODE_ADVANCE:
+      draw_edit_screen(PSTR("Choose Probe"), "Advance Menu");
+      break;
+    }
+  }
+  if (ui.lcd_clicked) {
+    rexyz_menu_mode = (uint8_t)ui.encoderPosition;
+    if (ui.use_click()) ui.goto_previous_screen();
+  }
+}
+
+void rmenu_setting_motion() {
+  START_MENU();
+  // M203 / M205 - Feedrate items
+  SUBMENU23(MSG_VELOCITY, menu_advanced_velocity);
+
+  // M201 - Acceleration items
+  SUBMENU23(MSG_ACCELERATION, menu_advanced_acceleration);
+
+  // M205 - Max Jerk
+  #if ENABLED(JUNCTION_DEVIATION)
+    #if ENABLED(LIN_ADVANCE)
+      EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f, planner.recalculate_max_e_jerk);
+    #else
+      EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f);
+    #endif
+  #else
+    SUBMENU23(MSG_JERK, menu_advanced_jerk);
+  #endif
+
+  if (!printer_busy()) {
+    // M92 - Steps Per mm
+    SUBMENU22(MSG_STEPS_PER_MM, menu_advanced_steps_per_mm);
+  }
+  #if HAS_M206_COMMAND
+    //
+    // Set Home Offsets
+    //
+    SUBSELECT(MSG_SET_HOME_OFFSETS, _lcd_set_home_offsets_confirm);
+  #endif
+
+  EDIT_ITEM(uint16_3, "Z Max Pos", &zv_max_pos, Z_MAX_POS - 30,  Z_MAX_POS + 20);
+
+  END_MENU();
+}
+
+void rmenu_setting() {
+  START_MENU();
+
+  SUBMENU32("Motion & Offset" , rmenu_setting_motion);
+
+  #if SHOW_MENU_ADVANCED_TEMPERATURE
+    SUBMENU23(MSG_TEMPERATURE, menu_advanced_temperature);
+  #endif
+
+  #if DISABLED(NO_VOLUMETRICS) || ENABLED(ADVANCED_PAUSE_FEATURE)
+    SUBMENU22(MSG_FILAMENT, menu_advanced_filament);
+  #elif ENABLED(LIN_ADVANCE)
+    #if EXTRUDERS == 1
+      EDIT_ITEM(float52, MSG_ADVANCE_K, &planner.extruder_advance_K[0], 0, 999);
+    #elif EXTRUDERS > 1
+      #define EDIT_ADVANCE_K(N) EDIT_ITEM(float52, MSG_ADVANCE_K MSG_E##N, &planner.extruder_advance_K[N-1], 0, 999)
+      EDIT_ADVANCE_K(1);
+      EDIT_ADVANCE_K(2);
+      #if EXTRUDERS > 2
+        EDIT_ADVANCE_K(3);
+        #if EXTRUDERS > 3
+          EDIT_ADVANCE_K(4);
+          #if EXTRUDERS > 4
+            EDIT_ADVANCE_K(5);
+            #if EXTRUDERS > 5
+              EDIT_ADVANCE_K(6);
+            #endif // EXTRUDERS > 5
+          #endif // EXTRUDERS > 4
+        #endif // EXTRUDERS > 3
+      #endif // EXTRUDERS > 2
+    #endif // EXTRUDERS > 1
+  #endif
+
+  SUBMENU21("Touch Screen", rmenu_setting_touchscreen);
+
+  SUBMENU22("Load & Save", rmenu_loadsave);
+
   do {
     _skipStatic = false;
     if (_menuLineNr == _thisItemNr) {
@@ -888,7 +989,7 @@ void menu_advanced_settings() {
         ui.refresh();
         ui.encoderPosition = rexyz_menu_mode;
         ui.screenMode = SCRMODE_EDIT_SCREEN;
-        ui.currentScreen = lcd_menu_choose_menu;
+        ui.currentScreen = rlcd_menu_choose_menu;
         if (screen_changed) return;
       }
       if (ui.should_draw())
@@ -907,4 +1008,5 @@ void menu_advanced_settings() {
   END_MENU();
 }
 
+#endif // REXYZ_TOUCH_MENU
 #endif // HAS_LCD_MENU

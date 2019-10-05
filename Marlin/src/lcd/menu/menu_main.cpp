@@ -168,6 +168,9 @@ void menu_main() {
   #endif
 
   SUBMENU(MSG_CONFIGURATION, menu_configuration);
+  #if ENABLED(REXYZ_TOUCH_MENU)
+    SUBMENU22("Rexyz Menu", rmenu_main);
+  #endif
 
   #if ENABLED(CUSTOM_USER_MENUS)
     SUBMENU(MSG_USER_MENU, menu_user);
@@ -267,4 +270,108 @@ void menu_main() {
   END_MENU();
 }
 
+#if ENABLED(REXYZ_TOUCH_MENU)
+
+#if ENABLED(AUTO_BED_LEVELING_UBL)
+  void _lcd_ubl_level_bed();
+#elif ENABLED(LCD_BED_LEVELING)
+  void menu_bed_leveling();
+#endif
+
+#if ENABLED(PROBE_MANUALLY)
+  extern bool g29_in_progress;
+#endif
+
+void rmenu_prepare() {
+  START_MENU();
+  SUBMENU22(MSG_MOTION, rmenu_motion);
+
+  //
+  // Level Bed
+  //
+  #if ENABLED(AUTO_BED_LEVELING_UBL)
+
+    SUBMENU(MSG_UBL_LEVEL_BED, _lcd_ubl_level_bed);
+
+  #elif ENABLED(LCD_BED_LEVELING)
+
+    if (!g29_in_progress) SUBMENU(MSG_BED_LEVELING, menu_bed_leveling);
+
+  #elif HAS_LEVELING && DISABLED(SLIM_LCD_MENUS)
+
+    #if DISABLED(PROBE_MANUALLY)
+      GCODES_ITEM(MSG_LEVEL_BED, PSTR("G28\nG29"));
+    #endif
+    if (all_axes_homed() && leveling_is_valid()) {
+      bool new_level_state = planner.leveling_active;
+      EDIT_ITEM(bool, MSG_BED_LEVELING, &new_level_state, _lcd_toggle_bed_leveling);
+    }
+    #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
+      EDIT_ITEM_FAST(float3, MSG_Z_FADE_HEIGHT, &lcd_z_fade_height, 0, 100, _lcd_set_z_fade_height);
+    #endif
+
+  #endif
+
+  #if ENABLED(ADVANCED_PAUSE_FEATURE)
+    #if E_STEPPERS == 1 && DISABLED(FILAMENT_LOAD_UNLOAD_GCODES)
+      if (thermalManager.targetHotEnoughToExtrude(active_extruder))
+        GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
+      else
+        SUBMENU22(MSG_FILAMENTCHANGE, menu_temp_e0_filament_change);
+    #else
+      SUBMENU(MSG_FILAMENTCHANGE, menu_change_filament);
+    #endif
+  #endif
+
+  SUBMENU(MSG_TEMPERATURE, menu_temperature);
+
+  END_MENU();
+}
+
+void rmenu_main() {
+  START_MENU();
+
+  const bool busy = printingIsActive()
+    #if ENABLED(SDSUPPORT)
+      , card_detected = card.isMounted()
+      , card_open = card_detected && card.isFileOpen()
+    #endif
+  ;
+
+  SUBMENU22("Prepare", rmenu_prepare);
+
+  SUBMENU32("Tune", menu_tune);
+
+  SUBMENU32("Setting", rmenu_setting);
+
+  #if HAS_ENCODER_WHEEL && ENABLED(SDSUPPORT)
+
+    if (card_detected) {
+      if (!card_open) {
+        /*
+        GCODES_ITEM(
+          #if PIN_EXISTS(SD_DETECT)
+            MSG_CHANGE_MEDIA, PSTR("M21")
+          #else
+            MSG_RELEASE_MEDIA, PSTR("M22")
+          #endif
+        );
+        */
+        SUBMENU14(MSG_MEDIA_MENU, menu_media);
+      }
+    }
+    else {
+      #if PIN_EXISTS(SD_DETECT)
+        ACTION_ITEM(MSG_NO_MEDIA, nullptr);
+      #else
+        GCODES_ITEM(MSG_INIT_MEDIA, PSTR("M21"));
+        ACTION_ITEM(MSG_MEDIA_RELEASED, nullptr);
+      #endif
+    }
+  #endif // HAS_ENCODER_WHEEL && SDSUPPORT
+
+  END_MENU();
+}
+
+#endif // REXYZ_TOUCH_MENU
 #endif // HAS_LCD_MENU

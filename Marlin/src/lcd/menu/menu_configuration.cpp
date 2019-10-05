@@ -427,8 +427,6 @@ void menu_configuration() {
   if (!busy)
     ACTION_ITEM(MSG_RESTORE_FAILSAFE, lcd_factory_settings);
 
-  SUBMENU22("Load & Save", rmenu_loadsave);
-
   END_MENU();
 }
 

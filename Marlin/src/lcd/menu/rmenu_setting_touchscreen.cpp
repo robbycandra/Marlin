@@ -297,4 +297,12 @@ void menu_touch_testing() {
   ui.defer_status_screen();
   ui.goto_screen(_lcd_touch_test_screen, SCRMODE_CALIBRATION);
 }
+
+void rmenu_setting_touchscreen() {
+  START_MENU();
+  ACTION_ITEM(MSG_TOUCHSCREEN_CALIBRATION, menu_touch_calibration);
+  ACTION_ITEM("TouchScreen Testing", menu_touch_testing);
+  END_MENU();
+}
+
 #endif // HAS_LCD_MENU && ENABLED(TOUCH_CALIBRATION)

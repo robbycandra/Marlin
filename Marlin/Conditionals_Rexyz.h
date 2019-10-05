@@ -189,16 +189,19 @@
     #define REXYZ_MACHINE_FRAME_TYPE "A1"
     #define REXYZ_BOARD_ROBINMINI
     #define REXYZ_STM32F1
+    #define REXYZ_TOUCH_MENU
 #endif
 #if defined(REXYZ_A2)
     #define REXYZ_MACHINE_FRAME_TYPE "A2"
     #define REXYZ_BOARD_ROBIN
     #define REXYZ_STM32F1
+    #define REXYZ_TOUCH_MENU
 #endif
 #if defined(REXYZ_D2)
     #define REXYZ_MACHINE_FRAME_TYPE "D2"
     #define REXYZ_BOARD_DLION
     #define REXYZ_STM32F1
+    #define REXYZ_TOUCH_MENU
 #endif
 
 //===========================================================================

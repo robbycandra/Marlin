@@ -535,4 +535,25 @@ void menu_motion() {
   END_MENU();
 }
 
+#if ENABLED(REXYZ_TOUCH_MENU)
+
+void rmenu_home_axis() {
+  START_MENU();
+  GCODES_ITEM(MSG_AUTO_HOME, PSTR("G28"));
+  GCODES_ITEM(MSG_AUTO_HOME_X, PSTR("G28 X"));
+  GCODES_ITEM(MSG_AUTO_HOME_Y, PSTR("G28 Y"));
+  GCODES_ITEM(MSG_AUTO_HOME_Z, PSTR("G28 Z"));
+  END_MENU();
+}
+
+void rmenu_motion() {
+  START_MENU();
+  SUBMENU(MSG_MOVE_AXIS, menu_move);
+  SUBMENU22("Home Axis", rmenu_home_axis);
+  GCODES_ITEM("Park Nozzle", PSTR("G27 P2"));
+  GCODES_ITEM(MSG_DISABLE_STEPPERS, PSTR("M84"));
+  END_MENU();
+}
+
+#endif // REXYZ_TOUCH_MENU
 #endif // HAS_LCD_MENU

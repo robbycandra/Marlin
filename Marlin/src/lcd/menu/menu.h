@@ -655,18 +655,25 @@ void _lcd_draw_homing();
 #if ENABLED(EEPROM_SETTINGS)
   void lcd_store_settings();
   void lcd_load_settings();
-  void rmenu_loadsave();
+  #if ENABLED(REXYZ_TOUCH_MENU)
+    void rmenu_loadsave();
+  #endif
 #endif
 
 #if ENABLED(TOUCH_CALIBRATION)
   void menu_touch_calibration();
   void menu_touch_testing();
-  void rmenu_setting_touchscreen();
+  #if ENABLED(REXYZ_TOUCH_MENU)
+    void rmenu_setting_touchscreen();
+  #endif
 #endif
 
 #if ENABLED(POWER_LOSS_RECOVERY)
   void menu_job_recovery();
 #endif
 
-void rmenu_main();
-void rmenu_setting();
+#if ENABLED(REXYZ_TOUCH_MENU)
+  void rmenu_main();
+  void rmenu_motion();
+  void rmenu_setting();
+#endif
