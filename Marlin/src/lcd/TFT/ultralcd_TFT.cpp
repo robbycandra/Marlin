@@ -315,9 +315,17 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
       u8g.setColorIndex(3);
       if (PAGE_CONTAINS(row_y1, row_y1)) u8g.drawHLine(col_x1, row_y1, w);
       if (PAGE_CONTAINS(row_y2, row_y2)) u8g.drawHLine(col_x1, row_y2, w);
-      u8g.drawVLine(col_x1, row_y1, h);
-      u8g.drawVLine(col_x2, row_y1, h);
+      if (PAGE_CONTAINS(row_y1, row_y2)) {
+        u8g.drawVLine(col_x1, row_y1, h);
+        u8g.drawVLine(col_x2, row_y1, h);
+      }
     }
+    u8g.setColorIndex(3);
+    if ((row_y2+1) < LCD_PIXEL_HEIGHT)
+      if (PAGE_CONTAINS(row_y2+1, row_y2+1)) u8g.drawHLine(col_x1, row_y2+1, w);
+    if (PAGE_CONTAINS(row_y1, row_y2)) {
+      if ((col_x2+1 < LCD_PIXEL_WIDTH))
+        u8g.drawVLine(col_x2+1, row_y1, h);
     u8g.setColorIndex(1);
   }
 
@@ -403,7 +411,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
         }
         break;
     }
-    if (!PAGE_CONTAINS(row_y1, row_y2)) return false;
+    if (!PAGE_CONTAINS(row_y1, row_y2+1)) return false;
     row_str_base = (row_y1+row_y2)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;
     if ((ui.screenMode != SCRMODE_SCREEN_1X6 && ui.screenMode != SCRMODE_SCREEN_1X8) || sel)
       draw_item_box(sel);
