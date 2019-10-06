@@ -1770,10 +1770,14 @@
 #ifndef LCD_WIDTH
   #if HAS_GRAPHICAL_LCD
    #if HAS_FULL_SCALE_TFT
-    #define LCD_WIDTH 32
+    #if ENABLED(FULL_SCALE_TFT_320X240)
+     #define LCD_WIDTH 31
+    #else
+     #define LCD_WIDTH 47
+    #endif
    #else
     #define LCD_WIDTH 21
-   #endif 
+   #endif
   #elif ENABLED(ULTIPANEL)
     #define LCD_WIDTH 20
   #elif HAS_SPI_LCD

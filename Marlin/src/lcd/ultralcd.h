@@ -65,8 +65,8 @@
   #if HAS_LCD_MENU
 
     #if HAS_GRAPHICAL_LCD
-      #define SETCURSOR(col, row) lcd_moveto(col * (MENU_FONT_WIDTH), (row + 1) * (MENU_FONT_HEIGHT))
-      #define SETCURSOR_RJ(len, row) lcd_moveto(LCD_PIXEL_WIDTH - (len) * (MENU_FONT_WIDTH), (row + 1) * (MENU_FONT_HEIGHT))
+      #define SETCURSOR(col, row) lcd_moveto(col * (MENU_FONT_WIDTH) + (MENU_FONT_WIDTH/2) , (row + 1) * (MENU_FONT_HEIGHT))
+      #define SETCURSOR_RJ(len, row) lcd_moveto(LCD_PIXEL_WIDTH - (len) * (MENU_FONT_WIDTH) - (MENU_FONT_WIDTH/2), (row + 1) * (MENU_FONT_HEIGHT))
       #define LCDPRINT(p) u8g.print(p)
       #define LCDWRITE(c) u8g.print(c)
     #else

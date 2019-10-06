@@ -82,6 +82,11 @@ U8G_CLASS u8g(U8G_PARAM);
 
 #include LANGUAGE_TFT_DATA_INCL(LCD_LANGUAGE)
 
+struct RexyzSplitedString {
+  char str01[50], str02[50], str03[50];
+  uint8_t numStr;
+};
+
 #if HAS_LCD_CONTRAST
 
   int16_t MarlinUI::contrast; // Initialized by settings.load()
@@ -463,40 +468,76 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     }
   }
 
+  RexyzSplitedString splitItemString(PGM_P pstr, uint8_t maxStringLen) {
+    uint8_t stringLen = strlen(pstr);
+    RexyzSplitedString output;
+
+    if (stringLen <= maxStringLen) {
+      strncpy(output.str01, pstr, stringLen);
+      output.str01[stringLen] = '\0';
+      output.numStr = 1;
+      return output;
+    }
+    else {
+      uint8_t i;
+      for (i = stringLen; i > 0; i--) {
+        if (pstr[i] == ' ' && i <= maxStringLen && (stringLen-i-1) <= maxStringLen)
+          break;
+      }
+      if (i) {
+        strncpy(output.str01, pstr, i);
+        output.str01[i] = '\0';
+        strncpy(output.str02, pstr+i+1, stringLen-i-1);
+        output.str02[stringLen-i-1] = '\0';
+        output.numStr = 2;
+        return output;
+      }
+      else {
+        if (stringLen <= maxStringLen*2) {
+          const uint8_t firstStrLen = (stringLen + 1) / 2;
+          strncpy(output.str01, pstr, firstStrLen);
+          output.str01[firstStrLen] = '\0';
+          strncpy(output.str02, pstr+firstStrLen, stringLen - firstStrLen);
+          output.str02[stringLen - firstStrLen] = '\0';
+          output.numStr = 2;
+          return output;
+        }
+        else {
+          if (stringLen > maxStringLen*3) stringLen = maxStringLen * 3;
+          strncpy(output.str01, pstr, maxStringLen);
+          output.str01[maxStringLen] = '\0';
+          strncpy(output.str02, pstr+maxStringLen, maxStringLen);
+          output.str02[maxStringLen] = '\0';
+          strncpy(output.str03, pstr+maxStringLen*2, stringLen - maxStringLen*2);
+          output.str03[stringLen-maxStringLen*2] = '\0';
+          output.numStr = 3;
+          return output;
+        }
+      }
+    }
+  }
+
+
   // Draw a generic menu item
   void draw_menu_item(const bool sel, const uint8_t row, PGM_P const pstr, const char pre_char, const char post_char) {
     UNUSED(pre_char);
 
     if (mark_as_selected(row, sel)) {
-      char str01[31], str02[31];
-      uint8_t stringLen = strlen(pstr);
+      RexyzSplitedString splitedStr;
+
       uint8_t maxStringLen = (int)((col_x2 - col_x1 - 3) / MENU_FONT_WIDTH);
-      //uint8_t maxStringLen = (int)((LCD_PIXEL_WIDTH / 2 - 4) / MENU_FONT_WIDTH);
       if (post_char && post_char != ' ') {
         lcd_put_wchar(col_x2 - 2 - MENU_FONT_WIDTH, row_str_base, post_char);
         maxStringLen--;
       }
-      if (stringLen <= maxStringLen) {
-        draw_centered_string(row_str_base, col_x1+2, col_x2-2, pstr, ' ', ' ');
+
+      splitedStr = splitItemString(pstr,maxStringLen);
+      if (splitedStr.numStr == 1) {
+        draw_centered_string(row_str_base, col_x1+2, col_x2-2, splitedStr.str01, ' ', ' ');
       }
       else {
-        uint8_t i;
-        for (i = maxStringLen; i > 0; i--) {
-          if (pstr[i] == ' ' )
-            break;
-        }
-        if (i) {
-          strncpy(str01, pstr, i);
-          str01[i] = '\0';
-          strncpy(str02, pstr+i+1, maxStringLen);
-        }
-        else {
-          strncpy(str01, pstr, maxStringLen);
-          str01[maxStringLen] = '\0';
-          strncpy(str02, pstr+maxStringLen, maxStringLen);
-        }
-        draw_centered_string(row_str_base - 10, col_x1+2, col_x2-2, str01, ' ', ' ');
-        draw_centered_string(row_str_base + 10, col_x1+2, col_x2-2, str02, ' ', ' ');
+        draw_centered_string(row_str_base - MENU_FONT_HEIGHT/2, col_x1+2, col_x2-2, splitedStr.str01, ' ', ' ');
+        draw_centered_string(row_str_base + MENU_FONT_HEIGHT/2, col_x1+2, col_x2-2, splitedStr.str02, ' ', ' ');
       }
     }
   }
@@ -504,8 +545,17 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   // Draw a menu item with an editable value
   void _draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm) {
     if (mark_as_selected(row, sel)) {
-      draw_centered_string(row_str_base - 10, col_x1+2, col_x2-2, pstr, ' ', ' ');
-      draw_centered_string(row_str_base + 10, col_x1+2, col_x2-2, data, '>', ' ');
+      const uint8_t maxStringLen = (int)((col_x2 - col_x1 - 3) / MENU_FONT_WIDTH);
+      const RexyzSplitedString splitedStr = splitItemString(pstr,maxStringLen);
+      if (splitedStr.numStr == 1) {
+        draw_centered_string(row_str_base - MENU_FONT_HEIGHT/2, col_x1+2, col_x2-2, pstr, ' ', ' ');
+        draw_centered_string(row_str_base + MENU_FONT_HEIGHT/2, col_x1+2, col_x2-2, data, '>', ' ');
+      }
+      else {
+        draw_centered_string(row_str_base - MENU_FONT_HEIGHT, col_x1+2, col_x2-2, splitedStr.str01, ' ', ' ');
+        draw_centered_string(row_str_base, col_x1+2, col_x2-2, splitedStr.str02, ' ', ' ');
+        draw_centered_string(row_str_base + MENU_FONT_HEIGHT, col_x1+2, col_x2-2, data, '>', ' ');
+      }
     }
   }
 
@@ -519,30 +569,15 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   void draw_edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/) {
     ui.encoder_direction_normal();
 
-    constexpr u8g_uint_t lcd_chr_fit = LCD_PIXEL_WIDTH / EDIT_FONT_WIDTH;
-    const u8g_uint_t labellen = utf8_strlen_P(pstr), vallen = utf8_strlen(value);
-    bool extra_row = labellen + vallen > lcd_chr_fit - 2;
-
-    // Center the label and value lines on the middle line
-    u8g_uint_t baseline = extra_row ? (LCD_PIXEL_HEIGHT) / 2 - 1
-                                    : (LCD_PIXEL_HEIGHT + EDIT_FONT_ASCENT) / 2;
-
-    // Assume the label is alpha-numeric (with a descender)
-    bool onpage = PAGE_CONTAINS(baseline - (EDIT_FONT_ASCENT - 1), baseline + EDIT_FONT_DESCENT);
-    if (onpage) lcd_put_u8str_P(0, baseline, pstr);
-
-    // If a value is included, print a colon, then print the value right-justified
+    u8g_uint_t baseline = (LCD_PIXEL_HEIGHT) / 2 - 1;
+    if (PAGE_CONTAINS(baseline - (EDIT_FONT_ASCENT - 1), baseline + EDIT_FONT_DESCENT)) {
+      draw_centered_string(baseline, 0, LCD_PIXEL_WIDTH-1, pstr, ' ', ' ');
+      if (value != nullptr) lcd_put_wchar(':');
+    }
     if (value != nullptr) {
-      lcd_put_wchar(':');
-      if (extra_row) {
-        // Assume that value is numeric (with no descender)
-        baseline += EDIT_FONT_ASCENT + 2;
-        onpage = PAGE_CONTAINS(baseline - (EDIT_FONT_ASCENT - 1), baseline);
-      }
-      if (onpage) {
-        lcd_put_wchar(((lcd_chr_fit - 1) - (vallen + 1)) * EDIT_FONT_WIDTH, baseline, ' '); // Right-justified, padded, add a leading space
-        lcd_put_u8str(value);
-      }
+      baseline += EDIT_FONT_HEIGHT;
+      if (PAGE_CONTAINS(baseline - (EDIT_FONT_ASCENT - 1), baseline + EDIT_FONT_DESCENT))
+        draw_centered_string(baseline, 0, LCD_PIXEL_WIDTH-1, value, ' ', ' ');
     }
     /*
      * TODO: Gunakan ini jika encoder button ingin di hilangkan

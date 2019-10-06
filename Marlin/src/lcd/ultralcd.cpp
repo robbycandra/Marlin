@@ -85,6 +85,7 @@
 
 #if HAS_GRAPHICAL_LCD
  #if HAS_FULL_SCALE_TFT
+  #include "TFT/TFT_screen_defines.h"
   #include "TFT/ultralcd_TFT.h "
  #else
   #include "dogm/ultralcd_DOGM.h"
@@ -320,6 +321,11 @@ millis_t MarlinUI::next_button_update_ms; // = 0
       SETCURSOR(0, row);              // Simulate carriage return
     };
 
+    #if HAS_FULL_SCALE_TFT
+      const uint8_t maxStringLen = LCD_PIXEL_WIDTH / MENU_FONT_WIDTH - 1;
+    #else
+      const uint8_t maxStringLen = LCD_WIDTH;
+    #endif
     uint8_t *p = (uint8_t*)string;
     wchar_t ch;
     if (wordwrap) {
@@ -333,7 +339,7 @@ millis_t MarlinUI::next_button_update_ms; // = 0
         if (eol || ch == ' ' || ch == '-' || ch == '+' || ch == '.') {
           if (!c && ch == ' ') { if (wrd) wrd++; continue; } // collapse extra spaces
           // Past the right and the word is not too long?
-          if (col + c > LCD_WIDTH && col >= (LCD_WIDTH) / 4) _newline(); // should it wrap?
+          if (col + c > maxStringLen && col >= (maxStringLen) / 4) _newline(); // should it wrap?
           c += !eol;                  // +1 so the space will be printed
           col += c;                   // advance col to new position
           while (c) {                 // character countdown
@@ -353,7 +359,7 @@ millis_t MarlinUI::next_button_update_ms; // = 0
         if (!ch) break;
         lcd_put_wchar(ch);
         col++;
-        if (col >= LCD_WIDTH) _newline();
+        if (col >= maxStringLen) _newline();
       }
     }
   }
@@ -361,8 +367,14 @@ millis_t MarlinUI::next_button_update_ms; // = 0
   void MarlinUI::draw_select_screen_prompt(PGM_P const pref, const char * const string/*=nullptr*/, PGM_P const suff/*=nullptr*/) {
     const uint8_t plen = utf8_strlen_P(pref), slen = suff ? utf8_strlen_P(suff) : 0;
     uint8_t col = 0, row = 0;
-    if (!string && plen + slen <= LCD_WIDTH) {
-      col = (LCD_WIDTH - plen - slen) / 2;
+    #if HAS_FULL_SCALE_TFT
+      const uint8_t maxStringLen = LCD_PIXEL_WIDTH / MENU_FONT_WIDTH - 1;
+    #else
+      const uint8_t maxStringLen = LCD_WIDTH;
+    #endif
+
+    if (!string && plen + slen <= maxStringLen) {
+      col = (maxStringLen - plen - slen) / 2;
      #if HAS_FULL_SCALE_TFT
       row = 2;
      #else

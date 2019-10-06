@@ -681,16 +681,17 @@ void MarlinUI::draw_status_message(const bool blink) {
 
   // Get the UTF8 character count of the string
   uint8_t slen = utf8_strlen(status_message);
+  const uint8_t maxStatusLen = LCD_PIXEL_WIDTH / MENU_FONT_WIDTH - 1;
 
   #if ENABLED(STATUS_MESSAGE_SCROLLING)
 
     static bool last_blink = false;
 
-    if (slen <= LCD_WIDTH-1) {
+    if (slen <= maxStatusLen) {
       // The string fits within the line. Print with no scrolling
       lcd_moveto((LCD_PIXEL_WIDTH-slen*MENU_FONT_WIDTH)/2-1, row_str1_base);
       lcd_put_u8str(status_message);
-      while (slen < LCD_WIDTH-1) { lcd_put_wchar(' '); ++slen; }
+      while (slen < maxStatusLen) { lcd_put_wchar(' '); ++slen; }
     }
     else {
       // String is longer than the available space
@@ -699,13 +700,13 @@ void MarlinUI::draw_status_message(const bool blink) {
       // and the string remaining length
       uint8_t rlen;
       const char *stat = status_and_len(rlen);
-      lcd_moveto(OFFSET_X, row_str1_base);
+      lcd_moveto(MENU_FONT_WIDTH/2-1, row_str1_base);
       lcd_put_u8str_max(stat, LCD_PIXEL_WIDTH);
 
       // If the remaining string doesn't completely fill the screen
-      if (rlen < LCD_WIDTH - 1) {
+      if (rlen < maxStatusLen) {
         lcd_put_wchar('.');                     // Always at 1+ spaces left, draw a dot
-        uint8_t chars = LCD_WIDTH - rlen - 1;       // Amount of space left in characters
+        uint8_t chars = maxStatusLen - rlen;       // Amount of space left in characters
         if (--chars) {                          // Draw a second dot if there's space
           lcd_put_wchar('.');
           if (--chars) {                        // Print a second copy of the message
@@ -725,14 +726,17 @@ void MarlinUI::draw_status_message(const bool blink) {
     UNUSED(blink);
 
     // Just print the string to the LCD
-    if (slen <= LCD_WIDTH-1) {
+
+    if (slen < maxStatusLen) {
+      // Centered
       lcd_moveto((LCD_PIXEL_WIDTH-slen*MENU_FONT_WIDTH)/2-1, row_str1_base);
     else
-      lcd_moveto(OFFSET_X, row_str1_base);
+      // Left Justified
+      lcd_moveto(MENU_FONT_WIDTH/2-1, row_str1_base);
     lcd_put_u8str_max(status_message, LCD_PIXEL_WIDTH);
 
     // Fill the rest with spaces
-    for (; slen < LCD_WIDTH; ++slen) lcd_put_wchar(' ');
+    for (; slen < maxStatusLen; ++slen) lcd_put_wchar(' ');
 
   #endif // !STATUS_MESSAGE_SCROLLING
 }
