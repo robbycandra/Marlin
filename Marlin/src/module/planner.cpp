@@ -1199,8 +1199,13 @@ void Planner::check_axes_activity() {
     #endif
 
     #if FAN_COUNT > 0
-      FANS_LOOP(i)
+      FANS_LOOP(i) {
+       #if ENABLED(SINGLE_AUTO_FAN)
+        tail_fan_speed[i] = _MAX(thermalManager.scaledFanSpeed(i, block->fan_speed[i]), thermalManager.minimum_fan_speed);
+       #else
         tail_fan_speed[i] = thermalManager.scaledFanSpeed(i, block->fan_speed[i]);
+       #endif
+      }
     #endif
 
     #if ENABLED(BARICUDA)
@@ -1221,8 +1226,13 @@ void Planner::check_axes_activity() {
   }
   else {
     #if FAN_COUNT > 0
-      FANS_LOOP(i)
+      FANS_LOOP(i) {
+       #if ENABLED(SINGLE_AUTO_FAN)
+        tail_fan_speed[i] = _MAX(thermalManager.scaledFanSpeed(i), thermalManager.minimum_fan_speed);
+       #else
         tail_fan_speed[i] = thermalManager.scaledFanSpeed(i);
+       #endif
+      }
     #endif
 
     #if ENABLED(BARICUDA)

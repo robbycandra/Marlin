@@ -463,6 +463,10 @@ class Temperature {
     #if FAN_COUNT > 0
 
       static uint8_t fan_speed[FAN_COUNT];
+      #if ENABLED(SINGLE_AUTO_FAN)
+        static uint8_t minimum_fan_speed;
+      #endif
+
       #define FANS_LOOP(I) LOOP_L_N(I, FAN_COUNT)
 
       static void set_fan_speed(const uint8_t target, const uint16_t speed);

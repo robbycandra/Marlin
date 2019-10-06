@@ -504,7 +504,6 @@ void MarlinUI::draw_status_screen() {
           #if ENABLED(ADAPTIVE_FAN_SLOWING)
             if (!blink && thermalManager.fan_speed_scaler[0] < 128) {
               spd = thermalManager.scaledFanSpeed(0, spd);
-              c = '*';
             }
           #endif
           u8g.setFont(MENU_FONT_NAME);
@@ -513,13 +512,28 @@ void MarlinUI::draw_status_screen() {
         }
       }
       if (PAGE_CONTAINS(row_str2_top, row_str2_botm)) {
-        char c = '%';
-        uint16_t spd = thermalManager.fan_speed[0];
-        if (spd) {
-          u8g.setFont(MENU_FONT_NAME);
-          lcd_moveto((LCD_PIXEL_WIDTH/4*3)+65, row_str2_base);
-          lcd_put_wchar(c);
-        }
+        #if ENABLED(SINGLE_AUTO_FAN)
+          uint16_t spd = thermalManager.fan_speed[0];
+          if (spd || thermalManager.minimum_fan_speed) {
+            #if ENABLED(ADAPTIVE_FAN_SLOWING)
+              if (!blink && thermalManager.fan_speed_scaler[0] < 128) {
+                spd = thermalManager.scaledFanSpeed(0, spd);
+              }
+            #endif
+            spd = _MAX(spd, thermalManager.minimum_fan_speed);
+            u8g.setFont(MENU_FONT_NAME);
+            lcd_moveto((LCD_PIXEL_WIDTH/4*3)+FAN_IMAGE_SIZE+OFFSET_X , row_str2_base);
+            lcd_put_u8str(i16tostr3(thermalManager.fanPercent(spd)));
+          }
+        #else
+          char c = '%';
+          uint16_t spd = thermalManager.fan_speed[0];
+          if (spd) {
+            u8g.setFont(MENU_FONT_NAME);
+            lcd_moveto((LCD_PIXEL_WIDTH/4*3)+65, row_str2_base);
+            lcd_put_wchar(c);
+          }
+        #endif
       }
     #endif
   }

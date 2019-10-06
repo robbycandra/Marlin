@@ -127,6 +127,9 @@ Temperature thermalManager;
 #if FAN_COUNT > 0
 
   uint8_t Temperature::fan_speed[FAN_COUNT]; // = { 0 }
+  #if ENABLED(SINGLE_AUTO_FAN)
+    uint8_t Temperature::minimum_fan_speed;
+  #endif
 
   #if ENABLED(EXTRA_FAN_SPEED)
     uint8_t Temperature::old_fan_speed[FAN_COUNT], Temperature::new_fan_speed[FAN_COUNT];
@@ -761,27 +764,22 @@ int16_t Temperature::getHeaterPower(const heater_ind_t heater_id) {
     }
   }
 
-#else ENABLED(SINGLE_AUTO_FAN)
+#elif ENABLED(SINGLE_AUTO_FAN)
 
   void Temperature::checkExtruderSingleAutoFan() {
-    uint8_t fan_Auto_Speed = 0;
 
     #ifndef EXTRUDER_AUTO_FAN_TEMPERATURE_MAX
       #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX EXTRUDER_AUTO_FAN_TEMPERATURE
     #endif
 
     if (temp_hotend[0].celsius >= EXTRUDER_AUTO_FAN_TEMPERATURE_MAX) {
-      fan_Auto_Speed = EXTRUDER_AUTO_FAN_SPEED;
+      minimum_fan_speed = EXTRUDER_AUTO_FAN_SPEED;
     }
     else if (temp_hotend[0].celsius < EXTRUDER_AUTO_FAN_TEMPERATURE) {
-      fan_Auto_Speed = 0; // Minimum Fan Speed
+      minimum_fan_speed = 0; // Minimum Fan Speed
     }
     else {
-      fan_Auto_Speed = EXTRUDER_AUTO_FAN_SPEED * (temp_hotend[0].celsius - EXTRUDER_AUTO_FAN_TEMPERATURE) / (EXTRUDER_AUTO_FAN_TEMPERATURE_MAX - EXTRUDER_AUTO_FAN_TEMPERATURE);
-    }
-
-    if (fan_speed[0] < fan_Auto_Speed) {
-      set_fan_speed(0, fan_Auto_Speed);
+      minimum_fan_speed = EXTRUDER_AUTO_FAN_SPEED * (temp_hotend[0].celsius - EXTRUDER_AUTO_FAN_TEMPERATURE) / (EXTRUDER_AUTO_FAN_TEMPERATURE_MAX - EXTRUDER_AUTO_FAN_TEMPERATURE);
     }
   }
 
