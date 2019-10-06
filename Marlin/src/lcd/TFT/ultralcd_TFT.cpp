@@ -323,7 +323,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     u8g.setColorIndex(3);
     if ((row_y2+1) < LCD_PIXEL_HEIGHT)
       if (PAGE_CONTAINS(row_y2+1, row_y2+1)) u8g.drawHLine(col_x1, row_y2+1, w);
-    if (PAGE_CONTAINS(row_y1, row_y2)) {
+    if (PAGE_CONTAINS(row_y1, row_y2))
       if ((col_x2+1 < LCD_PIXEL_WIDTH))
         u8g.drawVLine(col_x2+1, row_y1, h);
     u8g.setColorIndex(1);
