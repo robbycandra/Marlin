@@ -105,7 +105,11 @@ FORCE_INLINE void draw_menu_item_edit_P(const bool sel, const uint8_t row, PGM_P
   #define draw_menu_item_submenu31(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_submenu32(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_submenu33(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenuh21(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenuh22(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_submenuh23(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenuh31(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
+  #define draw_menu_item_submenuh32(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_subedit(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_subselect(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
   #define draw_menu_item_subscreen6(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', '>')
@@ -120,7 +124,11 @@ FORCE_INLINE void draw_menu_item_edit_P(const bool sel, const uint8_t row, PGM_P
   #define draw_menu_item_submenu31(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_submenu32(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_submenu33(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenuh21(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenuh22(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_submenuh23(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenuh31(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
+  #define draw_menu_item_submenuh32(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_subedit(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_subselect(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
   #define draw_menu_item_subscreen6(sel, row, pstr, data)  draw_menu_item(sel, row, pstr, '>', LCD_STR_ARROW_RIGHT[0])
@@ -288,11 +296,43 @@ class MenuItem_submenu33 {
     }
 };
 
+class MenuItem_submenuh21 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_H_2X1);
+    }
+};
+
+class MenuItem_submenuh22 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_H_2X2);
+    }
+};
+
 class MenuItem_submenuh23 {
   public:
     static inline void action(PGM_P const, const screenFunc_t func) {
       ui.save_previous_screen();
       ui.goto_screen(func, SCRMODE_MENU_H_2X3);
+    }
+};
+
+class MenuItem_submenuh31 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_H_3X1);
+    }
+};
+
+class MenuItem_submenuh32 {
+  public:
+    static inline void action(PGM_P const, const screenFunc_t func) {
+      ui.save_previous_screen();
+      ui.goto_screen(func, SCRMODE_MENU_H_3X2);
     }
 };
 
@@ -579,7 +619,11 @@ class MenuItem_bool {
 #define SUBMENU31(LABEL, DEST)      MENU_ITEM(submenu31, LABEL, DEST)
 #define SUBMENU32(LABEL, DEST)      MENU_ITEM(submenu32, LABEL, DEST)
 #define SUBMENU33(LABEL, DEST)      MENU_ITEM(submenu33, LABEL, DEST)
+#define SUBMENUH21(LABEL, DEST)     MENU_ITEM(submenuh21, LABEL, DEST)
+#define SUBMENUH22(LABEL, DEST)     MENU_ITEM(submenuh22, LABEL, DEST)
 #define SUBMENUH23(LABEL, DEST)     MENU_ITEM(submenuh23, LABEL, DEST)
+#define SUBMENUH31(LABEL, DEST)     MENU_ITEM(submenuh31, LABEL, DEST)
+#define SUBMENUH32(LABEL, DEST)     MENU_ITEM(submenuh32, LABEL, DEST)
 #define SUBMENU(LABEL, DEST)        MENU_ITEM(submenu, LABEL, DEST)
 #define GCODES_ITEM(LABEL, GCODES)  MENU_ITEM(gcode, LABEL, GCODES)
 #define ACTION_ITEM(LABEL, ACTION)  MENU_ITEM(function, LABEL, ACTION)

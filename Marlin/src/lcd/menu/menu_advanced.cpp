@@ -972,7 +972,7 @@ void rmenu_setting() {
     #endif // EXTRUDERS > 1
   #endif
 
-  SUBMENU21("Touch Screen", rmenu_setting_touchscreen);
+  SUBMENUH21("Touch Screen", rmenu_setting_touchscreen);
 
   SUBMENU22("Load & Save", rmenu_loadsave);
 

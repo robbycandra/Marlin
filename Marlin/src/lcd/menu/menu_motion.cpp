@@ -355,15 +355,15 @@ void menu_move() {
         true
       #endif
     ) {
-      SUBMENUH23(MSG_MOVE_X, lcd_move_get_x_amount);
-      SUBMENUH23(MSG_MOVE_Y, lcd_move_get_y_amount);
+      SUBMENUH31(MSG_MOVE_X, lcd_move_get_x_amount);
+      SUBMENUH31(MSG_MOVE_Y, lcd_move_get_y_amount);
     }
     #if ENABLED(DELTA)
       else
         ACTION_ITEM(MSG_FREE_XY, lcd_lower_z_to_clip_height);
     #endif
 
-    SUBMENUH23(MSG_MOVE_Z, lcd_move_get_z_amount);
+    SUBMENUH31(MSG_MOVE_Z, lcd_move_get_z_amount);
   }
   else
     GCODES_ITEM(MSG_AUTO_HOME, PSTR("G28"));
@@ -425,7 +425,7 @@ void menu_move() {
     #else
 
       // Independent extruders with one E-stepper per hotend
-      SUBEDIT(MSG_MOVE_E, lcd_move_get_e_amount);
+      SUBMENUH31(MSG_MOVE_E, lcd_move_get_e_amount);
       #if E_MANUAL > 1
         SUBEDIT(MSG_MOVE_E MSG_MOVE_E1, lcd_move_get_e0_amount);
         SUBEDIT(MSG_MOVE_E MSG_MOVE_E2, lcd_move_get_e1_amount);
@@ -548,7 +548,7 @@ void rmenu_home_axis() {
 
 void rmenu_motion() {
   START_MENU();
-  SUBMENU(MSG_MOVE_AXIS, menu_move);
+  SUBMENU22(MSG_MOVE_AXIS, menu_move);
   SUBMENU22("Home Axis", rmenu_home_axis);
   GCODES_ITEM("Park Nozzle", PSTR("G27 P2"));
   GCODES_ITEM(MSG_DISABLE_STEPPERS, PSTR("M84"));

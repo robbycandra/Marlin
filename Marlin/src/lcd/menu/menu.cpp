@@ -460,9 +460,29 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
           menu_col = 3;
           menu_header = 0;
           break;
+        case SCRMODE_MENU_H_2X1:
+          menu_row = 1;
+          menu_col = 2;
+          menu_header = 1;
+          break;
+        case SCRMODE_MENU_H_2X2:
+          menu_row = 2;
+          menu_col = 2;
+          menu_header = 1;
+          break;
         case SCRMODE_MENU_H_2X3:
           menu_row = 3;
           menu_col = 2;
+          menu_header = 1;
+          break;
+        case SCRMODE_MENU_H_3X1:
+          menu_row = 1;
+          menu_col = 3;
+          menu_header = 1;
+          break;
+        case SCRMODE_MENU_H_3X2:
+          menu_row = 2;
+          menu_col = 3;
           menu_header = 1;
           break;
         default :

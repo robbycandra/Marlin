@@ -395,6 +395,36 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
         col_x1 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)) + 1) / 3;
         col_x2 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)+1) + 1) / 3 - 1;
         break;
+      case SCRMODE_MENU_H_2X1 :
+        if (!item_num) {
+          row_y1 = 0;
+          row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
+          col_x1 = 0;
+          col_x2 = LCD_PIXEL_WIDTH - 1;
+        }
+        else {
+          item_num++;
+          row_y1 = (LCD_PIXEL_HEIGHT/4);
+          row_y2 = LCD_PIXEL_HEIGHT - 1;
+          col_x1 = (item_num & 1) * LCD_PIXEL_WIDTH / 2;
+          col_x2 = ((item_num & 1) + 1) * LCD_PIXEL_WIDTH / 2 - 1;
+        }
+        break;
+      case SCRMODE_MENU_H_2X2 :
+        if (!item_num) {
+          row_y1 = 0;
+          row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/6) - 1;
+          col_x1 = 0;
+          col_x2 = LCD_PIXEL_WIDTH - 1;
+        }
+        else {
+          item_num--;
+          row_y1 = (LCD_PIXEL_HEIGHT/6) + (item_num >> 1) * (LCD_PIXEL_HEIGHT*5/12) ;
+          row_y2 = row_y1 + (LCD_PIXEL_HEIGHT*5/12) - 1;
+          col_x1 = (item_num & 1) * LCD_PIXEL_WIDTH / 2;
+          col_x2 = ((item_num & 1) + 1) * LCD_PIXEL_WIDTH/2 - 1;
+        }
+        break;
       case SCRMODE_MENU_H_2X3 :
         if (!item_num) {
           row_y1 = 0;
@@ -407,9 +437,44 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
           row_y1 = (item_num >> 1) * (LCD_PIXEL_HEIGHT/4);
           row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
           col_x1 = (item_num & 1) * LCD_PIXEL_WIDTH / 2;
-          col_x2 = ((item_num & 1) + 1) * LCD_PIXEL_WIDTH - 1;
+          col_x2 = ((item_num & 1) + 1) * LCD_PIXEL_WIDTH/2 - 1;
         }
         break;
+      case SCRMODE_MENU_H_3X1 :
+        if (!item_num) {
+          row_y1 = 0;
+          row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/4) - 1;
+          col_x1 = 0;
+          col_x2 = LCD_PIXEL_WIDTH - 1;
+        }
+        else {
+          item_num--;
+          row_y1 = (LCD_PIXEL_HEIGHT/4);
+          row_y2 = LCD_PIXEL_HEIGHT - 1;
+          col_x1 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)) + 1) / 3;
+          col_x2 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)+1) + 1) / 3 - 1;
+        }
+        break;
+      case SCRMODE_MENU_H_3X2 :
+        if (!item_num) {
+          row_y1 = 0;
+          row_y2 = row_y1 + (LCD_PIXEL_HEIGHT/6) - 1;
+          col_x1 = 0;
+          col_x2 = LCD_PIXEL_WIDTH - 1;
+        }
+        else {
+          item_num--;
+          row_y1 = (LCD_PIXEL_HEIGHT/6) + (int)(item_num / 3) * (LCD_PIXEL_HEIGHT*5/12);;
+          row_y2 = row_y1 + (LCD_PIXEL_HEIGHT*5/12) - 1;
+          col_x1 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)) + 1) / 3;
+          col_x2 = (LCD_PIXEL_WIDTH * ((int)(item_num % 3)+1) + 1) / 3 - 1;
+        }
+        break;
+      default:
+        row_y1 = 0;
+        row_y2 = LCD_PIXEL_HEIGHT - 1;
+        col_x1 = 0;
+        col_x2 = LCD_PIXEL_WIDTH - 1;
     }
     if (!PAGE_CONTAINS(row_y1, row_y2+1)) return false;
     row_str_base = (row_y1+row_y2)/2 + MENU_FONT_HEIGHT/2 - MENU_FONT_DESCENT;

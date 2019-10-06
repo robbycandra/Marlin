@@ -385,8 +385,8 @@ void menu_temperature() {
     // Preheat for Material 1 and 2
     //
     #if TEMP_SENSOR_1 != 0 || TEMP_SENSOR_2 != 0 || TEMP_SENSOR_3 != 0 || TEMP_SENSOR_4 != 0 || TEMP_SENSOR_5 != 0 || HAS_HEATED_BED
-      SUBMENU(MSG_PREHEAT_1, menu_preheat_m1);
-      SUBMENU(MSG_PREHEAT_2, menu_preheat_m2);
+      SUBMENU31(MSG_PREHEAT_1, menu_preheat_m1);
+      SUBMENU31(MSG_PREHEAT_2, menu_preheat_m2);
     #else
       ACTION_ITEM(MSG_PREHEAT_1, lcd_preheat_m1_e0_only);
       ACTION_ITEM(MSG_PREHEAT_2, lcd_preheat_m2_e0_only);

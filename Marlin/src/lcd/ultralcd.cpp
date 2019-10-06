@@ -258,10 +258,40 @@ millis_t MarlinUI::next_button_update_ms; // = 0
             menu_area_touched = true;
             wait_for_untouched = true;
             break;
+          case SCRMODE_MENU_H_2X1:
+            if (row > 2) {
+              touched_item_number = (col / 6) + 1;
+              menu_area_touched = true;
+              wait_for_untouched = true;
+            }
+            break;
+          case SCRMODE_MENU_H_2X2:
+            if (row > 1) {
+              touched_item_number = (int)((row-2) / 2) * 2 + (col / 6) + 1;
+              menu_area_touched = true;
+              wait_for_untouched = true;
+            }
+            break;
           case SCRMODE_MENU_H_2X3:
-            touched_item_number = (int)(row / 3) * 2 + (col / 6) - 1;
-            menu_area_touched = true;
-            wait_for_untouched = true;
+            if (row > 2) {
+              touched_item_number = (int)(row / 3) * 2 + (col / 6) - 1;
+              menu_area_touched = true;
+              wait_for_untouched = true;
+            }
+            break;
+          case SCRMODE_MENU_H_3X1:
+            if (row > 2) {
+              touched_item_number = (col / 4) + 1;
+              menu_area_touched = true;
+              wait_for_untouched = true;
+            }
+            break;
+          case SCRMODE_MENU_H_3X2:
+            if (row > 1) {
+              touched_item_number = (int)((row-2) / 5) * 3 + (col / 4) + 1;
+              menu_area_touched = true;
+              wait_for_untouched = true;
+            }
             break;
           case SCRMODE_SELECT_SCREEN:
             if (row > 8) {  //4th row
