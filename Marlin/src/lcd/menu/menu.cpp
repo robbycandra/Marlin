@@ -240,11 +240,19 @@ void MarlinUI::goto_screen(screenFunc_t screen, RexyzScreenMode scr_mode, const 
       static millis_t doubleclick_expire_ms = 0;
       // Going to menu_main from status screen? Remember first click time.
       // Going back to status screen within a very short time? Go to Z babystepping.
+     #if ENABLED(REXYZ_TOUCH_MENU)
+      if (screen == rmenu_main) {
+     #else
       if (screen == menu_main) {
+     #endif
         if (on_status_screen())
           doubleclick_expire_ms = millis() + DOUBLECLICK_MAX_INTERVAL;
       }
+     #if ENABLED(REXYZ_TOUCH_MENU)
+      else if (screen == status_screen && currentScreen == rmenu_main && PENDING(millis(), doubleclick_expire_ms)) {
+     #else
       else if (screen == status_screen && currentScreen == menu_main && PENDING(millis(), doubleclick_expire_ms)) {
+     #endif
 
         #if ENABLED(BABYSTEP_WITHOUT_HOMING)
           constexpr bool can_babystep = true;

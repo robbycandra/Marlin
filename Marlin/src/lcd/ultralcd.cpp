@@ -643,7 +643,11 @@ void MarlinUI::status_screen() {
       #if BOTH(FILAMENT_LCD_DISPLAY, SDSUPPORT)
         next_filament_display = millis() + 5000UL;  // Show status message for 5s
       #endif
-      goto_screen(menu_main, SCRMODE_MENU_2X4);
+      #if ENABLED(REXYZ_TOUCH_MENU)
+        goto_screen(rmenu_main, SCRMODE_MENU_2X2);
+      #else
+        goto_screen(menu_main, SCRMODE_MENU_2X4);
+      #endif
       #if DISABLED(NO_LCD_REINIT)
         init_lcd(); // May revive the LCD if static electricity killed it
       #endif

@@ -168,9 +168,6 @@ void menu_main() {
   #endif
 
   SUBMENU(MSG_CONFIGURATION, menu_configuration);
-  #if ENABLED(REXYZ_TOUCH_MENU)
-    SUBMENU22("Rexyz Menu", rmenu_main);
-  #endif
 
   #if ENABLED(CUSTOM_USER_MENUS)
     SUBMENU(MSG_USER_MENU, menu_user);
@@ -325,6 +322,8 @@ void rmenu_prepare() {
 
   SUBMENU(MSG_TEMPERATURE, menu_temperature);
 
+  SUBMENU24("Marlin Menu",main_menu);
+
   END_MENU();
 }
 
@@ -338,7 +337,7 @@ void rmenu_main() {
     #endif
   ;
 
-  SUBMENU22("Prepare", rmenu_prepare);
+  SUBMENU32("Prepare", rmenu_prepare);
 
   SUBMENU32("Tune", menu_tune);
 
