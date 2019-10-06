@@ -270,7 +270,10 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
         #if ENABLED(MANUAL_E_MOVES_RELATIVE)
           manual_move_e_origin = current_position.e;
         #endif
-        STATIC_ITEM(MSG_MOVE_E, SS_CENTER|SS_INVERT);
+        #if ENABLED(PREVENT_COLD_EXTRUSION)
+          if (!thermalManager.tooColdToExtrude(eindex >= 0 ? eindex : active_extruder))
+        #endif
+            STATIC_ITEM(MSG_MOVE_E, SS_CENTER|SS_INVERT);
         break;
     }
   }
