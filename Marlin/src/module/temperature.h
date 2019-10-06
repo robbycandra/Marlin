@@ -390,7 +390,7 @@ class Temperature {
       static millis_t preheat_end_time[HOTENDS];
     #endif
 
-    #if HAS_AUTO_FAN
+    #if HAS_AUTO_FAN || ENABLED(SINGLE_AUTO_FAN)
       static millis_t next_auto_fan_check_ms;
     #endif
 
@@ -814,6 +814,10 @@ class Temperature {
     #endif
 
     static void checkExtruderAutoFans();
+
+    #if ENABLED(SINGLE_AUTO_FAN)
+      static void checkExtruderSingleAutoFan();
+    #endif
 
     static float get_pid_output_hotend(const uint8_t e);
 

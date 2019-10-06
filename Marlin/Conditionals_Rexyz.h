@@ -396,22 +396,22 @@
     #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 225 // 255 == full speed
     #define REXYZ_E0_AUTO_FAN_PIN FAN1_PIN
-    #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
-    #define EXTRUDER_AUTO_FAN_SPEED_MAX 191    // 255 == full speed
-    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 63   // 255 == full speed
+    #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 150
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 191   // 255 == full speed
 #endif
 #if defined(REXYZ_A8P)
     #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 225 // 255 == full speed
     #define REXYZ_E0_AUTO_FAN_PIN FAN1_PIN
-    #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
-    #define EXTRUDER_AUTO_FAN_SPEED_MAX 191    // 255 == full speed
-    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 63   // 255 == full speed
+    #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 150
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 191   // 255 == full speed
 #endif
 #if defined(REXYZ_BOARD_ROBINMINI)
     #define REXYZ_E0_AUTO_FAN_PIN -1
     #define REXYZ_TEMP_SENSOR_1 0
-    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
+    #define SINGLE_AUTO_FAN                     // Remember to set PAUSED_FAN_SPEED
+    #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 150
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 127   // 255 == full speed
 #endif
 #if defined(REXYZ_BOARD_ROBIN)
     #define REXYZ_E0_AUTO_FAN_PIN -1
@@ -421,7 +421,6 @@
     //D lion tidak ada PWM Pin.
     #define REXYZ_E0_AUTO_FAN_PIN MANUAL_FAN_PIN //-1// FAN1_PIN
     //#define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
-    #define EXTRUDER_AUTO_FAN_SPEED_MAX 255    // 255 == full speed
     #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
 #endif
 
