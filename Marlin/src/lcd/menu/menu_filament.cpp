@@ -535,7 +535,10 @@ void lcd_pause_show_message(
   const screenFunc_t next_screen = ap_message_screen(message);
   if (next_screen) {
     ui.defer_status_screen();
-    ui.goto_screen(next_screen, SCRMODE_STATIC);
+    if (message == PAUSE_MESSAGE_OPTION)
+      ui.goto_screen(next_screen, SCRMODE_MENU_H_2X1);
+    else
+      ui.goto_screen(next_screen, SCRMODE_SCREEN_1X6);
   }
   else
     ui.return_to_status();
