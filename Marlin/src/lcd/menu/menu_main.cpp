@@ -307,6 +307,8 @@ void rmenu_prepare() {
       EDIT_ITEM_FAST(float3, MSG_Z_FADE_HEIGHT, &lcd_z_fade_height, 0, 100, _lcd_set_z_fade_height);
     #endif
 
+  #else
+    SUBMENU(MSG_LEVEL_CORNERS, _lcd_level_bed_corners);
   #endif
 
   #if ENABLED(ADVANCED_PAUSE_FEATURE)
@@ -314,15 +316,15 @@ void rmenu_prepare() {
       if (thermalManager.targetHotEnoughToExtrude(active_extruder))
         GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
       else
-        SUBMENU22(MSG_FILAMENTCHANGE, menu_temp_e0_filament_change);
+        SUBMENUH31(MSG_FILAMENTCHANGE, menu_temp_e0_filament_change);
     #else
       SUBMENU(MSG_FILAMENTCHANGE, menu_change_filament);
     #endif
   #endif
 
-  SUBMENU(MSG_TEMPERATURE, menu_temperature);
+  SUBMENU23(MSG_TEMPERATURE, menu_temperature);
 
-  SUBMENU24("Marlin Menu",main_menu);
+  SUBMENU24("Marlin Menu",menu_main);
 
   END_MENU();
 }
@@ -337,7 +339,7 @@ void rmenu_main() {
     #endif
   ;
 
-  SUBMENU32("Prepare", rmenu_prepare);
+  SUBMENU22("Prepare", rmenu_prepare);
 
   SUBMENU32("Tune", menu_tune);
 
