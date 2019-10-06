@@ -300,8 +300,9 @@ void menu_touch_testing() {
 
 void rmenu_setting_touchscreen() {
   START_MENU();
-  ACTION_ITEM(MSG_TOUCHSCREEN_CALIBRATION, menu_touch_calibration);
-  ACTION_ITEM("TouchScreen Testing", menu_touch_testing);
+  STATIC_ITEM("TouchScreen");
+  ACTION_ITEM("Calibration", menu_touch_calibration);
+  ACTION_ITEM("Testing", menu_touch_testing);
   END_MENU();
 }
 
