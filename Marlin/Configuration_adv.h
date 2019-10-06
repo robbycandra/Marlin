@@ -277,7 +277,7 @@
  * The fan will turn on automatically whenever any stepper is enabled
  * and turn off after a set period after all steppers are turned off.
  */
-#define USE_CONTROLLER_FAN REXYZ_USE_CONTROLLER_FAN 
+#define USE_CONTROLLER_FAN REXYZ_USE_CONTROLLER_FAN
 #if ENABLED(USE_CONTROLLER_FAN)
   #define CONTROLLER_FAN_PIN REXYZ_CONTROLLER_FAN_PIN       // Set a custom pin for the controller fan
   #define CONTROLLERFAN_SECS 60          // Duration in seconds for the fan to run after all motors are disabled
@@ -438,9 +438,9 @@
   #endif
 #endif
 
-//#define Z_DUAL_STEPPER_DRIVERS 
+//#define Z_DUAL_STEPPER_DRIVERS
 #if ENABLED(Z_DUAL_STEPPER_DRIVERS)
-  //#define Z_DUAL_ENDSTOPS 
+  //#define Z_DUAL_ENDSTOPS
   #if ENABLED(Z_DUAL_ENDSTOPS)
     #define Z2_USE_ENDSTOP REXYZ_Z2_USE_ENDSTOP
     #define Z_DUAL_ENDSTOPS_ADJUSTMENT  0
@@ -822,7 +822,7 @@
 // @section lcd
 
 #if EITHER(ULTIPANEL, EXTENSIBLE_UI)
-// Rexyz change standard manual feerate	
+// Rexyz change standard manual feerate
   #define MANUAL_FEEDRATE REXYZ_MANUAL_FEEDRATE // Feedrates for manual moves along X, Y, Z, E from panel
   #define SHORT_MANUAL_Z_MOVE REXYZ_SHORT_MANUAL_Z_MOVE // (mm) Smallest manual Z move (< 0.1mm)
   #if ENABLED(ULTIPANEL)
@@ -1637,7 +1637,7 @@
  * This feature is required for the default FILAMENT_RUNOUT_SCRIPT.
  *
  * Unload Sequence
- *  
+ *
  * 1. Extrude FILAMENT_UNLOAD_FIRST_PURGE_LENGTH
  * 2. Retract FILAMENT_UNLOAD_RETRACT_LENGTH
  * 3. Delay   FILAMENT_UNLOAD_DELAY
@@ -1645,7 +1645,7 @@
  * 5. Retract FILAMENT_CHANGE_UNLOAD_LENGTH
  *
  * Load Sequence
- * 
+ *
  * 1. Extrude FILAMENT_CHANGE_SLOW_LOAD_LENGTH
  * 2. Extrude FILAMENT_CHANGE_FAST_LOAD_LENGTH
  * 1. Extrude ADVANCED_PAUSE_PURGE_LENGTH
@@ -1657,7 +1657,7 @@
                                                   // This short retract is done immediately, before parking the nozzle.
   #define FILAMENT_CHANGE_UNLOAD_FEEDRATE     10  // (mm/s) Unload filament feedrate. This can be pretty fast.
   #define FILAMENT_CHANGE_UNLOAD_ACCEL        25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
-  #define FILAMENT_CHANGE_UNLOAD_LENGTH      REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH  
+  #define FILAMENT_CHANGE_UNLOAD_LENGTH      REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH
                                                   // (mm) The length of filament for a complete unload.
                                                   //   For Bowden, the full length of the tube and nozzle.
                                                   //   For direct drive, the full length of the nozzle.
@@ -1667,7 +1667,7 @@
                                                   // 0 to disable start loading and skip to fast load only
   #define FILAMENT_CHANGE_FAST_LOAD_FEEDRATE   6  // (mm/s) Load filament feedrate. This can be pretty fast.
   #define FILAMENT_CHANGE_FAST_LOAD_ACCEL     25  // (mm/s^2) Lower acceleration may allow a faster feedrate.
-  #define FILAMENT_CHANGE_FAST_LOAD_LENGTH   REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH  
+  #define FILAMENT_CHANGE_FAST_LOAD_LENGTH   REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH
                                                   // (mm) Load length of filament, from extruder gear to nozzle.
                                                   //   For Bowden, the full length of the tube and nozzle.
                                                   //   For direct drive, the full length of the nozzle.
