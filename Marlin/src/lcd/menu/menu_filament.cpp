@@ -376,10 +376,19 @@ void menu_pause_option() {
 void _lcd_pause_message(PGM_P const msg1, PGM_P const msg2=nullptr, PGM_P const msg3=nullptr) {
   START_SCREEN();
   STATIC_ITEM_P(pause_header(), SS_CENTER|SS_INVERT);
+  #if HAS_FULL_SCALE_TFT
+    if ((!!msg1) + (!!msg2) + (!!msg3) < 3) STATIC_ITEM_P(PSTR(" "));
+    STATIC_ITEM_P(msg1);
+    if (msg2) STATIC_ITEM_P(msg2);
+    if (msg3) STATIC_ITEM_P(msg3);
+    if ((!!msg1) + (!!msg2) + (!!msg3) < 2) STATIC_ITEM_P(PSTR(" "));
+    STATIC_ITEM_P(PSTR(" "));
+  #else
   STATIC_ITEM_P(msg1);
   if (msg2) STATIC_ITEM_P(msg2);
   if (msg3 && (LCD_HEIGHT) >= 5) STATIC_ITEM_P(msg3);
   if ((!!msg2) + (!!msg3) + 2 < (LCD_HEIGHT) - 1) STATIC_ITEM(" ");
+  #endif
   HOTEND_STATUS_ITEM();
   END_SCREEN();
 }
