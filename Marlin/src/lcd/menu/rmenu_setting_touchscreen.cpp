@@ -246,7 +246,7 @@ void _lcd_touch_point_screen() {
     if (abs(delta_x) > 10) isfail = true;
     if (abs(delta_y) > 15) isfail = true;
 
-    ui.goto_screen(_lcd_touch_cal_result, SCRMODE_CALIBRATION);
+    ui.goto_screen(_lcd_touch_cal_result, SCRMODE_STATIC);
   }
 }
 
@@ -259,7 +259,7 @@ void menu_touch_calibration() {
   ui.first_touch = false;
   ui.save_previous_screen();
   ui.defer_status_screen();
-  ui.goto_screen(_lcd_touch_point_screen, SCRMODE_CALIBRATION);
+  ui.goto_screen(_lcd_touch_point_screen, SCRMODE_STATIC_BACK);
 }
 
 void _lcd_touch_test_screen() {
@@ -295,12 +295,12 @@ void menu_touch_testing() {
   ui.first_touch = false;
   ui.save_previous_screen();
   ui.defer_status_screen();
-  ui.goto_screen(_lcd_touch_test_screen, SCRMODE_CALIBRATION);
+  ui.goto_screen(_lcd_touch_test_screen, SCRMODE_STATIC_BACK);
 }
 
 void rmenu_setting_touchscreen() {
   START_MENU();
-  STATIC_ITEM("TouchScreen");
+  STATIC_ITEM("TouchScreen", SS_CENTER | SS_INVERT);
   ACTION_ITEM("Calibration", menu_touch_calibration);
   ACTION_ITEM("Testing", menu_touch_testing);
   END_MENU();

@@ -206,7 +206,7 @@ static inline void _lcd_adjust_corner_homing() {
     previous_zoffset = probe_offset.z;
     firstprobe = true;
     remember_feedrate_and_scaling();
-    ui.goto_screen(menu_adjust_corner, SCRMODE_MENU_1X4);
+    ui.goto_screen(menu_adjust_corner, SCRMODE_MENU_H_3X1);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
     current_position.x = X_MIN_BED + LEVEL_CORNERS_INSET - probe_offset.x;
     current_position.y = Y_MIN_BED + LEVEL_CORNERS_INSET - probe_offset.y;
@@ -280,7 +280,7 @@ static inline void _lcd_measure_probe_offset_homing() {
     corner_measured_z = 0;
     firstprobe = true;
     remember_feedrate_and_scaling();
-    ui.goto_screen(menu_measure_probe_offset,SCRMODE_MENU_1X4);
+    ui.goto_screen(menu_measure_probe_offset,SCRMODE_MENU_H_3X1);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
     current_position.x = X_MIN_BED + LEVEL_CORNERS_INSET;
     current_position.y = Y_MIN_BED + LEVEL_CORNERS_INSET;

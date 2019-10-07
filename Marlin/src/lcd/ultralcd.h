@@ -245,10 +245,15 @@
 #endif
 
 enum RexyzScreenMode : uint8_t {
-  SCRMODE_BOOT = 0,
-  SCRMODE_STATUS,
-  SCRMODE_EDIT_SCREEN,
-  SCRMODE_SELECT_SCREEN,
+  SCRMODE_BOOT = 0,      // No Button
+  SCRMODE_NO_BUTTON,     // No Button
+  SCRMODE_STATUS,        // Arrow, OK
+  SCRMODE_EDIT_SCREEN,   // Arrow, OK, Back
+  SCRMODE_SELECT_SCREEN, // OK + BACK Button with callback function.
+  SCRMODE_STATIC,        // OK + BACK Button
+  SCRMODE_STATIC_OK,     // OK Button
+  SCRMODE_STATIC_BACK,   // BACK Button
+  SCRMODE_KILLSCREEN,    // Special Function
   SCRMODE_MENU_1X4,
   SCRMODE_MENU_2X1,
   SCRMODE_MENU_2X2,
@@ -262,11 +267,8 @@ enum RexyzScreenMode : uint8_t {
   SCRMODE_MENU_H_2X3,
   SCRMODE_MENU_H_3X1,
   SCRMODE_MENU_H_3X2,
-  SCRMODE_STATIC,
   SCRMODE_SCREEN_1X6,
-  SCRMODE_SCREEN_1X8,
-  SCRMODE_CALIBRATION,
-  SCRMODE_KILLSCREEN
+  SCRMODE_SCREEN_1X8
 };
 
 ////////////////////////////////////////////

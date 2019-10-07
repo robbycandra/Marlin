@@ -607,10 +607,11 @@ class MenuItem_bool {
 #else
   #define BACK_ITEM(LABEL)          MENU_ITEM(back,LABEL)
 #endif
-#define SUBSCREEN6(LABEL, DEST)     MENU_ITEM(subscreen6, LABEL, DEST)
-#define SUBSCREEN8(LABEL, DEST)     MENU_ITEM(subscreen8, LABEL, DEST)
+#define GCODES_ITEM(LABEL, GCODES)  MENU_ITEM(gcode, LABEL, GCODES)
+#define ACTION_ITEM(LABEL, ACTION)  MENU_ITEM(function, LABEL, ACTION)
 #define SUBEDIT(LABEL, DEST)        MENU_ITEM(subedit, LABEL, DEST)
 #define SUBSELECT(LABEL, DEST)      MENU_ITEM(subselect, LABEL, DEST)
+#define SUBMENU(LABEL, DEST)        MENU_ITEM(submenu, LABEL, DEST)
 #define SUBMENU14(LABEL, DEST)      MENU_ITEM(submenu14, LABEL, DEST)
 #define SUBMENU21(LABEL, DEST)      MENU_ITEM(submenu21, LABEL, DEST)
 #define SUBMENU22(LABEL, DEST)      MENU_ITEM(submenu22, LABEL, DEST)
@@ -624,9 +625,8 @@ class MenuItem_bool {
 #define SUBMENUH23(LABEL, DEST)     MENU_ITEM(submenuh23, LABEL, DEST)
 #define SUBMENUH31(LABEL, DEST)     MENU_ITEM(submenuh31, LABEL, DEST)
 #define SUBMENUH32(LABEL, DEST)     MENU_ITEM(submenuh32, LABEL, DEST)
-#define SUBMENU(LABEL, DEST)        MENU_ITEM(submenu, LABEL, DEST)
-#define GCODES_ITEM(LABEL, GCODES)  MENU_ITEM(gcode, LABEL, GCODES)
-#define ACTION_ITEM(LABEL, ACTION)  MENU_ITEM(function, LABEL, ACTION)
+#define SUBSCREEN6(LABEL, DEST)     MENU_ITEM(subscreen6, LABEL, DEST)
+#define SUBSCREEN8(LABEL, DEST)     MENU_ITEM(subscreen8, LABEL, DEST)
 
 ////////////////////////////////////////////
 /////////////// Menu Screens ///////////////

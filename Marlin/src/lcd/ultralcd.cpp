@@ -293,19 +293,14 @@ millis_t MarlinUI::next_button_update_ms; // = 0
               wait_for_untouched = true;
             }
             break;
-          case SCRMODE_SELECT_SCREEN:
-            if (row > 8) {  //4th row
-              touched_item_number = col / 6;
-              menu_area_touched = true;
-            }
-            wait_for_untouched = true;
-            break;
+          /*
           default:
             if (row > 8) {  //4th row
               touched_item_number = col / 3;
               menu_area_touched = true;
               repeat_delay = 50;
             }
+          */
         }
         if (menu_area_touched) {
           if (touched_item_number == tested_item_number) {
@@ -406,14 +401,14 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     if (!string && plen + slen <= maxStringLen) {
       col = (maxStringLen - plen - slen) / 2;
      #if HAS_FULL_SCALE_TFT
-      row = 2;
+      row = 4;
      #else
       row = LCD_HEIGHT > 3 ? 1 : 0;
      #endif
     }
     #if HAS_FULL_SCALE_TFT
       else
-        row = 2;
+        row = 3;
     #endif
 
     wrap_string_P(col, row, pref, true);
