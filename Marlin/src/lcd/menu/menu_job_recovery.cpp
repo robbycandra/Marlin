@@ -49,7 +49,7 @@ static void lcd_power_loss_recovery_cancel() {
 void menu_job_recovery() {
   ui.defer_status_screen();
   START_MENU();
-  STATIC_ITEM(MSG_OUTAGE_RECOVERY);
+  STATIC_ITEM(MSG_OUTAGE_RECOVERY, SS_CENTER|SS_INVERT);
   ACTION_ITEM(MSG_RESUME_PRINT, lcd_power_loss_recovery_resume);
   ACTION_ITEM(MSG_STOP_PRINT, lcd_power_loss_recovery_cancel);
   END_MENU();

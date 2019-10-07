@@ -48,6 +48,15 @@
   float lcd_runout_distance_mm;
 #endif
 
+#if HAS_FILAMENT_SENSOR
+  #include "../../feature/runout.h"
+#endif
+
+#if ENABLED(POWER_LOSS_RECOVERY)
+  #include "../../feature/power_loss_recovery.h"
+#endif
+
+
 void menu_tmc();
 void menu_backlash();
 
@@ -939,6 +948,48 @@ void rmenu_setting_motion() {
   END_MENU();
 }
 
+void rmenu_option() {
+  START_MENU();
+  #if HAS_FILAMENT_SENSOR
+    EDIT_ITEM(bool, MSG_RUNOUT_SENSOR, &runout.enabled, runout.reset);
+  #endif
+
+  #if ENABLED(POWER_LOSS_RECOVERY)
+    EDIT_ITEM(bool, MSG_OUTAGE_RECOVERY, &recovery.enabled, recovery.changed);
+  #endif
+
+  do {
+    _skipStatic = false;
+    if (_menuLineNr == _thisItemNr) {
+     #if ENABLED(TOUCH_BUTTONS)
+      if ((encoderLine == _thisItemNr && ui.use_click()) || ui.menu_is_touched(_thisItemNr - encoderTopLine)) {
+     #else
+      if (encoderLine == _thisItemNr && ui.use_click()) {
+     #endif
+        _MENU_ITEM_MULTIPLIER_CHECK(false);
+        ui.save_previous_screen();
+        ui.refresh();
+        ui.encoderPosition = rexyz_menu_mode;
+        ui.screenMode = SCRMODE_EDIT_SCREEN;
+        ui.currentScreen = rlcd_menu_choose_menu;
+        if (screen_changed) return;
+      }
+      if (ui.should_draw())
+        switch (rexyz_menu_mode) {
+        case MENUMODE_BASIC:
+          draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Menu Mode"), "Basic");
+          break;
+        case MENUMODE_ADVANCE:
+          draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Menu Mode"), "Advance");
+          break;
+        }
+    }
+    ++_thisItemNr;
+  }while(0);
+
+  END_MENU();
+}
+
 void rmenu_setting() {
   START_MENU();
 
@@ -974,36 +1025,9 @@ void rmenu_setting() {
 
   SUBMENUH21("Touch Screen", rmenu_setting_touchscreen);
 
-  SUBMENU22("Load & Save", rmenu_loadsave);
+  SUBMENU22("Option", rmenu_option);
 
-  do {
-    _skipStatic = false;
-    if (_menuLineNr == _thisItemNr) {
-     #if ENABLED(TOUCH_BUTTONS)
-      if ((encoderLine == _thisItemNr && ui.use_click()) || ui.menu_is_touched(_thisItemNr - encoderTopLine)) {
-     #else
-      if (encoderLine == _thisItemNr && ui.use_click()) {
-     #endif
-        _MENU_ITEM_MULTIPLIER_CHECK(false);
-        ui.save_previous_screen();
-        ui.refresh();
-        ui.encoderPosition = rexyz_menu_mode;
-        ui.screenMode = SCRMODE_EDIT_SCREEN;
-        ui.currentScreen = rlcd_menu_choose_menu;
-        if (screen_changed) return;
-      }
-      if (ui.should_draw())
-        switch (rexyz_menu_mode) {
-        case MENUMODE_BASIC:
-          draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Menu Mode"), "Basic");
-          break;
-        case MENUMODE_ADVANCE:
-          draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Menu Mode"), "Advance");
-          break;
-        }
-    }
-    ++_thisItemNr;
-  }while(0);
+  SUBMENU22("Load & Save", rmenu_loadsave);
 
   END_MENU();
 }
