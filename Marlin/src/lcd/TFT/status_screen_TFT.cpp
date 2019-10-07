@@ -570,10 +570,10 @@ void MarlinUI::draw_status_screen() {
         if (card.isFileOpen())
           u8g.setColorIndex(2);
         else
-          u8g.setColorIndex(1);
+          u8g.setColorIndex(3);
       }
       else
-        u8g.setColorIndex(3);
+        u8g.setColorIndex(1);
       lcd_put_u8str(COL_WIDTH + (COL_WIDTH - MENU_FONT_WIDTH*5)/2 - 1, row_str1_base, "MEDIA"); // 160 + (80 - 12 *5) /2
       u8g.setColorIndex(1);
     #endif
@@ -585,18 +585,18 @@ void MarlinUI::draw_status_screen() {
         if(runout.filament_ran_out)
           u8g.setColorIndex(2);
         else
-          u8g.setColorIndex(1);
+          u8g.setColorIndex(3);
       }
       else
-        u8g.setColorIndex(3);
+        u8g.setColorIndex(1);
       lcd_put_u8str(COL_WIDTH*2 + (COL_WIDTH - MENU_FONT_WIDTH*3)/2- 1, row_str1_base, "FIL"); // 160 + (80 - 12 *3) /2
       u8g.setColorIndex(1);
     #endif
     #if ENABLED(POWER_LOSS_RECOVERY)
       if (recovery.enabled)
-        u8g.setColorIndex(1);
-      else
         u8g.setColorIndex(3);
+      else
+        u8g.setColorIndex(1);
       lcd_put_u8str(COL_WIDTH*3 + (COL_WIDTH - MENU_FONT_WIDTH*3)/2- 1, row_str1_base, "PLR"); // 160 + (80 - 12 *3) /2
       u8g.setColorIndex(1);
     #endif
