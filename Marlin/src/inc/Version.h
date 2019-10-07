@@ -44,7 +44,7 @@
    * Verbose version identifier which should contain a reference to the location
    * from where the binary was downloaded or the source code was compiled.
    */
-  #define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION " (Rexyz)"
+  #define DETAILED_BUILD_VERSION SHORT_BUILD_VERSION
   /**
    * The STRING_DISTRIBUTION_DATE represents when the binary file was built,
    * here we define this default string as the date where the latest release
@@ -74,7 +74,7 @@
    */
   #define MACHINE_TYPE REXYZ_MACHINE_TYPE
   #define MACHINE_NAME "Rexyz-" REXYZ_MACHINE_FRAME_TYPE
-  
+
   /**
    * The SOURCE_CODE_URL is the location where users will find the Marlin Source
    * Code which is installed on the device. In most cases —unless the manufacturer

@@ -28,7 +28,7 @@
 #if ENABLED(REXYZ_MARKING_INIT) || ENABLED(REXYZ_MARKING_UPDATE)
   #define REXYZ_FW_VERSION ".INIT" // Change this with each update
 #else
-  #define REXYZ_FW_VERSION ".13" // Change this with each update
+  #define REXYZ_FW_VERSION ".15" // Change this with each update
 #endif
 #define REXYZ_DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
 #define REXYZ_SOURCE_CODE_URL "http://rajawali3d.com"
@@ -232,8 +232,8 @@
 #if defined(REXYZ_BOARD_ROBINMINI)
     #define MOTHERBOARD BOARD_MKS_ROBIN_MINI
     #define ENDSTOP_INTERRUPTS_FEATURE
-    #define REXYZ_SERIAL_PORT 3
-    #define SERIAL_PORT_2 1
+    #define REXYZ_SERIAL_PORT 1
+    #define SERIAL_PORT_2 3
     #define NUM_SERIAL 2
     #define POWER_LOSS_STATE LOW
 #endif
@@ -745,12 +745,20 @@
       #define REXYZ_XPT2046_Y_CAL_SCALE_Y  -10686
       #define REXYZ_XPT2046_Y_OFFSET          275
     #else
+      #define REXYZ_XPT2046_X_CAL_SCALE_X   11621
+      #define REXYZ_XPT2046_X_CAL_SCALE_Y     -30
+      #define REXYZ_XPT2046_X_OFFSET          -33
+      #define REXYZ_XPT2046_Y_CAL_SCALE_X    -141
+      #define REXYZ_XPT2046_Y_CAL_SCALE_Y   -8470
+      #define REXYZ_XPT2046_Y_OFFSET          255
+      /*
       #define REXYZ_XPT2046_X_CAL_SCALE_X   12316
       #define REXYZ_XPT2046_X_CAL_SCALE_Y       0
       #define REXYZ_XPT2046_X_OFFSET          -43
       #define REXYZ_XPT2046_Y_CAL_SCALE_X       0
       #define REXYZ_XPT2046_Y_CAL_SCALE_Y   -8981
       #define REXYZ_XPT2046_Y_OFFSET          257
+      */
     #endif
 
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2
