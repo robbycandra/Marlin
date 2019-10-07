@@ -101,6 +101,7 @@ static inline void menu_level_bed_corners() {
       #if HAS_LEVELING
         set_bed_leveling_enabled(leveling_was_active);
       #endif
+      queue.inject_P(PSTR("G27 P2"));
       ui.goto_previous_screen_no_defer();
     },
     PSTR(
@@ -136,7 +137,7 @@ void _lcd_level_bed_corners() {
     set_bed_leveling_enabled(false);
   #endif
 
-  ui.goto_screen(_lcd_level_bed_corners_homing, SCRMODE_STATIC);
+  ui.goto_screen(_lcd_level_bed_corners_homing, SCRMODE_NO_BUTTON);
 }
 
 //================================================
@@ -227,7 +228,7 @@ void _lcd_adjust_corner() {
     leveling_was_active = planner.leveling_active;
     set_bed_leveling_enabled(false);
   #endif
-  ui.goto_screen(_lcd_adjust_corner_homing, SCRMODE_STATIC);
+  ui.goto_screen(_lcd_adjust_corner_homing, SCRMODE_NO_BUTTON);
 }
 
 //========================================
@@ -302,7 +303,7 @@ void _lcd_measure_probe_offset() {
     leveling_was_active = planner.leveling_active;
     set_bed_leveling_enabled(false);
   #endif
-  ui.goto_screen(_lcd_measure_probe_offset_homing, SCRMODE_STATIC);
+  ui.goto_screen(_lcd_measure_probe_offset_homing, SCRMODE_NO_BUTTON);
 }
 
 #endif // HAS_BED_PROBE

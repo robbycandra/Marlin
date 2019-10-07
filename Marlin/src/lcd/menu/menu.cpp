@@ -662,25 +662,27 @@ bool MarlinUI::update_selection() {
   }
   return selection;
 }
+
+/*
+ * do select screen
+ * Harus berjalan dengan ui.screenMode = SCRMODE_SELECT_SCREEN
+ * karena mode ini membatalkan back button supaya bisa menjalankan
+ * callback di pilihan ini.
+ *
+ * untuk pilihan konfirmasi sederhana bisa menggunakan ui.screenMode = SCRMODE_STATIC
+ * tanpa memanggil do_select_screen.
+ */
 void do_select_screen(PGM_P const yes, PGM_P const no, selectFunc_t yesFunc, selectFunc_t noFunc, PGM_P const pref, const char * const string/*=nullptr*/, PGM_P const suff/*=nullptr*/) {
  #if HAS_FULL_SCALE_TFT
- /*
-  *  gunakan ini juga ingin menghilangkan encoder touch button
-  *
-  bool ui_selection = ui.update_selection(), got_click = ui.use_click();
-  if (!got_click) {
-    ui.screenMode = SCRMODE_SELECT_SCREEN;
-    if (ui.menu_is_touched(0)) {
-      got_click = true;
-      ui_selection = 0;
-    }
-    else if (ui.menu_is_touched(1)) {
-      got_click = true;
-      ui_selection = 1;
-    }
+  bool ui_selection = false, got_click = false;
+  if (ui.menu_is_touched(0)) {
+    ui_selection = false;
+    got_click = true;
   }
- */
-  const bool ui_selection = true, got_click = ui.use_click();
+  if (ui.menu_is_touched(1)) {
+    ui_selection = true;
+    got_click = true;
+  }
  #else
   const bool ui_selection = ui.update_selection(), got_click = ui.use_click();
  #endif

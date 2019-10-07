@@ -293,6 +293,13 @@ millis_t MarlinUI::next_button_update_ms; // = 0
               wait_for_untouched = true;
             }
             break;
+          case SCRMODE_SELECT_SCREEN:
+            if (row == 12) {  // dummy row
+              touched_item_number = (col / 6);
+              menu_area_touched = true;
+              wait_for_untouched = true;
+            }
+            break;
           /*
           default:
             if (row > 8) {  //4th row
@@ -938,7 +945,31 @@ void MarlinUI::update() {
             }
             touch_buttons = 0;                          // Swallow the touch, so it will not used by Encoder
           }
-          buttons |= (touch_buttons & (EN_C | EN_D));   // Pass on Click and Back buttons
+          if (touch_buttons & (EN_C | EN_D)) {
+            if(ui.screenMode == SCRMODE_SELECT_SCREEN) {
+              if (!wait_for_untouched) {                   // If not waiting for a debounce release:
+                next_button_update_ms = ms + repeat_delay; // Assume the repeat delay
+                if (!screen_is_touched) {                 // If not waiting for a debounce release:
+                  next_button_update_ms += 250;           // Longer delay on first press
+                  first_touch = true;
+                }
+                //wait_for_unclick = true;                //  - Set debounce flag to ignore continous clicks
+                screen_is_touched = true;                 //  - Flag for touch screen, work like arrow is pressed
+                wait_for_user = false;
+                if (touch_buttons & EN_C)                 //  - Any click clears wait for user
+                  lcd_menu_touched_coord = 0xDB;          // row 13->12, col 0
+                else
+                  lcd_menu_touched_coord = 0xD0;          // row 13->12, col 11
+                #if HAS_LCD_MENU
+                  refresh();
+                #endif
+              }
+              touch_buttons = 0;                          // Swallow the touch, so it will not used by Encoder
+            }
+            else {
+              buttons |= (touch_buttons & (EN_C | EN_D));   // Pass on Click and Back buttons
+            }
+          }
           if (touch_buttons & (EN_A | EN_B)) {          // A and/or B button?
             encoderDiff = (ENCODER_STEPS_PER_MENU_ITEM) * (ENCODER_PULSES_PER_STEP) * encoderDirection;
             if (touch_buttons & EN_A) encoderDiff *= -1;

@@ -105,7 +105,7 @@ class MenuItem_sdfile {
         sd_items = screen_items;
       #endif
       #if ENABLED(SD_MENU_CONFIRM_START)
-        MenuItem_submenu::action(pstr, menu_sd_confirm);
+        MenuItem_subselect::action(pstr, menu_sd_confirm);
       #else
         sdcard_start_selected_file();
         UNUSED(pstr);
