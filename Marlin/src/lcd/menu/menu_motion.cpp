@@ -278,19 +278,27 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
     }
   }
   #if ENABLED(PREVENT_COLD_EXTRUSION)
-    if (axis == E_AXIS && thermalManager.tooColdToExtrude(eindex >= 0 ? eindex : active_extruder))
+    if (axis == E_AXIS && thermalManager.tooColdToExtrude(eindex >= 0 ? eindex : active_extruder)) {
      #if HAS_FULL_SCALE_TFT
+      ui.screenMode = SCRMODE_STATIC_BACK;
       STATIC_ITEM(MSG_HOTEND_TOO_COLD);
      #else
       BACK_ITEM(MSG_HOTEND_TOO_COLD);
      #endif
+    }
     else
   #endif
   {
     BACK_ITEM(MSG_MOVE_AXIS);
-    SUBMENU(MSG_MOVE_10MM, menu_move_10mm);
-    SUBMENU(MSG_MOVE_1MM, menu_move_1mm);
-    SUBMENU(MSG_MOVE_01MM, menu_move_01mm);
+    #if HAS_FULL_SCALE_TFT
+      SUBMENU("10 mm", menu_move_10mm);
+      SUBMENU("1 mm", menu_move_1mm);
+      SUBMENU("0.1 mm", menu_move_01mm);
+    #else
+      SUBMENU(MSG_MOVE_10MM, menu_move_10mm);
+      SUBMENU(MSG_MOVE_1MM, menu_move_1mm);
+      SUBMENU(MSG_MOVE_01MM, menu_move_01mm);
+    #endif
     if (axis == Z_AXIS && (SHORT_MANUAL_Z_MOVE) > 0.0f && (SHORT_MANUAL_Z_MOVE) < 0.1f) {
       SUBMENU("", []{ _goto_manual_move(float(SHORT_MANUAL_Z_MOVE)); });
       MENU_ITEM_ADDON_START(1);
@@ -308,6 +316,12 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
 void lcd_move_get_x_amount() { _menu_move_distance(X_AXIS, lcd_move_x); }
 void lcd_move_get_y_amount() { _menu_move_distance(Y_AXIS, lcd_move_y); }
 void lcd_move_get_z_amount() { _menu_move_distance(Z_AXIS, lcd_move_z); }
+
+void _lcd_extruder_too_cold() {
+  START_MENU();
+  STATIC_ITEM(MSG_HOTEND_TOO_COLD);
+  END_MENU();
+}
 
 #if E_MANUAL
   void lcd_move_get_e_amount() { _menu_move_distance(E_AXIS, lcd_move_e, -1); }
@@ -351,6 +365,7 @@ void menu_move() {
       true
     #endif
   ) {
+    ui.screenMode = SCRMODE_MENU_2X2;
     if (
       #if ENABLED(DELTA)
         current_position.z <= delta_clip_start_height
@@ -368,8 +383,11 @@ void menu_move() {
 
     SUBMENUH31(MSG_MOVE_Z, lcd_move_get_z_amount);
   }
-  else
+  else {
+    ui.screenMode = SCRMODE_MENU_H_2X1;
+    STATIC_ITEM("Axis Not Homed", SS_CENTER|SS_INVERT);
     GCODES_ITEM(MSG_AUTO_HOME, PSTR("G28"));
+  }
 
   #if ANY(SWITCHING_EXTRUDER, SWITCHING_NOZZLE, MAGNETIC_SWITCHING_TOOLHEAD)
 
@@ -428,6 +446,11 @@ void menu_move() {
     #else
 
       // Independent extruders with one E-stepper per hotend
+      #if ENABLED(PREVENT_COLD_EXTRUSION)
+        if (thermalManager.tooColdToExtrude(active_extruder))
+          ACTION_ITEM("Extruder too cold", []{ui.goto_screen(_lcd_extruder_too_cold, SCRMODE_STATIC_BACK);});
+        else
+      #endif
       SUBMENUH31(MSG_MOVE_E, lcd_move_get_e_amount);
       #if E_MANUAL > 1
         SUBEDIT(MSG_MOVE_E MSG_MOVE_E1, lcd_move_get_e0_amount);
