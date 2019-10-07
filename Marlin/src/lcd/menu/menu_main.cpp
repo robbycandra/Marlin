@@ -178,9 +178,9 @@ void menu_main() {
       if (thermalManager.targetHotEnoughToExtrude(active_extruder))
         GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
       else
-        SUBMENU14(MSG_FILAMENTCHANGE, menu_temp_e0_filament_change);
+        SUBMENUH31(MSG_FILAMENTCHANGE, menu_temp_e0_filament_change);
     #else
-      SUBMENU(MSG_FILAMENTCHANGE, menu_change_filament);
+      SUBMENUH31(MSG_FILAMENTCHANGE, menu_change_filament);
     #endif
   #endif
 
@@ -318,7 +318,7 @@ void rmenu_prepare() {
       else
         SUBMENUH31(MSG_FILAMENTCHANGE, menu_temp_e0_filament_change);
     #else
-      SUBMENU(MSG_FILAMENTCHANGE, menu_change_filament);
+      SUBMENUH31(MSG_FILAMENTCHANGE, menu_change_filament);
     #endif
   #endif
 
@@ -339,37 +339,66 @@ void rmenu_main() {
     #endif
   ;
 
-  SUBMENU22("Prepare", rmenu_prepare);
+  if (busy) {
+    ui.screenMode = SCRMODE_MENU_3X2;
+
+    #if MACHINE_CAN_PAUSE
+      ACTION_ITEM(MSG_PAUSE_PRINT, ui.pause_print);
+    #endif
+    #if MACHINE_CAN_STOP
+      SUBSELECT(MSG_STOP_PRINT, menu_abort_confirm);
+    #endif
+    #if ENABLED(ADVANCED_PAUSE_FEATURE)
+      #if E_STEPPERS == 1 && DISABLED(FILAMENT_LOAD_UNLOAD_GCODES)
+        if (thermalManager.targetHotEnoughToExtrude(active_extruder))
+          GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
+        else
+          SUBMENUH31(MSG_FILAMENTCHANGE, menu_temp_e0_filament_change);
+      #else
+        SUBMENUH31(MSG_FILAMENTCHANGE, menu_change_filament);
+      #endif
+    #endif
+  }
+  else {
+    ui.screenMode = SCRMODE_MENU_2X2;
+    #if MACHINE_CAN_PAUSE
+      if (printingIsPaused()) ACTION_ITEM(MSG_RESUME_PRINT, ui.resume_print);
+    #endif
+
+    SUBMENU22("Prepare", rmenu_prepare);
+  }
 
   SUBMENU32("Tune", menu_tune);
 
   SUBMENU32("Setting", rmenu_setting);
 
-  #if HAS_ENCODER_WHEEL && ENABLED(SDSUPPORT)
+  if (!busy) {
+    #if HAS_ENCODER_WHEEL && ENABLED(SDSUPPORT)
 
-    if (card_detected) {
-      if (!card_open) {
-        /*
-        GCODES_ITEM(
-          #if PIN_EXISTS(SD_DETECT)
-            MSG_CHANGE_MEDIA, PSTR("M21")
-          #else
-            MSG_RELEASE_MEDIA, PSTR("M22")
-          #endif
-        );
-        */
+      if (card_detected) {
+        if (!card_open) {
+          /*
+          GCODES_ITEM(
+            #if PIN_EXISTS(SD_DETECT)
+              MSG_CHANGE_MEDIA, PSTR("M21")
+            #else
+              MSG_RELEASE_MEDIA, PSTR("M22")
+            #endif
+          );
+          */
         SUBMENU14(MSG_MEDIA_MENU, menu_media);
+        }
       }
-    }
-    else {
-      #if PIN_EXISTS(SD_DETECT)
-        ACTION_ITEM(MSG_NO_MEDIA, nullptr);
-      #else
-        GCODES_ITEM(MSG_INIT_MEDIA, PSTR("M21"));
-        ACTION_ITEM(MSG_MEDIA_RELEASED, nullptr);
-      #endif
-    }
-  #endif // HAS_ENCODER_WHEEL && SDSUPPORT
+      else {
+        #if PIN_EXISTS(SD_DETECT)
+          ACTION_ITEM(MSG_NO_MEDIA, nullptr);
+        #else
+          GCODES_ITEM(MSG_INIT_MEDIA, PSTR("M21"));
+          ACTION_ITEM(MSG_MEDIA_RELEASED, nullptr);
+        #endif
+      }
+    #endif // HAS_ENCODER_WHEEL && SDSUPPORT
+  }
 
   END_MENU();
 }
