@@ -232,9 +232,9 @@
 #if defined(REXYZ_BOARD_ROBINMINI)
     #define MOTHERBOARD BOARD_MKS_ROBIN_MINI
     #define ENDSTOP_INTERRUPTS_FEATURE
-    #define REXYZ_SERIAL_PORT 1
-    #define SERIAL_PORT_2 3
-    #define NUM_SERIAL 2
+    #define REXYZ_SERIAL_PORT 3
+    //#define SERIAL_PORT_2 1
+    //#define NUM_SERIAL 2
     #define POWER_LOSS_STATE LOW
 #endif
 #if defined(REXYZ_BOARD_ROBIN)
@@ -285,7 +285,7 @@
 
     #define PID_EDIT_MENU       // Add PID editing to the "Advanced Settings" menu. (~700 bytes of PROGMEM)
     #define PID_AUTOTUNE_MENU   // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of PROGMEM)
-    #define REXYZ_PID_FUNCTIONAL_RANGE 20 // If the temperature difference between the target temperature and the actual temperature
+    #define REXYZ_PID_FUNCTIONAL_RANGE 50 // If the temperature difference between the target temperature and the actual temperature
 
     #define REXYZ_THERMAL_PROTECTION_PERIOD 60        // Seconds
     #define REXYZ_WATCH_TEMP_PERIOD 40                // Seconds
@@ -334,19 +334,19 @@
 #endif
 
 #if defined(REXYZ_A1) || defined(REXYZ_A2)
-  // Ultimaker
-  #define REXYZ_DEFAULT_Kp 23.29
-  #define REXYZ_DEFAULT_Ki 2.23
-  #define REXYZ_DEFAULT_Kd 60.68
 
-    #define REXYZ_PREHEAT_1_TEMP_BED  60
-    #define REXYZ_PREHEAT_2_TEMP_BED  80
+  #define REXYZ_DEFAULT_Kp 14.75
+  #define REXYZ_DEFAULT_Ki 1.15
+  #define REXYZ_DEFAULT_Kd 47.30
+
+  #define REXYZ_PREHEAT_1_TEMP_BED  60
+  #define REXYZ_PREHEAT_2_TEMP_BED  80
 
   #define PIDTEMPBED
+  #define REXYZ_DEFAULT_bedKp 50.49
+  #define REXYZ_DEFAULT_bedKi 9.26
+  #define REXYZ_DEFAULT_bedKd 183.48
 
-  #define REXYZ_DEFAULT_bedKp 78.61
-  #define REXYZ_DEFAULT_bedKi 15.08
-  #define REXYZ_DEFAULT_bedKd 273.08
   #if defined(REXYZ_A2)
     #define REXYZ_TEMP_SENSOR_1 0 //1
     #define REXYZ_EXTRUDERS 1 //2
@@ -751,14 +751,6 @@
       #define REXYZ_XPT2046_Y_CAL_SCALE_X    -141
       #define REXYZ_XPT2046_Y_CAL_SCALE_Y   -8470
       #define REXYZ_XPT2046_Y_OFFSET          255
-      /*
-      #define REXYZ_XPT2046_X_CAL_SCALE_X   12316
-      #define REXYZ_XPT2046_X_CAL_SCALE_Y       0
-      #define REXYZ_XPT2046_X_OFFSET          -43
-      #define REXYZ_XPT2046_Y_CAL_SCALE_X       0
-      #define REXYZ_XPT2046_Y_CAL_SCALE_Y   -8981
-      #define REXYZ_XPT2046_Y_OFFSET          257
-      */
     #endif
 
     #define REXYZ_LCD_FEEDBACK_FREQUENCY_DURATION_MS 2

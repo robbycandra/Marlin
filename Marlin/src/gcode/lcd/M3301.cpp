@@ -47,7 +47,7 @@ void print_controller(uint16_t lcd_id) {
   }
   SERIAL_ECHO("LCD Controller: ");
   SERIAL_ECHO(controller);
-  sprintf(controller, " %x",lcd_id); 
+  sprintf(controller, " %x",lcd_id);
   SERIAL_ECHOLN(controller);
 }
 
@@ -60,7 +60,7 @@ void GcodeSuite::M3301() {
   //lcdReset();
 
   MYSERIAL0.println("Simple TFT LCD Information - MYSERIAL0");
-  MYSERIAL1.println("Simple TFT LCD Information - MYSERIAL1");
+  //MYSERIAL1.println("Simple TFT LCD Information - MYSERIAL1");
   UsbSerial.println("Simple TFT LCD Information - UsbSerial");
   SERIAL_ECHOLN("Simple TFT LCD Information - Serial Echo");
 
@@ -75,7 +75,7 @@ void GcodeSuite::M3301() {
   char response[50];
   // read 8bit data at 0
   reg = TOUCH_LCD_IO_ReadReg(0x00);
-  sprintf(response, "Reg at 0: %x",reg); 
+  sprintf(response, "Reg at 0: %x",reg);
   SERIAL_ECHOLN(response);
   SERIAL_ECHOLN();
   reg &= 0xFF;
@@ -84,7 +84,7 @@ void GcodeSuite::M3301() {
     // read ID1 register to get LCD controller ID, MOST of the time located in register 0x04
     data = TOUCH_LCD_IO_ReadData(0x04, 3);
     lcdId = (uint16_t)(data & 0xFFFF);
-    sprintf(response, "At pos 0x04 - LCD ID : %x",(uint16_t)((data >> 16) & 0xFF)); 
+    sprintf(response, "At pos 0x04 - LCD ID : %x",(uint16_t)((data >> 16) & 0xFF));
     SERIAL_ECHOLN(response);
     print_controller(lcdId);
     SERIAL_ECHOLN();
@@ -92,7 +92,7 @@ void GcodeSuite::M3301() {
     //If ID1 is 0, it means we need to check alternate registers, like 0xD3 in the case of ILI9341
     data = TOUCH_LCD_IO_ReadData(0xD3, 3);
     lcdId = (uint16_t)(data & 0xFFFF);
-    sprintf(response, "At pos 0xD3 - LCD ID : %x",(uint16_t)((data >> 16) & 0xFF)); 
+    sprintf(response, "At pos 0xD3 - LCD ID : %x",(uint16_t)((data >> 16) & 0xFF));
     SERIAL_ECHOLN(response);
     print_controller(lcdId);
     SERIAL_ECHOLN();
