@@ -183,11 +183,14 @@ void _lcd_preheat(const int16_t endnum, const int16_t temph, const int16_t tempb
 
   void menu_preheat_m1() {
     START_MENU();
+    #if HAS_FULL_SCALE_TFT
+      STATIC_ITEM(MSG_PREHEAT_1);
+    #endif
     BACK_ITEM(MSG_TEMPERATURE);
     #if HOTENDS == 1
       #if HAS_HEATED_BED
-        ACTION_ITEM(MSG_PREHEAT_1, lcd_preheat_m1_e0);
-        ACTION_ITEM(MSG_PREHEAT_1_END, lcd_preheat_m1_e0_only);
+        ACTION_ITEM("HotEnd & Bed", lcd_preheat_m1_e0);
+        ACTION_ITEM("HotEnd", lcd_preheat_m1_e0_only);
       #else
         ACTION_ITEM(MSG_PREHEAT_1, lcd_preheat_m1_e0_only);
       #endif
@@ -236,18 +239,21 @@ void _lcd_preheat(const int16_t endnum, const int16_t temph, const int16_t tempb
       ACTION_ITEM(MSG_PREHEAT_1_ALL, lcd_preheat_m1_all);
     #endif // HOTENDS > 1
     #if HAS_HEATED_BED
-      ACTION_ITEM(MSG_PREHEAT_1_BEDONLY, lcd_preheat_m1_bedonly);
+      ACTION_ITEM("Bed", lcd_preheat_m1_bedonly);
     #endif
     END_MENU();
   }
 
   void menu_preheat_m2() {
     START_MENU();
+    #if HAS_FULL_SCALE_TFT
+      STATIC_ITEM(MSG_PREHEAT_2);
+    #endif
     BACK_ITEM(MSG_TEMPERATURE);
     #if HOTENDS == 1
       #if HAS_HEATED_BED
-        ACTION_ITEM(MSG_PREHEAT_2, lcd_preheat_m2_e0);
-        ACTION_ITEM(MSG_PREHEAT_2_END, lcd_preheat_m2_e0_only);
+        ACTION_ITEM("HotEnd & Bed", lcd_preheat_m2_e0);
+        ACTION_ITEM("HotEnd", lcd_preheat_m2_e0_only);
       #else
         ACTION_ITEM(MSG_PREHEAT_2, lcd_preheat_m2_e0_only);
       #endif
@@ -296,7 +302,7 @@ void _lcd_preheat(const int16_t endnum, const int16_t temph, const int16_t tempb
       ACTION_ITEM(MSG_PREHEAT_2_ALL, lcd_preheat_m2_all);
     #endif // HOTENDS > 1
     #if HAS_HEATED_BED
-      ACTION_ITEM(MSG_PREHEAT_2_BEDONLY, lcd_preheat_m2_bedonly);
+      ACTION_ITEM("Bed", lcd_preheat_m2_bedonly);
     #endif
     END_MENU();
   }
@@ -385,8 +391,8 @@ void menu_temperature() {
     // Preheat for Material 1 and 2
     //
     #if TEMP_SENSOR_1 != 0 || TEMP_SENSOR_2 != 0 || TEMP_SENSOR_3 != 0 || TEMP_SENSOR_4 != 0 || TEMP_SENSOR_5 != 0 || HAS_HEATED_BED
-      SUBMENU31(MSG_PREHEAT_1, menu_preheat_m1);
-      SUBMENU31(MSG_PREHEAT_2, menu_preheat_m2);
+      SUBMENUH31(MSG_PREHEAT_1, menu_preheat_m1);
+      SUBMENUH31(MSG_PREHEAT_2, menu_preheat_m2);
     #else
       ACTION_ITEM(MSG_PREHEAT_1, lcd_preheat_m1_e0_only);
       ACTION_ITEM(MSG_PREHEAT_2, lcd_preheat_m2_e0_only);
