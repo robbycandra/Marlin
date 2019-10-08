@@ -68,6 +68,11 @@ uint8_t GCodeQueue::length = 0,  // Count of commands in the queue
         GCodeQueue::index_w = 0; // Ring buffer write position
 
 char GCodeQueue::command_buffer[BUFSIZE][MAX_CMD_SIZE];
+#if ENABLED(DEBUG_SDCARD)
+  char comment_buffer[96];
+  uint8_t comment_count;
+  millis_t next_message_time;
+#endif
 
 /*
  * The port that the command was received on
@@ -512,10 +517,31 @@ void GCodeQueue::get_serial_commands() {
 
     uint16_t sd_count = 0;
     bool card_eof = card.eof();
+
+    #if ENABLED(DEBUG_SDCARD)
+      millis_t now = millis();
+      if (next_message_time < now) {
+        SERIAL_ECHOLNPAIR("count of command in queue = ", length);
+        SERIAL_ECHOLNPAIR("stop_buffering = ", stop_buffering);
+        SERIAL_ECHOPAIR("Index = ",card.getIndex());
+        SERIAL_ECHOLNPAIR(",Filesize = ", card.getFilesize());
+        SERIAL_ECHOLN("-----------------------");
+        next_message_time = now + 1000;
+      }
+    #endif
+
     while (length < BUFSIZE && !card_eof && !stop_buffering) {
       const int16_t n = card.get();
       char sd_char = (char)n;
       card_eof = card.eof();
+      #if ENABLED(DEBUG_SDCARD)
+        if(card.getIndex() >= card.getFilesize() - 2) {
+          SERIAL_ECHOPAIR("Index = ",card.getIndex());
+          SERIAL_ECHOPAIR(" - CharNum = ", n);
+          SERIAL_ECHOLNPAIR(",char = ", sd_char);
+          SERIAL_ECHOLN("-----------------------");
+        }
+      #endif
       if (card_eof || n == -1
           || sd_char == '\n' || sd_char == '\r'
           || ((sd_char == '#' || sd_char == ':') && !sd_comment_mode
@@ -524,9 +550,28 @@ void GCodeQueue::get_serial_commands() {
             #endif
           )
       ) {
+
+        #if ENABLED(DEBUG_SDCARD) && ENABLED(THIS_IS_FALSE)
+          if (comment_count) {
+            comment_buffer[comment_count] = '\0';
+            SERIAL_ECHOLNPAIR("Comment = ", comment_buffer);
+            SERIAL_ECHOPAIR("Index = ",card.getIndex());
+            SERIAL_ECHOLNPAIR(",Filesize = ", card.getFilesize());
+            SERIAL_ECHOLN("-----------------------");
+            comment_count = 0;
+          }
+        #endif
+
         if (card_eof) {
 
+          #if ENABLED(DEBUG_SDCARD)
+            SERIAL_ECHOLNPAIR(" Before card.printingHasFinished");
+          #endif
           card.printingHasFinished();
+
+          #if ENABLED(DEBUG_SDCARD)
+            SERIAL_ECHOLNPAIR(" After card.printingHasFinished");
+          #endif
 
           if (IS_SD_PRINTING())
             sd_count = 0; // If a sub-file was printing, continue from call point
@@ -549,6 +594,23 @@ void GCodeQueue::get_serial_commands() {
         else if (n == -1)
           SERIAL_ERROR_MSG(MSG_SD_ERR_READ);
 
+        #if ENABLED(DEBUG_SDCARD)
+          if (card_eof)
+            SERIAL_ECHOLN("endchar = card eof");
+          else if (sd_char == '\n')
+            SERIAL_ECHOLN("endchar = newline");
+          else if (sd_char == '\r')
+            SERIAL_ECHOLN("endchar = carriage return");
+          else if (sd_char == ':')
+            SERIAL_ECHOLN("endchar = colon");
+          else if (sd_char == '#')
+            SERIAL_ECHOLN("endchar = hash");
+          else if (sd_char == '\0')
+            SERIAL_ECHOLN("endchar = null");
+          else
+            SERIAL_ECHOLN("endchar = unknown");
+        #endif
+
         if (sd_char == '#') stop_buffering = true;
 
         sd_comment_mode = false; // for new command
@@ -557,10 +619,26 @@ void GCodeQueue::get_serial_commands() {
         #endif
 
         // Skip empty lines and comments
-        if (!sd_count) { thermalManager.manage_heater(); continue; }
+        if (!sd_count) {
+          #if ENABLED(DEBUG_SDCARD)
+            thermalManager.manage_heater();
+            SERIAL_ECHO("Skip Command");
+            SERIAL_ECHOPAIR(" - File Index = ",card.getIndex());
+            SERIAL_ECHOLNPAIR(",size = ", card.getFilesize());
+            SERIAL_ECHOLN("-----------------------");
+          #endif
+          continue;
+        }
 
         command_buffer[index_w][sd_count] = '\0'; // terminate string
         sd_count = 0; // clear sd line buffer
+
+        #if ENABLED(DEBUG_SDCARD)
+          SERIAL_ECHOPAIR("Queue Command : ", command_buffer[index_w]);
+          SERIAL_ECHOPAIR(" - File Index = ",card.getIndex());
+          SERIAL_ECHOLNPAIR(",size = ", card.getFilesize());
+          SERIAL_ECHOLN("-----------------------");
+        #endif
 
         _commit_command(false);
 
@@ -575,7 +653,13 @@ void GCodeQueue::get_serial_commands() {
          */
       }
       else {
-        if (sd_char == ';') sd_comment_mode = true;
+        if (sd_char == ';') {
+          sd_comment_mode = true;
+          #if ENABLED(DEBUG_SDCARD)
+            comment_buffer[0] = sd_char;
+            comment_count = 1;
+          #endif
+        }
         #if ENABLED(PAREN_COMMENTS)
           else if (sd_char == '(') sd_comment_paren_mode = true;
           else if (sd_char == ')') sd_comment_paren_mode = false;
@@ -585,6 +669,10 @@ void GCodeQueue::get_serial_commands() {
             && ! sd_comment_paren_mode
           #endif
         ) command_buffer[index_w][sd_count++] = sd_char;
+        #if ENABLED(DEBUG_SDCARD)
+          else
+            comment_buffer[comment_count++] = sd_char;
+        #endif
       }
     }
   }
