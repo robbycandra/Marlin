@@ -23,6 +23,8 @@
 
 /**
  * MKS Robin (STM32F130ZET6) board pin assignments
+ *
+ * https://github.com/makerbase-mks/MKS-Robin/tree/master/MKS%20Robin/Hardware
  */
 
 #ifndef __STM32F1__
@@ -36,12 +38,7 @@
 //
 // Release PB4 (Y_ENABLE_PIN) from JTAG NRST role
 //
-#define DISABLE_DEBUG
-
-//
-// Note: MKS Robin board is using SPI2 interface.
-//
-#define SPI_MODULE 2
+#define DISABLE_JTAG
 
 //
 // Servos
@@ -60,10 +57,6 @@
 #define Y_MAX_PIN          PC4
 #define Z_MIN_PIN          PA4
 #define Z_MAX_PIN          PF7
-
-#ifndef FIL_RUNOUT_PIN
-  #define FIL_RUNOUT_PIN     PF11  // MT_DET
-#endif
 
 //
 // Steppers
@@ -115,17 +108,19 @@
 //
 #define POWER_LOSS_PIN     PA2   // PW_DET
 #define PS_ON_PIN          PA3   // PW_OFF
-#define LED_PIN            PB2
+#ifndef FIL_RUNOUT_PIN
+  #define FIL_RUNOUT_PIN     PF11  // MT_DET
+#endif
 
 //
 // LCD / Controller
 //
 #define BEEPER_PIN         PC13
-#define SD_DETECT_PIN      PF12
+#define LED_PIN            PB2
 
 /**
  * Note: MKS Robin TFT screens use various TFT controllers. Supported screens
- * are based on the ILI9342, ILI9328 and ST7798V. Define init sequences for
+ * are based on the ILI9341, ILI9328 and ST7798V. Define init sequences for
  * other screens in u8g_dev_tft_320x240_upscale_from_128x64.cpp
  *
  * If the screen stays white, disable 'LCD_RESET_PIN'
@@ -134,22 +129,21 @@
  * Setting an 'LCD_RESET_PIN' may cause a flicker when entering the LCD menu
  * because Marlin uses the reset as a failsafe to revive a glitchy LCD.
  */
-#if ENABLED(FSMC_GRAPHICAL_TFT)
-  #define FSMC_CS_PIN        PG12  // NE4
-  #define FSMC_RS_PIN        PF0   // A0
+//#define LCD_RESET_PIN      PF6
+#define LCD_BACKLIGHT_PIN  PG11
+#define FSMC_CS_PIN        PG12  // NE4
+#define FSMC_RS_PIN        PF0   // A0
 
-  //#define LCD_RESET_PIN      PF6
-  #define NO_LCD_REINIT           // Suppress LCD re-initialization
-
-  #define LCD_BACKLIGHT_PIN  PG11
-  #if ENABLED(TOUCH_BUTTONS)
-    #define CS_PIN             PB1
-    #define TOUCH_CS           PB1
-    #define TOUCH_CS_PIN       PB1
-  #endif
+#if ENABLED(TOUCH_BUTTONS)
+  #define TOUCH_CS_PIN     PB1   // SPI2_NSS
+  #define TOUCH_SCK_PIN    PB13  // SPI2_SCK
+  #define TOUCH_MISO_PIN   PB14  // SPI2_MISO
+  #define TOUCH_MOSI_PIN   PB15  // SPI2_MOSI
+  #define TOUCH_INT_PIN    -1
+  #define SS_PIN           PB12
 #endif
 
-
+#define NO_LCD_REINIT           // Suppress LCD re-initialization
 
 
 /**
@@ -164,11 +158,10 @@
  * Any pin can be used for Chip Select (SS_PIN)
  * SPI1 is enabled by default
  */
-#define TOUCH_INT_PIN  -1
-#define TOUCH_MISO_PIN PB14
-#define TOUCH_MOSI_PIN PB15
-#define TOUCH_SCK_PIN  PB13
-#define SS_PIN         PB12
+// SPI1(PA7) & SPI3(PB5) not available
+#define ENABLE_SPI2
+
+#define SD_DETECT_PIN      PF12
 
 //
 // Custom SPI pins
@@ -185,3 +178,22 @@
 //#define SDSS               PD2
 
 //#define SD_DETECT_PIN       -1   // PF12
+
+/*
+#if ENABLED(SDIO_SUPPORT)
+  #define SCK_PIN           PB13 // SPI2
+  #define MISO_PIN          PB14 // SPI2
+  #define MOSI_PIN          PB15 // SPI2
+  #define SS_PIN            -1   // PB12 is X-
+  #define SD_DETECT_PIN     PF12 // SD_CD
+#else
+  // SD as custom software SPI (SDIO pins)
+  #define SCK_PIN           PC12
+  #define MISO_PIN          PC8
+  #define MOSI_PIN          PD2
+  #define SS_PIN            -1
+  #define ONBOARD_SD_CS_PIN PC11
+  #define SDSS              PD2
+  #define SD_DETECT_PIN     -1
+#endif
+*/
