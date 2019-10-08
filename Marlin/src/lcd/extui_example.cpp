@@ -59,12 +59,6 @@ namespace ExtUI {
   void onStatusChanged(const char * const msg) {}
   void onFactoryReset() {}
 
-  #if HAS_LEVELING
-    #if HAS_MESH
-      void onMeshUpdate(const uint8_t xpos, const uint8_t ypos, const float zval) {};
-    #endif
-  #endif
-
   void onStoreSettings(char *buff) {
     // This is called when saving to EEPROM (i.e. M500). If the ExtUI needs
     // permanent data to be stored, it can write up to eeprom_data_size bytes
@@ -95,6 +89,9 @@ namespace ExtUI {
     // whether successful or not.
   }
 
+  void onMeshUpdate(const uint8_t xpos, const uint8_t ypos, const float zval) {
+    // This is called when any mesh points are updated
+  }
 }
 
 #endif // EXTUI_EXAMPLE && EXTENSIBLE_UI
