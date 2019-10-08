@@ -543,7 +543,7 @@ void GCodeQueue::get_serial_commands() {
         }
       #endif
       if (card_eof || n == -1
-          || sd_char == '\n' || sd_char == '\r'
+          || sd_char == '\n' || sd_char == '\r' || sd_char == '\0'
           || ((sd_char == '#' || sd_char == ':') && !sd_comment_mode
             #if ENABLED(PAREN_COMMENTS)
               && !sd_comment_paren_mode
@@ -562,7 +562,7 @@ void GCodeQueue::get_serial_commands() {
           }
         #endif
 
-        if (card_eof) {
+        if (card_eof || (n == -1)) {
 
           #if ENABLED(DEBUG_SDCARD)
             SERIAL_ECHOLNPAIR(" Before card.printingHasFinished");
@@ -590,10 +590,9 @@ void GCodeQueue::get_serial_commands() {
               #endif
             #endif // PRINTER_EVENT_LEDS
           }
+          if (n == -1)
+            SERIAL_ERROR_MSG(MSG_SD_ERR_READ);
         }
-        else if (n == -1)
-          SERIAL_ERROR_MSG(MSG_SD_ERR_READ);
-
         #if ENABLED(DEBUG_SDCARD)
           if (card_eof)
             SERIAL_ECHOLN("endchar = card eof");
