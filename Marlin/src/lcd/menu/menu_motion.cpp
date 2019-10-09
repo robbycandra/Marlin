@@ -330,7 +330,7 @@ void menu_move() {
         ACTION_ITEM(MSG_FREE_XY, [](){ line_to_z(delta_clip_start_height); ui.synchronize(); });
     #endif
 
-    SUBMENUH31(MSG_MOVE_Z, [](){ _menu_move_distance(Y_AXIS, lcd_move_y); });
+    SUBMENUH31(MSG_MOVE_Z, [](){ _menu_move_distance(Z_AXIS, lcd_move_z); });
   }
   else {
     ui.screenMode = SCRMODE_MENU_H_2X1;
