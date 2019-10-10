@@ -95,7 +95,7 @@ static inline void _lcd_goto_next_corner() {
 
 static inline void menu_level_bed_corners() {
   do_select_screen(
-    PSTR(MSG_BUTTON_NEXT), PSTR(MSG_BUTTON_DONE),
+    GET_TEXT(MSG_BUTTON_NEXT), GET_TEXT(MSG_BUTTON_DONE),
     _lcd_goto_next_corner,
     []{
       #if HAS_LEVELING
@@ -104,7 +104,7 @@ static inline void menu_level_bed_corners() {
       queue.inject_P(PSTR("G27 P2"));
       ui.goto_previous_screen_no_defer();
     },
-    PSTR(
+    GET_TEXT(
       #if ENABLED(LEVEL_CENTER_TOO)
         MSG_LEVEL_BED_NEXT_POINT
       #else

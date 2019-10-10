@@ -156,7 +156,7 @@ void run_status_screen_touch_command() {
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         if (!TEST(axis_homed, Z_AXIS) || !TEST(axis_known_position, Z_AXIS)) {
-          MenuItem_gcode::action("Home Z", PSTR("G28 Z"));
+          MenuItem_gcode::action(PSTR("Home Z"), PSTR("G28 Z"));
         }
         move_menu_scale = 10;
         ui.wait_for_untouched = true;
@@ -168,14 +168,14 @@ void run_status_screen_touch_command() {
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         ui.wait_for_untouched = true;
-        MenuItem_int3::action(PSTR(MSG_SPEED), &feedrate_percentage, 10, 999);
+        MenuItem_int3::action(GET_TEXT(MSG_SPEED), &feedrate_percentage, 10, 999);
         break;
       case 5:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         ui.wait_for_untouched = true;
-        MenuItem_int3::action(PSTR(MSG_NOZZLE),&thermalManager.temp_hotend[0].target, 0, HEATER_0_MAXTEMP - 15, [](){ thermalManager.start_watching_hotend(0); });
+        MenuItem_int3::action(GET_TEXT(MSG_NOZZLE),&thermalManager.temp_hotend[0].target, 0, HEATER_0_MAXTEMP - 15, [](){ thermalManager.start_watching_hotend(0); });
         break;
       case 6:
         #if HAS_HEATED_BED
@@ -183,7 +183,7 @@ void run_status_screen_touch_command() {
             ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
           #endif
           ui.wait_for_untouched = true;
-          MenuItem_int3::action(PSTR(MSG_BED),&thermalManager.temp_bed.target, 0, BED_MAXTEMP - 10, thermalManager.start_watching_bed);
+          MenuItem_int3::action(GET_TEXT(MSG_BED),&thermalManager.temp_bed.target, 0, BED_MAXTEMP - 10, thermalManager.start_watching_bed);
           break;
         #endif
       case 7:
@@ -193,7 +193,7 @@ void run_status_screen_touch_command() {
         ui.wait_for_untouched = true;
         ui.screenMode = SCRMODE_EDIT_SCREEN;
         editable.uint8 = thermalManager.fan_speed[0];
-        MenuItem_percent::action(PSTR(MSG_FAN_SPEED),&editable.uint8, 0, 255, [](){ thermalManager.set_fan_speed(0, editable.uint8); });
+        MenuItem_percent::action(GET_TEXT(MSG_FAN_SPEED),&editable.uint8, 0, 255, [](){ thermalManager.set_fan_speed(0, editable.uint8); });
         break;
       case 8:
       case 9:

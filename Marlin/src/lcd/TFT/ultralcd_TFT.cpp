@@ -281,8 +281,8 @@ void MarlinUI::draw_kill_screen() {
   do {
     set_font(FONT_MENU);
     lcd_put_u8str(20, h4 * 1, status_message);
-    lcd_put_u8str_P(20, h4 * 2, PSTR(MSG_HALTED));
-    lcd_put_u8str_P(20, h4 * 3, PSTR(MSG_PLEASE_RESET));
+    lcd_put_u8str_P(20, h4 * 2, GET_TEXT(MSG_HALTED));
+    lcd_put_u8str_P(20, h4 * 3, GET_TEXT(MSG_PLEASE_RESET));
   } while (u8g.nextPage());
 }
 

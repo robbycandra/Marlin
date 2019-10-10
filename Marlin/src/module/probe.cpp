@@ -282,17 +282,17 @@ inline void do_probe_raise(const float z_raise) {
 #if HAS_LCD_MENU
   static inline void _lcd_deploy_message() {
     START_SCREEN();
-    STATIC_ITEM_P(PSTR(MSG_MANUAL_DEPLOY), SS_CENTER||SS_INVERT);
+    STATIC_ITEM_P(GET_TEXT(MSG_MANUAL_DEPLOY), SS_CENTER||SS_INVERT);
     if ( LCD_HEIGHT > 3) STATIC_ITEM(" ");
-    STATIC_ITEM_P(PSTR(MSG_USERWAIT), SS_CENTER||SS_INVERT);
+    STATIC_ITEM_P(GET_TEXT(MSG_USERWAIT), SS_CENTER||SS_INVERT);
     END_SCREEN();
   }
 
   static inline void _lcd_stow_message() {
     START_SCREEN();
-    STATIC_ITEM_P(PSTR(MSG_MANUAL_STOW), SS_CENTER||SS_INVERT);
+    STATIC_ITEM_P(GET_TEXT(MSG_MANUAL_STOW), SS_CENTER||SS_INVERT);
     if ( LCD_HEIGHT > 3) STATIC_ITEM(" ");
-    STATIC_ITEM_P(PSTR(MSG_USERWAIT), SS_CENTER||SS_INVERT);
+    STATIC_ITEM_P(GET_TEXT(MSG_USERWAIT), SS_CENTER||SS_INVERT);
     END_SCREEN();
   }
 #endif
@@ -315,7 +315,7 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
       BUZZ(100, 659);
       BUZZ(100, 698);
 
-      //PGM_P const ds_str = deploy ? PSTR(MSG_MANUAL_DEPLOY) : PSTR(MSG_MANUAL_STOW);
+      //PGM_P const ds_str = deploy ? GET_TEXT(MSG_MANUAL_DEPLOY) : GET_TEXT(MSG_MANUAL_STOW);
       //ui.return_to_status();       // To display the new status message
       //ui.set_status_P(ds_str, 99);
       //serialprintPGM(ds_str);
@@ -329,7 +329,7 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
         host_prompt_do(PROMPT_USER_CONTINUE, PSTR("Stow Probe"), PSTR("Continue"));
       #endif
       #if ENABLED(EXTENSIBLE_UI)
-        ExtUI::onUserConfirmRequired(PSTR("Stow Probe"));
+        ExtUI::onUserConfirmRequired_P(PSTR("Stow Probe"));
       #endif
       #if HAS_LCD_MENU
         while (wait_for_user) idle();
@@ -337,7 +337,7 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
         ui.lcdCurDisplayTimeUpdate = false;
         ui.goto_previous_screen();
       #endif
-    } 
+    }
   }
   #if ENABLED(SOLENOID_PROBE)
 
@@ -383,8 +383,8 @@ bool set_probe_deployed(const bool deploy) {
   // Make room for probe to deploy (or stow)
   // Fix-mounted probe should only raise for deploy
   // unless PAUSE_BEFORE_DEPLOY_STOW is enabled
-  
-  #if ENABLED(FIX_MOUNTED_PROBE) 
+
+  #if ENABLED(FIX_MOUNTED_PROBE)
     bool deploy_stow_condition = true;
     if (rexyz_probe_mode == REXYZPROBE_MANUAL_DEPLOY)
       deploy_stow_condition = true;
@@ -438,7 +438,7 @@ bool set_probe_deployed(const bool deploy) {
     if (PROBE_STOWED() == deploy) {                // Unchanged after deploy/stow action?
       if (IsRunning()) {
         SERIAL_ERROR_MSG("Z-Probe failed");
-        LCD_ALERTMESSAGEPGM("Err: ZPROBE");
+        LCD_ALERTMESSAGEPGM_P(PSTR("Err: ZPROBE"));
       }
       stop();
       return true;
@@ -768,7 +768,7 @@ float probe_at_point(const float &rx, const float &ry, const ProbePtRaise raise_
 
   if (isnan(measured_z)) {
     STOW_PROBE();
-    LCD_MESSAGEPGM(MSG_ERR_PROBING_FAILED);
+    LCD_MESSAGEPGM(MSG_LCD_PROBING_FAILED);
     SERIAL_ERROR_MSG(MSG_ERR_PROBING_FAILED);
   }
 

@@ -34,7 +34,7 @@
 
 static void lcd_store_settings_confirm() {
   do_select_screen(
-    PSTR(MSG_STORE_EEPROM), PSTR(MSG_BUTTON_CANCEL),
+    GET_TEXT(MSG_STORE_EEPROM), GET_TEXT(MSG_BUTTON_CANCEL),
     []{
       const bool inited = settings.save();
       #if HAS_BUZZER
@@ -43,13 +43,13 @@ static void lcd_store_settings_confirm() {
       UNUSED(inited);
     },
     ui.goto_previous_screen,
-    PSTR(MSG_STORE_EEPROM), nullptr, PSTR("?")
+    GET_TEXT(MSG_STORE_EEPROM), nullptr, PSTR("?")
   );
 }
 
 static void lcd_load_settings_confirm() {
   do_select_screen(
-    PSTR(MSG_LOAD_EEPROM), PSTR(MSG_BUTTON_CANCEL),
+    GET_TEXT(MSG_LOAD_EEPROM), GET_TEXT(MSG_BUTTON_CANCEL),
     []{
       const bool inited = settings.load();
       #if HAS_BUZZER
@@ -58,13 +58,13 @@ static void lcd_load_settings_confirm() {
       UNUSED(inited);
     },
     ui.goto_previous_screen,
-    PSTR(MSG_LOAD_EEPROM), nullptr, PSTR("?")
+    GET_TEXT(MSG_LOAD_EEPROM), nullptr, PSTR("?")
   );
 }
 
 static void lcd_factory_settings_confirm() {
   do_select_screen(
-    PSTR(MSG_RESTORE_FAILSAFE), PSTR(MSG_BUTTON_CANCEL),
+    GET_TEXT(MSG_RESTORE_FAILSAFE), GET_TEXT(MSG_BUTTON_CANCEL),
     []{
       settings.reset();
       #if HAS_BUZZER
@@ -72,13 +72,13 @@ static void lcd_factory_settings_confirm() {
       #endif
     },
     ui.goto_previous_screen,
-    PSTR(MSG_RESTORE_FAILSAFE), nullptr, PSTR("?")
+    GET_TEXT(MSG_RESTORE_FAILSAFE), nullptr, PSTR("?")
   );
 }
 
 static void lcd_init_eeprom_confirm() {
   do_select_screen(
-    PSTR(MSG_BUTTON_INIT), PSTR(MSG_BUTTON_CANCEL),
+    GET_TEXT(MSG_BUTTON_INIT), GET_TEXT(MSG_BUTTON_CANCEL),
     []{
       const bool inited = settings.init_eeprom();
       #if HAS_BUZZER
@@ -87,7 +87,7 @@ static void lcd_init_eeprom_confirm() {
       UNUSED(inited);
     },
     ui.goto_previous_screen,
-    PSTR(MSG_INIT_EEPROM), nullptr, PSTR("?")
+    GET_TEXT(MSG_INIT_EEPROM), nullptr, PSTR("?")
   );
 }
 

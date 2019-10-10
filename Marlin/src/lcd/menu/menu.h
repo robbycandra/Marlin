@@ -81,16 +81,17 @@ typedef void (*selectFunc_t)();
 void draw_select_screen(PGM_P const yes, PGM_P const no, const bool yesno, PGM_P const pref, const char * const string, PGM_P const suff);
 void do_select_screen(PGM_P const yes, PGM_P const no, selectFunc_t yesFunc, selectFunc_t noFunc, PGM_P const pref, const char * const string=nullptr, PGM_P const suff=nullptr);
 inline void do_select_screen_yn(selectFunc_t yesFunc, selectFunc_t noFunc, PGM_P const pref, const char * const string=nullptr, PGM_P const suff=nullptr) {
-  do_select_screen(PSTR(MSG_YES), PSTR(MSG_NO), yesFunc, noFunc, pref, string, suff);
+  do_select_screen(GET_TEXT(MSG_YES), GET_TEXT(MSG_NO), yesFunc, noFunc, pref, string, suff);
 }
 
-#define SS_LEFT   0x00
-#define SS_CENTER 0x01
-#define SS_INVERT 0x02
+#define SS_LEFT    0x00
+#define SS_CENTER  0x01
+#define SS_INVERT  0x02
+#define SS_DEFAULT SS_CENTER
 
 void draw_edit_screen(PGM_P const pstr, const char* const value=nullptr);
 void draw_menu_item(const bool sel, const uint8_t row, PGM_P const pstr, const char pre_char, const char post_char);
-void draw_menu_item_static(const uint8_t row, PGM_P const pstr, const uint8_t style=SS_CENTER, const char * const valstr=nullptr);
+void draw_menu_item_static(const uint8_t row, PGM_P const pstr, const uint8_t style=SS_DEFAULT, const char * const valstr=nullptr);
 void _draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm);
 FORCE_INLINE void draw_menu_item_back(const bool sel, const uint8_t row, PGM_P const pstr) { draw_menu_item(sel, row, pstr, LCD_STR_UPLEVEL[0], LCD_STR_UPLEVEL[0]); }
 FORCE_INLINE void draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data) { _draw_menu_item_edit(sel, row, pstr, data, false); }
@@ -137,7 +138,7 @@ FORCE_INLINE void draw_menu_item_edit_P(const bool sel, const uint8_t row, PGM_P
 #define draw_menu_item_gcode(sel, row, pstr, gcode)   draw_menu_item(sel, row, pstr, '>', ' ')
 #define draw_menu_item_function(sel, row, pstr, data) draw_menu_item(sel, row, pstr, '>', ' ')
 #define DRAW_MENU_ITEM_SETTING_EDIT_GENERIC(VAL)      draw_menu_item_edit(sel, row, pstr, VAL)
-#define DRAW_BOOL_SETTING(sel, row, pstr, data)       draw_menu_item_edit_P(sel, row, pstr, (*(data))?PSTR(MSG_LCD_ON):PSTR(MSG_LCD_OFF))
+#define DRAW_BOOL_SETTING(sel, row, pstr, data)       draw_menu_item_edit_P(sel, row, pstr, (*(data))?GET_TEXT(MSG_LCD_ON):GET_TEXT(MSG_LCD_OFF))
 
 #if HAS_FULL_SCALE_TFT
 void draw_sdupdir_item(const bool sel, const uint8_t row, PGM_P const pstr);
@@ -520,17 +521,17 @@ class MenuItem_bool {
  * Examples:
  *   BACK_ITEM(MSG_WATCH)
  *   MENU_ITEM(back, MSG_WATCH)
- *     draw_menu_item_back(sel, row, PSTR(MSG_WATCH))
+ *     draw_menu_item_back(sel, row, GET_TEXT(MSG_WATCH))
  *     MenuItem_back::action()
  *
  *   ACTION_ITEM(MSG_PAUSE_PRINT, lcd_sdcard_pause)
  *   ACTION_ITEM(MSG_PAUSE_PRINT, lcd_sdcard_pause)
- *     draw_menu_item_function(sel, row, PSTR(MSG_PAUSE_PRINT), lcd_sdcard_pause)
+ *     draw_menu_item_function(sel, row, GET_TEXT(MSG_PAUSE_PRINT), lcd_sdcard_pause)
  *     MenuItem_function::action(lcd_sdcard_pause)
  *
  *   EDIT_ITEM(int3, MSG_SPEED, &feedrate_percentage, 10, 999)
- *     draw_menu_item_int3(sel, row, PSTR(MSG_SPEED), &feedrate_percentage, 10, 999)
- *     MenuItem_int3::action(PSTR(MSG_SPEED), &feedrate_percentage, 10, 999)
+ *     draw_menu_item_int3(sel, row, GET_TEXT(MSG_SPEED), &feedrate_percentage, 10, 999)
+ *     MenuItem_int3::action(GET_TEXT(MSG_SPEED), &feedrate_percentage, 10, 999)
  *
  */
 
@@ -611,40 +612,50 @@ class MenuItem_bool {
 
 #define MENU_ITEM_ADDON_END() } }while(0)
 
-#define STATIC_ITEM(LABEL, V...) STATIC_ITEM_P(PSTR(LABEL), ##V)
+#define STATIC_ITEM(LABEL, V...) STATIC_ITEM_P(GET_TEXT(LABEL), ##V)
 
-#define MENU_ITEM_P(TYPE, PLABEL, V...)   _MENU_ITEM_P(TYPE, false, PLABEL,      ##V)
-#define MENU_ITEM(TYPE, LABEL, V...)      _MENU_ITEM_P(TYPE, false, PSTR(LABEL), ##V)
-#define EDIT_ITEM(TYPE, LABEL, V...)      _MENU_ITEM_P(TYPE, false, PSTR(LABEL), ##V)
-#define EDIT_ITEM_FAST(TYPE, LABEL, V...) _MENU_ITEM_P(TYPE,  true, PSTR(LABEL), ##V)
+#define MENU_ITEM_P(TYPE, PLABEL, V...)       _MENU_ITEM_P(TYPE, false, PLABEL, ##V)
+#define MENU_ITEM(TYPE, LABEL, V...)           MENU_ITEM_P(TYPE, GET_TEXT(LABEL), ##V)
+
+#define EDIT_ITEM_P(TYPE, PLABEL, V...)        MENU_ITEM_P(TYPE, PLABEL, ##V)
+#define EDIT_ITEM(TYPE, LABEL, V...)           EDIT_ITEM_P(TYPE, GET_TEXT(LABEL), ##V)
+
+#define EDIT_ITEM_FAST_P(TYPE, PLABEL, V...)  _MENU_ITEM_P(TYPE, true, PLABEL, ##V)
+#define EDIT_ITEM_FAST(TYPE, LABEL, V...) EDIT_ITEM_FAST_P(TYPE, GET_TEXT(LABEL), ##V)
+
+#define ACTION_ITEM_P(PLABEL, ACTION)          MENU_ITEM_P(function, PLABEL, ACTION)
+#define ACTION_ITEM(LABEL, ACTION)           ACTION_ITEM_P(GET_TEXT(LABEL), ACTION)
+
+#define GCODES_ITEM_P(PLABEL, GCODES)          MENU_ITEM_P(gcode, PLABEL, GCODES)
+#define GCODES_ITEM(LABEL, GCODES)           GCODES_ITEM_P(GET_TEXT(LABEL), GCODES)
+
+#define SUBMENU_P(PLABEL, DEST)                MENU_ITEM_P(submenu, PLABEL, DEST)
+#define SUBMENU(LABEL, DEST)                     SUBMENU_P(GET_TEXT(LABEL), DEST)
 
 #define SKIP_ITEM()                 (_thisItemNr++)
-
 #if ENABLED(TOUCH_BUTTONS)
   #define BACK_ITEM(LABEL)          NOOP
 #else
   #define BACK_ITEM(LABEL)          MENU_ITEM(back,LABEL)
 #endif
-#define GCODES_ITEM(LABEL, GCODES)  MENU_ITEM(gcode, LABEL, GCODES)
-#define ACTION_ITEM(LABEL, ACTION)  MENU_ITEM(function, LABEL, ACTION)
-#define SUBEDIT(LABEL, DEST)        MENU_ITEM(subedit, LABEL, DEST)
-#define SUBSELECT(LABEL, DEST)      MENU_ITEM(subselect, LABEL, DEST)
-#define SUBMENU(LABEL, DEST)        MENU_ITEM(submenu, LABEL, DEST)
-#define SUBMENU14(LABEL, DEST)      MENU_ITEM(submenu14, LABEL, DEST)
-#define SUBMENU21(LABEL, DEST)      MENU_ITEM(submenu21, LABEL, DEST)
-#define SUBMENU22(LABEL, DEST)      MENU_ITEM(submenu22, LABEL, DEST)
-#define SUBMENU23(LABEL, DEST)      MENU_ITEM(submenu23, LABEL, DEST)
-#define SUBMENU24(LABEL, DEST)      MENU_ITEM(submenu24, LABEL, DEST)
-#define SUBMENU31(LABEL, DEST)      MENU_ITEM(submenu31, LABEL, DEST)
-#define SUBMENU32(LABEL, DEST)      MENU_ITEM(submenu32, LABEL, DEST)
-#define SUBMENU33(LABEL, DEST)      MENU_ITEM(submenu33, LABEL, DEST)
-#define SUBMENUH21(LABEL, DEST)     MENU_ITEM(submenuh21, LABEL, DEST)
-#define SUBMENUH22(LABEL, DEST)     MENU_ITEM(submenuh22, LABEL, DEST)
-#define SUBMENUH23(LABEL, DEST)     MENU_ITEM(submenuh23, LABEL, DEST)
-#define SUBMENUH31(LABEL, DEST)     MENU_ITEM(submenuh31, LABEL, DEST)
-#define SUBMENUH32(LABEL, DEST)     MENU_ITEM(submenuh32, LABEL, DEST)
-#define SUBSCREEN6(LABEL, DEST)     MENU_ITEM(subscreen6, LABEL, DEST)
-#define SUBSCREEN8(LABEL, DEST)     MENU_ITEM(subscreen8, LABEL, DEST)
+
+#define SUBEDIT(LABEL, DEST)        MENU_ITEM_P(subedit,   GET_TEXT(LABEL), DEST)
+#define SUBSELECT(LABEL, DEST)      MENU_ITEM_P(subselect, GET_TEXT(LABEL), DEST)
+#define SUBMENU14(LABEL, DEST)      MENU_ITEM_P(submenu14, GET_TEXT(LABEL), DEST)
+#define SUBMENU21(LABEL, DEST)      MENU_ITEM_P(submenu21, GET_TEXT(LABEL), DEST)
+#define SUBMENU22(LABEL, DEST)      MENU_ITEM_P(submenu22, GET_TEXT(LABEL), DEST)
+#define SUBMENU23(LABEL, DEST)      MENU_ITEM_P(submenu23, GET_TEXT(LABEL), DEST)
+#define SUBMENU24(LABEL, DEST)      MENU_ITEM_P(submenu24, GET_TEXT(LABEL), DEST)
+#define SUBMENU31(LABEL, DEST)      MENU_ITEM_P(submenu31, GET_TEXT(LABEL), DEST)
+#define SUBMENU32(LABEL, DEST)      MENU_ITEM_P(submenu32, GET_TEXT(LABEL), DEST)
+#define SUBMENU33(LABEL, DEST)      MENU_ITEM_P(submenu33, GET_TEXT(LABEL), DEST)
+#define SUBMENUH21(LABEL, DEST)     MENU_ITEM_P(submenuh21, GET_TEXT(LABEL), DEST)
+#define SUBMENUH22(LABEL, DEST)     MENU_ITEM_P(submenuh22, GET_TEXT(LABEL), DEST)
+#define SUBMENUH23(LABEL, DEST)     MENU_ITEM_P(submenuh23, GET_TEXT(LABEL), DEST)
+#define SUBMENUH31(LABEL, DEST)     MENU_ITEM_P(submenuh31, GET_TEXT(LABEL), DEST)
+#define SUBMENUH32(LABEL, DEST)     MENU_ITEM_P(submenuh32, GET_TEXT(LABEL), DEST)
+#define SUBSCREEN6(LABEL, DEST)     MENU_ITEM_P(subscreen6, GET_TEXT(LABEL), DEST)
+#define SUBSCREEN8(LABEL, DEST)     MENU_ITEM_P(subscreen8, GET_TEXT(LABEL), DEST)
 
 ////////////////////////////////////////////
 /////////////// Menu Screens ///////////////

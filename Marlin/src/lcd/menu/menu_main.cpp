@@ -44,7 +44,7 @@
 
 #if MACHINE_CAN_STOP
   void menu_abort_confirm() {
-    do_select_screen(PSTR(MSG_BUTTON_STOP), PSTR(MSG_BACK), ui.abort_print, ui.goto_previous_screen, PSTR(MSG_STOP_PRINT), nullptr, PSTR("?"));
+    do_select_screen(GET_TEXT(MSG_BUTTON_STOP), GET_TEXT(MSG_BACK), ui.abort_print, ui.goto_previous_screen, GET_TEXT(MSG_STOP_PRINT), nullptr, PSTR("?"));
   }
 #endif // MACHINE_CAN_STOP
 
@@ -305,10 +305,10 @@ void rmenu_prepare() {
     #endif
     if (all_axes_homed() && leveling_is_valid()) {
       bool new_level_state = planner.leveling_active;
-      EDIT_ITEM(bool, MSG_BED_LEVELING, &new_level_state, _lcd_toggle_bed_leveling);
+      EDIT_ITEM(bool, GET_TEXT(MSG_BED_LEVELING), &new_level_state, _lcd_toggle_bed_leveling);
     }
     #if ENABLED(ENABLE_LEVELING_FADE_HEIGHT)
-      EDIT_ITEM_FAST(float3, MSG_Z_FADE_HEIGHT, &lcd_z_fade_height, 0, 100, _lcd_set_z_fade_height);
+      EDIT_ITEM_FAST(float3, GET_TEXT(MSG_Z_FADE_HEIGHT), &lcd_z_fade_height, 0, 100, _lcd_set_z_fade_height);
     #endif
 
   #else
@@ -328,7 +328,7 @@ void rmenu_prepare() {
 
   SUBMENU23(MSG_TEMPERATURE, menu_temperature);
 
-  SUBMENU24("Marlin Menu",menu_main);
+  SUBMENU_P(PSTR("Marlin Menu"),menu_main);
 
   END_MENU();
 }
@@ -369,12 +369,12 @@ void rmenu_main() {
       if (printingIsPaused()) ACTION_ITEM(MSG_RESUME_PRINT, ui.resume_print);
     #endif
 
-    SUBMENU22("Prepare", rmenu_prepare);
+    MENU_ITEM_P(submenu22,PSTR("Prepare"), rmenu_prepare);
   }
 
-  SUBMENU32("Tune", menu_tune);
+  MENU_ITEM_P(submenu32,PSTR("Tune"), menu_tune);
 
-  SUBMENU32("Setting", rmenu_setting);
+  MENU_ITEM_P(submenu32,PSTR("Setting"), rmenu_setting);
 
   if (!busy) {
     #if HAS_ENCODER_WHEEL && ENABLED(SDSUPPORT)
