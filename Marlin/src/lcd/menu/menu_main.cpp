@@ -182,7 +182,7 @@ void menu_main() {
       if (thermalManager.targetHotEnoughToExtrude(active_extruder))
         GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
       else
-        SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_LOAD_FILAMENT, 0); });
+        SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_PAUSE_PRINT, 0); });
     #else
       SUBMENUH31(MSG_FILAMENTCHANGE, menu_change_filament);
     #endif
@@ -320,7 +320,7 @@ void rmenu_prepare() {
       if (thermalManager.targetHotEnoughToExtrude(active_extruder))
         GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
       else
-        SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_LOAD_FILAMENT, 0); });
+        SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_PAUSE_PRINT, 0); });
     #else
       SUBMENUH31(MSG_FILAMENTCHANGE, menu_change_filament);
     #endif
@@ -357,7 +357,7 @@ void rmenu_main() {
         if (thermalManager.targetHotEnoughToExtrude(active_extruder))
           GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
         else
-          SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_LOAD_FILAMENT, 0); });
+          SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_PAUSE_PRINT, 0); });
       #else
         SUBMENUH31(MSG_FILAMENTCHANGE, menu_change_filament);
       #endif
