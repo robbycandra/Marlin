@@ -139,14 +139,14 @@ void GcodeSuite::M205() {
   #if DISABLED(CLASSIC_JERK)
     if (parser.seen('J')) {
       const float junc_dev = parser.value_linear_units();
-      if (WITHIN(junc_dev, 0.01f, MAX_JUNCTION_DEVIATION_MM)) {
+      if (WITHIN(junc_dev, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM)) {
         planner.junction_deviation_mm = junc_dev;
         #if ENABLED(LIN_ADVANCE)
           planner.recalculate_max_e_jerk();
         #endif
       }
       else
-        SERIAL_ERROR_MSG("?J out of range.");
+        SERIAL_ERROR_MSG("JD is out of range.");
     }
   #endif
   #if HAS_CLASSIC_JERK

@@ -615,9 +615,9 @@ void menu_backlash();
 
     #if DISABLED(CLASSIC_JERK)
       #if ENABLED(LIN_ADVANCE)
-        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f, planner.recalculate_max_e_jerk);
+        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM, planner.recalculate_max_e_jerk);
       #else
-        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f);
+        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM);
       #endif
     #endif
     #if HAS_CLASSIC_JERK
@@ -728,11 +728,11 @@ void menu_advanced_settings() {
     SUBMENU(MSG_ACCELERATION, menu_advanced_acceleration);
 
     // M205 - Max Jerk
-    #if ENABLED(JUNCTION_DEVIATION)
+    #if DISABLED(CLASSIC_JERK)
       #if ENABLED(LIN_ADVANCE)
-        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f, planner.recalculate_max_e_jerk);
+        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM, planner.recalculate_max_e_jerk);
       #else
-        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f);
+        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM);
       #endif
     #else
       SUBMENU(MSG_JERK, menu_advanced_jerk);
@@ -868,9 +868,9 @@ void rmenu_setting_motion() {
   // M205 - Max Jerk
   #if DISABLED(CLASSIC_JERK)
     #if ENABLED(LIN_ADVANCE)
-      EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f, planner.recalculate_max_e_jerk);
+      EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM, planner.recalculate_max_e_jerk);
     #else
-      EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f);
+      EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM, );
     #endif
   #else
     SUBMENU23(MSG_JERK, menu_advanced_jerk);
