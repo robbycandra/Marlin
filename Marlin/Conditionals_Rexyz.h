@@ -774,6 +774,10 @@
   #define POWER_LOSS_RECOVERY
 #endif
 
+#if defined(REXYZ_A1)
+  // supaya filament tidak masuk ke lubang kipas.
+  #define HOME_BEFORE_FILAMENT_CHANGE
+#endif
 //===========================================================================
 //============================= Filament Runout Settings ====================
 //===========================================================================
