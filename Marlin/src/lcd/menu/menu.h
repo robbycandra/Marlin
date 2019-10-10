@@ -525,7 +525,7 @@ class MenuItem_bool {
  *     MenuItem_back::action()
  *
  *   ACTION_ITEM(MSG_PAUSE_PRINT, lcd_sdcard_pause)
- *   ACTION_ITEM(MSG_PAUSE_PRINT, lcd_sdcard_pause)
+ *   MENU_ITEM(function, MSG_PAUSE_PRINT, lcd_sdcard_pause)
  *     draw_menu_item_function(sel, row, GET_TEXT(MSG_PAUSE_PRINT), lcd_sdcard_pause)
  *     MenuItem_function::action(lcd_sdcard_pause)
  *

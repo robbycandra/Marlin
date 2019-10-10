@@ -29,6 +29,7 @@
 
 // All displays share the MarlinUI class
 #if HAS_DISPLAY
+  #include "../gcode/queue.h"
   #include "ultralcd.h"
   #include "fontutils.h"
   MarlinUI ui;
@@ -95,7 +96,6 @@
 #include "../module/planner.h"
 #include "../module/printcounter.h"
 #include "../module/motion.h"
-#include "../gcode/queue.h"
 
 #include "../Marlin.h"
 

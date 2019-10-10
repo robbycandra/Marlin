@@ -795,7 +795,7 @@ void menu_advanced_settings() {
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     SUBEDIT(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
-    SUBEDIT("Probe", menu_advanced_probe);
+    MENU_ITEM_P(subedit,PSTR("Probe"), menu_advanced_probe);
   #endif
 
   #if ENABLED(TOUCH_CALIBRATION)
@@ -866,7 +866,7 @@ void rmenu_setting_motion() {
   SUBMENU23(MSG_ACCELERATION, menu_advanced_acceleration);
 
   // M205 - Max Jerk
-  #if ENABLED(JUNCTION_DEVIATION)
+  #if DISABLED(CLASSIC_JERK)
     #if ENABLED(LIN_ADVANCE)
       EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, 0.01f, 0.3f, planner.recalculate_max_e_jerk);
     #else

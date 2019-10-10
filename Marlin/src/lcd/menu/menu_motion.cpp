@@ -158,9 +158,6 @@ static void _lcd_move_xyz(PGM_P name, AxisEnum axis) {
 void lcd_move_x() { _lcd_move_xyz(GET_TEXT(MSG_MOVE_X), X_AXIS); }
 void lcd_move_y() { _lcd_move_xyz(GET_TEXT(MSG_MOVE_Y), Y_AXIS); }
 void lcd_move_z() { _lcd_move_xyz(GET_TEXT(MSG_MOVE_Z), Z_AXIS); }
-//void lcd_move_x() { _lcd_move_xyz(PSTR(MSG_MOVE_X), X_AXIS); }
-//void lcd_move_y() { _lcd_move_xyz(PSTR(MSG_MOVE_Y), Y_AXIS); }
-//void lcd_move_z() { _lcd_move_xyz(PSTR(MSG_MOVE_Z), Z_AXIS); }
 
 #if E_MANUAL
 
@@ -281,13 +278,13 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
     #endif
     if (axis == Z_AXIS && (SHORT_MANUAL_Z_MOVE) > 0.0f && (SHORT_MANUAL_Z_MOVE) < 0.1f) {
       SUBMENU_P(PSTR(""), []{ _goto_manual_move(float(SHORT_MANUAL_Z_MOVE)); });
-      MENU_ITEM_ADDON_START(1);
+      MENU_ITEM_ADDON_START(0);
         char tmp[20], numstr[10];
         // Determine digits needed right of decimal
         const uint8_t digs = !UNEAR_ZERO((SHORT_MANUAL_Z_MOVE) * 1000 - int((SHORT_MANUAL_Z_MOVE) * 1000)) ? 4 :
                              !UNEAR_ZERO((SHORT_MANUAL_Z_MOVE) *  100 - int((SHORT_MANUAL_Z_MOVE) *  100)) ? 3 : 2;
         sprintf_P(tmp, GET_TEXT(MSG_MOVE_Z_DIST), dtostrf(SHORT_MANUAL_Z_MOVE, 1, digs, numstr));
-        LCDPRINT(tmp);
+        lcd_put_u8str(tmp);
       MENU_ITEM_ADDON_END();
     }
   }
@@ -383,7 +380,7 @@ void menu_move() {
         ACTION_ITEM_P(PSTR("Extruder too cold"), []{ui.goto_screen(_lcd_extruder_too_cold, SCRMODE_STATIC_BACK);});
       else
     #endif
-      SUBEDIT(MSG_MOVE_E, [](){ _menu_move_distance(E_AXIS, [](){ lcd_move_e(); }, -1); });
+      SUBMENUH31(MSG_MOVE_E, [](){ _menu_move_distance(E_AXIS, lcd_move_e, -1); });
 
     #define SUBMENU_MOVE_E(N) SUBEDIT(MSG_MOVE_E##N, [](){ _menu_move_distance(E_AXIS, [](){ lcd_move_e(N); }, N); });
 

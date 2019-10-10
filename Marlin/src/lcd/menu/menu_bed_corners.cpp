@@ -192,9 +192,9 @@ static inline void menu_adjust_corner() {
   char mea_z[10];
   dtostrf(corner_measured_z,1,2,mea_z);
   START_MENU();
-  STATIC_ITEM("Offset ",SS_LEFT, mea_z);
+  STATIC_ITEM_P(PSTR("Offset "),SS_LEFT, mea_z);
   ACTION_ITEM(MSG_BACK, _lcd_probe_calibration_back);
-  ACTION_ITEM("Check Corner", _lcd_probe_corner);
+  ACTION_ITEM_P(PSTR("Check Corner"), _lcd_probe_corner);
   ACTION_ITEM(MSG_NEXT_CORNER, _lcd_probe_next_corner);
   END_MENU();
 }
@@ -263,12 +263,12 @@ static inline void menu_measure_probe_offset() {
   dtostrf(corner_measured_z,1,2,mea_z);
   START_MENU();
   if (bed_corner == 0)
-    STATIC_ITEM("Adjust Bed Height");
+    STATIC_ITEM_P(PSTR("Adjust Bed Height"));
   else
-    STATIC_ITEM("Offset ",SS_LEFT, mea_z);
+    STATIC_ITEM_P(PSTR("Offset "),SS_LEFT, mea_z);
   ACTION_ITEM(MSG_BACK, _lcd_probe_calibration_back);
-  ACTION_ITEM("Measure Offset", _lcd_measure_offset);
-  ACTION_ITEM("Save Offset", _lcd_save_offset);
+  ACTION_ITEM_P(PSTR("Measure Offset"), _lcd_measure_offset);
+  ACTION_ITEM_P(PSTR("Save Offset"), _lcd_save_offset);
   END_MENU();
 }
 

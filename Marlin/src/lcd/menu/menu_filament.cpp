@@ -331,12 +331,12 @@ void _lcd_pause_message(PGM_P const msg) {
     STATIC_ITEM_P(PSTR(" "));
   #else
   if (skip1) SKIP_ITEM();                                       // Move a single-line message down
-  STATIC_ITEM_P(msg1);
-  if (msg2) STATIC_ITEM_P(msg2);
-  if (msg3 && (LCD_HEIGHT) >= 5) STATIC_ITEM_P(msg3);
-  if ((!!msg2) + (!!msg3) + 2 < (LCD_HEIGHT) - 1) STATIC_ITEM(" ");
+  STATIC_ITEM_P(msg1);                                          // 2: Message Line 1
+  if (has2) STATIC_ITEM_P(msg2);                                // 3: Message Line 2
+  if (has3 && (LCD_HEIGHT) >= 5) STATIC_ITEM_P(msg3);           // 4: Message Line 3 (if LCD has 5 lines)
+  if (skip1 + 1 + has2 + has3 < (LCD_HEIGHT) - 2) SKIP_ITEM();  // Push Hotend Status down, if needed
   #endif
-  HOTEND_STATUS_ITEM();
+  HOTEND_STATUS_ITEM();                                         // 5: Hotend Status
   END_SCREEN();
 }
 
