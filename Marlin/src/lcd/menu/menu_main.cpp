@@ -44,6 +44,7 @@
 
 #if MACHINE_CAN_STOP
   void menu_abort_confirm() {
+    do_select_screen(GET_TEXT(MSG_BUTTON_STOP), GET_TEXT(MSG_BACK), ui.abort_print, ui.goto_previous_screen, GET_TEXT(MSG_STOP_PRINT), nullptr, PSTR("?"));
   }
 #endif // MACHINE_CAN_STOP
 
