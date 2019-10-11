@@ -380,7 +380,7 @@ void menu_move() {
         ACTION_ITEM_P(PSTR("Extruder too cold"), []{ui.goto_screen(_lcd_extruder_too_cold, SCRMODE_STATIC_BACK);});
       else
     #endif
-      SUBMENUH31(MSG_MOVE_E, [](){ _menu_move_distance(E_AXIS, lcd_move_e, -1); });
+      SUBMENUH31(MSG_MOVE_E, [](){ _menu_move_distance(E_AXIS, [](){ lcd_move_e(); }, -1); });
 
     #define SUBMENU_MOVE_E(N) SUBEDIT(MSG_MOVE_E##N, [](){ _menu_move_distance(E_AXIS, [](){ lcd_move_e(N); }, N); });
 
