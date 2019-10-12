@@ -378,7 +378,19 @@ millis_t MarlinUI::next_button_update_ms; // = 0
           if (eol) break;             // all done!
           wrd = nullptr;              // set up for next word
         }
-        else c++;                     // count word characters
+        else {
+          c++;                     // count word characters
+          if (col == 0 && c >= maxStringLen) {
+            while (c) {                 // character countdown
+              --c;                      // count down to zero
+              wrd = get_utf8_value_cb(wrd, cb_read_byte, &ch); // get characters again
+              lcd_put_wchar(ch);        // character to the LCD
+            }
+            if (eol) break;             // all done!
+            wrd = nullptr;              // set up for next word
+            _newline();
+          }
+        }
       }
     }
     else {
@@ -411,13 +423,13 @@ millis_t MarlinUI::next_button_update_ms; // = 0
     }
     #if HAS_FULL_SCALE_TFT
       else
-        row = 3;
+        row = 2;
     #endif
 
     wrap_string_P(col, row, pref, true);
     if (string) {
       if (col) { col = 0; row++; } // Move to the start of the next line
-      wrap_string(col, row, string);
+      wrap_string(col, row, string, true);
     }
     if (suff) wrap_string_P(col, row, suff);
   }

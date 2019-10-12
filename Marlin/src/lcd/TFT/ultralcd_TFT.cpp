@@ -541,7 +541,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     }
   }
 
-  RexyzSplitedString splitItemString(PGM_P pstr, uint8_t maxStringLen) {
+  RexyzSplitedString splitItemString(PGM_P pstr, uint8_t maxStringLen, bool splitAtCenter) {
     uint8_t stringLen = strlen(pstr);
     RexyzSplitedString output;
 
@@ -567,13 +567,24 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
       }
       else {
         if (stringLen <= maxStringLen*2) {
-          const uint8_t firstStrLen = (stringLen + 1) / 2;
-          strncpy(output.str01, pstr, firstStrLen);
-          output.str01[firstStrLen] = '\0';
-          strncpy(output.str02, pstr+firstStrLen, stringLen - firstStrLen);
-          output.str02[stringLen - firstStrLen] = '\0';
-          output.numStr = 2;
-          return output;
+          if (splitAtCenter) {
+            const uint8_t firstStrLen = (stringLen + 1) / 2;
+            strncpy(output.str01, pstr, firstStrLen);
+            output.str01[firstStrLen] = '\0';
+            strncpy(output.str02, pstr+firstStrLen, stringLen - firstStrLen);
+            output.str02[stringLen - firstStrLen] = '\0';
+            output.numStr = 2;
+            return output;
+          }
+          else {
+            const uint8_t firstStrLen = maxStringLen;
+            strncpy(output.str01, pstr, firstStrLen);
+            output.str01[firstStrLen] = '\0';
+            strncpy(output.str02, pstr+firstStrLen, stringLen - firstStrLen);
+            output.str02[stringLen - firstStrLen] = '\0';
+            output.numStr = 2;
+            return output;
+          }
         }
         else {
           if (stringLen > maxStringLen*3) stringLen = maxStringLen * 3;
@@ -604,7 +615,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
         maxStringLen--;
       }
 
-      splitedStr = splitItemString(pstr,maxStringLen);
+      splitedStr = splitItemString(pstr,maxStringLen,true);
       if (splitedStr.numStr == 1) {
         draw_centered_string(row_str_base, col_x1+2, col_x2-2, splitedStr.str01, ' ', ' ');
       }
@@ -619,7 +630,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   void _draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm) {
     if (mark_as_selected(row, sel)) {
       const uint8_t maxStringLen = (int)((col_x2 - col_x1 - 3) / MENU_FONT_WIDTH);
-      const RexyzSplitedString splitedStr = splitItemString(pstr,maxStringLen);
+      const RexyzSplitedString splitedStr = splitItemString(pstr,maxStringLen,true);
       if (splitedStr.numStr == 1) {
         draw_centered_string(row_str_base - MENU_FONT_HEIGHT/2, col_x1+2, col_x2-2, pstr, ' ', ' ');
         draw_centered_string(row_str_base + MENU_FONT_HEIGHT/2, col_x1+2, col_x2-2, data, '>', ' ');
@@ -703,39 +714,21 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
         const u8g_uint_t pixw = LCD_PIXEL_WIDTH - 4 - MENU_FONT_WIDTH;
         constexpr uint8_t maxlen = pixw / MENU_FONT_WIDTH;
         strcpy(strfn, ui.scrolled_filename(theCard, maxlen, row, sel));
-        uint8_t stringLen = strlen(strfn);
-        if (stringLen <= maxlen) {
+        //uint8_t stringLen = strlen(strfn);
+
+        const RexyzSplitedString splitedStr = splitItemString(strfn,maxlen,false);
+        if (splitedStr.numStr == 1) {
           lcd_moveto(col_x1+2+MENU_FONT_WIDTH, row_str_base);
-          u8g_uint_t n = pixw - lcd_put_u8str_max(strfn, pixw);
+          u8g_uint_t n = pixw - lcd_put_u8str_max(splitedStr.str01, pixw);
           while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
         }
         else {
-          char str01[31], str02[31];
-          uint8_t i;
-          for (i = maxlen; i >= 0; i--) {
-            if (strfn[i] == ' ' || strfn[i] == '.')
-              break;
-          }
-          if (i) {
-            strncpy(str01, strfn, i);
-            str01[i] = '\0';
-            if (strfn[i] == ' ')
-              strncpy(str02, strfn+i+1, maxlen);
-            else
-              strncpy(str02, strfn+i, maxlen);
-          }
-          else {
-            strncpy(str01, strfn, maxlen);
-            str01[maxlen] = '\0';
-            strncpy(str02, strfn+maxlen, maxlen);
-          }
-
           lcd_moveto(col_x1+2+MENU_FONT_WIDTH, row_str_base-10);
-          u8g_uint_t n = pixw - lcd_put_u8str_max(str01, pixw);
+          u8g_uint_t n = pixw - lcd_put_u8str_max(splitedStr.str01, pixw);
           while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
 
           lcd_moveto(col_x1+2+MENU_FONT_WIDTH, row_str_base+10);
-          n = pixw - lcd_put_u8str_max(str02, pixw);
+          n = pixw - lcd_put_u8str_max(splitedStr.str02, pixw);
           while (n > MENU_FONT_WIDTH) n -= lcd_put_wchar(' ');
         }
       }
