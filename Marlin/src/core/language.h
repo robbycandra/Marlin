@@ -141,6 +141,7 @@
 
 // Common serial messages
 #define MSG_MARLIN "Marlin"
+#define MSG_REXYZ_FIRMWARE "Rexyz Firmware"
 
 // Serial Console Messages (do not translate those!)
 

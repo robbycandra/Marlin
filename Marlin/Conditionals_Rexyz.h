@@ -28,7 +28,7 @@
 #if ENABLED(REXYZ_MARKING_INIT) || ENABLED(REXYZ_MARKING_UPDATE)
   #define REXYZ_FW_VERSION ".INIT" // Change this with each update
 #else
-  #define REXYZ_FW_VERSION ".15" // Change this with each update
+  #define REXYZ_FW_VERSION ".16" // Change this with each update
 #endif
 #define REXYZ_DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
 #define REXYZ_SOURCE_CODE_URL "http://rajawali3d.com"
@@ -836,6 +836,7 @@
     #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100
     #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 10), (Y_MAX_POS - 10), 20 }
   #else
+    // Bowden DirectDrive
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "BD"
     #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH   245
     #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      310
@@ -857,6 +858,7 @@
 #if defined(REXYZ_MK8_MANUAL_PROBE)
     #define AUTO_BED_LEVELING_BILINEAR
     #define LCD_BED_LEVELING
+    // Direct DirectDrive Manual
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDM"
     #define REXYZ_PROBE_MANUALLY
     #define REXYZ_MANUAL_PROBE_START_Z 0
@@ -865,6 +867,7 @@
 #if defined(REXYZ_MK8_PROXIMITY_8MM)
     #define AUTO_BED_LEVELING_BILINEAR
     #define LCD_BED_LEVELING
+    // Direct DirectDrive Proximity 8
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDP8"
     #define REXYZ_USE_XMIN_PLUG
     #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
@@ -874,6 +877,7 @@
 #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) || defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL)
     #define AUTO_BED_LEVELING_BILINEAR
     #define LCD_BED_LEVELING
+    // Direct DirectDrive FixProbe SensorFilament
     #ifdef REXYZ_FILAMENT_MOTION_DETECTOR
       #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDFS"
     #else
@@ -896,6 +900,7 @@
 #if defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH)
     #define AUTO_BED_LEVELING_BILINEAR
     #define LCD_BED_LEVELING
+    // Direct DirectDrive Touch
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDT"
     #define REXYZ_USE_XMIN_PLUG
     #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN

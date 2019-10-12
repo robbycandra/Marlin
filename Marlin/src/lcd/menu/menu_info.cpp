@@ -263,10 +263,10 @@ void menu_info_board() {
       #endif
     );
     START_SCREEN();
-    STATIC_ITEM_P(PSTR("Rexyz-" MSG_MARLIN), SS_CENTER|SS_INVERT);       // Marlin
+    STATIC_ITEM_P(PSTR(MSG_REXYZ_FIRMWARE), SS_CENTER|SS_INVERT);       // Marlin
     STATIC_ITEM_P(PSTR(SHORT_BUILD_VERSION));                   // x.x.x-Branch
     STATIC_ITEM_P(PSTR(STRING_DISTRIBUTION_DATE));              // YYYY-MM-DD HH:MM
-    STATIC_ITEM_P(PSTR("Rexyz-" MACHINE_NAME));                          // My3DPrinter
+    STATIC_ITEM_P(PSTR(MACHINE_NAME));                          // My3DPrinter
     STATIC_ITEM_P(PSTR(WEBSITE_URL));                           // www.my3dprinter.com
     char buffer[21];
     VALUE_ITEM_P(MSG_INFO_EXTRUDERS, STRINGIFY(EXTRUDERS), SS_CENTER); // Extruders: 2

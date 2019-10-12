@@ -880,7 +880,7 @@ void setup() {
   SERIAL_ECHOLNPGM(SHORT_BUILD_VERSION);
   SERIAL_EOL();
 
-  #if defined(REXYZ_STRING_DISTRIBUTION_DATE) && defined(STRING_CONFIG_H_AUTHOR)
+  #if defined(STRING_DISTRIBUTION_DATE) && defined(STRING_CONFIG_H_AUTHOR)
     SERIAL_ECHO_MSG(
       MSG_CONFIGURATION_VER
       STRING_DISTRIBUTION_DATE
@@ -913,7 +913,7 @@ void setup() {
     ui.buzz(200,1318);
     ui.buzz(200,1046);
   #endif
-  
+
   #if ENABLED(SDSUPPORT)
     card.mount(); // Mount the SD card before settings.first_load
   #endif

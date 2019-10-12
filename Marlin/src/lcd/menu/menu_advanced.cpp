@@ -795,7 +795,7 @@ void menu_advanced_settings() {
   #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
     SUBEDIT(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
   #elif HAS_BED_PROBE
-    MENU_ITEM_P(subedit,PSTR("Probe"), menu_advanced_probe);
+    SUBEDIT_P(PSTR("Probe"), menu_advanced_probe);
   #endif
 
   #if ENABLED(TOUCH_CALIBRATION)
