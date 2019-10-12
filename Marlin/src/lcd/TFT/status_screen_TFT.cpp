@@ -105,6 +105,10 @@
 
 #define MAX_HOTEND_DRAW _MIN(HOTENDS, ((LCD_PIXEL_WIDTH - (STATUS_LOGO_BYTEWIDTH + STATUS_FAN_BYTEWIDTH) * 8) / (STATUS_HEATERS_XSPACE)))
 
+#define PROGRESS_BAR_X OFFSET_X //(STATUS_FONT_WIDTH * 9)
+#define PROGRESS_BAR_Y LCD_PIXEL_HEIGHT * 5 / 6  - 10
+#define PROGRESS_BAR_WIDTH (LCD_PIXEL_WIDTH - OFFSET_X * 2)
+
 #if ENABLED(MARLIN_DEV_MODE)
   #define SHOW_ON_STATE READ(X_MIN_PIN)
 #else
@@ -367,6 +371,26 @@ void MarlinUI::draw_status_screen() {
     static char wstring[5], mstring[4];
   #endif
 
+  #if HAS_PRINT_PROGRESS
+    #if DISABLED(DOGM_SD_PERCENT)
+      #define _SD_DURATION_X(len) (PROGRESS_BAR_X + (PROGRESS_BAR_WIDTH) / 2 - (len) * (MENU_FONT_WIDTH) / 2)
+    #else
+      #define _SD_DURATION_X(len) (LCD_PIXEL_WIDTH - (len) * (MENU_FONT_WIDTH))
+    #endif
+
+    static uint8_t progress_bar_solid_width = 0, lastProgress = 0;
+    #if ENABLED(DOGM_SD_PERCENT)
+      static char progress_string[5];
+    #endif
+    static uint8_t lastElapsed = 0, elapsed_x_pos = 0;
+    static char elapsed_string[10];
+    #if ENABLED(SHOW_REMAINING_TIME)
+      #define SHOW_REMAINING_TIME_PREFIX 'E'
+      static uint8_t estimation_x_pos = 0;
+      static char estimation_string[10];
+    #endif
+  #endif
+
   // At the first page, generate new display values
   if (first_page) {
     #if ANIM_HOTEND || ANIM_BED || ANIM_CHAMBER
@@ -385,6 +409,50 @@ void MarlinUI::draw_status_screen() {
     strcpy(xstring, ftostr4sign(LOGICAL_X_POSITION(current_position[X_AXIS])));
     strcpy(ystring, ftostr4sign(LOGICAL_Y_POSITION(current_position[Y_AXIS])));
     strcpy(zstring, ftostr52sp(LOGICAL_Z_POSITION(current_position[Z_AXIS])));
+
+    // Progress / elapsed / estimation updates and string formatting to avoid float math on each LCD draw
+    #if HAS_PRINT_PROGRESS
+      const progress_t progress =
+        #if HAS_PRINT_PROGRESS_PERMYRIAD
+          get_progress_permyriad()
+        #else
+          get_progress_percent()
+        #endif
+      ;
+      duration_t elapsed = print_job_timer.duration();
+      const uint8_t p = progress & 0xFF, ev = elapsed.value & 0xFF;
+      if (progress > 1 && p != lastProgress) {
+        lastProgress = p;
+
+        progress_bar_solid_width = uint8_t((PROGRESS_BAR_WIDTH - 2) * progress / (PROGRESS_SCALE) * 0.01f);
+
+        #if ENABLED(DOGM_SD_PERCENT)
+          strcpy(progress_string, (
+            #if ENABLED(PRINT_PROGRESS_SHOW_DECIMALS)
+              permyriadtostr4(progress)
+            #else
+              ui8tostr3(progress / (PROGRESS_SCALE))
+            #endif
+          ));
+        #endif
+      }
+
+      if (ev != lastElapsed) {
+        lastElapsed = ev;
+        const bool has_days = (elapsed.value >= 60*60*24L);
+        const uint8_t len = elapsed.toDigital(elapsed_string, has_days);
+        elapsed_x_pos = _SD_DURATION_X(len);
+
+        #if ENABLED(SHOW_REMAINING_TIME)
+          if (!(ev & 0x3)) {
+            duration_t estimation = elapsed.value * (100 * (PROGRESS_SCALE) - progress) / progress;
+            const bool has_days = (estimation.value >= 60*60*24L);
+            const uint8_t len = estimation.toDigital(estimation_string, has_days);
+            estimation_x_pos = _SD_DURATION_X(len + 1);
+          }
+        #endif
+      }
+    #endif
   } // first_page
 
   const bool blink = get_blink();
@@ -603,74 +671,61 @@ void MarlinUI::draw_status_screen() {
     #endif
   }
 
-  //
-  // Progress bar frame
-  //
   #if HAS_PRINT_PROGRESS
 
     //
     // Progress bar frame
     //
-    #define PROGRESS_BAR_X OFFSET_X //(STATUS_FONT_WIDTH * 9)
-    #define PROGRESS_BAR_Y LCD_PIXEL_HEIGHT * 5 / 6  - 10
-    #define PROGRESS_BAR_WIDTH (LCD_PIXEL_WIDTH - OFFSET_X * 2)
 
     if (PAGE_CONTAINS(PROGRESS_BAR_Y, PROGRESS_BAR_Y + 3))
       u8g.drawFrame(PROGRESS_BAR_X, PROGRESS_BAR_Y, PROGRESS_BAR_WIDTH, 4);
 
+    //
+    // Progress bar solid part
+    //
+
+    if (PAGE_CONTAINS(PROGRESS_BAR_Y+1, PROGRESS_BAR_Y+2))     // 50-51 (or just 50)
+      u8g.drawBox(PROGRESS_BAR_X + 1, PROGRESS_BAR_Y+1, progress_bar_solid_width, 2);
+
     row_y1 += STATUS_FONT_HEIGHT + 5;
     row_y2 += STATUS_FONT_HEIGHT + 5;
     row_str1_base += STATUS_FONT_HEIGHT + 5;
-    if (PAGE_CONTAINS(row_y1,row_y2)) {
+
+    //
+    // SD Percent Complete
+    //
+
+    #if ENABLED(DOGM_SD_PERCENT)
+      if (progress_string[0] != '\0')
+        if (PAGE_CONTAINS(row_y1,row_y2)) {
+          // Percent complete
+          lcd_put_u8str(PROGRESS_BAR_X, row_str1_base, progress_string);
+          lcd_put_wchar('%');
+        }
+    #endif
+
     //
     // Elapsed Time
     //
-      #if DISABLED(DOGM_SD_PERCENT)
-        #define SD_DURATION_X (PROGRESS_BAR_X + (PROGRESS_BAR_WIDTH / 2) - len * (MENU_FONT_WIDTH / 2)) - OFFSET_X
-      #else
-        #define SD_DURATION_X (LCD_PIXEL_WIDTH - len * STATUS_FONT_WIDTH) - OFFSET_X
+
+    if (PAGE_CONTAINS(row_y1,row_y2)) {
+
+      #if ENABLED(SHOW_REMAINING_TIME)
+        if (blink && (estimation_string[0] != '\0')) {
+          lcd_put_wchar(estimation_x_pos, row_str1_base, SHOW_REMAINING_TIME_PREFIX);
+          lcd_put_u8str(estimation_string);
+        }
+        else
       #endif
-
-      if (PAGE_CONTAINS(row_y1,row_y2)) {
-        u8g.setFont(STATUS_FONT_NAME);
-        char buffer[13];
-        duration_t elapsed = print_job_timer.duration();
-        bool has_days = (elapsed.value >= 60*60*24L);
-        uint8_t len = elapsed.toDigital(buffer, has_days);
-        lcd_put_u8str(SD_DURATION_X, row_str1_base, buffer);
-      }
+          lcd_put_u8str(elapsed_x_pos, row_str1_base, elapsed_string);
     }
 
-    const uint8_t progress = get_progress();
-    if (progress > 1) {
-
-      //
-      // Progress bar solid part
-      //
-      if (PAGE_CONTAINS(PROGRESS_BAR_Y+1, PROGRESS_BAR_Y+2))     // 50-51 (or just 50)
-        u8g.drawBox(
-          PROGRESS_BAR_X + 1, PROGRESS_BAR_Y+1,
-          (uint16_t)((PROGRESS_BAR_WIDTH - 2) * progress * 0.01), 2
-        );
-
-      if (PAGE_CONTAINS(row_y1,row_y2)) {
-        //
-        // SD Percent Complete
-        //
-          #if ENABLED(DOGM_SD_PERCENT)
-            if (PAGE_CONTAINS(row_y1,row_y2)) {
-              // Percent complete
-              lcd_moveto(PROGRESS_BAR_X, row_str1_base);
-              lcd_put_u8str(ui8tostr3(progress));
-              lcd_put_wchar('%');
-            }
-          #endif
-      }
-    }
   #endif // HAS_PRINT_PROGRESS
+
   //
   // Status line
   //
+
   draw_status_message(blink);
 
   run_status_screen_touch_command();
