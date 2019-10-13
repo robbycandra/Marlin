@@ -334,10 +334,16 @@
 #endif
 
 #if defined(REXYZ_A1) || defined(REXYZ_A2)
-
+  /* AUTOTUNE RESULT
   #define REXYZ_DEFAULT_Kp 14.75
   #define REXYZ_DEFAULT_Ki 1.15
   #define REXYZ_DEFAULT_Kd 47.30
+  */
+  /* MANUAL TUNE
+  */
+  #define REXYZ_DEFAULT_Kp  6.0
+  #define REXYZ_DEFAULT_Ki  0.2
+  #define REXYZ_DEFAULT_Kd 30.0
 
   #define REXYZ_PREHEAT_1_TEMP_BED  60
   #define REXYZ_PREHEAT_2_TEMP_BED  80
