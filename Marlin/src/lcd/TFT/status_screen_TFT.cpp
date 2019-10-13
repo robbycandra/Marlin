@@ -373,9 +373,9 @@ void MarlinUI::draw_status_screen() {
 
   #if HAS_PRINT_PROGRESS
     #if DISABLED(DOGM_SD_PERCENT)
-      #define _SD_DURATION_X(len) (PROGRESS_BAR_X + (PROGRESS_BAR_WIDTH) / 2 - (len) * (MENU_FONT_WIDTH) / 2)
+      #define _SD_DURATION_X(len) (PROGRESS_BAR_X + (PROGRESS_BAR_WIDTH) / 2 - (len) * (MENU_FONT_WIDTH) / 2) - OFFSET_X
     #else
-      #define _SD_DURATION_X(len) (LCD_PIXEL_WIDTH - (len) * (MENU_FONT_WIDTH))
+      #define _SD_DURATION_X(len) (LCD_PIXEL_WIDTH - (len) * (STATUS_FONT_WIDTH)) - OFFSET_X
     #endif
 
     static uint8_t progress_bar_solid_width = 0, lastProgress = 0;
@@ -448,7 +448,7 @@ void MarlinUI::draw_status_screen() {
             duration_t estimation = elapsed.value * (100 * (PROGRESS_SCALE) - progress) / progress;
             const bool has_days = (estimation.value >= 60*60*24L);
             const uint8_t len = estimation.toDigital(estimation_string, has_days);
-            estimation_x_pos = _SD_DURATION_X(len + 1);
+            estimation_x_pos = _SD_DURATION_X(len) - LCD_PIXEL_WIDTH/4;
           }
         #endif
       }
@@ -711,13 +711,16 @@ void MarlinUI::draw_status_screen() {
     if (PAGE_CONTAINS(row_y1,row_y2)) {
 
       #if ENABLED(SHOW_REMAINING_TIME)
+        /*
         if (blink && (estimation_string[0] != '\0')) {
           lcd_put_wchar(estimation_x_pos, row_str1_base, SHOW_REMAINING_TIME_PREFIX);
           lcd_put_u8str(estimation_string);
+        */
+        if (estimation_string[0] != '\0') {
+          lcd_put_u8str(estimation_x_pos, row_str1_base, estimation_string);
         }
-        else
       #endif
-          lcd_put_u8str(elapsed_x_pos, row_str1_base, elapsed_string);
+        lcd_put_u8str(elapsed_x_pos, row_str1_base, elapsed_string);
     }
 
   #endif // HAS_PRINT_PROGRESS
