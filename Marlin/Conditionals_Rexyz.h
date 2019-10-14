@@ -584,7 +584,7 @@
     #define REXYZ_Z_MIN_POS 0
     #define REXYZ_X_MAX_POS 300
     #define REXYZ_Y_MAX_POS 300
-    #define REXYZ_Z_MAX_POS 365
+    #define REXYZ_Z_MAX_POS 355
 
     #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
 
