@@ -376,6 +376,7 @@ void MarlinUI::draw_status_screen() {
       #define _SD_DURATION_X(len) (PROGRESS_BAR_X + (PROGRESS_BAR_WIDTH) / 2 - (len) * (MENU_FONT_WIDTH) / 2) - OFFSET_X
     #else
       #define _SD_DURATION_X(len) (LCD_PIXEL_WIDTH - (len) * (STATUS_FONT_WIDTH)) - OFFSET_X
+      #define _PROGRESS_CENTER_X(len) (LCD_PIXEL_WIDTH - (len) * (STATUS_FONT_WIDTH)) / 2
     #endif
 
     static uint8_t progress_bar_solid_width = 0, lastProgress = 0;
@@ -448,7 +449,7 @@ void MarlinUI::draw_status_screen() {
             duration_t estimation = elapsed.value * (100 * (PROGRESS_SCALE) - progress) / progress;
             const bool has_days = (estimation.value >= 60*60*24L);
             const uint8_t len = estimation.toDigital(estimation_string, has_days);
-            estimation_x_pos = _SD_DURATION_X(len) - LCD_PIXEL_WIDTH/4;
+            estimation_x_pos = _PROGRESS_CENTER_X(len);
           }
         #endif
       }
