@@ -692,24 +692,23 @@ void MarlinUI::draw_status_screen() {
     row_y2 += STATUS_FONT_HEIGHT + 5;
     row_str1_base += STATUS_FONT_HEIGHT + 5;
 
-    //
-    // SD Percent Complete
-    //
+    if (PAGE_CONTAINS(row_y1,row_y2)) {
+      //
+      // SD Percent Complete
+      //
+      u8g.setFont(STATUS_FONT_NAME);
 
-    #if ENABLED(DOGM_SD_PERCENT)
-      if (progress_string[0] != '\0')
-        if (PAGE_CONTAINS(row_y1,row_y2)) {
+      #if ENABLED(DOGM_SD_PERCENT)
+        if (progress_string[0] != '\0') {
           // Percent complete
           lcd_put_u8str(PROGRESS_BAR_X, row_str1_base, progress_string);
           lcd_put_wchar('%');
         }
-    #endif
+      #endif
 
-    //
-    // Elapsed Time
-    //
-
-    if (PAGE_CONTAINS(row_y1,row_y2)) {
+      //
+      // Elapsed Time
+      //
 
       #if ENABLED(SHOW_REMAINING_TIME)
         /*
