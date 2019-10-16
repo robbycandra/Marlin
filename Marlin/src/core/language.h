@@ -169,7 +169,6 @@
 #define MSG_INVALID_E_STEPPER               "Invalid E stepper"
 #define MSG_E_STEPPER_NOT_SPECIFIED         "E stepper not specified"
 #define MSG_INVALID_SOLENOID                "Invalid solenoid"
-#define MSG_ERR_NO_THERMISTORS              "No thermistors - no temperature"
 #define MSG_M115_REPORT                     "FIRMWARE_NAME:Rexyz " DETAILED_BUILD_VERSION " URL:" SOURCE_CODE_URL " MACHINE_TYPE:" MACHINE_NAME " EXTRUDER_COUNT:" STRINGIFY(EXTRUDERS)
 #define MSG_COUNT_X                         " Count X:"
 #define MSG_COUNT_A                         " Count A:"
