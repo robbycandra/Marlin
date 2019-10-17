@@ -181,6 +181,8 @@ void menu_main() {
     #if E_STEPPERS == 1 && DISABLED(FILAMENT_LOAD_UNLOAD_GCODES)
       if (thermalManager.targetHotEnoughToExtrude(active_extruder))
         GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
+      else if (rexyz_menu_mode == MENUMODE_BASIC)
+        SUBMENUH21(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
       else
         SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
     #else
@@ -319,6 +321,8 @@ void rmenu_prepare() {
     #if E_STEPPERS == 1 && DISABLED(FILAMENT_LOAD_UNLOAD_GCODES)
       if (thermalManager.targetHotEnoughToExtrude(active_extruder))
         GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
+      else if (rexyz_menu_mode == MENUMODE_BASIC)
+        SUBMENUH21(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
       else
         SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
     #else
@@ -356,6 +360,8 @@ void rmenu_main() {
       #if E_STEPPERS == 1 && DISABLED(FILAMENT_LOAD_UNLOAD_GCODES)
         if (thermalManager.targetHotEnoughToExtrude(active_extruder))
           GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
+        else if (rexyz_menu_mode == MENUMODE_BASIC)
+          SUBMENUH21(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
         else
           SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
       #else
@@ -374,7 +380,10 @@ void rmenu_main() {
 
   MENU_ITEM_P(submenu32,PSTR("Tune"), menu_tune);
 
-  MENU_ITEM_P(submenu32,PSTR("Setting"), rmenu_setting);
+  if (rexyz_menu_mode == MENUMODE_BASIC)
+    MENU_ITEM_P(submenu22,PSTR("Setting"), rmenu_setting);
+  else
+    MENU_ITEM_P(submenu32,PSTR("Setting"), rmenu_setting);
 
   if (!busy) {
     #if HAS_ENCODER_WHEEL && ENABLED(SDSUPPORT)

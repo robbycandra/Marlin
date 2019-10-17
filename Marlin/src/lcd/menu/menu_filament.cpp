@@ -86,9 +86,12 @@ void _menu_temp_filament_op(const PauseMode mode, const int8_t extruder) {
   BACK_ITEM(MSG_BACK);
   ACTION_ITEM(MSG_PREHEAT_1, [](){ _change_filament_temp(ui.preheat_hotend_temp[0]); });
   ACTION_ITEM(MSG_PREHEAT_2, [](){ _change_filament_temp(ui.preheat_hotend_temp[1]); });
-  EDIT_ITEM_FAST(int3, MSG_PREHEAT_CUSTOM, &thermalManager.temp_hotend[_change_filament_temp_extruder].target, EXTRUDE_MINTEMP, heater_maxtemp[extruder] - 15, [](){
-    _change_filament_temp(thermalManager.temp_hotend[_change_filament_temp_extruder].target);
-  });
+
+  if (LCD_HEIGHT < 8 || rexyz_menu_mode != MENUMODE_BASIC) {
+    EDIT_ITEM_FAST(int3, MSG_PREHEAT_CUSTOM, &thermalManager.temp_hotend[_change_filament_temp_extruder].target, EXTRUDE_MINTEMP, heater_maxtemp[extruder] - 15, [](){
+      _change_filament_temp(thermalManager.temp_hotend[_change_filament_temp_extruder].target);
+    });
+  }
   END_MENU();
 }
 

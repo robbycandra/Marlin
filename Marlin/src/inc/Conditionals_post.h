@@ -1790,6 +1790,7 @@
   #ifndef LCD_HEIGHT
     #if HAS_GRAPHICAL_LCD
       #if HAS_FULL_SCALE_TFT
+        // LCD_HEIGHT menjadi tanda apakah printer menggunakan Full Scale TFT atau tidak
         #define LCD_HEIGHT 8
       #else
         #define LCD_HEIGHT 5

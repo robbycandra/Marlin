@@ -258,6 +258,7 @@ void menu_touch_calibration() {
   ui.wait_for_untouched = true;
   ui.first_touch = false;
   ui.defer_status_screen();
+  ui.goto_previous_screen();
   ui.goto_screen(_lcd_touch_point_screen, SCRMODE_STATIC_BACK);
 }
 
@@ -308,17 +309,21 @@ void menu_touch_testing() {
   ui.lcd_menu_touched_coord = 0;
   ui.wait_for_untouched = true;
   ui.first_touch = false;
-  ui.save_previous_screen();
   ui.defer_status_screen();
   ui.goto_screen(_lcd_touch_test_screen, SCRMODE_STATIC_BACK);
 }
 
 void rmenu_setting_touchscreen() {
-  START_MENU();
-  STATIC_ITEM_P(PSTR("TouchScreen"), SS_CENTER | SS_INVERT);
-  SUBSELECT_P(PSTR("Calibration"), menu_touch_calibration_confirm);
-  ACTION_ITEM_P(PSTR("Testing"), menu_touch_testing);
-  END_MENU();
+  if (rexyz_menu_mode == MENUMODE_BASIC) {
+    menu_touch_testing();
+  }
+  else {
+    START_MENU();
+    STATIC_ITEM_P(PSTR("TouchScreen"), SS_CENTER | SS_INVERT);
+    SUBSELECT_P(PSTR("Calibration"), menu_touch_calibration_confirm);
+    ACTION_ITEM_P(PSTR("Testing"), menu_touch_testing);
+    END_MENU();
+  }
 }
 
 #endif // HAS_LCD_MENU && ENABLED(TOUCH_CALIBRATION)

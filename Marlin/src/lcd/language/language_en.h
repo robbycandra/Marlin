@@ -342,6 +342,7 @@ namespace Language_en {
   PROGMEM Language_Str MSG_SELECT_E4                       = _UxGT("Select ") LCD_STR_E4;
   PROGMEM Language_Str MSG_SELECT_E5                       = _UxGT("Select ") LCD_STR_E5;
   PROGMEM Language_Str MSG_ACC                             = _UxGT("Accel");
+  PROGMEM Language_Str MSG_A_PRINT                         = _UxGT("A-Print");
   PROGMEM Language_Str MSG_JERK                            = _UxGT("Jerk");
   PROGMEM Language_Str MSG_VA_JERK                         = _UxGT("V") LCD_STR_A _UxGT("-Jerk");
   PROGMEM Language_Str MSG_VB_JERK                         = _UxGT("V") LCD_STR_B _UxGT("-Jerk");

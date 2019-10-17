@@ -540,11 +540,13 @@ void menu_backlash();
       EDIT_ITEM_FAST(float3, MSG_VMAX_E, &planner.settings.max_feedrate_mm_s[E_AXIS], 1, max_fr_edit_scaled.e);
     #endif
 
-    // M205 S Min Feedrate
-    EDIT_ITEM_FAST(float3, MSG_VMIN, &planner.settings.min_feedrate_mm_s, 0, 999);
+    if ((LCD_HEIGHT < 8) || (rexyz_menu_mode != MENUMODE_BASIC)) {
+      // M205 S Min Feedrate
+      EDIT_ITEM_FAST(float3, MSG_VMIN, &planner.settings.min_feedrate_mm_s, 0, 999);
 
-    // M205 T Min Travel Feedrate
-    EDIT_ITEM_FAST(float3, MSG_VTRAV_MIN, &planner.settings.min_travel_feedrate_mm_s, 0, 999);
+      // M205 T Min Travel Feedrate
+      EDIT_ITEM_FAST(float3, MSG_VTRAV_MIN, &planner.settings.min_travel_feedrate_mm_s, 0, 999);
+    }
 
     END_MENU();
   }
@@ -554,9 +556,13 @@ void menu_backlash();
     START_MENU();
     BACK_ITEM(MSG_ADVANCED_SETTINGS);
 
+    if ((LCD_HEIGHT >= 8) && (rexyz_menu_mode == MENUMODE_BASIC)) {
+      STATIC_ITEM_P(PSTR("Acceleration"));
+    }
+
     static float max_accel = _MAX(planner.settings.max_acceleration_mm_per_s2[A_AXIS], planner.settings.max_acceleration_mm_per_s2[B_AXIS], planner.settings.max_acceleration_mm_per_s2[C_AXIS]);
     // M204 P Acceleration
-    EDIT_ITEM_FAST(float5_25, MSG_ACC, &planner.settings.acceleration, 25, max_accel);
+    EDIT_ITEM_FAST(float5_25, MSG_A_PRINT, &planner.settings.acceleration, 25, max_accel);
 
     // M204 R Retract Acceleration
     EDIT_ITEM_FAST(float5, MSG_A_RETRACT, &planner.settings.retract_acceleration, 100, max_accel);
@@ -564,48 +570,51 @@ void menu_backlash();
     // M204 T Travel Acceleration
     EDIT_ITEM_FAST(float5_25, MSG_A_TRAVEL, &planner.settings.travel_acceleration, 25, max_accel);
 
-    // M201 settings
-    constexpr xyze_ulong_t max_accel_edit =
-      #ifdef MAX_ACCEL_EDIT_VALUES
-        MAX_ACCEL_EDIT_VALUES
-      #elif ENABLED(LIMITED_MAX_ACCEL_EDITING)
-        DEFAULT_MAX_ACCELERATION
+    if ((LCD_HEIGHT < 8) || (rexyz_menu_mode != MENUMODE_BASIC)) {
+      // M201 settings
+      constexpr xyze_ulong_t max_accel_edit =
+        #ifdef MAX_ACCEL_EDIT_VALUES
+          MAX_ACCEL_EDIT_VALUES
+        #elif ENABLED(LIMITED_MAX_ACCEL_EDITING)
+          DEFAULT_MAX_ACCELERATION
+        #else
+          { 99000, 99000, 99000, 99000 }
+        #endif
+      ;
+      #if ENABLED(LIMITED_MAX_ACCEL_EDITING) && !defined(MAX_ACCEL_EDIT_VALUES)
+        const xyze_ulong_t max_accel_edit_scaled = max_accel_edit * 2;
       #else
-        { 99000, 99000, 99000, 99000 }
+        const xyze_ulong_t &max_accel_edit_scaled = max_accel_edit;
       #endif
-    ;
-    #if ENABLED(LIMITED_MAX_ACCEL_EDITING) && !defined(MAX_ACCEL_EDIT_VALUES)
-      const xyze_ulong_t max_accel_edit_scaled = max_accel_edit * 2;
-    #else
-      const xyze_ulong_t &max_accel_edit_scaled = max_accel_edit;
-    #endif
 
-    #define EDIT_AMAX(Q,L) EDIT_ITEM_FAST(long5_25, MSG_AMAX_##Q, &planner.settings.max_acceleration_mm_per_s2[_AXIS(Q)], L, max_accel_edit_scaled[_AXIS(Q)], [](){ planner.reset_acceleration_rates(); })
+      #define EDIT_AMAX(Q,L) EDIT_ITEM_FAST(long5_25, MSG_AMAX_##Q, &planner.settings.max_acceleration_mm_per_s2[_AXIS(Q)], L, max_accel_edit_scaled[_AXIS(Q)], [](){ planner.reset_acceleration_rates(); })
 
-    EDIT_AMAX(A,100);
-    EDIT_AMAX(B,100);
-    EDIT_AMAX(C, 10);
+      EDIT_AMAX(A,100);
+      EDIT_AMAX(B,100);
+      EDIT_AMAX(C, 10);
 
-    #if ENABLED(DISTINCT_E_FACTORS)
-      #define EDIT_AMAX_E(N) EDIT_ITEM_FAST(long5_25, MSG_AMAX_E##N, &planner.settings.max_acceleration_mm_per_s2[E_AXIS_N(N)], 100, max_accel_edit_scaled.e, [](){ _reset_e_acceleration_rate(N); })
-      EDIT_ITEM_FAST(long5_25, MSG_AMAX_E, &planner.settings.max_acceleration_mm_per_s2[E_AXIS_N(active_extruder)], 100, max_accel_edit_scaled.e, [](){ planner.reset_acceleration_rates(); });
-      EDIT_AMAX_E(0);
-      EDIT_AMAX_E(1);
-      #if E_STEPPERS > 2
-        EDIT_AMAX_E(2);
-        #if E_STEPPERS > 3
-          EDIT_AMAX_E(3);
-          #if E_STEPPERS > 4
-            EDIT_AMAX_E(4);
-            #if E_STEPPERS > 5
-              EDIT_AMAX_E(5);
-            #endif // E_STEPPERS > 5
-          #endif // E_STEPPERS > 4
-        #endif // E_STEPPERS > 3
-      #endif // E_STEPPERS > 2
-    #elif E_STEPPERS
-      EDIT_ITEM_FAST(long5_25, MSG_AMAX_E, &planner.settings.max_acceleration_mm_per_s2[E_AXIS], 100, max_accel_edit_scaled.e, [](){ planner.reset_acceleration_rates(); });
-    #endif
+      #if ENABLED(DISTINCT_E_FACTORS)
+        #define EDIT_AMAX_E(N) EDIT_ITEM_FAST(long5_25, MSG_AMAX_E##N, &planner.settings.max_acceleration_mm_per_s2[E_AXIS_N(N)], 100, max_accel_edit_scaled.e, [](){ _reset_e_acceleration_rate(N); })
+        EDIT_ITEM_FAST(long5_25, MSG_AMAX_E, &planner.settings.max_acceleration_mm_per_s2[E_AXIS_N(active_extruder)], 100, max_accel_edit_scaled.e, [](){ planner.reset_acceleration_rates(); });
+        EDIT_AMAX_E(0);
+        EDIT_AMAX_E(1);
+        #if E_STEPPERS > 2
+          EDIT_AMAX_E(2);
+          #if E_STEPPERS > 3
+            EDIT_AMAX_E(3);
+            #if E_STEPPERS > 4
+              EDIT_AMAX_E(4);
+              #if E_STEPPERS > 5
+                EDIT_AMAX_E(5);
+              #endif // E_STEPPERS > 5
+            #endif // E_STEPPERS > 4
+          #endif // E_STEPPERS > 3
+        #endif // E_STEPPERS > 2
+      #elif E_STEPPERS
+        EDIT_ITEM_FAST(long5_25, MSG_AMAX_E, &planner.settings.max_acceleration_mm_per_s2[E_AXIS], 100, max_accel_edit_scaled.e, [](){ planner.reset_acceleration_rates(); });
+      #endif
+
+    }
 
     END_MENU();
   }
@@ -862,51 +871,59 @@ void rlcd_menu_choose_menu() {
 void rmenu_setting_motion() {
   START_MENU();
   // M203 / M205 - Feedrate items
-  SUBMENU23(MSG_VELOCITY, menu_advanced_velocity);
+  if (rexyz_menu_mode == MENUMODE_BASIC)
+    SUBMENU22(MSG_VELOCITY, menu_advanced_velocity);
+  else
+    SUBMENU23(MSG_VELOCITY, menu_advanced_velocity);
 
   // M201 - Acceleration items
-  SUBMENU23(MSG_ACCELERATION, menu_advanced_acceleration);
+  if (rexyz_menu_mode == MENUMODE_BASIC)
+    SUBMENUH31(MSG_ACCELERATION, menu_advanced_acceleration);
+  else
+    SUBMENU23(MSG_ACCELERATION, menu_advanced_acceleration);
 
-  // M205 - Max Jerk
-  #if DISABLED(CLASSIC_JERK)
-    #if ENABLED(LIN_ADVANCE)
-      EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM, planner.recalculate_max_e_jerk);
+  if (rexyz_menu_mode != MENUMODE_BASIC) {
+    // M205 - Max Jerk
+    #if DISABLED(CLASSIC_JERK)
+      #if ENABLED(LIN_ADVANCE)
+        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM, planner.recalculate_max_e_jerk);
+      #else
+        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM, );
+      #endif
     #else
-      EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM, );
+      SUBMENU23(MSG_JERK, menu_advanced_jerk);
     #endif
-  #else
-    SUBMENU23(MSG_JERK, menu_advanced_jerk);
-  #endif
 
-  if (!printer_busy()) {
-    // M92 - Steps Per mm
-    SUBMENU22(MSG_STEPS_PER_MM, menu_advanced_steps_per_mm);
+    if (!printer_busy()) {
+      // M92 - Steps Per mm
+      SUBMENU22(MSG_STEPS_PER_MM, menu_advanced_steps_per_mm);
+    }
+    #if HAS_M206_COMMAND
+      //
+      // Set Home Offsets
+      //
+      SUBSELECT(MSG_SET_HOME_OFFSETS, []{
+        do_select_screen(
+          PSTR("Set Offset"), GET_TEXT(MSG_BUTTON_CANCEL),
+          []{
+            queue.inject_P(PSTR("M428"));
+            #if HAS_BUZZER
+              ui.completion_feedback(true);
+            #endif
+          },
+          ui.goto_previous_screen,
+          PSTR("Set Home Offset"), nullptr, PSTR("?")
+        );});
+    #endif
+
+    EDIT_ITEM_P(uint16_3, PSTR("Z Max Pos"), &zv_max_pos, Z_MAX_POS - 30,  Z_MAX_POS + 20);
   }
-  #if HAS_M206_COMMAND
-    //
-    // Set Home Offsets
-    //
-    SUBSELECT(MSG_SET_HOME_OFFSETS, []{
-      do_select_screen(
-        PSTR("Set Offset"), GET_TEXT(MSG_BUTTON_CANCEL),
-        []{
-          queue.inject_P(PSTR("M428"));
-          #if HAS_BUZZER
-            ui.completion_feedback(true);
-          #endif
-        },
-        ui.goto_previous_screen,
-        PSTR("Set Home Offset"), nullptr, PSTR("?")
-      );});
-  #endif
-
-  EDIT_ITEM_P(uint16_3, PSTR("Z Max Pos"), &zv_max_pos, Z_MAX_POS - 30,  Z_MAX_POS + 20);
-
   END_MENU();
 }
 
 void rmenu_option() {
   START_MENU();
+  STATIC_ITEM_P(PSTR("Option"));
   #if HAS_FILAMENT_SENSOR
     EDIT_ITEM(bool, MSG_RUNOUT_SENSOR, &runout.enabled, runout.reset);
   #endif
@@ -948,43 +965,57 @@ void rmenu_option() {
 }
 
 void rmenu_setting() {
+
+  // screenMode change after user change Menu Mode
+  if (rexyz_menu_mode == MENUMODE_BASIC)
+    ui.screenMode = SCRMODE_MENU_2X2;
+  else
+    ui.screenMode = SCRMODE_MENU_3X2;
+
   START_MENU();
+  if (rexyz_menu_mode == MENUMODE_BASIC)
+    MENU_ITEM_P(submenu21, PSTR("Motion & Offset") , rmenu_setting_motion);
+  else
+    MENU_ITEM_P(submenu32, PSTR("Motion & Offset") , rmenu_setting_motion);
 
-  MENU_ITEM_P(submenu32, PSTR("Motion & Offset") , rmenu_setting_motion);
+  if (rexyz_menu_mode != MENUMODE_BASIC) {
+    #if SHOW_MENU_ADVANCED_TEMPERATURE
+      SUBMENU23(MSG_TEMPERATURE, menu_advanced_temperature);
+    #endif
 
-  #if SHOW_MENU_ADVANCED_TEMPERATURE
-    SUBMENU23(MSG_TEMPERATURE, menu_advanced_temperature);
-  #endif
-
-  #if DISABLED(NO_VOLUMETRICS) || ENABLED(ADVANCED_PAUSE_FEATURE)
-    SUBMENU22(MSG_FILAMENT, menu_advanced_filament);
-  #elif ENABLED(LIN_ADVANCE)
-    #if EXTRUDERS == 1
-      EDIT_ITEM(float52, MSG_ADVANCE_K, &planner.extruder_advance_K[0], 0, 999);
-    #elif EXTRUDERS > 1
-      #define EDIT_ADVANCE_K(N) EDIT_ITEM(float52, MSG_ADVANCE_K MSG_E##N, &planner.extruder_advance_K[N-1], 0, 999)
-      EDIT_ADVANCE_K(1);
-      EDIT_ADVANCE_K(2);
-      #if EXTRUDERS > 2
-        EDIT_ADVANCE_K(3);
-        #if EXTRUDERS > 3
-          EDIT_ADVANCE_K(4);
-          #if EXTRUDERS > 4
-            EDIT_ADVANCE_K(5);
-            #if EXTRUDERS > 5
-              EDIT_ADVANCE_K(6);
-            #endif // EXTRUDERS > 5
-          #endif // EXTRUDERS > 4
-        #endif // EXTRUDERS > 3
-      #endif // EXTRUDERS > 2
-    #endif // EXTRUDERS > 1
-  #endif
+    #if DISABLED(NO_VOLUMETRICS) || ENABLED(ADVANCED_PAUSE_FEATURE)
+      SUBMENU22(MSG_FILAMENT, menu_advanced_filament);
+    #elif ENABLED(LIN_ADVANCE)
+      #if EXTRUDERS == 1
+        EDIT_ITEM(float52, MSG_ADVANCE_K, &planner.extruder_advance_K[0], 0, 999);
+      #elif EXTRUDERS > 1
+        #define EDIT_ADVANCE_K(N) EDIT_ITEM(float52, MSG_ADVANCE_K MSG_E##N, &planner.extruder_advance_K[N-1], 0, 999)
+        EDIT_ADVANCE_K(1);
+        EDIT_ADVANCE_K(2);
+        #if EXTRUDERS > 2
+          EDIT_ADVANCE_K(3);
+          #if EXTRUDERS > 3
+            EDIT_ADVANCE_K(4);
+            #if EXTRUDERS > 4
+              EDIT_ADVANCE_K(5);
+              #if EXTRUDERS > 5
+                EDIT_ADVANCE_K(6);
+              #endif // EXTRUDERS > 5
+            #endif // EXTRUDERS > 4
+          #endif // EXTRUDERS > 3
+        #endif // EXTRUDERS > 2
+      #endif // EXTRUDERS > 1
+    #endif
+  }
 
   MENU_ITEM_P(submenuh21,PSTR("Touch Screen"), rmenu_setting_touchscreen);
 
-  MENU_ITEM_P(submenu22,PSTR("Option"), rmenu_option);
+  MENU_ITEM_P(submenuh31,PSTR("Option"), rmenu_option);
 
-  MENU_ITEM_P(submenu22,PSTR("Load & Save"), rmenu_loadsave);
+  if (rexyz_menu_mode == MENUMODE_BASIC)
+    MENU_ITEM_P(submenu31,PSTR("Load & Save"), rmenu_loadsave);
+  else
+    MENU_ITEM_P(submenu22,PSTR("Load & Save"), rmenu_loadsave);
 
   END_MENU();
 }

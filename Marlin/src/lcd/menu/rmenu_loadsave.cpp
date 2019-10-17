@@ -104,7 +104,8 @@ void rmenu_loadsave() {
     SUBSELECT(MSG_RESTORE_FAILSAFE, lcd_factory_settings_confirm);
 
   #if ENABLED(EEPROM_SETTINGS)
-    SUBSELECT(MSG_INIT_EEPROM, lcd_init_eeprom_confirm);
+    if (rexyz_menu_mode != MENUMODE_BASIC)
+      SUBSELECT(MSG_INIT_EEPROM, lcd_init_eeprom_confirm);
   #endif
 
   END_MENU();
