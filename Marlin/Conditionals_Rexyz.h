@@ -250,9 +250,10 @@
 #if defined(REXYZ_BOARD_DLION)
     #define REXYZ_MOTHERBOARD BOARD_REXYZ_DLION_D2
     #define ENDSTOP_INTERRUPTS_FEATURE
-    #define REXYZ_SERIAL_PORT 3
-    #define SERIAL_PORT_2 1
-    #define NUM_SERIAL 2
+    #define REXYZ_SERIAL_PORT 1
+    //#define SERIAL_PORT_2 3
+    //#define NUM_SERIAL 2
+    //#define WIFISUPPORT
 #endif
 
 //===========================================================================
