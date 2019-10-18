@@ -468,7 +468,7 @@ void menu_motion() {
 
   #elif ENABLED(LCD_BED_LEVELING)
 
-    if (!g29_in_progress) SUBMENU(MSG_BED_LEVELING, menu_bed_leveling);
+    if (!g29_in_progress) SUBMENU22(MSG_BED_LEVELING, menu_bed_leveling);
 
   #elif HAS_LEVELING && DISABLED(SLIM_LCD_MENUS)
 
