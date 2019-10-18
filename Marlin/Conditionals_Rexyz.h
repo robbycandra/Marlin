@@ -740,11 +740,11 @@
     #define TOUCH_ENCODER
 
     #if defined(REXYZ_D2)
-      #define REXYZ_XPT2046_X_CAL_SCALE_X  -16626
-      #define REXYZ_XPT2046_X_CAL_SCALE_Y       0
-      #define REXYZ_XPT2046_X_OFFSET          486
-      #define REXYZ_XPT2046_Y_CAL_SCALE_X       0
-      #define REXYZ_XPT2046_Y_CAL_SCALE_Y   10933
+      #define REXYZ_XPT2046_X_CAL_SCALE_X  -16692
+      #define REXYZ_XPT2046_X_CAL_SCALE_Y     128
+      #define REXYZ_XPT2046_X_OFFSET          487
+      #define REXYZ_XPT2046_Y_CAL_SCALE_X     -61
+      #define REXYZ_XPT2046_Y_CAL_SCALE_Y   11321
       #define REXYZ_XPT2046_Y_OFFSET          -13
     #elif defined(REXYZ_A2)
       #define REXYZ_XPT2046_X_CAL_SCALE_X   14202

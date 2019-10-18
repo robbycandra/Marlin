@@ -42,6 +42,7 @@
 
 #if HAS_FULL_SCALE_TFT
   #define TOUCH_TEXT_OFFSET 15
+  //(LCD_PIXEL_WIDTH/2)
   #define TOUCH_POINT_OFFSET 50
   #define TOUCH_POINT_BOTTOM 10
   #define LINE_LENGTH 15
@@ -52,9 +53,9 @@
 
 #define DISP_PT_X0 (LCD_PIXEL_WIDTH/2)
 #define DISP_PT_Y0 TOUCH_POINT_OFFSET
-#define DISP_PT_X1 (LCD_PIXEL_WIDTH - TOUCH_POINT_OFFSET)
+#define DISP_PT_X1 TOUCH_POINT_OFFSET
 #define DISP_PT_Y1 ((LCD_PIXEL_HEIGHT + TOUCH_POINT_OFFSET - TOUCH_POINT_BOTTOM)/2)
-#define DISP_PT_X2 TOUCH_POINT_OFFSET
+#define DISP_PT_X2 (LCD_PIXEL_WIDTH - TOUCH_POINT_OFFSET)
 #define DISP_PT_Y2 (LCD_PIXEL_HEIGHT - TOUCH_POINT_BOTTOM)
 
 typedef struct Point { int32_t x, y; } POINT;
@@ -86,13 +87,13 @@ void _lcd_touch_cal_result() {
         break;
       case 1:
         if(PAGE_CONTAINS((LCD_PIXEL_HEIGHT - MENU_FONT_ASCENT)/2, (LCD_PIXEL_HEIGHT + MENU_FONT_ASCENT)/2)) {
-          lcd_moveto(LCD_PIXEL_WIDTH - slen*MENU_FONT_WIDTH - TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT + MENU_FONT_ASCENT)/2);
+          lcd_moveto(TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT + MENU_FONT_ASCENT)/2);
           lcd_put_u8str(pointStr);
         }
         break;
       case 2:
         if(PAGE_CONTAINS(LCD_PIXEL_HEIGHT - TOUCH_TEXT_OFFSET - MENU_FONT_ASCENT, LCD_PIXEL_HEIGHT - TOUCH_TEXT_OFFSET - 1)) {
-          lcd_moveto(TOUCH_TEXT_OFFSET, LCD_PIXEL_HEIGHT - TOUCH_TEXT_OFFSET);
+          lcd_moveto(LCD_PIXEL_WIDTH - slen*MENU_FONT_WIDTH - TOUCH_TEXT_OFFSET, LCD_PIXEL_HEIGHT - TOUCH_TEXT_OFFSET);
           lcd_put_u8str(pointStr);
         }
         break;
@@ -100,7 +101,7 @@ void _lcd_touch_cal_result() {
   }
 
   if (isfail) {
-    lcd_put_u8str(TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_HEIGHT*0.5), "Fail, Retry");
+    lcd_put_u8str(LCD_PIXEL_WIDTH/2, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_HEIGHT*0.5), "Fail, Retry");
     bool got_click = ui.use_click();
     if (got_click) {
       ui.goto_previous_screen();
@@ -132,17 +133,17 @@ void _lcd_touch_cal_result() {
 
     #if HAS_FULL_SCALE_TFT
       sprintf(pointStr,"X-CalX:%d", (int16_t)round((float)x_calx*65536/divider));
-      lcd_put_u8str(TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT/2) - (MENU_FONT_HEIGHT *2), pointStr);
+      lcd_put_u8str(LCD_PIXEL_WIDTH/2, (LCD_PIXEL_HEIGHT/2) - (MENU_FONT_HEIGHT *2), pointStr);
       sprintf(pointStr,"X-CalY:%d", (int16_t)round((float)x_caly*65536/divider));
-      lcd_put_u8str(TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT/2) - (MENU_FONT_HEIGHT*1), pointStr);
+      lcd_put_u8str(LCD_PIXEL_WIDTH/2, (LCD_PIXEL_HEIGHT/2) - (MENU_FONT_HEIGHT*1), pointStr);
       sprintf(pointStr,"X-Offs:%d", (int16_t)round(x_offs/divider));
-      lcd_put_u8str(TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT/2) - (MENU_FONT_HEIGHT*0), pointStr);
+      lcd_put_u8str(LCD_PIXEL_WIDTH/2, (LCD_PIXEL_HEIGHT/2) - (MENU_FONT_HEIGHT*0), pointStr);
       sprintf(pointStr,"Y-CalX:%d", (int16_t)round((float)y_calx*65536/divider));
-      lcd_put_u8str(TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_HEIGHT*1), pointStr);
+      lcd_put_u8str(LCD_PIXEL_WIDTH/2, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_HEIGHT*1), pointStr);
       sprintf(pointStr,"Y-CalY:%d", (int16_t)round((float)y_caly*65536/divider));
-      lcd_put_u8str(TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_HEIGHT*2), pointStr);
+      lcd_put_u8str(LCD_PIXEL_WIDTH/2, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_HEIGHT*2), pointStr);
       sprintf(pointStr,"Y-Offs:%d", (int16_t)round(y_offs/divider));
-      lcd_put_u8str(TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_HEIGHT*3), pointStr);
+      lcd_put_u8str(LCD_PIXEL_WIDTH/2, (LCD_PIXEL_HEIGHT/2) + (MENU_FONT_HEIGHT*3), pointStr);
     #endif
 
     bool got_click = ui.use_click();
@@ -196,13 +197,13 @@ void _lcd_touch_point_screen() {
           break;
         case 1:
           if(PAGE_CONTAINS((LCD_PIXEL_HEIGHT - MENU_FONT_ASCENT)/2, (LCD_PIXEL_HEIGHT + MENU_FONT_ASCENT)/2)) {
-            lcd_moveto(LCD_PIXEL_WIDTH - slen*MENU_FONT_WIDTH - TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT + MENU_FONT_ASCENT)/2);
+            lcd_moveto(TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT + MENU_FONT_ASCENT)/2);
             lcd_put_u8str(pointStr);
           }
           break;
         case 2:
           if(PAGE_CONTAINS(LCD_PIXEL_HEIGHT - TOUCH_TEXT_OFFSET - MENU_FONT_ASCENT, LCD_PIXEL_HEIGHT - TOUCH_TEXT_OFFSET - 1)) {
-            lcd_moveto(TOUCH_TEXT_OFFSET, LCD_PIXEL_HEIGHT - TOUCH_TEXT_OFFSET);
+            lcd_moveto(LCD_PIXEL_WIDTH - slen*MENU_FONT_WIDTH - TOUCH_TEXT_OFFSET, LCD_PIXEL_HEIGHT - TOUCH_TEXT_OFFSET);
             lcd_put_u8str(pointStr);
           }
           break;
@@ -210,7 +211,7 @@ void _lcd_touch_point_screen() {
     }
     if(PAGE_CONTAINS((LCD_PIXEL_HEIGHT - MENU_FONT_ASCENT)/2, (LCD_PIXEL_HEIGHT + MENU_FONT_ASCENT)/2)) {
       sprintf(pointStr,"Test %d of 9]",touch_point_index+1);
-      lcd_moveto(TOUCH_TEXT_OFFSET, (LCD_PIXEL_HEIGHT + MENU_FONT_ASCENT)/2);
+      lcd_moveto(LCD_PIXEL_WIDTH/2, (LCD_PIXEL_HEIGHT + MENU_FONT_ASCENT)/2);
       lcd_put_u8str(pointStr);
     }
   #endif
