@@ -622,9 +622,9 @@ void MarlinUI::draw_status_screen() {
   //
     #if HAS_ABL_OR_UBL
       if (planner.leveling_active)
-        u8g.setColorIndex(2);
-      else
         u8g.setColorIndex(3);
+      else
+        u8g.setColorIndex(1);
       #if ENABLED(AUTO_BED_LEVELING_UBL)
         lcd_put_u8str((COL_WIDTH - MENU_FONT_WIDTH*3)/2 - 1, row_str1_base, "UBL");
       #else
