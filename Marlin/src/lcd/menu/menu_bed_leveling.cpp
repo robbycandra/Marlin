@@ -351,9 +351,11 @@ void menu_bed_leveling() {
     EDIT_ITEM(float52, MSG_ZPROBE_ZOFFSET, &probe_offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
   #endif
 
+  /*
   #if ENABLED(LEVEL_BED_CORNERS)
     SUBMENU(MSG_LEVEL_CORNERS, _lcd_level_bed_corners);
   #endif
+  */
 
   #if ENABLED(EEPROM_SETTINGS)
     ACTION_ITEM(MSG_LOAD_EEPROM, lcd_load_settings);
