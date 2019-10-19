@@ -626,7 +626,7 @@
 #if defined(REXYZ_D2)
     #define REXYZ_X_BED_SIZE 235
     #define REXYZ_Y_BED_SIZE 235
-    #define REXYZ_X_MIN_POS 0
+    #define REXYZ_X_MIN_POS -5
     #define REXYZ_Y_MIN_POS 0
     #define REXYZ_Z_MIN_POS 0
     #define REXYZ_X_MAX_POS 235
