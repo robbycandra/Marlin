@@ -133,9 +133,9 @@ void menu_media() {
   START_MENU();
   BACK_ITEM(MSG_MAIN);
   if (card.flag.workDirIsRoot) {
-    #if !PIN_EXISTS(SD_DETECT)
+    //#if !PIN_EXISTS(SD_DETECT)
       ACTION_ITEM(MSG_REFRESH, [](){ encoderTopLine = 0; card.mount(); });
-    #endif
+    //#endif
   }
   else if (card.isMounted())
    #if HAS_FULL_SCALE_TFT
