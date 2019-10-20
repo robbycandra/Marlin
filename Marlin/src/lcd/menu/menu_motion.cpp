@@ -293,7 +293,11 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
 
 void _lcd_extruder_too_cold() {
   START_MENU();
-  STATIC_ITEM(MSG_HOTEND_TOO_COLD);
+  #if HAS_FULL_SCALE_TFT
+    STATIC_ITEM(MSG_HOTEND_TOO_COLD);
+  #else
+    BACK_ITEM(MSG_HOTEND_TOO_COLD);
+  #endif
   END_MENU();
 }
 
