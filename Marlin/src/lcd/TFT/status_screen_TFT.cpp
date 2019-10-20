@@ -379,15 +379,15 @@ void MarlinUI::draw_status_screen() {
       #define _PROGRESS_CENTER_X(len) (LCD_PIXEL_WIDTH - (len) * (STATUS_FONT_WIDTH)) / 2
     #endif
 
-    static uint8_t progress_bar_solid_width = 0, lastProgress = 0;
     #if ENABLED(DOGM_SD_PERCENT)
       static char progress_string[5];
     #endif
-    static uint8_t lastElapsed = 0, elapsed_x_pos = 0;
+    static uint8_t lastElapsed = 0, lastProgress = 0;
+    static u8g_uint_t elapsed_x_pos = 0, progress_bar_solid_width = 0;
     static char elapsed_string[10];
     #if ENABLED(SHOW_REMAINING_TIME)
       #define SHOW_REMAINING_TIME_PREFIX 'E'
-      static uint8_t estimation_x_pos = 0;
+      static u8g_uint_t estimation_x_pos = 0;
       static char estimation_string[10];
     #endif
   #endif
@@ -422,19 +422,25 @@ void MarlinUI::draw_status_screen() {
       ;
       duration_t elapsed = print_job_timer.duration();
       const uint8_t p = progress & 0xFF, ev = elapsed.value & 0xFF;
-      if (progress > 1 && p != lastProgress) {
+      if (progress > 1 || p != lastProgress) {
         lastProgress = p;
 
-        progress_bar_solid_width = uint8_t((PROGRESS_BAR_WIDTH - 2) * progress / (PROGRESS_SCALE) * 0.01f);
+        progress_bar_solid_width = u8g_uint_t((PROGRESS_BAR_WIDTH - 2) * progress / (PROGRESS_SCALE) * 0.01f);
 
         #if ENABLED(DOGM_SD_PERCENT)
-          strcpy(progress_string, (
-            #if ENABLED(PRINT_PROGRESS_SHOW_DECIMALS)
-              permyriadtostr4(progress)
-            #else
-              ui8tostr3(progress / (PROGRESS_SCALE))
-            #endif
-          ));
+          if (progress == 0) {
+            progress_string[0] = '\0';
+            estimation_string[0] = '\0';
+            estimation_x_pos = _PROGRESS_CENTER_X(0);
+          }
+          else
+            strcpy(progress_string, (
+              #if ENABLED(PRINT_PROGRESS_SHOW_DECIMALS)
+                permyriadtostr4(progress)
+              #else
+                ui8tostr3(progress / (PROGRESS_SCALE))
+              #endif
+            ));
         #endif
       }
 
@@ -448,8 +454,14 @@ void MarlinUI::draw_status_screen() {
           if (!(ev & 0x3)) {
             duration_t estimation = elapsed.value * (100 * (PROGRESS_SCALE) - progress) / progress;
             const bool has_days = (estimation.value >= 60*60*24L);
-            const uint8_t len = estimation.toDigital(estimation_string, has_days);
-            estimation_x_pos = _PROGRESS_CENTER_X(len);
+            if (estimation.value == 0) {
+              estimation_string[0] = '\0';
+              estimation_x_pos = _PROGRESS_CENTER_X(0);
+            }
+            else {
+              const uint8_t len = estimation.toDigital(estimation_string, has_days);
+              estimation_x_pos = _PROGRESS_CENTER_X(len);
+            }
           }
         #endif
       }
