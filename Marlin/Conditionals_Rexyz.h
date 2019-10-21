@@ -643,6 +643,10 @@
 //============================= Movement Settings ===========================
 //===========================================================================
 
+#if defined(REXYZ_N2)
+  #define NO_MOTION_BEFORE_HOMING
+#endif
+
 #if defined(REXYZ_D2)
   #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 800, 98 }
 #else
