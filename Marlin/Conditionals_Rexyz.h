@@ -256,6 +256,11 @@
     //#define WIFISUPPORT
 #endif
 
+#if defined(REXYZ_BOARD_ROBINMINI) || defined(REXYZ_BOARD_DLION)
+  #define REXYZ_BAUDRATE 115200
+#else
+  #define REXYZ_BAUDRATE 250000
+#endif
 //===========================================================================
 //============================= Media Settings ==============================
 //===========================================================================
