@@ -910,6 +910,7 @@ void rmenu_setting_motion() {
             #if HAS_BUZZER
               ui.completion_feedback(true);
             #endif
+            ui.return_to_status();
           },
           ui.goto_previous_screen,
           PSTR("Set Home Offset"), nullptr, PSTR("?")
