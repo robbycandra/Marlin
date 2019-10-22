@@ -22,9 +22,9 @@
 #pragma once
 
  /**
-  * 
+  *
   *   REXYZ 3D Printer by Rajawali3d
-  *  
+  *
   *   Pin assignments for 32-bit Dlion Rexyz D2 Printer
   */
 
@@ -50,53 +50,53 @@
 //
 // Limit Switches
 //
-#define X_STOP_PIN         PD6  //PIN 122 - PC6
-#define Y_STOP_PIN         PG9  //PIN 124 - PG8
-#define Z_STOP_PIN         PG10 //PIN 125 - PG7
-//#define X_MAX_PIN          PG15 //PIN 132 - PC5
-//#define Y_MAX_PIN          PG14 //PIN 129 - PC4
-//#define Z_MAX_PIN          PG13 //PIN 128 - PB0
+#define X_MIN_PIN          PD6
+#define Y_MIN_PIN          PG9
+#define Z_MIN_PIN          PG10
+//#define X_MAX_PIN          PG15
+//#define Y_MAX_PIN          PG14
+#define Z_MAX_PIN          PG13
 
-#define FIL_RUNOUT_PIN     PG11 //PIN 126 - PC7
-#define EX_IO_PIN          PB8  //PIN 139 
+#define FIL_RUNOUT_PIN     PG11
+#define EX_IO_PIN          PB8
 
 //
 // Steppers
 //
-#define X_STEP_PIN         PD12 //PD6
-#define X_DIR_PIN          PD11 //PD3
-#define X_ENABLE_PIN       PD13 //PG9
+#define X_STEP_PIN         PD12
+#define X_DIR_PIN          PD11
+#define X_ENABLE_PIN       PD13
 
-#define Y_STEP_PIN         PG3 //PG12
-#define Y_DIR_PIN          PG2 //PG11
-#define Y_ENABLE_PIN       PG4 //PG13
+#define Y_STEP_PIN         PG3
+#define Y_DIR_PIN          PG2
+#define Y_ENABLE_PIN       PG4
 
-#define Z_STEP_PIN         PG6 //PG15
-#define Z_DIR_PIN          PG5 //PG14
-#define Z_ENABLE_PIN       PG7 //PB8
+#define E1_STEP_PIN        PG6
+#define E1_DIR_PIN         PG5
+#define E1_ENABLE_PIN      PG7
 
-#define E0_STEP_PIN        PC6 //PE2
-#define E0_DIR_PIN         PG8 //PB9
-#define E0_ENABLE_PIN      PC7 //PE3
+#define E0_STEP_PIN        PC6
+#define E0_DIR_PIN         PG8
+#define E0_ENABLE_PIN      PC7
 
-//#define E1_STEP_PIN        //PE5
-//#define E1_DIR_PIN         //PC3 //PE4
-//#define E1_ENABLE_PIN      //PE6
+#define Z_STEP_PIN         PA12
+#define Z_DIR_PIN          PA11
+#define Z_ENABLE_PIN       PG7  // This PIN is share with Z2 (E1)
 
 //
 // Temperature Sensors
 //
-#define TEMP_0_PIN         PC1 // PF6 // PC2
-#define TEMP_BED_PIN       PC0 // PC1
+#define TEMP_0_PIN         PC1
+#define TEMP_BED_PIN       PC0
 
 //
 // Heaters / Fans
 //
-#define HEATER_0_PIN       PB0 //PA2
-#define HEATER_BED_PIN     PB1 //PA3
+#define HEATER_0_PIN       PB0
+#define HEATER_BED_PIN     PB1
 
-#define FAN_PIN            PA1 // MARKED:E0_PIN
-#define MANUAL_FAN_PIN     PE1 // MARKED:ED_PIN
+#define FAN_PIN            PA1
+#define MANUAL_FAN_PIN     PE1
 
 #define FAN_SOFT_PWM
 
@@ -114,9 +114,9 @@
 //
 // SD Card
 //
-#define SD_DETECT_PIN     PC2 
+#define SD_DETECT_PIN     PC2
 //#define SCK_PIN           PC12
-//#define MISO_PIN          PB8 
+//#define MISO_PIN          PB8
 //#define MOSI_PIN          PD2
 //#define SS_PIN            PC11
 

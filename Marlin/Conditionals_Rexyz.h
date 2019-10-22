@@ -522,7 +522,7 @@
 
 #endif
 
-#if defined(REXYZ_A1) || defined(REXYZ_A2) || defined(REXYZ_D2)
+#if defined(REXYZ_A1) || defined(REXYZ_A2)
     #define REXYZ_USE_XMIN_PLUG
     #define REXYZ_USE_YMIN_PLUG
     #define REXYZ_USE_ZMIN_PLUG
@@ -543,6 +543,35 @@
     #define REXYZ_X_HOME_DIR -1
     #define REXYZ_Y_HOME_DIR -1
     #define REXYZ_Z_HOME_DIR -1
+
+#endif
+
+#if defined(REXYZ_D2)
+    #define REXYZ_USE_XMIN_PLUG
+    #define REXYZ_USE_YMIN_PLUG
+    #define REXYZ_USE_ZMIN_PLUG
+    #define REXYZ_USE_ZMAX_PLUG
+
+    #define REXYZ_X_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+    #define REXYZ_Y_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+    #define REXYZ_Z_MIN_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+    #define REXYZ_X_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
+    #define REXYZ_Y_MAX_ENDSTOP_INVERTING false // set to true to invert the logic of the endstop.
+    #define REXYZ_Z_MAX_ENDSTOP_INVERTING true // set to true to invert the logic of the endstop.
+
+    #define REXYZ_INVERT_X_DIR false
+    #define REXYZ_INVERT_Y_DIR false
+    #define REXYZ_INVERT_Z_DIR true
+    #define REXYZ_INVERT_E0_DIR false
+    #define REXYZ_INVERT_E1_DIR false
+
+    #define REXYZ_X_HOME_DIR -1
+    #define REXYZ_Y_HOME_DIR -1
+    #define REXYZ_Z_HOME_DIR -1
+
+    #define Z_DUAL_STEPPER_DRIVERS
+    #define Z_DUAL_ENDSTOPS
+    #define REXYZ_Z2_USE_ENDSTOP _ZMAX_
 
 #endif
 
