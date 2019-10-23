@@ -103,7 +103,11 @@ void _menu_temp_filament_op(const PauseMode mode, const int8_t extruder) {
 #if E_STEPPERS > 1 || ENABLED(FILAMENT_LOAD_UNLOAD_GCODES)
   void menu_change_filament() {
     START_MENU();
-    BACK_ITEM(MSG_MAIN);
+    #if HAS_FULL_SCALE_TFT
+      STATIC_ITEM_P(PSTR("Filament Change"));
+    #else
+      BACK_ITEM(MSG_MAIN);
+    #endif
 
     // Say "filament change" when no print is active
     editable.int8 = printingIsPaused() ? PAUSE_MODE_PAUSE_PRINT : PAUSE_MODE_CHANGE_FILAMENT;
@@ -111,8 +115,12 @@ void _menu_temp_filament_op(const PauseMode mode, const int8_t extruder) {
     // Change filament
     #if E_STEPPERS == 1
       PGM_P const msg0 = GET_TEXT(MSG_FILAMENTCHANGE);
-      if (thermalManager.targetTooColdToExtrude(active_extruder))
-        MENU_ITEM_P(submenu1, msg0, [](){ _menu_temp_filament_op(PauseMode(editable.int8), 0); });
+      if (thermalManager.targetTooColdToExtrude(active_extruder)) {
+        if (rexyz_menu_mode == MENUMODE_BASIC)
+          MENU_ITEM_P(submenuh21, msg0, [](){ _menu_temp_filament_op(PauseMode(editable.int8), 0); });
+        else
+          MENU_ITEM_P(submenuh31, msg0, [](){ _menu_temp_filament_op(PauseMode(editable.int8), 0); });
+      }
       else
         MENU_ITEM_P(gcode, msg0, PSTR("M600 B0"));
     #else
@@ -161,8 +169,12 @@ void _menu_temp_filament_op(const PauseMode mode, const int8_t extruder) {
         // Load filament
         #if E_STEPPERS == 1
           PGM_P const msg0 = GET_TEXT(MSG_FILAMENTLOAD);
-          if (thermalManager.targetTooColdToExtrude(active_extruder))
-            MENU_ITEM_P(submenu1, msg0, [](){ _menu_temp_filament_op(PAUSE_MODE_LOAD_FILAMENT, 0); });
+          if (thermalManager.targetTooColdToExtrude(active_extruder)) {
+            if (rexyz_menu_mode == MENUMODE_BASIC)
+              MENU_ITEM_P(submenuh21, msg0, [](){ _menu_temp_filament_op(PAUSE_MODE_LOAD_FILAMENT, 0); });
+            else
+              MENU_ITEM_P(submenuh31, msg0, [](){ _menu_temp_filament_op(PAUSE_MODE_LOAD_FILAMENT, 0); });
+          }
           else
             MENU_ITEM_P(gcode, msg0, PSTR("M701"));
         #else
@@ -210,8 +222,12 @@ void _menu_temp_filament_op(const PauseMode mode, const int8_t extruder) {
         #if E_STEPPERS == 1
           if (thermalManager.targetHotEnoughToExtrude(active_extruder))
             GCODES_ITEM(MSG_FILAMENTUNLOAD, PSTR("M702"));
-          else
-            SUBMENU14(MSG_FILAMENTUNLOAD, [](){ _menu_temp_filament_op(PAUSE_MODE_UNLOAD_FILAMENT, 0); });
+          else {
+            if (rexyz_menu_mode == MENUMODE_BASIC)
+              SUBMENUH21(MSG_FILAMENTUNLOAD, [](){ _menu_temp_filament_op(PAUSE_MODE_UNLOAD_FILAMENT, 0); });
+            else
+              SUBMENUH31(MSG_FILAMENTUNLOAD, [](){ _menu_temp_filament_op(PAUSE_MODE_UNLOAD_FILAMENT, 0); });
+          }
         #else
           #if ENABLED(FILAMENT_UNLOAD_ALL_EXTRUDERS)
             if (JOIN_N(E_STEPPERS, &&,
@@ -320,18 +336,19 @@ void _lcd_pause_message(PGM_P const msg) {
   PGM_P const msg1 = msg;
   PGM_P const msg2 = msg1 + strlen_P(msg1) + 1;
   PGM_P const msg3 = msg2 + strlen_P(msg2) + 1;
-  const bool has2 = msg2[0], has3 = msg3[0],
-             skip1 = !has2 && (LCD_HEIGHT) >= 5;
-
+  const bool has2 = msg2[0], has3 = msg3[0];
+  #if !HAS_FULL_SCALE_TFT
+  const bool skip1 = !has2 && (LCD_HEIGHT) >= 5;
+  #endif
   START_SCREEN();
   STATIC_ITEM_P(pause_header(), SS_CENTER|SS_INVERT);
   #if HAS_FULL_SCALE_TFT
-    if ((!!msg1) + (!!msg2) + (!!msg3) < 3) STATIC_ITEM_P(PSTR(" "));
+    if (!has3) SKIP_ITEM();
     STATIC_ITEM_P(msg1);
-    if (msg2) STATIC_ITEM_P(msg2);
-    if (msg3) STATIC_ITEM_P(msg3);
-    if ((!!msg1) + (!!msg2) + (!!msg3) < 2) STATIC_ITEM_P(PSTR(" "));
-    STATIC_ITEM_P(PSTR(" "));
+    if (has2) STATIC_ITEM_P(msg2);
+    if (has3) STATIC_ITEM_P(msg3);
+    if (!has2) SKIP_ITEM();
+    SKIP_ITEM();
   #else
   if (skip1) SKIP_ITEM();                                       // Move a single-line message down
   STATIC_ITEM_P(msg1);                                          // 2: Message Line 1

@@ -1456,7 +1456,8 @@
 
 // Preheat Constants
 #define PREHEAT_1_LABEL       "PLA"
-#define PREHEAT_1_TEMP_HOTEND 180
+// Mengatasi filament stuck, maka dibuat unload lebih panas dan lebih cepat
+#define PREHEAT_1_TEMP_HOTEND 190
 #define PREHEAT_1_TEMP_BED     REXYZ_PREHEAT_1_TEMP_BED
 #define PREHEAT_1_FAN_SPEED     0 // Value from 0 to 255
 
