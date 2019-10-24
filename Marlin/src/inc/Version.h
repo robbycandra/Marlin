@@ -25,7 +25,7 @@
  * Release version. Leave the Marlin version or apply a custom scheme.
  */
 #ifndef SHORT_BUILD_VERSION
-  #define SHORT_BUILD_VERSION "2.0.0" REXYZ_FW_VERSION
+  #define SHORT_BUILD_VERSION "bugfix-2.0.x"
 #endif
 
 /**
@@ -73,8 +73,7 @@
  * Define a generic printer name to be output to the LCD after booting Marlin.
  */
 #ifndef MACHINE_NAME
-  #define MACHINE_TYPE REXYZ_MACHINE_TYPE
-  #define MACHINE_NAME "Rexyz-" REXYZ_MACHINE_FRAME_TYPE
+  #define MACHINE_NAME "3D Printer"
 #endif
 
 /**
@@ -83,14 +82,14 @@
  * providing the source code to your customers.)
  */
 #ifndef SOURCE_CODE_URL
-  #define SOURCE_CODE_URL REXYZ_SOURCE_CODE_URL
+  #define SOURCE_CODE_URL "https://github.com/MarlinFirmware/Marlin"
 #endif
 
 /**
  * Default generic printer UUID.
  */
 #ifndef DEFAULT_MACHINE_UUID
-  #define DEFAULT_MACHINE_UUID REXYZ_DEFAULT_MACHINE_UUID
+  #define DEFAULT_MACHINE_UUID "cede2a2f-41a2-4748-9b12-c55c62f367ff"
 #endif
 
   /**
@@ -98,7 +97,7 @@
    * documentation about a specific Marlin release. Displayed in the Info Menu.
    */
 #ifndef WEBSITE_URL
-  #define WEBSITE_URL REXYZ_WEBSITE_URL
+  #define WEBSITE_URL "http://marlinfw.org"
 #endif
 
 /**
