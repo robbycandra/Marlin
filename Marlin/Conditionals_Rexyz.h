@@ -290,7 +290,7 @@
 
     #define REXYZ_TEMP_RESIDENCY_TIME  6 // (seconds) Time to wait for hotend to "settle" in M109
     #define REXYZ_TEMP_RESIDENCY_TIME  6 // (seconds) Time to wait for bed to "settle" in M190
-    #define REXYZ_BED_MAXTEMP 130
+    #define REXYZ_BED_MAXTEMP 120
 
     #define PID_EDIT_MENU       // Add PID editing to the "Advanced Settings" menu. (~700 bytes of PROGMEM)
     #define PID_AUTOTUNE_MENU   // Add PID auto-tuning to the "Advanced Settings" menu. (~250 bytes of PROGMEM)
