@@ -135,7 +135,7 @@
 #define MOTOR_CURRENT_PWM_Z_PIN    PA7
 #define MOTOR_CURRENT_PWM_E_PIN    PB0
 #define MOTOR_CURRENT_PWM_RANGE    1500 // (255 * (1000mA / 65535)) * 257 = 1000 is equal 1.6v Vref in turn equal 1Amp
-#define DEFAULT_PWM_MOTOR_CURRENT  { 850, 850, 850 } // 1.05Amp per driver, here is XY, Z and E. This values determined empirically.
+#define DEFAULT_PWM_MOTOR_CURRENT  { 850, 750, 850 } // 1.05Amp per driver, here is XY, Z and E. This values determined empirically.
 
 /**
  * STM32F1 Default SPI Pins
