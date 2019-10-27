@@ -372,10 +372,14 @@
 #endif
 
 #if defined(REXYZ_D2)
-  // Ultimaker
-  #define REXYZ_DEFAULT_Kp 12.73
-  #define REXYZ_DEFAULT_Ki  0.76
-  #define REXYZ_DEFAULT_Kd 53.07
+
+  #define REXYZ_DEFAULT_Kp 16.18
+  #define REXYZ_DEFAULT_Ki 1.13
+  #define REXYZ_DEFAULT_Kd 58.05
+
+  //#define REXYZ_DEFAULT_Kp 12.73
+  //#define REXYZ_DEFAULT_Ki  0.76
+  //#define REXYZ_DEFAULT_Kd 53.07
 
   #define REXYZ_PREHEAT_1_TEMP_BED  60
   #define REXYZ_PREHEAT_2_TEMP_BED  80
