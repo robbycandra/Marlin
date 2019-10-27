@@ -677,8 +677,8 @@ uint16_t CardReader::countFilesInWorkDir() {
  *
  * A nullptr result indicates an unrecoverable error.
  */
-const char* CardReader::diveToFile(SdFile*& curDir, const char * const path, const bool echo/*=false*/) {
   // Track both parent and subfolder
+const char* CardReader::diveToFile(SdFile*& curDir, const char * const path, const bool echo/*=false*/) {
   static SdFile newDir1, newDir2;
   SdFile *sub = &newDir1, *startDir;
 
@@ -1108,7 +1108,9 @@ void CardReader::printingHasFinished() {
   void CardReader::removeJobRecoveryFile() {
     if (jobRecoverFileExists()) {
       recovery.init();
+      const uint8_t saveWorkDirDepth = workDirDepth;
       removeFile(recovery.filename);
+      workDirDepth = saveWorkDirDepth;
       #if ENABLED(DEBUG_POWER_LOSS_RECOVERY)
         SERIAL_ECHOPGM("Power-loss file delete");
         serialprintPGM(jobRecoverFileExists() ? PSTR(" failed.\n") : PSTR("d.\n"));
