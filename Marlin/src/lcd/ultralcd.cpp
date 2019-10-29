@@ -263,7 +263,7 @@ millis_t MarlinUI::next_button_update_ms; // = 0
             break;
           case SCRMODE_MENU_H_2X2:
             if (row > 1) {
-              touched_item_number = (int)((row-2) / 2) * 2 + (col / 6) + 1;
+              touched_item_number = (int)((row-2) / 5) * 2 + (col / 6) + 1;
               menu_area_touched = true;
               wait_for_untouched = true;
             }
