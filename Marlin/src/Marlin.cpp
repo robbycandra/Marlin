@@ -373,6 +373,7 @@ void startOrResumeJob() {
     #endif
     #if ENABLED(LCD_SHOW_E_TOTAL)
       e_move_accumulator = 0;
+      e_move_is_retract = false;
     #endif
   }
   print_job_timer.start();

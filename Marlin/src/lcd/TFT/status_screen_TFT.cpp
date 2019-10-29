@@ -124,16 +124,19 @@ void run_status_screen_touch_command() {
     //row = 0 is for default buttons.
     const uint8_t row = ((ui.lcd_menu_touched_coord & 0xF0) >> 4) - 1;
     const uint8_t col =  (ui.lcd_menu_touched_coord & 0x0F);
-    touched_item_number = (int)(row / 3) * 4 + (col / 3);
+    touched_item_number = (int)(row / 3) * 12 + col;
     switch(touched_item_number) {
       case 0:
+      case 1:
+      case 2:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         ui.wait_for_untouched = true;
         MenuItem_gcode::action("Home","G28");
         break;
-      case 1:
+      case 6:
+      case 7:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
@@ -144,7 +147,8 @@ void run_status_screen_touch_command() {
         ui.wait_for_untouched = true;
         ui.goto_screen(lcd_move_x, SCRMODE_EDIT_SCREEN);
         break;
-      case 2:
+      case 8:
+      case 9:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
@@ -155,7 +159,8 @@ void run_status_screen_touch_command() {
         ui.wait_for_untouched = true;
         ui.goto_screen(lcd_move_y, SCRMODE_EDIT_SCREEN);
         break;
-      case 3:
+      case 10:
+      case 11:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
@@ -167,21 +172,27 @@ void run_status_screen_touch_command() {
         ui.goto_screen(lcd_move_z, SCRMODE_EDIT_SCREEN);
         break;
 
-      case 4:
+      case 12:
+      case 13:
+      case 14:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         ui.wait_for_untouched = true;
         MenuItem_int3::action(GET_TEXT(MSG_SPEED), &feedrate_percentage, 10, 999);
         break;
-      case 5:
+      case 15:
+      case 16:
+      case 17:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         ui.wait_for_untouched = true;
         MenuItem_int3::action(GET_TEXT(MSG_NOZZLE),&thermalManager.temp_hotend[0].target, 0, HEATER_0_MAXTEMP - 15, [](){ thermalManager.start_watching_hotend(0); });
         break;
-      case 6:
+      case 18:
+      case 19:
+      case 20:
         #if HAS_HEATED_BED
           #if HAS_BUZZER
             ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
@@ -190,7 +201,9 @@ void run_status_screen_touch_command() {
           MenuItem_int3::action(GET_TEXT(MSG_BED),&thermalManager.temp_bed.target, 0, BED_MAXTEMP - 10, thermalManager.start_watching_bed);
           break;
         #endif
-      case 7:
+      case 21:
+      case 22:
+      case 23:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
@@ -199,10 +212,18 @@ void run_status_screen_touch_command() {
         editable.uint8 = thermalManager.fan_speed[0];
         MenuItem_percent::action(GET_TEXT(MSG_FAN_SPEED),&editable.uint8, 0, 255, [](){ thermalManager.set_fan_speed(0, editable.uint8); });
         break;
-      case 8:
-      case 9:
-      case 10:
-      case 11:
+      case 24:
+      case 25:
+      case 26:
+      case 27:
+      case 28:
+      case 29:
+      case 30:
+      case 31:
+      case 32:
+      case 33:
+      case 34:
+      case 35:
         #if HAS_BUZZER
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
@@ -372,6 +393,9 @@ void MarlinUI::draw_status_screen() {
   ui.screenMode = SCRMODE_STATUS;
   ui.repeat_delay = 50;
 
+  static bool isExtrude;
+  static bool isRetract;
+
   #if ENABLED(MARLIN_DEV_MODE)
     if (first_page) count_renders++;
   #endif
@@ -416,12 +440,22 @@ void MarlinUI::draw_status_screen() {
       #endif
       heat_bits = new_bits;
     #endif
-    //const uint8_t escale = e_move_accumulator >= 100000.0f ? 10 : 1; // After 100m switch to cm
-    //sprintf_P(estring, PSTR("%ld%cm"), uint32_t(_MAX(e_move_accumulator, 0.0f)) / escale, escale == 10 ? 'c' : 'm'); // 1234567mm
+
+    isRetract = false;
+    isExtrude = false;
+
+    if (e_move_is_retract) {
+      isRetract = true;
+      e_move_is_retract = false;
+    } else if (!thermalManager.tooColdToExtrude(0)) {
+      isExtrude = true;
+    }
+
     if (e_move_accumulator == 0)
       estring[0] = '\0';
     else
       strcpy(estring, ftostr52sp(e_move_accumulator/10));
+
     strcpy(xstring, ftostr4sign(LOGICAL_X_POSITION(current_position[X_AXIS])));
     strcpy(ystring, ftostr4sign(LOGICAL_Y_POSITION(current_position[Y_AXIS])));
     strcpy(zstring, ftostr52sp(LOGICAL_Z_POSITION(current_position[Z_AXIS])));
@@ -521,26 +555,24 @@ void MarlinUI::draw_status_screen() {
 
     if (PAGE_CONTAINS(row_str1_top, row_str1_botm)) {
       u8g.setFont(STATUS_FONT_NAME);
-      u8g.setColorIndex(2);
-      if (e_move_accumulator >= 0) {
+      if (isRetract)
         u8g.setColorIndex(2);
-        lcd_moveto(X_LABEL_POS, row_str1_base);
-        lcd_put_wchar('R');
+      else
+        u8g.setColorIndex(1);
+      lcd_moveto(X_LABEL_POS, row_str1_base);
+      lcd_put_wchar('R');
+
+      if (isExtrude)
         u8g.setColorIndex(3);
-        lcd_moveto(X_LABEL_POS + off_x*0.5, row_str1_base);
-        lcd_put_wchar('E');
-      }
-      else {
-        u8g.setColorIndex(2);
-        lcd_moveto(X_LABEL_POS + off_x*0.5, row_str1_base);
-        lcd_put_wchar('E');
-        u8g.setColorIndex(3);
-        lcd_moveto(X_LABEL_POS, row_str1_base);
-        lcd_put_wchar('R');
-      }
+      else
+        u8g.setColorIndex(1);
+      lcd_moveto(X_LABEL_POS + off_x*0.5, row_str1_base);
+      lcd_put_wchar('E');
+
       u8g.setColorIndex(1);
       lcd_moveto(X_LABEL_POS + off_x*0.25, row_str1_base);
       lcd_put_wchar('/');
+
       if (TEST(axis_known_position, X_AXIS)) u8g.setColorIndex(3);
       else u8g.setColorIndex(1);
       lcd_moveto(X_LABEL_POS + off_x*1, row_str1_base);

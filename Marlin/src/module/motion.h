@@ -112,6 +112,7 @@ extern int16_t feedrate_percentage;
 
 #if ENABLED(LCD_SHOW_E_TOTAL)
   extern float e_move_accumulator;
+  extern bool e_move_is_retract; // true if there is retract move. Set to false after retract move displayed.
 #endif
 
 FORCE_INLINE float pgm_read_any(const float *p) { return pgm_read_float(p); }

@@ -1822,6 +1822,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
 
   #if ENABLED(LCD_SHOW_E_TOTAL)
     e_move_accumulator += delta_mm.e;
+    if (delta_mm.e < 0) e_move_is_retract = true;
   #endif
 
   if (block->steps.a < MIN_STEPS_PER_SEGMENT && block->steps.b < MIN_STEPS_PER_SEGMENT && block->steps.c < MIN_STEPS_PER_SEGMENT) {

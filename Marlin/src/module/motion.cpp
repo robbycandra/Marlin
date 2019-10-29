@@ -122,6 +122,7 @@ xyze_pos_t destination; // {0}
 
 #if ENABLED(LCD_SHOW_E_TOTAL)
   float e_move_accumulator; // = 0
+  bool e_move_is_retract; // true if there is retract move. Set to false after retract move displayed.
 #endif
 
 // Extruder offsets
@@ -1385,7 +1386,7 @@ void set_axis_is_at_home(const AxisEnum axis) {
     else {
       current_position[axis] = base_home_pos(axis);
     }
-      
+
   #endif
 
   /**
