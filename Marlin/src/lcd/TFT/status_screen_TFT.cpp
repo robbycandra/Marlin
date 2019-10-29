@@ -75,8 +75,8 @@
   #include "../../feature/mixing.h"
 #endif
 
-#define X_LABEL_POS     (COL_WIDTH - STATUS_FONT_WIDTH) / 2
-#define X_VALUE_POS     (COL_WIDTH - (MENU_FONT_WIDTH*7)) / 2
+#define X_LABEL_POS     (LCD_PIXEL_WIDTH/4) + ((LCD_PIXEL_WIDTH/4) - STATUS_FONT_WIDTH) / 2
+#define X_VALUE_POS     (LCD_PIXEL_WIDTH/4) + ((LCD_PIXEL_WIDTH/4) - (MENU_FONT_WIDTH*7)) / 2
 
 #define DO_DRAW_BED (HAS_HEATED_BED && STATUS_BED_WIDTH && HOTENDS <= 3 && DISABLED(STATUS_COMBINE_HEATERS))
 #define DO_DRAW_FAN (HAS_FAN0 && STATUS_FAN_WIDTH && STATUS_FAN_FRAMES)
@@ -316,7 +316,7 @@ FORCE_INLINE void _draw_heater_status(const heater_ind_t heater, const bool blin
 // Homed and known, display constantly.
 //
 FORCE_INLINE void _draw_axis_value(const AxisEnum axis, const char *value, const bool blink) {
-  const u8g_uint_t offs = off_x * (axis + 1);
+  const u8g_int_t offs = (axis == E_AXIS ? MENU_FONT_WIDTH : axis == X_AXIS ? off_x : axis == Y_AXIS ? off_x * 1.5 : off_x * 2);
   u8g.setFont(MENU_FONT_NAME);
   lcd_moveto(X_VALUE_POS + offs, row_str2_base);
   if (blink)
@@ -357,6 +357,16 @@ void draw_4colom_box () {
   u8g.setColorIndex(1);
 }
 
+void draw_6colom_box () {
+  //draw_item_box(false);
+  u8g.setColorIndex(1);
+  u8g.drawVLine(col_x1 + off_x   - 1, row_y1, row_h);
+  u8g.drawVLine(col_x1 + off_x      , row_y1, row_h);
+  u8g.drawHLine(0, row_y2, LCD_PIXEL_WIDTH);
+  u8g.drawHLine(0, row_y2-1, LCD_PIXEL_WIDTH);
+  u8g.setColorIndex(1);
+}
+
 void MarlinUI::draw_status_screen() {
 
   ui.screenMode = SCRMODE_STATUS;
@@ -366,7 +376,7 @@ void MarlinUI::draw_status_screen() {
     if (first_page) count_renders++;
   #endif
 
-  static char xstring[5], ystring[5], zstring[8];
+  static char estring[10], xstring[5], ystring[5], zstring[8];
   #if ENABLED(FILAMENT_LCD_DISPLAY)
     static char wstring[5], mstring[4];
   #endif
@@ -406,6 +416,12 @@ void MarlinUI::draw_status_screen() {
       #endif
       heat_bits = new_bits;
     #endif
+    //const uint8_t escale = e_move_accumulator >= 100000.0f ? 10 : 1; // After 100m switch to cm
+    //sprintf_P(estring, PSTR("%ld%cm"), uint32_t(_MAX(e_move_accumulator, 0.0f)) / escale, escale == 10 ? 'c' : 'm'); // 1234567mm
+    if (e_move_accumulator == 0)
+      estring[0] = '\0';
+    else
+      strcpy(estring, ftostr52sp(e_move_accumulator/10));
     strcpy(xstring, ftostr4sign(LOGICAL_X_POSITION(current_position[X_AXIS])));
     strcpy(ystring, ftostr4sign(LOGICAL_Y_POSITION(current_position[Y_AXIS])));
     strcpy(zstring, ftostr52sp(LOGICAL_Z_POSITION(current_position[Z_AXIS])));
@@ -485,7 +501,7 @@ void MarlinUI::draw_status_screen() {
   col_x2 = LCD_PIXEL_WIDTH - 1;
 
   if (PAGE_CONTAINS(row_y1,row_y2)) {
-    draw_4colom_box();
+    draw_6colom_box();
     row_str1_top  = row_y1 + OFFSET_Y;
     row_str1_base = row_y1 + OFFSET_Y + STATUS_FONT_ASCENT;
     row_str1_botm = row_y1 + OFFSET_Y + STATUS_FONT_ASCENT + STATUS_FONT_DESCENT;
@@ -505,17 +521,44 @@ void MarlinUI::draw_status_screen() {
 
     if (PAGE_CONTAINS(row_str1_top, row_str1_botm)) {
       u8g.setFont(STATUS_FONT_NAME);
-      //lcd_put_u8str((COL_WIDTH - STATUS_FONT_WIDTH*5)/2 - 1, row_str1_base, "REXYZ");
-      lcd_moveto(X_LABEL_POS + off_x, row_str1_base);
+      u8g.setColorIndex(2);
+      if (e_move_accumulator >= 0) {
+        u8g.setColorIndex(2);
+        lcd_moveto(X_LABEL_POS, row_str1_base);
+        lcd_put_wchar('R');
+        u8g.setColorIndex(3);
+        lcd_moveto(X_LABEL_POS + off_x*0.5, row_str1_base);
+        lcd_put_wchar('E');
+      }
+      else {
+        u8g.setColorIndex(2);
+        lcd_moveto(X_LABEL_POS + off_x*0.5, row_str1_base);
+        lcd_put_wchar('E');
+        u8g.setColorIndex(3);
+        lcd_moveto(X_LABEL_POS, row_str1_base);
+        lcd_put_wchar('R');
+      }
+      u8g.setColorIndex(1);
+      lcd_moveto(X_LABEL_POS + off_x*0.25, row_str1_base);
+      lcd_put_wchar('/');
+      if (TEST(axis_known_position, X_AXIS)) u8g.setColorIndex(3);
+      else u8g.setColorIndex(1);
+      lcd_moveto(X_LABEL_POS + off_x*1, row_str1_base);
       lcd_put_wchar('X');
-      lcd_moveto(X_LABEL_POS + off_x*2, row_str1_base);
+      if (TEST(axis_known_position, Y_AXIS)) u8g.setColorIndex(3);
+      else u8g.setColorIndex(1);
+      lcd_moveto(X_LABEL_POS + off_x*1.5, row_str1_base);
       lcd_put_wchar('Y');
-      lcd_moveto(X_LABEL_POS + off_x*3, row_str1_base);
+      if (TEST(axis_known_position, Z_AXIS)) u8g.setColorIndex(3);
+      else u8g.setColorIndex(1);
+      lcd_moveto(X_LABEL_POS + off_x*2, row_str1_base);
       lcd_put_wchar('Z');
+      u8g.setColorIndex(1);
     }
     if (PAGE_CONTAINS(row_str2_top, row_str2_botm)) {
       u8g.setFont(STATUS_FONT_NAME);
-      lcd_put_u8str((COL_WIDTH - STATUS_FONT_WIDTH*2)/2 - 1, row_str2_base, REXYZ_MACHINE_FRAME_TYPE);
+      lcd_put_u8str(((LCD_FULL_PIXEL_WIDTH/4) - STATUS_FONT_WIDTH*2)/2 - 1, row_str2_base, REXYZ_MACHINE_FRAME_TYPE);
+      _draw_axis_value(E_AXIS, estring, true);
       _draw_axis_value(X_AXIS, xstring, blink);
       _draw_axis_value(Y_AXIS, ystring, blink);
       _draw_axis_value(Z_AXIS, zstring, blink);
