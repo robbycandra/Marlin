@@ -331,7 +331,7 @@ void rmenu_prepare() {
     #endif
   #endif
 
-  SUBMENU23(MSG_TEMPERATURE, menu_temperature);
+  SUBMENU32(MSG_TEMPERATURE, menu_temperature);
 
   //SUBMENU_P(PSTR("Marlin Menu"),menu_main);
 
