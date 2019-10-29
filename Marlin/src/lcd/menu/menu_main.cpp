@@ -56,6 +56,7 @@ void menu_tune();
 void menu_motion();
 void menu_temperature();
 void menu_configuration();
+void menu_cancelobject();
 
 #if ENABLED(CUSTOM_USER_MENUS)
   void menu_user();
@@ -355,6 +356,9 @@ void rmenu_main() {
     #endif
     #if MACHINE_CAN_STOP
       SUBSELECT(MSG_STOP_PRINT, menu_abort_confirm);
+    #endif
+    #if ENABLED(CANCEL_OBJECTS)
+      SUBMENU24(MSG_CANCEL_OBJECT, [](){ editable.int8 = -1; ui.goto_screen(menu_cancelobject, SCRMODE_MENU_2X4); });
     #endif
     #if ENABLED(ADVANCED_PAUSE_FEATURE)
       #if E_STEPPERS == 1 && DISABLED(FILAMENT_LOAD_UNLOAD_GCODES)

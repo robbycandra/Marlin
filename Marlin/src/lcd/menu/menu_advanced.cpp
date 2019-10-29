@@ -761,7 +761,7 @@ void menu_advanced_settings() {
   #endif
 
   #if ENABLED(CANCEL_OBJECTS)
-    SUBMENU(MSG_CANCEL_OBJECT, [](){ editable.int8 = -1; ui.goto_screen(menu_cancelobject); });
+    SUBMENU24(MSG_CANCEL_OBJECT, [](){ editable.int8 = -1; ui.goto_screen(menu_cancelobject, SCRMODE_MENU_2X4); });
   #endif
 
   #if ENABLED(DAC_STEPPER_CURRENT)
