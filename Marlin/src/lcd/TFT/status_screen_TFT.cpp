@@ -454,7 +454,7 @@ void MarlinUI::draw_status_screen() {
     if (e_move_accumulator == 0)
       estring[0] = '\0';
     else
-      strcpy(estring, ftostr52sp(e_move_accumulator/10));
+      strcpy(estring, ftostr52sp(e_move_accumulator/1000));
 
     strcpy(xstring, ftostr4sign(LOGICAL_X_POSITION(current_position[X_AXIS])));
     strcpy(ystring, ftostr4sign(LOGICAL_Y_POSITION(current_position[Y_AXIS])));
