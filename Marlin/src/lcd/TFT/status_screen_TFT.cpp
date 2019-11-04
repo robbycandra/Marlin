@@ -188,7 +188,7 @@ void run_status_screen_touch_command() {
           ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
         #endif
         ui.wait_for_untouched = true;
-        MenuItem_int3::action(GET_TEXT(MSG_NOZZLE),&thermalManager.temp_hotend[0].target, 0, HEATER_0_MAXTEMP - 15, [](){ thermalManager.start_watching_hotend(0); });
+        MenuItem_int3::action(GET_TEXT(MSG_NOZZLE),&thermalManager.temp_hotend[0].target, 0, HEATER_0_MAXTEMP - 15, []{ thermalManager.start_watching_hotend(0); });
         break;
       case 18:
       case 19:
@@ -210,7 +210,7 @@ void run_status_screen_touch_command() {
         ui.wait_for_untouched = true;
         ui.screenMode = SCRMODE_EDIT_SCREEN;
         editable.uint8 = thermalManager.fan_speed[0];
-        MenuItem_percent::action(GET_TEXT(MSG_FAN_SPEED),&editable.uint8, 0, 255, [](){ thermalManager.set_fan_speed(0, editable.uint8); });
+        MenuItem_percent::action(GET_TEXT(MSG_FAN_SPEED),&editable.uint8, 0, 255, []{ thermalManager.set_fan_speed(0, editable.uint8); });
         break;
       case 24:
       case 25:

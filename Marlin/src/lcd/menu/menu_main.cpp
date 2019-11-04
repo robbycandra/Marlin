@@ -183,9 +183,9 @@ void menu_main() {
       if (thermalManager.targetHotEnoughToExtrude(active_extruder))
         GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
       else if (rexyz_menu_mode == MENUMODE_BASIC)
-        SUBMENUH21(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
+        SUBMENUH21(MSG_FILAMENTCHANGE, []{ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
       else
-        SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
+        SUBMENUH31(MSG_FILAMENTCHANGE, []{ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
     #else
       SUBMENUH31(MSG_FILAMENTCHANGE, menu_change_filament);
     #endif
@@ -323,9 +323,9 @@ void rmenu_prepare() {
       if (thermalManager.targetHotEnoughToExtrude(active_extruder))
         GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
       else if (rexyz_menu_mode == MENUMODE_BASIC)
-        SUBMENUH21(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
+        SUBMENUH21(MSG_FILAMENTCHANGE, []{ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
       else
-        SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
+        SUBMENUH31(MSG_FILAMENTCHANGE, []{ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
     #else
       SUBMENUH31(MSG_FILAMENTCHANGE, menu_change_filament);
     #endif
@@ -358,16 +358,16 @@ void rmenu_main() {
       SUBSELECT(MSG_STOP_PRINT, menu_abort_confirm);
     #endif
     #if ENABLED(CANCEL_OBJECTS)
-      SUBMENU24(MSG_CANCEL_OBJECT, [](){ editable.int8 = -1; ui.goto_screen(menu_cancelobject, SCRMODE_MENU_2X4); });
+      SUBMENU24(MSG_CANCEL_OBJECT, []{ editable.int8 = -1; ui.goto_screen(menu_cancelobject, SCRMODE_MENU_2X4); });
     #endif
     #if ENABLED(ADVANCED_PAUSE_FEATURE)
       #if E_STEPPERS == 1 && DISABLED(FILAMENT_LOAD_UNLOAD_GCODES)
         if (thermalManager.targetHotEnoughToExtrude(active_extruder))
           GCODES_ITEM(MSG_FILAMENTCHANGE, PSTR("M600 B0"));
         else if (rexyz_menu_mode == MENUMODE_BASIC)
-          SUBMENUH21(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
+          SUBMENUH21(MSG_FILAMENTCHANGE, []{ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
         else
-          SUBMENUH31(MSG_FILAMENTCHANGE, [](){ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
+          SUBMENUH31(MSG_FILAMENTCHANGE, []{ _menu_temp_filament_op(PAUSE_MODE_CHANGE_FILAMENT, 0); });
       #else
         SUBMENUH31(MSG_FILAMENTCHANGE, menu_change_filament);
       #endif
