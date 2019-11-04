@@ -196,7 +196,7 @@
     ui.defer_status_screen();
     set_all_unhomed();
     ui.goto_screen(_lcd_level_bed_homing, SCRMODE_STATIC);
-    queue.inject_P(PSTR("G28"));
+    queue.inject_P(G28_STR);
   }
 #else
   extern bool g29_is_running;
@@ -250,7 +250,7 @@
     ui.defer_status_screen();
     if (!all_axes_known()) {
       set_all_unhomed();
-      queue.inject_P(PSTR("G28"));
+      queue.inject_P(G28_STR));
     }
     ui.goto_screen(_lcd_level_bed_homing, SCRMODE_STATIC);
   }
@@ -298,7 +298,7 @@ void menu_bed_leveling() {
 
   // Auto Home if not using manual probing
   #if NONE(PROBE_MANUALLY, MESH_BED_LEVELING)
-    if (!is_homed) GCODES_ITEM(MSG_AUTO_HOME, PSTR("G28"));
+    if (!is_homed) GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
   #endif
 
   #if ENABLED(LEVEL_BED_CORNERS)
