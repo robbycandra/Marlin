@@ -56,6 +56,10 @@
   #include "../../feature/power_loss_recovery.h"
 #endif
 
+#if ENABLED(EEPROM_SETTINGS) && DISABLED(SLIM_LCD_MENUS)
+  #include "../../module/configuration_store.h"
+#endif
+
 
 void menu_tmc();
 void menu_backlash();
@@ -246,16 +250,16 @@ void menu_cancelobject();
     if (ui.should_draw())
       switch (ui.encoderPosition) {
       case REXYZPROBE_NO_PROBE:
-        draw_edit_screen(PSTR("Choose Probe"), "No Probe / Manual");
+        MenuEditItemBase::edit_screen(PSTR("Choose Probe"), "No Probe / Manual");
         break;
       case REXYZPROBE_PROXYMITY:
-        draw_edit_screen(PSTR("Choose Probe"), "Proximity Sensor.");
+        MenuEditItemBase::edit_screen(PSTR("Choose Probe"), "Proximity Sensor.");
         break;
       case REXYZPROBE_MANUAL_DEPLOY:
-        draw_edit_screen(PSTR("Choose Probe"), "Manual Deploy Prb");
+        MenuEditItemBase::edit_screen(PSTR("Choose Probe"), "Manual Deploy Prb");
         break;
       case REXYZPROBE_BLTOUCH:
-        draw_edit_screen(PSTR("Choose Probe"), "BL/3D Touch");
+        MenuEditItemBase::edit_screen(PSTR("Choose Probe"), "BL/3D Touch");
         break;
       }
     if (ui.lcd_clicked) {
@@ -282,16 +286,16 @@ void menu_cancelobject();
         if (ui.should_draw())
           switch (rexyz_probe_mode) {
           case REXYZPROBE_NO_PROBE:
-            draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "No Probe");
+            MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "No Probe", false);
             break;
           case REXYZPROBE_PROXYMITY:
-            draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Proximity");
+            MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Proximity", false);
             break;
           case REXYZPROBE_MANUAL_DEPLOY:
-            draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Manual Deploy");
+            MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Manual Deploy",false);
             break;
           case REXYZPROBE_BLTOUCH:
-            draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "BL/3D Touch");
+            MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "BL/3D Touch", false);
             break;
           }
       }
@@ -692,27 +696,6 @@ void menu_cancelobject();
     END_MENU();
   }
 
-  #if ENABLED(EEPROM_SETTINGS)
-
-    #include "../../module/configuration_store.h"
-
-    static void lcd_init_eeprom_confirm() {
-      do_select_screen(
-        GET_TEXT(MSG_BUTTON_INIT), GET_TEXT(MSG_BUTTON_CANCEL),
-        []{
-          const bool inited = settings.init_eeprom();
-          #if HAS_BUZZER
-            ui.completion_feedback(inited);
-          #endif
-          UNUSED(inited);
-        },
-        ui.goto_previous_screen,
-        GET_TEXT(MSG_INIT_EEPROM), nullptr, PSTR("?")
-      );
-    }
-
-  #endif
-
 #endif // !SLIM_LCD_MENUS
 
 void menu_advanced_settings() {
@@ -836,7 +819,18 @@ void menu_advanced_settings() {
   #endif
 
   #if ENABLED(EEPROM_SETTINGS) && DISABLED(SLIM_LCD_MENUS)
-    SUBSELECT(MSG_INIT_EEPROM, lcd_init_eeprom_confirm);
+    CONFIRM_ITEM(MSG_INIT_EEPROM,
+      MSG_BUTTON_INIT, MSG_BUTTON_CANCEL,
+      []{
+        const bool inited = settings.init_eeprom();
+        #if HAS_BUZZER
+          ui.completion_feedback(inited);
+        #endif
+        UNUSED(inited);
+      },
+      ui.goto_previous_screen,
+      GET_TEXT(MSG_INIT_EEPROM), (PGM_P)nullptr, PSTR("?")
+    );
   #endif
 
   END_MENU();
@@ -860,10 +854,10 @@ void rlcd_menu_choose_menu() {
     }
     switch (ui.encoderPosition) {
     case MENUMODE_BASIC:
-      draw_edit_screen(PSTR("Choose Probe"), "Basic Menu");
+      MenuEditItemBase::edit_screen(PSTR("Choose Probe"), "Basic Menu");
       break;
     case MENUMODE_ADVANCE:
-      draw_edit_screen(PSTR("Choose Probe"), "Advance Menu");
+      MenuEditItemBase::edit_screen(PSTR("Choose Probe"), "Advance Menu");
       break;
     }
   }
@@ -907,19 +901,18 @@ void rmenu_setting_motion() {
       //
       // Set Home Offsets
       //
-      SUBSELECT(MSG_SET_HOME_OFFSETS, []{
-        do_select_screen(
-          PSTR("Set Offset"), GET_TEXT(MSG_BUTTON_CANCEL),
-          []{
-            queue.inject_P(PSTR("M428"));
-            #if HAS_BUZZER
-              ui.completion_feedback(true);
-            #endif
+      _CONFIRM_ITEM_P(GET_TEXT(MSG_SET_HOME_OFFSETS),
+        PSTR("Set Offset"), GET_TEXT(MSG_BUTTON_CANCEL),
+        []{
+          queue.inject_P(PSTR("M428"));
+          #if HAS_BUZZER
+            ui.completion_feedback(true);
+          #endif
             ui.return_to_status();
-          },
-          ui.goto_previous_screen,
-          PSTR("Set Home Offset"), nullptr, PSTR("?")
-        );});
+        },
+        ui.goto_previous_screen,
+        PSTR("Set Home Offset"), (PGM_P)nullptr, PSTR("?")
+      );
     #endif
 
     EDIT_ITEM_P(uint16_3, PSTR("Z Max Pos"), &zv_max_pos, Z_MAX_POS - 30,  Z_MAX_POS + 20);
@@ -957,10 +950,10 @@ void rmenu_option() {
       if (ui.should_draw())
         switch (rexyz_menu_mode) {
         case MENUMODE_BASIC:
-          draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Menu Mode"), "Basic");
+          MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Menu Mode"), "Basic", false);
           break;
         case MENUMODE_ADVANCE:
-          draw_menu_item_edit(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Menu Mode"), "Advance");
+          MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Menu Mode"), "Advance", false);
           break;
         }
     }

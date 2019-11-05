@@ -32,80 +32,66 @@
 
 #include "../../module/configuration_store.h"
 
-static void lcd_store_settings_confirm() {
-  do_select_screen(
-    GET_TEXT(MSG_STORE_EEPROM), GET_TEXT(MSG_BUTTON_CANCEL),
-    []{
-      const bool inited = settings.save();
-      #if HAS_BUZZER
-        ui.completion_feedback(inited);
-      #endif
-      UNUSED(inited);
-    },
-    ui.goto_previous_screen,
-    GET_TEXT(MSG_STORE_EEPROM), nullptr, PSTR("?")
-  );
-}
-
-static void lcd_load_settings_confirm() {
-  do_select_screen(
-    GET_TEXT(MSG_LOAD_EEPROM), GET_TEXT(MSG_BUTTON_CANCEL),
-    []{
-      const bool inited = settings.load();
-      #if HAS_BUZZER
-        ui.completion_feedback(inited);
-      #endif
-      UNUSED(inited);
-    },
-    ui.goto_previous_screen,
-    GET_TEXT(MSG_LOAD_EEPROM), nullptr, PSTR("?")
-  );
-}
-
-static void lcd_factory_settings_confirm() {
-  do_select_screen(
-    GET_TEXT(MSG_RESTORE_FAILSAFE), GET_TEXT(MSG_BUTTON_CANCEL),
-    []{
-      settings.reset();
-      #if HAS_BUZZER
-        ui.completion_feedback(true);
-      #endif
-    },
-    ui.goto_previous_screen,
-    GET_TEXT(MSG_RESTORE_FAILSAFE), nullptr, PSTR("?")
-  );
-}
-
-static void lcd_init_eeprom_confirm() {
-  do_select_screen(
-    GET_TEXT(MSG_BUTTON_INIT), GET_TEXT(MSG_BUTTON_CANCEL),
-    []{
-      const bool inited = settings.init_eeprom();
-      #if HAS_BUZZER
-        ui.completion_feedback(inited);
-      #endif
-      UNUSED(inited);
-    },
-    ui.goto_previous_screen,
-    GET_TEXT(MSG_INIT_EEPROM), nullptr, PSTR("?")
-  );
-}
-
 void rmenu_loadsave() {
   const bool busy = printer_busy();
   START_MENU();
   #if ENABLED(EEPROM_SETTINGS)
-    SUBSELECT(MSG_STORE_EEPROM, lcd_store_settings_confirm);
+    CONFIRM_ITEM(MSG_STORE_EEPROM,
+      MSG_STORE_EEPROM, MSG_BUTTON_CANCEL,
+      []{
+        const bool inited = settings.save();
+        #if HAS_BUZZER
+          ui.completion_feedback(inited);
+        #endif
+        UNUSED(inited);
+      },
+      ui.goto_previous_screen,
+      GET_TEXT(MSG_STORE_EEPROM), (PGM_P)nullptr, PSTR("?")
+    );
+
     if (!busy)
-      SUBSELECT(MSG_LOAD_EEPROM, lcd_load_settings_confirm);
+      CONFIRM_ITEM(MSG_LOAD_EEPROM,
+        MSG_LOAD_EEPROM, MSG_BUTTON_CANCEL,
+        []{
+          const bool inited = settings.load();
+          #if HAS_BUZZER
+            ui.completion_feedback(inited);
+          #endif
+          UNUSED(inited);
+        },
+        ui.goto_previous_screen,
+        GET_TEXT(MSG_LOAD_EEPROM), (PGM_P)nullptr, PSTR("?")
+      );
+
   #endif
 
   if (!busy)
-    SUBSELECT(MSG_RESTORE_FAILSAFE, lcd_factory_settings_confirm);
+    CONFIRM_ITEM(MSG_RESTORE_FAILSAFE,
+      MSG_RESTORE_FAILSAFE, MSG_BUTTON_CANCEL,
+      []{
+        settings.reset();
+        #if HAS_BUZZER
+          ui.completion_feedback(true);
+        #endif
+      },
+      ui.goto_previous_screen,
+      GET_TEXT(MSG_RESTORE_FAILSAFE), (PGM_P)nullptr, PSTR("?")
+    );
 
   #if ENABLED(EEPROM_SETTINGS)
     if (rexyz_menu_mode != MENUMODE_BASIC)
-      SUBSELECT(MSG_INIT_EEPROM, lcd_init_eeprom_confirm);
+      CONFIRM_ITEM(MSG_INIT_EEPROM,
+        MSG_BUTTON_INIT, MSG_BUTTON_CANCEL,
+        []{
+          const bool inited = settings.init_eeprom();
+          #if HAS_BUZZER
+            ui.completion_feedback(inited);
+          #endif
+          UNUSED(inited);
+        },
+        ui.goto_previous_screen,
+        GET_TEXT(MSG_INIT_EEPROM), (PGM_P)nullptr, PSTR("?")
+      );
   #endif
 
   END_MENU();

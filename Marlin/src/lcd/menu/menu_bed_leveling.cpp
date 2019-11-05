@@ -81,7 +81,7 @@
         ui.completion_feedback();
       #endif
     }
-    if (ui.should_draw()) draw_menu_item_static(LCD_HEIGHT >= 4 ? 1 : 0, GET_TEXT(MSG_LEVEL_BED_DONE));
+    if (ui.should_draw()) MenuItem_static::draw(LCD_HEIGHT >= 4, GET_TEXT(MSG_LEVEL_BED_DONE));
     ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
   }
 
@@ -132,7 +132,7 @@
     //
     if (ui.should_draw()) {
       const float v = current_position.z;
-      draw_edit_screen(GET_TEXT(MSG_MOVE_Z), ftostr43sign(v + (v < 0 ? -0.0001f : 0.0001f), '+'));
+      MenuEditItemBase::edit_screen(GET_TEXT(MSG_MOVE_Z), ftostr43sign(v + (v < 0 ? -0.0001f : 0.0001f), '+'));
     }
   }
 
@@ -143,7 +143,7 @@
     if (ui.should_draw()) {
       char msg[10];
       sprintf_P(msg, PSTR("%i / %u"), int(manual_probe_index + 1), total_probe_points);
-      draw_edit_screen(GET_TEXT(MSG_LEVEL_BED_NEXT_POINT), msg);
+      MenuEditItemBase::edit_screen(GET_TEXT(MSG_LEVEL_BED_NEXT_POINT), msg);
     }
     //ui.refresh(LCDVIEW_CALL_NO_REDRAW);
     ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
@@ -170,7 +170,7 @@
   //         Move to the first probe position
   //
   void _lcd_level_bed_homing_done() {
-    if (ui.should_draw()) draw_edit_screen(GET_TEXT(MSG_LEVEL_BED_WAITING));
+    if (ui.should_draw()) MenuItem_static::draw(1, GET_TEXT(MSG_LEVEL_BED_WAITING));
     if (ui.use_click()) {
       manual_probe_index = 0;
       _lcd_level_goto_next_point();
@@ -212,21 +212,21 @@
         #if ENABLED(REXYZ_LCD12864)
           if (probe_xpos == 0) {
             sprintf_P(promptstr, PSTR(" Bed Leveling"));
-            draw_edit_screen(promptstr);
+            MenuEditItemBase::edit_screen(promptstr);
           }
           else {
             sprintf_P(promptstr, PSTR(" Probe x%i y%i"), probe_xpos, probe_ypos);
-            draw_edit_screen(promptstr, mea_z);
+            MenuEditItemBase::edit_screen(promptstr, mea_z);
           }
         #endif
         #if ENABLED(REXYZ_LCD2004)
           if (probe_xpos == 0) {
             sprintf_P(promptstr, PSTR("Bed Leveling"));
-            draw_edit_screen(promptstr);
+            MenuEditItemBase::edit_screen(promptstr);
           }
           else {
             sprintf_P(promptstr, PSTR("Probe x%i y%i"), probe_xpos, probe_ypos);
-            draw_edit_screen(promptstr, mea_z);
+            MenuEditItemBase::edit_screen(promptstr, mea_z);
           }
         #endif
         ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
@@ -250,7 +250,7 @@
     ui.defer_status_screen();
     if (!all_axes_known()) {
       set_all_unhomed();
-      queue.inject_P(G28_STR));
+      queue.inject_P(G28_STR);
     }
     ui.goto_screen(_lcd_level_bed_homing, SCRMODE_STATIC);
   }

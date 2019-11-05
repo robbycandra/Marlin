@@ -79,7 +79,7 @@ inline void sdcard_start_selected_file() {
     char buffer[strlen(longest) + 2];
     buffer[0] = ' ';
     strcpy(buffer + 1, longest);
-    do_select_screen(
+    MenuItem_confirm::select_screen(
       GET_TEXT(MSG_BUTTON_PRINT), GET_TEXT(MSG_BUTTON_CANCEL),
       sdcard_start_selected_file, ui.goto_previous_screen,
       GET_TEXT(MSG_START_PRINT), buffer, PSTR("?")
@@ -88,8 +88,11 @@ inline void sdcard_start_selected_file() {
 
 #endif
 
-class MenuItem_sdfile {
+class MenuItem_sdfile : public MenuItem_sdbase {
   public:
+    static inline void draw(const bool sel, const uint8_t row, PGM_P const pstr, CardReader &theCard) {
+      MenuItem_sdbase::draw(sel, row, pstr, theCard, false);
+    }
     static void action(PGM_P const pstr, CardReader &) {
       #if ENABLED(SD_REPRINT_LAST_SELECTED_FILE)
         // Save menu state for the selected file
@@ -98,7 +101,7 @@ class MenuItem_sdfile {
         sd_items = screen_items;
       #endif
       #if ENABLED(SD_MENU_CONFIRM_START)
-        MenuItem_subselect::action(pstr, menu_sd_confirm);
+        MenuItem_confirm::action(pstr, menu_sd_confirm);
       #else
         sdcard_start_selected_file();
         UNUSED(pstr);
@@ -106,8 +109,11 @@ class MenuItem_sdfile {
     }
 };
 
-class MenuItem_sdfolder {
+class MenuItem_sdfolder : public MenuItem_sdbase {
   public:
+    static inline void draw(const bool sel, const uint8_t row, PGM_P const pstr, CardReader &theCard) {
+      MenuItem_sdbase::draw(sel, row, pstr, theCard, true);
+    }
     static void action(PGM_P const, CardReader &theCard) {
       card.cd(theCard.filename);
       encoderTopLine = 0;

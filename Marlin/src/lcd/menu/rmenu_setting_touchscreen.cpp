@@ -263,22 +263,6 @@ void menu_touch_calibration() {
   ui.goto_screen(_lcd_touch_point_screen, SCRMODE_STATIC_BACK);
 }
 
-void menu_touch_calibration_confirm() {
-  do_select_screen(
-    PSTR("Calibrate"), GET_TEXT(MSG_BUTTON_CANCEL),
-    []{
-      menu_touch_calibration();
-      #if HAS_BUZZER
-        ui.completion_feedback(true);
-      #endif
-    },
-    ui.goto_previous_screen,
-    PSTR("Warning, Perhatian"),
-    PSTR("Kalibrasi Touchscreen dengan serampangan berpotensi membuat menu tidak bisa terakses. Yang mengakibatkan printer tidak bisa dioperasikan"),
-    PSTR("!")
-  );
-}
-
 void _lcd_touch_test_screen() {
   ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
   u8g.setColorIndex(1);
@@ -321,7 +305,19 @@ void rmenu_setting_touchscreen() {
   else {
     START_MENU();
     STATIC_ITEM_P(PSTR("TouchScreen"), SS_CENTER | SS_INVERT);
-    SUBSELECT_P(PSTR("Calibration"), menu_touch_calibration_confirm);
+    _CONFIRM_ITEM_P(PSTR("Calibration"),
+      PSTR("Calibrate"), GET_TEXT(MSG_BUTTON_CANCEL),
+      []{
+        menu_touch_calibration();
+        #if HAS_BUZZER
+          ui.completion_feedback(true);
+        #endif
+      },
+      ui.goto_previous_screen,
+      PSTR("Warning, Perhatian"),
+      PSTR("Kalibrasi Touchscreen dengan serampangan berpotensi membuat menu tidak bisa terakses. Yang mengakibatkan printer tidak bisa dioperasikan"),
+      PSTR("!")
+    );
     ACTION_ITEM_P(PSTR("Testing"), menu_touch_testing);
     END_MENU();
   }

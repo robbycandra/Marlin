@@ -75,6 +75,8 @@
   #include "../../feature/mixing.h"
 #endif
 
+void menu_change_filament();
+
 #define X_LABEL_POS     (LCD_PIXEL_WIDTH/4) + ((LCD_PIXEL_WIDTH/4) - STATUS_FONT_WIDTH) / 2
 #define X_VALUE_POS     (LCD_PIXEL_WIDTH/4) + ((LCD_PIXEL_WIDTH/4) - (MENU_FONT_WIDTH*7)) / 2
 
@@ -134,6 +136,14 @@ void run_status_screen_touch_command() {
         #endif
         ui.wait_for_untouched = true;
         MenuItem_gcode::action("Home","G28");
+        break;
+      case 3:
+      case 4:
+      case 5:
+        #if HAS_BUZZER
+          ui.buzz(LCD_FEEDBACK_FREQUENCY_DURATION_MS, LCD_FEEDBACK_FREQUENCY_HZ);
+        #endif
+        MenuItem_submenuh31 ::action(GET_TEXT(MSG_FILAMENTCHANGE),menu_change_filament);
         break;
       case 6:
       case 7:

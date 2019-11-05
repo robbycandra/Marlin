@@ -525,7 +525,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   }
 
   // Draw a static line of text in the same idiom as a menu item
-  void draw_menu_item_static(const uint8_t row, PGM_P const pstr, const uint8_t style/*=SS_CENTER*/, const char * const valstr/*=nullptr*/) {
+  void MenuItem_static::draw(const uint8_t row, PGM_P const pstr, const uint8_t style/*=SS_CENTER*/, const char * const valstr/*=nullptr*/) {
 
     if (mark_as_selected(row, (style & SS_INVERT))) {
       if ((style & SS_CENTER) && !valstr) {
@@ -601,11 +601,8 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     }
   }
 
-
   // Draw a generic menu item
-  void draw_menu_item(const bool sel, const uint8_t row, PGM_P const pstr, const char pre_char, const char post_char) {
-    UNUSED(pre_char);
-
+  void MenuItemBase::_draw(const bool sel, const uint8_t row, PGM_P const pstr, const char, const char post_char) {
     if (mark_as_selected(row, sel)) {
       RexyzSplitedString splitedStr;
 
@@ -627,7 +624,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
   }
 
   // Draw a menu item with an editable value
-  void _draw_menu_item_edit(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm) {
+  void MenuEditItemBase::draw(const bool sel, const uint8_t row, PGM_P const pstr, const char* const data, const bool pgm) {
     if (mark_as_selected(row, sel)) {
       const uint8_t maxStringLen = (int)((col_x2 - col_x1 - 3) / MENU_FONT_WIDTH);
       const RexyzSplitedString splitedStr = splitItemString(pstr,maxStringLen,true);
@@ -650,7 +647,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     draw_centered_string(row_str_base, col_x1+2, col_x2-2, pstr, ' ', ' ');
   }
 
-  void draw_edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/) {
+  void MenuEditItemBase::edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/) {
     ui.encoder_direction_normal();
 
     u8g_uint_t baseline = (LCD_PIXEL_HEIGHT) / 2 - 1;
@@ -686,7 +683,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     */
   }
 
-  void draw_select_screen(PGM_P const yes, PGM_P const no, const bool yesno, PGM_P const pref, const char * const string, PGM_P const suff) {
+  void MenuItem_confirm::draw_select_screen(PGM_P const yes, PGM_P const no, const bool yesno, PGM_P const pref, const char * const string/*=nullptr*/, PGM_P const suff/*=nullptr*/) {
     ui.draw_select_screen_prompt(pref, string, suff);
  /*
   *  gunakan ini juga ingin menghilangkan encoder touch button
@@ -704,9 +701,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
 
   #if ENABLED(SDSUPPORT)
 
-    void draw_sd_menu_item(const bool sel, const uint8_t row, PGM_P const pstr, CardReader &theCard, const bool isDir) {
-      UNUSED(pstr);
-
+    void MenuItem_sdbase::draw(const bool sel, const uint8_t row, PGM_P const, CardReader &theCard, const bool isDir) {
       if (mark_as_selected(row, sel)) {
         char strfn[LONG_FILENAME_LENGTH];
 
@@ -734,7 +729,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
       }
     }
 
-    void draw_sdupdir_item(const bool sel, const uint8_t row, PGM_P const pstr) {
+    void MenuItem_sdupdir::draw(const bool sel, const uint8_t row, PGM_P const pstr,const menuAction_t) {
       if (mark_as_selected(row, sel)) {
         const u8g_uint_t pixw = LCD_PIXEL_WIDTH - 4;
         lcd_moveto(2,row_str_base);
