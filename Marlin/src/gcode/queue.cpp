@@ -590,8 +590,8 @@ void GCodeQueue::get_serial_commands() {
               #endif
             #endif // PRINTER_EVENT_LEDS
           }
-          if (n == -1)
-            SERIAL_ERROR_MSG(MSG_SD_ERR_READ);
+          //if (n == -1)
+          //  SERIAL_ERROR_MSG(MSG_SD_ERR_READ);
         }
         #if ENABLED(DEBUG_SDCARD)
           if (card_eof)
