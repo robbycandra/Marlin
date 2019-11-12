@@ -162,9 +162,10 @@ typedef struct SettingsDataStruct {
   #endif
 
   //
-  // Z MAX POS
+  // Z MAX POS & Coordinate Mode
   //
   uint16_t zv_max_pos;
+  uint8_t coordinate_mode;
 
   //
   // FILAMENT_RUNOUT_SENSOR
@@ -587,6 +588,7 @@ void MarlinSettings::postprocess() {
     // Z MAX POS
     //
     EEPROM_WRITE(zv_max_pos);
+    EEPROM_WRITE(coordinate_mode);
 
     //
     // Filament Runout Sensor
@@ -1473,6 +1475,7 @@ void MarlinSettings::postprocess() {
       // Z MAX POS
       //
       EEPROM_READ(zv_max_pos);
+      EEPROM_READ(coordinate_mode);
 
       //
       // Filament Runout Sensor
@@ -2409,6 +2412,8 @@ void MarlinSettings::reset() {
   // Z MAX POS
   //
   zv_max_pos = Z_MAX_POS;
+  coordinate_mode = false;
+
 
   //
   // Filament Runout Sensor
@@ -2967,6 +2972,20 @@ void MarlinSettings::reset() {
     CONFIG_ECHO_HEADING("Z Max:");
     CONFIG_ECHO_START();
     SERIAL_ECHOLNPAIR(" Z_MAX_POS = ", int(zv_max_pos));
+
+    CONFIG_ECHO_HEADING("Coordinate Mode:");
+    CONFIG_ECHO_START();
+    switch(coordinate_mode) {
+      case 0:
+        SERIAL_ECHOLNPAIR(" Zero at Corner");
+        break;
+      case 1:
+        SERIAL_ECHOLNPAIR(" Zero at Center");
+        break;
+      case 2:
+        SERIAL_ECHOLNPAIR(" Flash Print");
+        break;
+    }
 
     #if HAS_HOTEND_OFFSET
       CONFIG_ECHO_HEADING("Hotend offsets:");

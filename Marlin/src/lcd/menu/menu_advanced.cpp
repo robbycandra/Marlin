@@ -867,6 +867,35 @@ void rlcd_menu_choose_menu() {
   }
 }
 
+void rlcd_menu_choose_zero() {
+  ui.encoder_direction_normal();
+  //ui.encoderPosition = rexyz_menu_mode;
+  if (ui.encoderPosition > 0x8000) ui.encoderPosition = 0;
+  if (ui.should_draw()) {
+    if (ui.encoderPosition < 0) {
+      ui.encoderPosition = 0;
+    }
+    if (ui.encoderPosition > 2) {
+      ui.encoderPosition = 2;
+    }
+    switch (ui.encoderPosition) {
+    case 0:
+      MenuEditItemBase::edit_screen(PSTR("Coord Mode"), "Corner Zero");
+      break;
+    case 1:
+      MenuEditItemBase::edit_screen(PSTR("Coord Mode"), "Center Zero");
+      break;
+    case 2:
+      MenuEditItemBase::edit_screen(PSTR("Coord Mode"), "Flash Print");
+      break;
+    }
+  }
+  if (ui.lcd_clicked) {
+    coordinate_mode = (uint8_t)ui.encoderPosition;
+    if (ui.use_click()) ui.goto_previous_screen();
+  }
+}
+
 void rmenu_setting_motion() {
   START_MENU();
   // M203 / M205 - Feedrate items
@@ -922,7 +951,7 @@ void rmenu_setting_motion() {
 
 void rmenu_option() {
   START_MENU();
-  STATIC_ITEM_P(PSTR("Option"));
+  //STATIC_ITEM_P(PSTR("Option"));
   #if HAS_FILAMENT_SENSOR
     EDIT_ITEM(bool, MSG_RUNOUT_SENSOR, &runout.enabled, runout.reset);
   #endif
@@ -930,6 +959,37 @@ void rmenu_option() {
   #if ENABLED(POWER_LOSS_RECOVERY)
     EDIT_ITEM(bool, MSG_OUTAGE_RECOVERY, &recovery.enabled, recovery.changed);
   #endif
+
+  do {
+    _skipStatic = false;
+    if (_menuLineNr == _thisItemNr) {
+     #if ENABLED(TOUCH_BUTTONS)
+      if ((encoderLine == _thisItemNr && ui.use_click()) || ui.menu_is_touched(_thisItemNr - encoderTopLine)) {
+     #else
+      if (encoderLine == _thisItemNr && ui.use_click()) {
+     #endif
+        _MENU_ITEM_MULTIPLIER_CHECK(false);
+        ui.save_previous_screen();
+        ui.refresh();
+        ui.encoderPosition = coordinate_mode;
+        ui.screenMode = SCRMODE_EDIT_SCREEN;
+        ui.currentScreen = rlcd_menu_choose_zero;
+        if (screen_changed) return;
+      }
+      if (ui.should_draw()) {
+        if (coordinate_mode == 1) {
+          MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Coord Mode"), "Center Zero", false);
+        }
+        else if (coordinate_mode == 2) {
+          MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Coord Mode"), "Flash Print", false);
+        }
+        else {
+          MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Coord Mode"), "Corner Zero", false);
+        }
+      }
+    }
+    ++_thisItemNr;
+  }while(0);
 
   do {
     _skipStatic = false;
@@ -1009,7 +1069,7 @@ void rmenu_setting() {
 
   MENU_ITEM_P(submenuh21,PSTR("Touch Screen"), rmenu_setting_touchscreen);
 
-  MENU_ITEM_P(submenuh31,PSTR("Option"), rmenu_option);
+  MENU_ITEM_P(submenu22,PSTR("Option"), rmenu_option);
 
   if (rexyz_menu_mode == MENUMODE_BASIC)
     MENU_ITEM_P(submenu31,PSTR("Load & Save"), rmenu_loadsave);

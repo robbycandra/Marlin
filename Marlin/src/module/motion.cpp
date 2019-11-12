@@ -91,7 +91,7 @@ XYZ_CONSTS(signed char, home_dir, HOME_DIR);
 uint8_t axis_homed, axis_known_position; // = 0
 
 uint16_t zv_max_pos;
-
+uint8_t coordinate_mode;
 // Relative Mode. Enable with G91, disable with G90.
 bool relative_mode; // = false;
 
@@ -1729,6 +1729,12 @@ void homeaxis(const AxisEnum axis) {
 #if HAS_WORKSPACE_OFFSET
   void update_workspace_offset(const AxisEnum axis) {
     workspace_offset[axis] = home_offset[axis] + position_shift[axis];
+    if (coordinate_mode == 1 || coordinate_mode == 2) {
+      if (axis == X_AXIS)
+        workspace_offset[X_AXIS] -= X_CENTER;
+      if (axis == Y_AXIS)
+        workspace_offset[Y_AXIS] -= Y_CENTER;
+    }
     if (DEBUGGING(LEVELING)) DEBUG_ECHOLNPAIR("Axis ", axis_codes[axis], " home_offset = ", home_offset[axis], " position_shift = ", position_shift[axis]);
   }
 #endif

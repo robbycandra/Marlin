@@ -34,6 +34,13 @@
  */
 void GcodeSuite::M118() {
   bool hasE = false, hasA = false;
+  const bool hasX = parser.seenval('X');
+  const bool hasY = parser.seenval('Y');
+  const bool hasZ = parser.seenval('Z');
+  if (hasX || hasY || hasZ) {
+    return;
+  }
+
   #if NUM_SERIAL > 1
     int8_t port = -1; // Assume no redirect
   #endif

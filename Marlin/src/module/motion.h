@@ -48,6 +48,7 @@ FORCE_INLINE void set_all_unknown() { axis_known_position = 0; }
 
 // Z_MAX_POS
 extern uint16_t zv_max_pos;
+extern uint8_t coordinate_mode;
 
 FORCE_INLINE bool homing_needed() {
   return !(
