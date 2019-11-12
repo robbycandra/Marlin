@@ -91,7 +91,7 @@ void MarlinUI::save_previous_screen() {
     screen_history[screen_history_depth++] = { currentScreen, screenMode, encoderPosition, encoderTopLine, screen_items};
 }
 
-void MarlinUI::goto_previous_screen(
+void MarlinUI::_goto_previous_screen(
   #if ENABLED(TURBO_BACK_MENU_ITEM)
     const bool is_back/*=false*/
   #endif
@@ -631,6 +631,7 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
 void _lcd_draw_homing() {
   constexpr uint8_t line = (LCD_HEIGHT - 1) / 2;
   if (ui.should_draw()) MenuItem_static::draw(line, GET_TEXT(MSG_LEVEL_BED_HOMING));
+  // untuk mengatasi tulisan tergambar separuh di 12864
   ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
 }
 
