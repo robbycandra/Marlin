@@ -334,7 +334,6 @@ FORCE_INLINE void probe_specific_action(const bool deploy) {
       #if HAS_LCD_MENU
         while (wait_for_user) idle();
         //ui.reset_status();
-        ui.lcdCurDisplayTimeUpdate = false;
         ui.goto_previous_screen();
       #endif
     }

@@ -175,7 +175,6 @@ static inline void _lcd_probe_corner() {
     }
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", corner_measured_z);
     ui.lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
-    ui.lcdCurDisplayTimeUpdate = false;
   }
 }
 
@@ -240,7 +239,6 @@ static inline void _lcd_measure_offset() {
     corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", corner_measured_z);
     ui.lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
-    ui.lcdCurDisplayTimeUpdate = false;
   }
 }
 

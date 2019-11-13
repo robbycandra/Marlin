@@ -335,7 +335,6 @@ void MarlinUI::_synchronize() {
   planner.synchronize(); // idle() is called until moves complete
   no_reentry = false;
   goto_screen(old_screen, old_screen_mode);
-  lcdCurDisplayTimeUpdate = false;
 }
 
 // Display the synchronize screen with a custom message
