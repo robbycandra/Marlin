@@ -379,7 +379,7 @@ void startOrResumeJob() {
       e_move_accumulator = 0;
       e_move_is_retract = false;
     #endif
-    #if ENABLED(USE_M73_REMAINING_TIME)
+    #if BOTH(LCD_SET_PROGRESS_MANUALLY, USE_M73_REMAINING_TIME)
       ui.reset_remaining_time();
     #endif
   }

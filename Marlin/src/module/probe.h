@@ -35,8 +35,6 @@ enum RexyzProbeMode : uint8_t {
 };
 #if HAS_BED_PROBE
 
-  constexpr xyz_pos_t nozzle_to_probe_offset = NOZZLE_TO_PROBE_OFFSET;
-
   extern xyz_pos_t probe_offset;
 
   extern uint8_t rexyz_probe_mode;
