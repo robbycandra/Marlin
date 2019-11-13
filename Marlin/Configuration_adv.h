@@ -904,7 +904,7 @@
 //#define LCD_TIMEOUT_TO_STATUS 15000
 
 // Add an 'M73' G-code to set the current percentage
-//#define LCD_SET_PROGRESS_MANUALLY
+#define LCD_SET_PROGRESS_MANUALLY
 
 // Show the E position (filament used) during printing
 #define LCD_SHOW_E_TOTAL
@@ -913,7 +913,9 @@
   #define PRINT_PROGRESS_SHOW_DECIMALS // Show progress with decimal digits (Graphical LCD only)
   #define SHOW_REMAINING_TIME          // Display estimated time to completion (Graphical LCD only)
   #if ENABLED(SHOW_REMAINING_TIME)
-    #define USE_M73_REMAINING_TIME     // Use remaining time from M73 command instead of estimation
+    #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
+      #define USE_M73_REMAINING_TIME     // Use remaining time from M73 command instead of estimation
+    #endif
     #define ROTATE_PROGRESS_DISPLAY    // Display (P)rogress, (E)lapsed, and (R)emaining time
   #endif
 #endif
