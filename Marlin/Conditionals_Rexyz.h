@@ -180,7 +180,7 @@
     #define REXYZ_MACHINE_FRAME_TYPE "N3"
     #define REXYZ_BOARD_SKR13
     #define REXYZ_N_TYPE
-    #define REXYZ_LCD2004
+    #define REXYZ_LCD12864
     #define REXYZ_EEPROM_FIRMWARE_PROTECTION
 #endif
 #if defined(REXYZ_A8P)
