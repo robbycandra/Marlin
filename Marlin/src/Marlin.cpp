@@ -379,6 +379,9 @@ void startOrResumeJob() {
       e_move_accumulator = 0;
       e_move_is_retract = false;
     #endif
+    #if ENABLED(USE_M73_REMAINING_TIME)
+      ui.reset_remaining_time();
+    #endif
   }
   print_job_timer.start();
 }
