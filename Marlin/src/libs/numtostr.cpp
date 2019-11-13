@@ -215,7 +215,7 @@ const char* ftostr52(const float &f) {
 
 #endif
 
-// Convert float to fixed-length string with +123.4 / -123.4 format
+// Convert signed float to fixed-length string with +123.4 / -123.4 format
 const char* ftostr41sign(const float &f) {
   int i = (f * 100 + (f < 0 ? -5: 5)) / 10;
   conv[1] = MINUSOR(i, '+');
@@ -223,6 +223,18 @@ const char* ftostr41sign(const float &f) {
   conv[3] = DIGIMOD(i, 100);
   conv[4] = DIGIMOD(i, 10);
   conv[5] = '.';
+  conv[6] = DIGIMOD(i, 1);
+  return &conv[1];
+}
+
+// Convert float to fixed-length string with +12.34 / -12.34 format
+const char* ftostr42sign(const float &f) {
+  int i = (f * 1000 + (f < 0 ? -5: 5)) / 10;
+  conv[1] = MINUSOR(i, '+');
+  conv[2] = DIGIMOD(i, 1000);
+  conv[3] = DIGIMOD(i, 100);
+  conv[4] = '.';
+  conv[5] = DIGIMOD(i, 10);
   conv[6] = DIGIMOD(i, 1);
   return &conv[1];
 }
