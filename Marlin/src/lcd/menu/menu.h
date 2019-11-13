@@ -633,7 +633,7 @@ class MenuItem_bool : public MenuEditItemBase {
   ++_thisItemNr;                                          \
 } while(0)
 
-#define STATIC_ITEM(LABEL, V...) STATIC_ITEM_P(GET_TEXT(LABEL), ##V)
+#define STATIC_ITEM(LABEL, V...)               STATIC_ITEM_P(GET_TEXT(LABEL), ##V)
 
 #define MENU_ITEM_P(TYPE, PLABEL, V...)       _MENU_ITEM_P(TYPE, false, PLABEL, ##V)
 #define MENU_ITEM(TYPE, LABEL, V...)           MENU_ITEM_P(TYPE, GET_TEXT(LABEL), ##V)
@@ -642,7 +642,7 @@ class MenuItem_bool : public MenuEditItemBase {
 #define EDIT_ITEM(TYPE, LABEL, V...)           EDIT_ITEM_P(TYPE, GET_TEXT(LABEL), ##V)
 
 #define EDIT_ITEM_FAST_P(TYPE, PLABEL, V...)  _MENU_ITEM_P(TYPE, true, PLABEL, ##V)
-#define EDIT_ITEM_FAST(TYPE, LABEL, V...) EDIT_ITEM_FAST_P(TYPE, GET_TEXT(LABEL), ##V)
+#define EDIT_ITEM_FAST(TYPE, LABEL, V...)      EDIT_ITEM_FAST_P(TYPE, GET_TEXT(LABEL), ##V)
 
 #define ACTION_ITEM_P(PLABEL, ACTION)          MENU_ITEM_P(function, PLABEL, ACTION)
 #define ACTION_ITEM(LABEL, ACTION)             ACTION_ITEM_P(GET_TEXT(LABEL), ACTION)

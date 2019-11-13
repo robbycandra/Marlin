@@ -507,11 +507,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     // Calculate Max StringLen
     uint8_t stringLen = strlen(pstr);
     uint8_t maxStringLen = (int)((colEnd - colPos + 1) / MENU_FONT_WIDTH);
-    NOMORE(stringLen,maxStringLen);
-    // StartPoint of String
-    lcd_uint_t startStrPos = colPos + ((colEnd - colPos + 1) - (stringLen * MENU_FONT_WIDTH)) / 2;
 
-    // Draw String
     if (post_char && post_char != ' ') {
       lcd_put_wchar(colEnd - MENU_FONT_WIDTH, rowPos, post_char);
       maxStringLen--;
@@ -519,8 +515,13 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     if (pre_char && pre_char != ' ') {
       lcd_put_wchar(colPos, rowPos, pre_char);
       maxStringLen--;
-      startStrPos += MENU_FONT_WIDTH;
     }
+    NOMORE(stringLen,maxStringLen);
+
+    // StartPoint of String
+    lcd_uint_t startStrPos = colPos + ((colEnd - colPos + 1) - (stringLen * MENU_FONT_WIDTH)) / 2;
+
+    // Draw String
     lcd_put_u8str_max_P(startStrPos, rowPos, pstr, maxStringLen * MENU_FONT_WIDTH);
   }
 
