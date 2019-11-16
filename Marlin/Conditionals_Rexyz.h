@@ -720,6 +720,7 @@
 
     #define SPEAKER
     #define STARTUP_TONE
+    #define LCD_SET_PROGRESS_MANUALLY
 #endif
 #if defined(REXYZ_LCD2004)
     #define REPRAP_DISCOUNT_SMART_CONTROLLER
@@ -749,6 +750,7 @@
 
     #define SPEAKER
     #define STARTUP_TONE
+    #define LCD_SET_PROGRESS_MANUALLY
 #endif
 #if defined(REXYZ_A8P)
     #define ANET_FULL_GRAPHICS_LCD
@@ -763,6 +765,7 @@
 
     #define SPEAKER
     #define STARTUP_TONE
+    #define LCD_SET_PROGRESS_MANUALLY
 #endif
 
 #if defined(REXYZ_A1) || defined(REXYZ_A2) || defined(REXYZ_D2)
@@ -811,6 +814,7 @@
     #define REXYZ_ENCODER_10X_STEPS_PER_SEC 30  // (steps/s) Encoder rate for 10x speed
     #define REXYZ_ENCODER_100X_STEPS_PER_SEC 80  // (steps/s) Encoder rate for 100x speed
 
+    #define LCD_SET_PROGRESS_MANUALLY
 #endif
 
 #if defined(REXYZ_TOUCH_UI)
