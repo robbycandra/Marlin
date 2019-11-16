@@ -47,7 +47,12 @@
   #include "../../feature/babystep.h"
   #include "../lcdprint.h"
   #if HAS_GRAPHICAL_LCD
-    #include "../dogm/ultralcd_DOGM.h"
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
+      #include "../TFT/TFT_screen_defines.h"
+      #include "../TFT/ultralcd_TFT.h"
+    #else
+      #include "../dogm/ultralcd_DOGM.h"
+    #endif
   #endif
 
   void _lcd_babystep(const AxisEnum axis, PGM_P const msg) {
@@ -69,13 +74,21 @@
       #if ENABLED(BABYSTEP_DISPLAY_TOTAL)
         const bool in_view = (true
           #if HAS_GRAPHICAL_LCD
-            && PAGE_CONTAINS(LCD_PIXEL_HEIGHT - MENU_FONT_HEIGHT, LCD_PIXEL_HEIGHT - 1)
+            #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
+              && PAGE_CONTAINS(LCD_PIXEL_HEIGHT - (2*MENU_FONT_HEIGHT), LCD_PIXEL_HEIGHT - MENU_FONT_HEIGHT - 1)
+            #else
+              && PAGE_CONTAINS(LCD_PIXEL_HEIGHT - MENU_FONT_HEIGHT, LCD_PIXEL_HEIGHT - 1)
+            #endif
           #endif
         );
         if (in_view) {
           #if HAS_GRAPHICAL_LCD
             ui.set_font(FONT_MENU);
-            lcd_moveto(0, LCD_PIXEL_HEIGHT - MENU_FONT_DESCENT);
+            #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
+              lcd_moveto(5, LCD_PIXEL_HEIGHT - MENU_FONT_HEIGHT - MENU_FONT_DESCENT);
+            #else
+              lcd_moveto(0, LCD_PIXEL_HEIGHT - MENU_FONT_DESCENT);
+            #endif
           #else
             lcd_moveto(0, LCD_HEIGHT - 1);
           #endif
