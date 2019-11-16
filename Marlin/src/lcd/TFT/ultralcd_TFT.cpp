@@ -648,7 +648,7 @@ void MarlinUI::clear_lcd() { } // Automatically cleared by Picture Loop
     draw_centered_string(row_str_base, col_x1+2, col_x2-2, pstr, ' ', ' ');
   }
 
-  void MenuEditItemBase::edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/) {
+  void MenuEditItemBase::draw_edit_screen(PGM_P const pstr, const char* const value/*=nullptr*/) {
     ui.encoder_direction_normal();
 
     u8g_uint_t baseline = (LCD_PIXEL_HEIGHT) / 2 - 1;
