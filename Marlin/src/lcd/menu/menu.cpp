@@ -404,7 +404,7 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
   #endif
 
   if (is_menu) {
-   #if HAS_FULL_SCALE_TFT
+   #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       uint8_t menu_row = 4;
       uint8_t menu_col = 2;
       uint8_t menu_header = 0;
@@ -512,11 +512,11 @@ void scroll_screen(const uint8_t limit, const bool is_menu) {
 
      #endif // TOUCH_ENCODER
 
-   #else //! HAS_FULL_SCALE_TFT
+   #else //! ENABLED(FULL_SCALE_GRAPHICAL_TFT)
     NOMORE(encoderTopLine, encoderLine);
     if (encoderLine >= encoderTopLine + LCD_HEIGHT)
       encoderTopLine = encoderLine - LCD_HEIGHT + 1;
-   #endif // HAS_FULL_SCALE_TFT
+   #endif // ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   }
   else // !is_menu
     encoderTopLine = encoderLine;
@@ -674,7 +674,7 @@ bool MarlinUI::update_selection() {
  */
 //void do_select_screen(PGM_P const yes, PGM_P const no, selectFunc_t yesFunc, selectFunc_t noFunc, PGM_P const pref, const char * const string/*=nullptr*/, PGM_P const suff/*=nullptr*/) {
 void MenuItem_confirm::select_screen(PGM_P const yes, PGM_P const no, selectFunc_t yesFunc, selectFunc_t noFunc, PGM_P const pref, const char * const string/*=nullptr*/, PGM_P const suff/*=nullptr*/) {
- #if HAS_FULL_SCALE_TFT
+ #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   bool ui_selection = false, got_click = false;
   if (ui.menu_is_touched(0)) {
     ui_selection = false;

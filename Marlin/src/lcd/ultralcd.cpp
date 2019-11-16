@@ -82,7 +82,7 @@
 #if HAS_SPI_LCD
 
 #if HAS_GRAPHICAL_LCD
- #if HAS_FULL_SCALE_TFT
+ #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   #include "TFT/TFT_screen_defines.h"
   #include "TFT/ultralcd_TFT.h "
  #else
@@ -212,7 +212,7 @@ millis_t MarlinUI::next_button_update_ms; // = 0
       uint8_t MarlinUI::lcd_menu_touched_coord;
     #endif
   #endif
-  #if HAS_FULL_SCALE_TFT
+  #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
     bool MarlinUI::menu_is_touched(int8_t tested_item_number) {
       int8_t touched_item_number;
       bool menu_area_touched = false;
@@ -355,7 +355,7 @@ millis_t MarlinUI::next_button_update_ms; // = 0
       SETCURSOR(0, row);              // Simulate carriage return
     };
 
-    #if HAS_FULL_SCALE_TFT
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       const uint8_t maxStringLen = LCD_PIXEL_WIDTH / MENU_FONT_WIDTH - 1;
     #else
       const uint8_t maxStringLen = LCD_WIDTH;
@@ -413,7 +413,7 @@ millis_t MarlinUI::next_button_update_ms; // = 0
   void MarlinUI::draw_select_screen_prompt(PGM_P const pref, const char * const string/*=nullptr*/, PGM_P const suff/*=nullptr*/) {
     const uint8_t plen = utf8_strlen_P(pref), slen = suff ? utf8_strlen_P(suff) : 0;
     uint8_t col = 0, row = 0;
-    #if HAS_FULL_SCALE_TFT
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       const uint8_t maxStringLen = LCD_PIXEL_WIDTH / MENU_FONT_WIDTH - 1;
     #else
       const uint8_t maxStringLen = LCD_WIDTH;
@@ -421,13 +421,13 @@ millis_t MarlinUI::next_button_update_ms; // = 0
 
     if (!string && plen + slen <= maxStringLen) {
       col = (maxStringLen - plen - slen) / 2;
-     #if HAS_FULL_SCALE_TFT
+     #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       row = 4;
      #else
       row = LCD_HEIGHT > 3 ? 1 : 0;
      #endif
     }
-    #if HAS_FULL_SCALE_TFT
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       else
         row = 2;
     #endif
@@ -1275,7 +1275,7 @@ void MarlinUI::update() {
 
       #if HAS_LCD_MENU
         lcd_clicked = false;
-        #if HAS_FULL_SCALE_TFT
+        #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
           lcd_menu_touched_coord = 0;
           first_touch = false;
         #endif

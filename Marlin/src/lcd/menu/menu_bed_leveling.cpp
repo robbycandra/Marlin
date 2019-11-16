@@ -356,7 +356,7 @@ void menu_bed_leveling() {
     SUBMENU(MSG_LEVEL_CORNERS, _lcd_level_bed_corners);
   #endif
   */
-  #if !HAS_FULL_SCALE_TFT
+  #if !ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   #if ENABLED(EEPROM_SETTINGS)
     ACTION_ITEM(MSG_LOAD_EEPROM, lcd_load_settings);
     ACTION_ITEM(MSG_STORE_EEPROM, lcd_store_settings);

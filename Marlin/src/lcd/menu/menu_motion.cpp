@@ -243,7 +243,7 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
   }
   #if ENABLED(PREVENT_COLD_EXTRUSION)
     if (axis == E_AXIS && thermalManager.tooColdToExtrude(eindex >= 0 ? eindex : active_extruder)) {
-     #if HAS_FULL_SCALE_TFT
+     #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       ui.screenMode = SCRMODE_STATIC_BACK;
       STATIC_ITEM(MSG_HOTEND_TOO_COLD);
      #else
@@ -254,7 +254,7 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
   #endif
   {
     BACK_ITEM(MSG_MOVE_AXIS);
-    #if HAS_FULL_SCALE_TFT
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       SUBMENU_P(PSTR("10 mm"), []{ _goto_manual_move(10);    });
       SUBMENU_P(PSTR("1 mm"),  []{ _goto_manual_move( 1);    });
       SUBMENU_P(PSTR("01 mm"), []{ _goto_manual_move( 0.1f); });
@@ -281,7 +281,7 @@ void _menu_move_distance(const AxisEnum axis, const screenFunc_t func, const int
 
 void _lcd_extruder_too_cold() {
   START_MENU();
-  #if HAS_FULL_SCALE_TFT
+  #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
     STATIC_ITEM(MSG_HOTEND_TOO_COLD);
   #else
     BACK_ITEM(MSG_HOTEND_TOO_COLD);

@@ -181,7 +181,7 @@ class MenuItem_function : public MenuItem_button {
   };
 #endif
 
-#if HAS_FULL_SCALE_TFT
+#if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
 class MenuItem_sdupdir {
   public:
     static void draw(const bool sel, const uint8_t row, PGM_P const pstr, const menuAction_t);
@@ -580,7 +580,7 @@ class MenuItem_bool : public MenuEditItemBase {
  *     MenuItem_int3::action(plabel, &feedrate_percentage, 10, 999)
  *     MenuItem_int3::draw(sel, row, plabel, &feedrate_percentage, 10, 999)
  */
-#if HAS_FULL_SCALE_TFT && ENABLED(TOUCH_ENCODER)
+#if ENABLED(FULL_SCALE_GRAPHICAL_TFT) && ENABLED(TOUCH_ENCODER)
 
 #define _MENU_INNER_P(TYPE, USE_MULTIPLIER, PLABEL, V...) do { \
   PGM_P const plabel = PLABEL;                                \
@@ -594,7 +594,7 @@ class MenuItem_bool : public MenuEditItemBase {
       (false, _lcdLineNr, plabel, ##V);                       \
 }while(0)
 
-#elif HAS_FULL_SCALE_TFT
+#elif ENABLED(FULL_SCALE_GRAPHICAL_TFT)
 
 #define _MENU_INNER_P(TYPE, USE_MULTIPLIER, PLABEL, V...) do { \
   PGM_P const plabel = PLABEL;                                \
@@ -734,7 +734,7 @@ class MenuItem_bool : public MenuEditItemBase {
 #define SUBSCREEN6(LABEL, DEST)     MENU_ITEM_P(subscreen6, GET_TEXT(LABEL), DEST)
 #define SUBSCREEN8(LABEL, DEST)     MENU_ITEM_P(subscreen8, GET_TEXT(LABEL), DEST)
 
-#if HAS_FULL_SCALE_TFT && ENABLED(TOUCH_ENCODER)
+#if ENABLED(FULL_SCALE_GRAPHICAL_TFT) && ENABLED(TOUCH_ENCODER)
 
 #define _CONFIRM_ITEM_INNER_P(PLABEL, V...) do {              \
     if (ui.menu_is_touched(_thisItemNr - encoderTopLine)) {   \
@@ -811,7 +811,7 @@ void menu_move();
 //////// Menu Item Helper Functions ////////
 ////////////////////////////////////////////
 
-#if HAS_FULL_SCALE_TFT
+#if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   void lcd_move_x();
   void lcd_move_y();
 #endif

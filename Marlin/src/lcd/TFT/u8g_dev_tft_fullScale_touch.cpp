@@ -56,7 +56,7 @@
 */
 #include "../../inc/MarlinConfig.h"
 
-#if HAS_GRAPHICAL_LCD && HAS_FULL_SCALE_TFT
+#if HAS_GRAPHICAL_LCD && ENABLED(FULL_SCALE_GRAPHICAL_TFT)
 #include "../ultralcd.h"
 #include "../../module/temperature.h"
 
@@ -650,4 +650,4 @@ uint8_t  u8g_dev_tft_fullScale_touch_buf[WIDTH*2] U8G_NOCOMMON ;
 u8g_pb_t u8g_dev_tft_fullScale_touch_pb = { {PAGE_HEIGHT, HEIGHT, 0, 0, 0},  WIDTH, u8g_dev_tft_fullScale_touch_buf};
 u8g_dev_t u8g_dev_tft_fullScale_touch = { u8g_dev_tft_fullScale_touch_fn, &u8g_dev_tft_fullScale_touch_pb, U8G_COM_HAL_FSMC_FN };
 
-#endif // HAS_GRAPHICAL_LCD && HAS_FULL_SCALE_TFT
+#endif // HAS_GRAPHICAL_LCD && ENABLED(FULL_SCALE_GRAPHICAL_TFT)

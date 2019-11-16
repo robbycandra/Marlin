@@ -459,7 +459,7 @@ public:
         static uint8_t lcd_menu_touched_coord;
       #endif
     #endif
-    #if HAS_FULL_SCALE_TFT
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       static bool menu_is_touched(int8_t itemNumber);
     #endif
 
@@ -562,7 +562,7 @@ public:
 
     staticRexyzScreenMode screenMode = 0;
     static constexpr bool lcd_clicked = false;
-    #if HAS_FULL_SCALE_TFT
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       staticuint8_t lcd_menu_touched_coord = 0;
     #endif
     static constexpr bool on_status_screen() { return true; }

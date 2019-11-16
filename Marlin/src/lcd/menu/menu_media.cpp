@@ -138,7 +138,7 @@ void menu_media() {
     //#endif
   }
   else if (card.isMounted())
-   #if HAS_FULL_SCALE_TFT
+   #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
     MENU_ITEM_P(sdupdir, PSTR(".."), lcd_sd_updir);
    #else
     ACTION_ITEM_P(PSTR(LCD_STR_FOLDER ".."), lcd_sd_updir);

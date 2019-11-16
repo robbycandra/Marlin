@@ -99,7 +99,7 @@ void _lcd_preheat(const int16_t endnum, const int16_t temph, const int16_t tempb
 
   void menu_preheat_m1() {
     START_MENU();
-    #if HAS_FULL_SCALE_TFT
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       STATIC_ITEM(MSG_PREHEAT_1);
     #endif
     BACK_ITEM(MSG_TEMPERATURE);
@@ -130,7 +130,7 @@ void _lcd_preheat(const int16_t endnum, const int16_t temph, const int16_t tempb
 
   void menu_preheat_m2() {
     START_MENU();
-    #if HAS_FULL_SCALE_TFT
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       STATIC_ITEM(MSG_PREHEAT_2);
     #endif
     BACK_ITEM(MSG_TEMPERATURE);

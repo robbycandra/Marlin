@@ -31,7 +31,7 @@
 #include "menu.h"
 
 #include "../../module/configuration_store.h"
-#if HAS_FULL_SCALE_TFT
+#if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   #include "../../lcd/TFT/ultralcd_TFT.h"
   #include "../../lcd/TFT/TFT_screen_defines.h"
 #else
@@ -40,7 +40,7 @@
 #endif
 #include "../../feature/touch/xpt2046.h"
 
-#if HAS_FULL_SCALE_TFT
+#if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   #define TOUCH_TEXT_OFFSET 15
   //(LCD_PIXEL_WIDTH/2)
   #define TOUCH_POINT_OFFSET 50
@@ -131,7 +131,7 @@ void _lcd_touch_cal_result() {
                           (touched_x[0] * touched_y[2] - touched_x[2] * touched_y[0]) * (DISP_PT_Y1) +
                           (touched_x[0] * touched_y[1] - touched_x[1] * touched_y[0]) * (DISP_PT_Y2) ;
 
-    #if HAS_FULL_SCALE_TFT
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       sprintf(pointStr,"X-CalX:%d", (int16_t)round((float)x_calx*65536/divider));
       lcd_put_u8str(LCD_PIXEL_WIDTH/2, (LCD_PIXEL_HEIGHT/2) - (MENU_FONT_HEIGHT *2), pointStr);
       sprintf(pointStr,"X-CalY:%d", (int16_t)round((float)x_caly*65536/divider));
@@ -182,7 +182,7 @@ void _lcd_touch_point_screen() {
       }
       break;
   }
-  #if HAS_FULL_SCALE_TFT
+  #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
     u8g.setFont(MENU_FONT_NAME);
     if (touch_point_index > 0) {
       int8_t idx = touch_point_index - 1;

@@ -103,7 +103,7 @@ void _menu_temp_filament_op(const PauseMode mode, const int8_t extruder) {
 #if E_STEPPERS > 1 || ENABLED(FILAMENT_LOAD_UNLOAD_GCODES)
   void menu_change_filament() {
     START_MENU();
-    #if HAS_FULL_SCALE_TFT
+    #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
       STATIC_ITEM_P(PSTR("Filament Change"));
     #else
       BACK_ITEM(MSG_MAIN);
@@ -268,12 +268,12 @@ void _lcd_pause_message(PGM_P const msg) {
   PGM_P const msg2 = msg1 + strlen_P(msg1) + 1;
   PGM_P const msg3 = msg2 + strlen_P(msg2) + 1;
   const bool has2 = msg2[0], has3 = msg3[0];
-  #if !HAS_FULL_SCALE_TFT
+  #if !ENABLED(FULL_SCALE_GRAPHICAL_TFT)
   const bool skip1 = !has2 && (LCD_HEIGHT) >= 5;
   #endif
   START_SCREEN();
   STATIC_ITEM_P(pause_header(), SS_CENTER|SS_INVERT);
-  #if HAS_FULL_SCALE_TFT
+  #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
     if (!has3) SKIP_ITEM();
     STATIC_ITEM_P(msg1);
     if (has2) STATIC_ITEM_P(msg2);

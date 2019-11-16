@@ -1782,7 +1782,7 @@
   // Get LCD character width/height, which may be overridden by pins, configs, etc.
   #ifndef LCD_WIDTH
     #if HAS_GRAPHICAL_LCD
-	  #if HAS_FULL_SCALE_TFT
+	  #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
         #if ENABLED(FULL_SCALE_TFT_320X240)
          #define LCD_WIDTH 31
         #else
@@ -1799,7 +1799,7 @@
   #endif
   #ifndef LCD_HEIGHT
     #if HAS_GRAPHICAL_LCD
-      #if HAS_FULL_SCALE_TFT
+      #if ENABLED(FULL_SCALE_GRAPHICAL_TFT)
         // LCD_HEIGHT menjadi tanda apakah printer menggunakan Full Scale TFT atau tidak
         #define LCD_HEIGHT 8
       #else
