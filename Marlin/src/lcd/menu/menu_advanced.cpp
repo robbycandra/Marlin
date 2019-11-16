@@ -529,11 +529,10 @@ void menu_cancelobject();
       #if ENABLED(DISTINCT_E_FACTORS)
         #define EDIT_AMAX_E(N) EDIT_ITEM_FAST_N(long5_25, N, MSG_AMAX_EN, &planner.settings.max_acceleration_mm_per_s2[E_AXIS_N(N)], 100, max_accel_edit_scaled.e, []{ _reset_e_acceleration_rate(MenuItemBase::itemIndex); })
         EDIT_ITEM_FAST(long5_25, MSG_AMAX_E, &planner.settings.max_acceleration_mm_per_s2[E_AXIS_N(active_extruder)], 100, max_accel_edit_scaled.e, []{ planner.reset_acceleration_rates(); });
-      for (uint8_t n = 0; n < E_STEPPERS; n++) EDIT_AMAX_E(n);
+        for (uint8_t n = 0; n < E_STEPPERS; n++) EDIT_AMAX_E(n);
       #elif E_STEPPERS
         EDIT_ITEM_FAST(long5_25, MSG_AMAX_E, &planner.settings.max_acceleration_mm_per_s2[E_AXIS], 100, max_accel_edit_scaled.e, []{ planner.reset_acceleration_rates(); });
       #endif
-
     }
 
     END_MENU();

@@ -787,7 +787,6 @@ class MenuItem_bool : public MenuEditItemBase {
 #define YESNO_ITEM_N_P(N,PLABEL, V...)      _CONFIRM_ITEM_N_P(N, PLABEL, ##V)
 #define YESNO_ITEM_N(N,LABEL, V...)            YESNO_ITEM_N_P(N, GET_TEXT(LABEL), ##V)
 
-
 ////////////////////////////////////////////
 /////////////// Menu Screens ///////////////
 ////////////////////////////////////////////

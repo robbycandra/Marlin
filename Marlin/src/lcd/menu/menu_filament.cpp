@@ -169,11 +169,12 @@ void _menu_temp_filament_op(const PauseMode mode, const int8_t extruder) {
         // Unload filament
         #if E_STEPPERS == 1
           PGM_P const msg_unload = GET_TEXT(MSG_FILAMENTUNLOAD);
-          if (thermalManager.targetTooColdToExtrude(active_extruder))
+          if (thermalManager.targetTooColdToExtrude(active_extruder)) {
             if (rexyz_menu_mode == MENUMODE_BASIC)
-               MENU_ITEM_P(submenuh21, msg_unload, []{ _menu_temp_filament_op(PAUSE_MODE_UNLOAD_FILAMENT, 0); });
+              MENU_ITEM_P(submenuh21, msg_unload, []{ _menu_temp_filament_op(PAUSE_MODE_UNLOAD_FILAMENT, 0); });
             else
-               MENU_ITEM_P(submenuh31, msg_unload, []{ _menu_temp_filament_op(PAUSE_MODE_UNLOAD_FILAMENT, 0); });
+              MENU_ITEM_P(submenuh31, msg_unload, []{ _menu_temp_filament_op(PAUSE_MODE_UNLOAD_FILAMENT, 0); });
+          }
           else
             GCODES_ITEM_P(msg_unload, PSTR("M702"));
         #else
@@ -188,7 +189,7 @@ void _menu_temp_filament_op(const PauseMode mode, const int8_t extruder) {
             if (!too_cold)
               GCODES_ITEM(MSG_FILAMENTUNLOAD_ALL, PSTR("M702"));
             else
-            SUBMENU14(MSG_FILAMENTUNLOAD_ALL, []{ _menu_temp_filament_op(PAUSE_MODE_UNLOAD_FILAMENT, -1); });
+              SUBMENU14(MSG_FILAMENTUNLOAD_ALL, []{ _menu_temp_filament_op(PAUSE_MODE_UNLOAD_FILAMENT, -1); });
           }
           #endif
           PGM_P const msg_unload = GET_TEXT(MSG_FILAMENTUNLOAD_E);
