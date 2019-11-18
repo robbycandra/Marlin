@@ -301,6 +301,35 @@ void menu_advanced_settings();
 
 #endif
 
+void rlcd_menu_choose_zero() {
+  ui.encoder_direction_normal();
+  //ui.encoderPosition = rexyz_menu_mode;
+  if (ui.encoderPosition > 0x8000) ui.encoderPosition = 0;
+  if (ui.should_draw()) {
+    if (ui.encoderPosition < 0) {
+      ui.encoderPosition = 0;
+    }
+    if (ui.encoderPosition > 2) {
+      ui.encoderPosition = 2;
+    }
+    switch (ui.encoderPosition) {
+    case 0:
+      MenuEditItemBase::draw_edit_screen(PSTR("Coord Mode"), "Corner Zero");
+      break;
+    case 1:
+      MenuEditItemBase::draw_edit_screen(PSTR("Coord Mode"), "Center Zero");
+      break;
+    case 2:
+      MenuEditItemBase::draw_edit_screen(PSTR("Coord Mode"), "Flash Print");
+      break;
+    }
+  }
+  if (ui.lcd_clicked) {
+    coordinate_mode = (uint8_t)ui.encoderPosition;
+    if (ui.use_click()) ui.goto_previous_screen();
+  }
+}
+
 void menu_configuration() {
   START_MENU();
   BACK_ITEM(MSG_MAIN);
@@ -379,6 +408,37 @@ void menu_configuration() {
   #if ENABLED(POWER_LOSS_RECOVERY)
     EDIT_ITEM(bool, MSG_OUTAGE_RECOVERY, &recovery.enabled, recovery.changed);
   #endif
+
+  do {
+    _skipStatic = false;
+    if (_menuLineNr == _thisItemNr) {
+     #if ENABLED(TOUCH_BUTTONS)
+      if ((encoderLine == _thisItemNr && ui.use_click()) || ui.menu_is_touched(_thisItemNr - encoderTopLine)) {
+     #else
+      if (encoderLine == _thisItemNr && ui.use_click()) {
+     #endif
+        _MENU_ITEM_MULTIPLIER_CHECK(false);
+        ui.save_previous_screen();
+        ui.refresh();
+        ui.encoderPosition = coordinate_mode;
+        ui.screenMode = SCRMODE_EDIT_SCREEN;
+        ui.currentScreen = rlcd_menu_choose_zero;
+        if (ui.screen_changed) return;
+      }
+      if (ui.should_draw()) {
+        if (coordinate_mode == 1) {
+          MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Coord Mode"), "Center Zero", false);
+        }
+        else if (coordinate_mode == 2) {
+          MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Coord Mode"), "Flash Print", false);
+        }
+        else {
+          MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Coord Mode"), "Corner Zero", false);
+        }
+      }
+    }
+    ++_thisItemNr;
+  }while(0);
 
   #if DISABLED(SLIM_LCD_MENUS)
     // Preheat configurations

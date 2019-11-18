@@ -64,6 +64,7 @@
 void menu_tmc();
 void menu_backlash();
 void menu_cancelobject();
+void rlcd_menu_choose_zero();
 
 #if ENABLED(DAC_STEPPER_CURRENT)
 
@@ -751,35 +752,6 @@ void rlcd_menu_choose_menu() {
   }
   if (ui.lcd_clicked) {
     rexyz_menu_mode = (uint8_t)ui.encoderPosition;
-    if (ui.use_click()) ui.goto_previous_screen();
-  }
-}
-
-void rlcd_menu_choose_zero() {
-  ui.encoder_direction_normal();
-  //ui.encoderPosition = rexyz_menu_mode;
-  if (ui.encoderPosition > 0x8000) ui.encoderPosition = 0;
-  if (ui.should_draw()) {
-    if (ui.encoderPosition < 0) {
-      ui.encoderPosition = 0;
-    }
-    if (ui.encoderPosition > 2) {
-      ui.encoderPosition = 2;
-    }
-    switch (ui.encoderPosition) {
-    case 0:
-      MenuEditItemBase::draw_edit_screen(PSTR("Coord Mode"), "Corner Zero");
-      break;
-    case 1:
-      MenuEditItemBase::draw_edit_screen(PSTR("Coord Mode"), "Center Zero");
-      break;
-    case 2:
-      MenuEditItemBase::draw_edit_screen(PSTR("Coord Mode"), "Flash Print");
-      break;
-    }
-  }
-  if (ui.lcd_clicked) {
-    coordinate_mode = (uint8_t)ui.encoderPosition;
     if (ui.use_click()) ui.goto_previous_screen();
   }
 }
