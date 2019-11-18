@@ -66,7 +66,7 @@
  * Allow one and only one Toolhead to be defined
  */
 #if 1 != 0 \
-  + ENABLED(REXYZ_NO_ABL) \
+  + ENABLED(REXYZ_BOWDEN_DIRECT) \
   + ENABLED(REXYZ_MK8_MANUAL_PROBE) \
   + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) \
   + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) \
@@ -118,8 +118,8 @@
   #if ENABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
     #error "Please disable REXYZ_EEPROM_FIRMWARE_PROTECTION."
   #endif
-  #if DISABLED(REXYZ_NO_ABL)
-    #error "Please enable REXYZ_NO_ABL."
+  #if DISABLED(REXYZ_BOWDEN_DIRECT)
+    #error "Please enable REXYZ_BOWDEN_DIRECT."
   #endif
   #if ENABLED(REXYZ_FILAMENT_MOTION_DETECTOR)
     #error "Please disable REXYZ_FILAMENT_MOTION_DETECTOR."
@@ -437,7 +437,7 @@
     #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
 #endif
 #if defined(REXYZ_BOARD_DLION)
-    //D lion tidak ada PWM Pin.
+    //D lion Pin PE1 - tidak ada PWM
     #define REXYZ_E0_AUTO_FAN_PIN MANUAL_FAN_PIN //-1// FAN1_PIN
     //#define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 130
     #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
@@ -677,6 +677,13 @@
     #define REXYZ_GRID_MAX_POINTS_Y 3
 #endif
 
+#if defined(REXYZ_D2) || defined(REXYZ_D3) ||  defined(REXYZ_A8P)
+  #define REXYZ_NOZZLE_PARK_POINT { (X_MIN_POS + 10), (Y_MAX_POS - 10), 20 }
+#elif defined(REXYZ_A1)
+  #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 15), (Y_MIN_POS + 70), 20 }
+#else
+  #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 10), (Y_MAX_POS - 10), 20 }
+#endif
 //===========================================================================
 //============================= Movement Settings ===========================
 //===========================================================================
@@ -867,6 +874,14 @@
     #define REXYZ_FIL_RUNOUT_INVERTING false
 #endif
 
+#if defined(REXYZ_A1)
+  #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH   245
+  #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      310
+#else
+  #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40
+  #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100
+#endif
+
 //===========================================================================
 //============================= Probe Settings ==============================
 //===========================================================================
@@ -886,29 +901,8 @@
 //    REXYZ_MK8_MULTI_FIXPROBE_MANUAL
 //    REXYZ_MK8_PROXIMITY_8MM
 
-#if defined(REXYZ_NO_ABL)
-  #if defined(REXYZ_D2)
-    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40
-    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100
-    #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 10), (Y_MAX_POS - 10), 20 }
-  #else
-    // Bowden DirectDrive
-    #define REXYZ_MACHINE_TOOLHEAD_TYPE "BD"
-    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH   245
-    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      310
-    #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 15), (Y_MIN_POS + 70), 20 }
-    //#define REXYZ_MANUAL_PROBE_START_Z 0
-  #endif
-#else
-  #if defined(REXYZ_D2)
-    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40
-    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100
-    #define REXYZ_NOZZLE_PARK_POINT { (X_MIN_POS + 10), (Y_MAX_POS - 10), 20 }
-  #else
-    #define REXYZ_FILAMENT_CHANGE_FAST_LOAD_LENGTH    40
-    #define REXYZ_FILAMENT_CHANGE_UNLOAD_LENGTH      100
-    #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 10), (Y_MAX_POS - 10), 20 }
-  #endif
+#if defined(REXYZ_BOWDEN_DIRECT)
+  #define REXYZ_MACHINE_TOOLHEAD_TYPE "BD"
 #endif
 
 #if defined(REXYZ_MK8_MANUAL_PROBE)
