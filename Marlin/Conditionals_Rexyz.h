@@ -66,7 +66,7 @@
  * Allow one and only one Toolhead to be defined
  */
 #if 1 != 0 \
-  + ENABLED(REXYZ_BOWDEN_DIRECT) \
+  + ENABLED(REXYZ_BOWDEN_NO_LEVELING) \
   + ENABLED(REXYZ_MK8_MANUAL_PROBE) \
   + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) \
   + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) \
@@ -118,8 +118,8 @@
   #if ENABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
     #error "Please disable REXYZ_EEPROM_FIRMWARE_PROTECTION."
   #endif
-  #if DISABLED(REXYZ_BOWDEN_DIRECT)
-    #error "Please enable REXYZ_BOWDEN_DIRECT."
+  #if DISABLED(REXYZ_BOWDEN_NO_LEVELING)
+    #error "Please enable REXYZ_BOWDEN_NO_LEVELING."
   #endif
   #if ENABLED(REXYZ_FILAMENT_MOTION_DETECTOR)
     #error "Please disable REXYZ_FILAMENT_MOTION_DETECTOR."
@@ -887,11 +887,13 @@
 //===========================================================================
 //
 //  1. D = Direct Extruder
+//     B = Bowden Extruder
 //  2. D = Direct Drive
 //  3. M = Manual Probe
 //     P8= Proximity 8mm
 //     F = Fixed Probe
 //     T = 3D Touch Probe
+//     N = No Leveling
 //  Yg pernah terjual :
 //    REXYZ_MK8_MANUAL_PROBE - Yohanes
 //    REXYZ_MK8_MULTI_FIXPROBE_PROXYMITY - Panji Enjoy dll
@@ -901,8 +903,8 @@
 //    REXYZ_MK8_MULTI_FIXPROBE_MANUAL
 //    REXYZ_MK8_PROXIMITY_8MM
 
-#if defined(REXYZ_BOWDEN_DIRECT)
-  #define REXYZ_MACHINE_TOOLHEAD_TYPE "BD"
+#if defined(REXYZ_BOWDEN_NO_LEVELING)
+  #define REXYZ_MACHINE_TOOLHEAD_TYPE "BDN"
 #endif
 
 #if defined(REXYZ_MK8_MANUAL_PROBE)
