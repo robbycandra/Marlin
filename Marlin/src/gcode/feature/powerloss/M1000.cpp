@@ -52,8 +52,13 @@ inline void plr_error(PGM_P const prefix) {
 void GcodeSuite::M1000() {
 
   if (recovery.valid()) {
-    if (parser.seen('S'))
-      ui.goto_screen(menu_job_recovery, SCRMODE_MENU_H_2X1);
+    if (parser.seen('S')) {
+      #if HAS_LCD_MENU
+        ui.goto_screen(menu_job_recovery, SCRMODE_MENU_H_2X1);
+      #else
+        SERIAL_ECHO_MSG("Resume requires LCD.");
+      #endif
+    }
     else
       recovery.resume();
   }
