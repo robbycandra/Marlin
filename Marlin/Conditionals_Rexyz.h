@@ -54,6 +54,7 @@
   + ENABLED(REXYZ_S33)  \
   + ENABLED(REXYZ_4MAX) \
   + ENABLED(REXYZ_N2)   \
+  + ENABLED(REXYZ_N2G)   \
   + ENABLED(REXYZ_N3)   \
   + ENABLED(REXYZ_A8P)  \
   + ENABLED(REXYZ_A1)   \
@@ -75,7 +76,7 @@
   #error "Please enable one and only one toolhead model."
 #endif
 
-#if ENABLED(REXYZ_N2)
+#if ENABLED(REXYZ_N2) || ENABLED(REXYZ_N2G)
   #if DISABLED(REXYZ_EEPROM_FIRMWARE_PROTECTION)
     #error "Please enable REXYZ_EEPROM_FIRMWARE_PROTECTION."
   #endif
@@ -174,6 +175,13 @@
     #define REXYZ_BOARD_SKR13
     #define REXYZ_N_TYPE
     #define REXYZ_LCD2004
+    #define REXYZ_EEPROM_FIRMWARE_PROTECTION
+#endif
+#if defined(REXYZ_N2G)
+    #define REXYZ_MACHINE_FRAME_TYPE "N2G"
+    #define REXYZ_BOARD_SKR13
+    #define REXYZ_N_TYPE
+    #define REXYZ_LCD12864
     #define REXYZ_EEPROM_FIRMWARE_PROTECTION
 #endif
 #if defined(REXYZ_N3)
@@ -584,7 +592,7 @@
 //===========================================================================
 
 #define REXYZ_LEVEL_CORNERS_Z_HOP 10.0  // (mm) Move nozzle up before moving between corners
-#if defined(REXYZ_S22) || defined(REXYZ_N2)
+#if defined(REXYZ_S22) || defined(REXYZ_N2) || defined(REXYZ_N2G)
     #define REXYZ_X_BED_SIZE 220
     #define REXYZ_Y_BED_SIZE 220
     #define REXYZ_X_MIN_POS 0
@@ -688,14 +696,18 @@
 //============================= Movement Settings ===========================
 //===========================================================================
 
-#if defined(REXYZ_N2)
+#if defined(REXYZ_N2) || defined(REXYZ_N2G)
   #define NO_MOTION_BEFORE_HOMING
 #endif
 
 #if defined(REXYZ_D2)
   #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 800, 98 }
 #else
-  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
+  #if defined(REXYZ_N2G) || defined(REXYZ_N3)
+    #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 190 }
+  #else
+    #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
+  #endif
 #endif
 
 #if defined(REXYZ_A1) || defined(REXYZ_D2)
