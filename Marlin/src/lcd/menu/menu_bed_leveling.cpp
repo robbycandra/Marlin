@@ -209,26 +209,19 @@
     if (g29_is_running) {
       if (ui.should_draw()) {
         dtostrf(probe_measured_z,1,2,mea_z);
-        #if ENABLED(REXYZ_LCD12864)
-          if (probe_xpos == 0) {
-            sprintf_P(promptstr, PSTR(" Bed Leveling"));
-            MenuEditItemBase::draw_edit_screen(promptstr);
-          }
-          else {
+        if (probe_xpos == 0) {
+          constexpr uint8_t line = (LCD_HEIGHT - 1) / 2;
+          if (ui.should_draw()) MenuItem_static::draw(line, PSTR("Bed Leveling"));
+        }
+        else {
+          #if ENABLED(REXYZ_LCD12864)
             sprintf_P(promptstr, PSTR(" Probe x%i y%i"), probe_xpos, probe_ypos);
-            MenuEditItemBase::draw_edit_screen(promptstr, mea_z);
-          }
-        #endif
-        #if ENABLED(REXYZ_LCD2004)
-          if (probe_xpos == 0) {
-            sprintf_P(promptstr, PSTR("Bed Leveling"));
-            MenuEditItemBase::draw_edit_screen(promptstr);
-          }
-          else {
+          #elif ENABLED(REXYZ_LCD2004)
             sprintf_P(promptstr, PSTR("Probe x%i y%i"), probe_xpos, probe_ypos);
-            MenuEditItemBase::draw_edit_screen(promptstr, mea_z);
-          }
-        #endif
+          #endif
+          MenuEditItemBase::draw_edit_screen(promptstr, mea_z);
+        }
+        // untuk mengatasi tulisan tergambar separuh di 12864
         ui.refresh(LCDVIEW_CALL_REDRAW_NEXT);
       }
     }
