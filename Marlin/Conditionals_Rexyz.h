@@ -701,13 +701,13 @@
 #endif
 
 #if defined(REXYZ_D2)
-  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 800, 98 }
+  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 800, 95 }
+#elif defined(REXYZ_N2G)
+  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 190 }
+#elif defined(REXYZ_N3)
+  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 330 }
 #else
-  #if defined(REXYZ_N2G) || defined(REXYZ_N3)
-    #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 190 }
-  #else
-    #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 98 }
-  #endif
+  #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 95 }
 #endif
 
 #if defined(REXYZ_A1) || defined(REXYZ_D2)
