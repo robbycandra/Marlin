@@ -397,6 +397,16 @@ void menu_move() {
   END_MENU();
 }
 
+void rmenu_home_axis() {
+  START_MENU();
+  BACK_ITEM(MSG_MOTION);
+  GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
+  GCODES_ITEM(MSG_AUTO_HOME_X, PSTR("G28 X"));
+  GCODES_ITEM(MSG_AUTO_HOME_Y, PSTR("G28 Y"));
+  GCODES_ITEM(MSG_AUTO_HOME_Z, PSTR("G28 Z"));
+  END_MENU();
+}
+
 #if ENABLED(AUTO_BED_LEVELING_UBL)
   void _lcd_ubl_level_bed();
 #elif ENABLED(LCD_BED_LEVELING)
@@ -422,11 +432,10 @@ void menu_motion() {
   //
   // Auto Home
   //
-  GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
   #if ENABLED(INDIVIDUAL_AXIS_HOMING_MENU)
-    GCODES_ITEM(MSG_AUTO_HOME_X, PSTR("G28 X"));
-    GCODES_ITEM(MSG_AUTO_HOME_Y, PSTR("G28 Y"));
-    GCODES_ITEM(MSG_AUTO_HOME_Z, PSTR("G28 Z"));
+    MENU_ITEM_P(submenu22,PSTR("Home Axis"), rmenu_home_axis);
+  #else
+    GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
   #endif
 
   //
@@ -484,15 +493,6 @@ void menu_motion() {
 }
 
 #if ENABLED(REXYZ_TOUCH_MENU)
-
-void rmenu_home_axis() {
-  START_MENU();
-  GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
-  GCODES_ITEM(MSG_AUTO_HOME_X, PSTR("G28 X"));
-  GCODES_ITEM(MSG_AUTO_HOME_Y, PSTR("G28 Y"));
-  GCODES_ITEM(MSG_AUTO_HOME_Z, PSTR("G28 Z"));
-  END_MENU();
-}
 
 void rmenu_motion() {
   START_MENU();
