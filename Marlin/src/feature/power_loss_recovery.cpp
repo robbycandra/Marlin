@@ -291,7 +291,7 @@ void PrintJobRecovery::resume() {
 
   #if HAS_LEVELING
     // Make sure leveling is off before any G92 and G28
-    gcode.process_subcommands_now_P(PSTR("M420 S0 Z0"));
+    gcode.process_subcommands_now_P(PSTR("M420 S0 Z0\nM109 S150"));
   #endif
 
   // Reset E, raise Z, home XY...
