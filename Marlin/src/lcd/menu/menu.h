@@ -742,7 +742,7 @@ class MenuItem_bool : public MenuEditItemBase {
     return;                                                   \
   }                                                           \
   if (ui.should_draw()) MenuItem_confirm::draw                \
-    (encoderLine == _thisItemNr, _lcdLineNr, PLABEL, ##V);    \
+    (false, _lcdLineNr, PLABEL, ##V);    \
 }while(0)
 
 #else
