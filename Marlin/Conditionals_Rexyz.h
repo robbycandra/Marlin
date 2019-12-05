@@ -285,7 +285,7 @@
 //#if defined(REXYZ_BOARD_ROBINMINI) || defined(REXYZ_BOARD_ROBIN) || defined(REXYZ_BOARD_DLION)
 #if defined(REXYZ_STM32F1)
   //#define SD_DETECT_INVERTED
-  #define SPI_SPEED SPI_HALF_SPEED
+  #define SPI_SPEED SPI_QUARTER_SPEED
   #define SDIO_SUPPORT
   #define SDCARD_SORT_ALPHA
   #define REXYZ_SDSORT_USES_RAM    true
@@ -721,6 +721,11 @@
 #endif
 // #define MANUAL_FEEDRATE { 50*60, 50*60, 4*60, 60 } // Feedrates for manual moves along X, Y, Z, E from panel
 
+#if defined(REXYZ_N3)
+  #define LIN_ADVANCE_K 0.12    // Unit: mm compression per 1mm/s extruder speed
+#else
+  #define LIN_ADVANCE_K 0.22    // Unit: mm compression per 1mm/s extruder speed
+#endif
 
 //===========================================================================
 //============================= LCD & Sound Settings ========================
