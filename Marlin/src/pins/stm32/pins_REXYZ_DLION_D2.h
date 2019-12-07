@@ -151,3 +151,31 @@
   #define TOUCH_MOSI_PIN   PA7
   #define TOUCH_SCK_PIN    PA5
 #endif
+
+//
+// Persistent Storage
+// If no option is selected below the SD Card will be used
+//
+//#define SPI_EEPROM
+#define FLASH_EEPROM_EMULATION
+
+#undef E2END
+#if ENABLED(SPI_EEPROM)
+  // SPI2 EEPROM Winbond W25Q64 (8MB/64Mbits)
+  #define ENABLE_SPI2
+  #define SPI_CHAN_EEPROM1   2
+  #define SPI_EEPROM1_CS     BOARD_SPI2_NSS_PIN   // pin 34
+  #define EEPROM_SCK         BOARD_SPI2_SCK_PIN   // PA5 pin 30
+  #define EEPROM_MISO        BOARD_SPI2_MISO_PIN  // PA6 pin 31
+  #define EEPROM_MOSI        BOARD_SPI2_MOSI_PIN  // PA7 pin 32
+
+  #define EEPROM_PAGE_SIZE   0x1000U              // 4KB (from datasheet)
+  #define E2END ((16 * EEPROM_PAGE_SIZE)-1)       // Limit to 64KB for now...
+#elif ENABLED(FLASH_EEPROM_EMULATION)
+  // SoC Flash (framework-arduinoststm32-maple/STM32F1/libraries/EEPROM/EEPROM.h)
+  #define EEPROM_START_ADDRESS (0x8000000UL + (512 * 1024) - 2 * EEPROM_PAGE_SIZE)
+  #define EEPROM_PAGE_SIZE     (0x800U)     // 2KB, but will use 2x more (4KB)
+  #define E2END (EEPROM_PAGE_SIZE - 1)
+#else
+  #define E2END (0x7FFU) // On SD, Limit to 2KB, require this amount of RAM
+#endif
