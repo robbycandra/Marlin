@@ -35,6 +35,11 @@
 #endif
 #define BOARD_INFO_NAME "Dlion Rexyz D2 board"
 
+//#define DISABLE_DEBUG            //  We still want to debug with STLINK...
+
+//#define DISABLE_JTAG             //  We free the jtag pins (PA15) but keep STLINK
+                                   //  Release PB4 (STEP_X_PIN) from JTAG NRST role.
+
 //#define STM32_XL_DENSITY
 // #define MCU_STM32F103ZE // not yet required
 // Enable EEPROM Emulation for this board, so that we don't overwrite factory data
