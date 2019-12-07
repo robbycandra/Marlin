@@ -355,7 +355,7 @@ inline void memset2(const void *ptr, uint16_t fill, size_t cnt) {
       #ifdef LCD_USE_DMA_FSMC
         if (k <= 80) { // generally is... for our buttons
           memcpy(&buffer[k], &buffer[0], k * sizeof(uint16_t));
-          LCD_IO_WriteSequence(buffer, k * sizeof(uint16_t));
+          LCD_IO_WriteSequence(buffer, k * 2);
         }
         else {
           LCD_IO_WriteSequence(buffer, k);
@@ -405,7 +405,12 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
       // Clear Screen Sequence
       u8g_WriteEscSeqP(u8g, dev, clear_screen_sequence);
       #ifdef LCD_USE_DMA_FSMC
-        LCD_IO_WriteMultiple(TFT_MARLINBG_COLOR, (320*240));
+        #if ENABLED(FULL_SCALE_TFT_320X240)
+          LCD_IO_WriteMultiple(TFT_MARLINBG_COLOR, (320*240));
+        #else
+          LCD_IO_WriteMultiple(TFT_MARLINBG_COLOR, (480*LCD_PIXEL_HEIGHT));
+          LCD_IO_WriteMultiple(COLOR_BLACK, (480*(320-LCD_PIXEL_HEIGHT)));
+        #endif
       #else
         memset2(buffer, COLOR_BLACK, WIDTH/2);
         for (uint16_t i = 0; i < LCD_PIXEL_HEIGHT*4; i++)
@@ -500,6 +505,10 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
       break;
 
     case U8G_DEV_MSG_PAGE_NEXT:
+      // Misal Y ada 32 pixel artinya HEIGHT = 32
+      // Sekali gambar di proses 8 pixel, artinya PAGE_HEIGHT = 8
+      // FIRST_PAGE -> page = 0, digunakan untuk proses variable, tidak mengupdate screen.
+      // NEXT_PAGE -> page 1, 2, 3, 4, digunakan utuk menggambar 8 line tiap kali update
       if (++page > (HEIGHT / PAGE_HEIGHT)) return 1;
 
       uint16_t color_fg, color_bg;
@@ -516,14 +525,21 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
         color_bg = TFT_MARLINUI_COLOR;
       }
 
+      // y adalah counter untuk line dalam tiap PAGE
       for (uint8_t y = 0; y < PAGE_HEIGHT; y++) {
         uint32_t k = 0;
         #ifdef LCD_USE_DMA_FSMC
+          // 2 memory digunakan selang seling
           buffer = (y & 1) ? bufferB : bufferA;
         #endif
         if (y < 4) {
+          // untuk y = 0,1,2,3
+          // i = indek kolom dari 0 sampai 479
           for (uint16_t i = 0; i < (uint32_t)pb->width; i++) {
+            // b = alamat buffer + i = alamat pixel dalam kolom
             const uint8_t b = *(((uint8_t *)pb->buf) + i);
+            // tiap pixel menggunakan 2bit sehingga ada 4 warna
+            // b = [clr3,clr3,clr2,clr2,clr1,clr1,clr0,clr0]
             const uint8_t clr = (b >> (y<<1)) & 0x03;
             switch(clr) {
               case 0: buffer[k++] = color_bg; break;
@@ -534,8 +550,13 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
           }
         }
         else {
+          // untuk y = 4,5,6,7
+          // i = indek kolom dari 0 sampai 479
           for (uint16_t i = 0; i < (uint32_t)pb->width; i++) {
+            // b = alamat buffer + width + i = alamat pixel dalam kolom
             const uint8_t b = *((uint32_t)pb->width + ((uint8_t *)pb->buf) + i);
+            // tiap pixel menggunakan 2bit sehingga ada 4 warna
+            // b = [clr7,clr7,clr6,clr6,clr5,clr5,clr4,clr4]
             const uint8_t clr = (b >> ((y-4)<<1)) & 0x03;
             switch(clr) {
               case 0: buffer[k++] = color_bg; break;
@@ -608,16 +629,15 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
           }
         }
         #ifdef LCD_USE_DMA_FSMC
-          memcpy(&buffer[256], &buffer[0], 512);
           if (allow_async) {
             if (y > 0 || page > 1) LCD_IO_WaitSequence_Async();
-            if (y == 7 && page == 8)
-              LCD_IO_WriteSequence(buffer, 512); // last line of last page
+            if (y == (PAGE_HEIGHT-1) && page == (HEIGHT / PAGE_HEIGHT))
+              LCD_IO_WriteSequence(buffer, WIDTH); // last line of last page
             else
-              LCD_IO_WriteSequence_Async(buffer, 512);
+              LCD_IO_WriteSequence_Async(buffer, WIDTH);
           }
           else
-            LCD_IO_WriteSequence(buffer, 512);
+            LCD_IO_WriteSequence(buffer, WIDTH);
         #else
           u8g_WriteSequence(u8g, dev, WIDTH / 2, (uint8_t*)buffer);
           u8g_WriteSequence(u8g, dev, WIDTH / 2, (uint8_t*)&(buffer[WIDTH / 4]));

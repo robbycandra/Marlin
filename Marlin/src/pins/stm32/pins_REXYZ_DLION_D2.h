@@ -107,9 +107,12 @@
 #define FSMC_CS_PIN        PD7
 #define FSMC_RS_PIN        PG0
 
-//#define LCD_USE_DMA_FSMC          // Use DMA transfers to send data to the TFT
-//#define FSMC_DMA_DEV       DMA2
-//#define FSMC_DMA_CHANNEL   DMA_CH5
+#define LCD_USE_DMA_FSMC          // Use DMA transfers to send data to the TFT
+#define FSMC_DMA_DEV       DMA2
+#define FSMC_DMA_CHANNEL   DMA_CH5
+
+#define DOGLCD_MOSI        -1  // Prevent auto-define by Conditionals_post.h
+#define DOGLCD_SCK         -1
 
 //
 // SD Card
