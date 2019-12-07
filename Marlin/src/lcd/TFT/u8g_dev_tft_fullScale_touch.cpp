@@ -406,7 +406,8 @@ uint8_t u8g_dev_tft_fullScale_touch_fn(u8g_t *u8g, u8g_dev_t *dev, uint8_t msg, 
       u8g_WriteEscSeqP(u8g, dev, clear_screen_sequence);
       #ifdef LCD_USE_DMA_FSMC
         #if ENABLED(FULL_SCALE_TFT_320X240)
-          LCD_IO_WriteMultiple(TFT_MARLINBG_COLOR, (320*240));
+          LCD_IO_WriteMultiple(TFT_MARLINBG_COLOR, (320*LCD_PIXEL_HEIGHT));
+          LCD_IO_WriteMultiple(COLOR_BLACK, (320*(320-LCD_PIXEL_HEIGHT)));
         #else
           LCD_IO_WriteMultiple(TFT_MARLINBG_COLOR, (480*LCD_PIXEL_HEIGHT));
           LCD_IO_WriteMultiple(COLOR_BLACK, (480*(320-LCD_PIXEL_HEIGHT)));
