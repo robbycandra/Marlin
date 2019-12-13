@@ -38,6 +38,12 @@
 //
 #define DISABLE_DEBUG
 
+#define FLASH_EEPROM_EMULATION
+// 2K in a AT24C16N
+#define EEPROM_PAGE_SIZE	(uint16)0x800 // 2048
+#define EEPROM_START_ADDRESS	((uint32)(0x8000000 + 512 * 1024 - 2 * EEPROM_PAGE_SIZE))
+#define E2END (EEPROM_PAGE_SIZE - 1)
+
 //
 // Note: MKS Robin mini board is using SPI2 interface.
 //
@@ -46,15 +52,13 @@
 //
 // Limit Switches
 //
-#define X_MIN_PIN          PA15
-#define X_MAX_PIN          PA15
-#define Y_MIN_PIN          PA12
-#define Y_MAX_PIN          PA12
+#define X_STOP_PIN         PA15
+#define Y_STOP_PIN         PA12
 #define Z_MIN_PIN          PA11
 #define Z_MAX_PIN          PC4
 
 #ifndef FIL_RUNOUT_PIN
-  #define FIL_RUNOUT_PIN   PA4  // Marlin -> PF11  // MT_DET
+  #define FIL_RUNOUT_PIN   PA4  // MT_DET
 #endif
 
 //
@@ -119,16 +123,33 @@
   #define FSMC_CS_PIN      PD7    // NE4
   #define FSMC_RS_PIN      PD11   // A0
 
-  #define LCD_RESET_PIN     PC6   // Marlin -> PF6
+  #define LCD_RESET_PIN    PC6
   #define NO_LCD_REINIT           // Suppress LCD re-initialization
 
   #define LCD_BACKLIGHT_PIN PD13
 
   #if ENABLED(TOUCH_BUTTONS)
     #define TOUCH_CS_PIN   PC2
-    #define TOUCH_CS       PC2
+    #define TOUCH_SCK_PIN  PB13
+    #define TOUCH_MOSI_PIN PB15
+    #define TOUCH_MISO_PIN PB14
   #endif
 #endif
+
+/**
+ * STM32F1 Default SPI Pins
+ *
+ *         SS     SCK     MISO    MOSI
+ *       +-----------------------------+
+ *  SPI1 | PA4    PA5     PA6     PA7  |
+ *  SPI2 | PB12   PB13    PB14    PB15 |
+ *  SPI3 | PA15   PB3     PB4     PB5  |
+ *       +-----------------------------+
+ * Any pin can be used for Chip Select (SS_PIN)
+ * SPI1 is enabled by default
+ */
+#define TOUCH_INT_PIN  -1
+#define SS_PIN         PB12
 
 #define LCD_USE_DMA_FSMC          // Use DMA transfers to send data to the TFT
 #define FSMC_DMA_DEV       DMA2
@@ -144,24 +165,6 @@
 #define MOTOR_CURRENT_PWM_RANGE    1500 // (255 * (1000mA / 65535)) * 257 = 1000 is equal 1.6v Vref in turn equal 1Amp
 #define DEFAULT_PWM_MOTOR_CURRENT  { 850, 750, 850 } // 1.05Amp per driver, here is XY, Z and E. This values determined empirically.
 
-/**
- * STM32F1 Default SPI Pins
- *
- *         SS     SCK     MISO    MOSI
- *       +-----------------------------+
- *  SPI1 | PA4    PA5     PA6     PA7  |
- *  SPI2 | PB12   PB13    PB14    PB15 |
- *  SPI3 | PA15   PB3     PB4     PB5  |
- *       +-----------------------------+
- * Any pin can be used for Chip Select (SS_PIN)
- * SPI1 is enabled by default
- */
-#define TOUCH_INT_PIN  -1
-#define TOUCH_MISO_PIN PB14
-#define TOUCH_MOSI_PIN PB15
-#define TOUCH_SCK_PIN  PB13
-#define SS_PIN         PB12
-
 // This is a kind of workaround in case native marlin "digipot" interface won't work.
 // Required to enable related code in STM32F1/HAL.cpp
 //#ifndef MKS_ROBIN_MINI_VREF_PWM
@@ -171,31 +174,3 @@
 //#define VREF_XY_PIN        PA6
 //#define VREF_Z_PIN         PA7
 //#define VREF_E1_PIN        PB0
-
-//
-// Persistent Storage
-// If no option is selected below the SD Card will be used
-//
-//#define SPI_EEPROM
-#define FLASH_EEPROM_EMULATION
-
-#undef E2END
-#if ENABLED(SPI_EEPROM)
-  // SPI2 EEPROM Winbond W25Q64 (8MB/64Mbits)
-  #define ENABLE_SPI2
-  #define SPI_CHAN_EEPROM1   2
-  #define SPI_EEPROM1_CS     BOARD_SPI2_NSS_PIN   // pin 34
-  #define EEPROM_SCK         BOARD_SPI2_SCK_PIN   // PA5 pin 30
-  #define EEPROM_MISO        BOARD_SPI2_MISO_PIN  // PA6 pin 31
-  #define EEPROM_MOSI        BOARD_SPI2_MOSI_PIN  // PA7 pin 32
-
-  #define EEPROM_PAGE_SIZE   0x1000U              // 4KB (from datasheet)
-  #define E2END ((16 * EEPROM_PAGE_SIZE)-1)       // Limit to 64KB for now...
-#elif ENABLED(FLASH_EEPROM_EMULATION)
-  // SoC Flash (framework-arduinoststm32-maple/STM32F1/libraries/EEPROM/EEPROM.h)
-  #define EEPROM_START_ADDRESS (0x8000000UL + (512 * 1024) - 2 * EEPROM_PAGE_SIZE)
-  #define EEPROM_PAGE_SIZE     (0x800U)     // 2KB, but will use 2x more (4KB)
-  #define E2END (EEPROM_PAGE_SIZE - 1)
-#else
-  #define E2END (0x7FFU) // On SD, Limit to 2KB, require this amount of RAM
-#endif
