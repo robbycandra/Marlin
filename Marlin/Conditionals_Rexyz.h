@@ -419,12 +419,29 @@
     #define REXYZ_E0_AUTO_FAN_PIN FAN2_PIN
     #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255  // 255 == full speed
 #endif
-#if defined(REXYZ_N_TYPE)
+#if defined(REXYZ_N2) || defined(REXYZ_N2G)
     #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
-    #define REXYZ_CONTROLLERFAN_SPEED 225 // 255 == full speed
+    #define REXYZ_CONTROLLERFAN_SPEED 255 // 255 == full speed
     #define REXYZ_E0_AUTO_FAN_PIN FAN1_PIN
     #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 150
-    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 191   // 255 == full speed
+    #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
+#endif
+#if defined(REXYZ_N3) // N3 use autofan for PSU control
+    #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
+    #define REXYZ_CONTROLLERFAN_SPEED 255 // 255 == full speed, need full speed for better cooling
+    #define PSU_CONTROL
+    #define PSU_NAME "Power Supply"
+    #define PSU_ACTIVE_HIGH true     // Set 'false' for ATX, 'true' for X-Box
+    //This option is use E1_TX_UART for PS_PIN and leave autofan working at H1
+        #define REXYZ_E0_AUTO_FAN_PIN FAN1_PIN
+        #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 150
+        #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255 // 255 == full speed, need full speed for better cooling
+        #define PS_ON_PIN P1_04 //use E1_TX_UART
+    //This option is use H1 (auto fan at N2)
+    //  #define REXYZ_E0_AUTO_FAN_PIN -1
+    //  #define FAN1_PIN -1 // To prevent auto define
+    //  #define PS_ON_PIN P2_04 //use FAN1_PIN
+    //End
 #endif
 #if defined(REXYZ_A8P)
     #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
@@ -600,8 +617,11 @@
     #define REXYZ_Z_MIN_POS 0
     #define REXYZ_X_MAX_POS 223
     #define REXYZ_Y_MAX_POS 220
-    #define REXYZ_Z_MAX_POS 255
-
+    #if defined(REXYZ_N2G)
+      #define REXYZ_Z_MAX_POS 250
+    #else
+      #define REXYZ_Z_MAX_POS 255
+    #endif
     #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
 
     #define REXYZ_GRID_MAX_POINTS_X 3
