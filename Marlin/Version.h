@@ -28,7 +28,7 @@
 /**
  * Marlin release version identifier
  */
-#define SHORT_BUILD_VERSION "2.0.0" REXYZ_FW_VERSION
+#define SHORT_BUILD_VERSION "2.0.1" REXYZ_FW_VERSION
 
 /**
  * Verbose version identifier which should contain a reference to the location
