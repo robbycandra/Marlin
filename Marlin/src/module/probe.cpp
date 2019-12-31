@@ -121,7 +121,9 @@ uint8_t rexyz_probe_mode;
 
   // Move to the magnet to unlock the probe
   void run_deploy_moves_script() {
-    #if TOUCH_MI_DEPLOY_XPOS > X_MAX_BED
+    #ifndef TOUCH_MI_DEPLOY_XPOS
+      #define TOUCH_MI_DEPLOY_XPOS X_MIN_POS
+    #elif TOUCH_MI_DEPLOY_XPOS > X_MAX_BED
       TemporaryGlobalEndstopsState unlock_x(false);
     #endif
     #if TOUCH_MI_DEPLOY_YPOS > Y_MAX_BED
@@ -383,7 +385,7 @@ bool set_probe_deployed(const bool deploy) {
   // Fix-mounted probe should only raise for deploy
   // unless PAUSE_BEFORE_DEPLOY_STOW is enabled
 
-  #if ENABLED(FIX_MOUNTED_PROBE)
+  #if EITHER(FIX_MOUNTED_PROBE, NOZZLE_AS_PROBE)
     bool deploy_stow_condition = true;
     if (rexyz_probe_mode == REXYZPROBE_MANUAL_DEPLOY)
       deploy_stow_condition = true;
