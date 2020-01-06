@@ -39,7 +39,7 @@
     !defined(REXYZ_S22) && \
     !defined(REXYZ_S33) && \
     !defined(REXYZ_N2) && \
-    !defined(REXYZ_N3) && \
+    !defined(REXYZ_N3G) && \
     !defined(REXYZ_4MAX) \
 )
     #error Must specify printer model. Please see "Configuration_Rexyz.h" for directions.
@@ -55,7 +55,7 @@
   + ENABLED(REXYZ_4MAX) \
   + ENABLED(REXYZ_N2)   \
   + ENABLED(REXYZ_N2G)   \
-  + ENABLED(REXYZ_N3)   \
+  + ENABLED(REXYZ_N3G)   \
   + ENABLED(REXYZ_A8P)  \
   + ENABLED(REXYZ_A1)   \
   + ENABLED(REXYZ_A2)   \
@@ -86,13 +86,13 @@
   #endif
 #endif
 
-#if ENABLED(REXYZ_N3)
+#if ENABLED(REXYZ_N3G)
   #if DISABLED(REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH)
     #error "Please enable REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH."
   #endif
 #endif
 
-#if ENABLED(REXYZ_N2) || ENABLED(REXYZ_N2G) || ENABLED(REXYZ_N3)
+#if ENABLED(REXYZ_N2) || ENABLED(REXYZ_N2G) || ENABLED(REXYZ_N3G)
   #if DISABLED(REXYZ_FILAMENT_MOTION_DETECTOR)
     #error "Please enable REXYZ_FILAMENT_MOTION_DETECTOR."
   #endif
@@ -191,8 +191,8 @@
     #define REXYZ_LCD12864
     #define REXYZ_EEPROM_FIRMWARE_PROTECTION
 #endif
-#if defined(REXYZ_N3)
-    #define REXYZ_MACHINE_FRAME_TYPE "N3"
+#if defined(REXYZ_N3G)
+    #define REXYZ_MACHINE_FRAME_TYPE "N3G"
     #define REXYZ_BOARD_SKR13
     #define REXYZ_N_TYPE
     #define REXYZ_LCD12864
@@ -433,7 +433,7 @@
     #define EXTRUDER_AUTO_FAN_TEMPERATURE_MAX 150
     #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255   // 255 == full speed
 #endif
-#if defined(REXYZ_N3) // N3 use autofan for PSU control
+#if defined(REXYZ_N3G) // N3 use autofan for PSU control
     #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 255 // 255 == full speed, need full speed for better cooling
     #define PSU_CONTROL
@@ -650,7 +650,7 @@
     #define REXYZ_GRID_MAX_POINTS_X 3
     #define REXYZ_GRID_MAX_POINTS_Y 3
 #endif
-#if defined(REXYZ_S33) || defined(REXYZ_N3)
+#if defined(REXYZ_S33) || defined(REXYZ_N3G)
     #define REXYZ_X_BED_SIZE 300
     #define REXYZ_Y_BED_SIZE 300
     #define REXYZ_X_MIN_POS 0
@@ -731,7 +731,7 @@
   #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 800, 95 }
 #elif defined(REXYZ_N2G)
   #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 190 }
-#elif defined(REXYZ_N3)
+#elif defined(REXYZ_N3G)
   #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 330 }
 #else
   #define REXYZ_DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 400, 95 }
@@ -748,7 +748,7 @@
 #endif
 // #define MANUAL_FEEDRATE { 50*60, 50*60, 4*60, 60 } // Feedrates for manual moves along X, Y, Z, E from panel
 
-#if defined(REXYZ_N3)
+#if defined(REXYZ_N3G)
   #define LIN_ADVANCE_K 0.12    // Unit: mm compression per 1mm/s extruder speed
 #else
   #define LIN_ADVANCE_K 0.22    // Unit: mm compression per 1mm/s extruder speed
