@@ -45,7 +45,7 @@
   #include "../feature/host_actions.h"
 #endif
 
-#include "../Marlin.h" // for stop(), disable_e_steppers, wait_for_user
+#include "../MarlinCore.h" // for stop(), disable_e_steppers, wait_for_user
 
 #if HAS_LEVELING
   #include "../feature/bedlevel/bedlevel.h"
@@ -63,9 +63,7 @@
   #include "../feature/backlash.h"
 #endif
 
-xyz_pos_t probe_offset; // Initialized by settings.load()
 uint8_t rexyz_probe_mode;
-
 #if ENABLED(BLTOUCH)
   #include "../feature/bltouch.h"
 #endif
@@ -93,6 +91,14 @@ uint8_t rexyz_probe_mode;
 
 #define DEBUG_OUT ENABLED(DEBUG_LEVELING_FEATURE)
 #include "../core/debug_out.h"
+
+
+xyz_pos_t probe_offset; // Initialized by settings.load()
+
+#if HAS_PROBE_XY_OFFSET
+  xyz_pos_t &probe_offset_xy = probe_offset;
+#endif
+
 
 #if ENABLED(Z_PROBE_SLED)
 
@@ -729,7 +735,7 @@ float probe_at_point(const float &rx, const float &ry, const ProbePtRaise raise_
   xyz_pos_t npos = { rx, ry };
   if (probe_relative) {
     if (!position_is_reachable_by_probe(npos)) return NAN;  // The given position is in terms of the probe
-    npos -= probe_offset;                                   // Get the nozzle position
+    npos -= probe_offset_xy;                                // Get the nozzle position
   }
   else if (!position_is_reachable(npos)) return NAN;        // The given position is in terms of the nozzle
 

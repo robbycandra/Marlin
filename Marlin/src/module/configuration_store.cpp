@@ -55,7 +55,7 @@
 #include "../core/language.h"
 #include "../libs/vector_3.h"   // for matrix_3x3
 #include "../gcode/gcode.h"
-#include "../Marlin.h"
+#include "../MarlinCore.h"
 
 #if EITHER(EEPROM_SETTINGS, SD_FIRMWARE_UPDATE)
   #include "../HAL/shared/persistent_store_api.h"
@@ -1185,7 +1185,7 @@ void MarlinSettings::postprocess() {
         EEPROM_WRITE(planner.extruder_advance_K);
       #else
         dummy = 0;
-        for (uint8_t q = EXTRUDERS; q--;) EEPROM_WRITE(dummy);
+        for (uint8_t q = _MIN(EXTRUDERS, 1); q--;) EEPROM_WRITE(dummy);
       #endif
     }
 
@@ -2063,7 +2063,7 @@ void MarlinSettings::postprocess() {
       // Linear Advance
       //
       {
-        float extruder_advance_K[EXTRUDERS];
+        float extruder_advance_K[_MIN(EXTRUDERS, 1)];
         _FIELD_TEST(planner_extruder_advance_K);
         EEPROM_READ(extruder_advance_K);
         #if ENABLED(LIN_ADVANCE)
@@ -2501,7 +2501,12 @@ void MarlinSettings::reset() {
   #if HAS_BED_PROBE
     constexpr float dpo[XYZ] = NOZZLE_TO_PROBE_OFFSET;
     static_assert(COUNT(dpo) == 3, "NOZZLE_TO_PROBE_OFFSET must contain offsets for X, Y, and Z.");
-    LOOP_XYZ(a) probe_offset[a] = dpo[a];
+    #if HAS_PROBE_XY_OFFSET
+      LOOP_XYZ(a) probe_offset[a] = dpo[a];
+    #else
+      probe_offset.x = probe_offset.y = 0;
+      probe_offset.z = dpo[Z_AXIS];
+    #endif
   #endif
 
   #if HAS_BED_PROBE
@@ -2702,9 +2707,9 @@ void MarlinSettings::reset() {
   #if ENABLED(LIN_ADVANCE)
     LOOP_L_N(i, EXTRUDERS) {
       planner.extruder_advance_K[i] = LIN_ADVANCE_K;
-    #if ENABLED(EXTRA_LIN_ADVANCE_K)
-      saved_extruder_advance_K[i] = LIN_ADVANCE_K;
-    #endif
+      #if ENABLED(EXTRA_LIN_ADVANCE_K)
+        saved_extruder_advance_K[i] = LIN_ADVANCE_K;
+      #endif
     }
   #endif
 
@@ -3292,9 +3297,16 @@ void MarlinSettings::reset() {
         say_units(true);
       }
       CONFIG_ECHO_START();
-      SERIAL_ECHOLNPAIR_P(PSTR("  M851 X"), LINEAR_UNIT(probe_offset.x),
-                                  SP_Y_STR, LINEAR_UNIT(probe_offset.y),
-                                  SP_Z_STR, LINEAR_UNIT(probe_offset.z));
+      SERIAL_ECHOLNPAIR_P(
+        #if HAS_PROBE_XY_OFFSET
+          PSTR("  M851 X"), LINEAR_UNIT(probe_offset_xy.x),
+                  SP_Y_STR, LINEAR_UNIT(probe_offset_xy.y),
+                  SP_Z_STR
+        #else
+          PSTR("  M851 X0 Y0 Z")
+        #endif
+        , LINEAR_UNIT(probe_offset.z)
+      );
     #endif
 
     /**

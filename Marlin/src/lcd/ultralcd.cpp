@@ -31,11 +31,13 @@
   #include "../feature/host_actions.h"
 #endif
 
+// All displays share the MarlinUI class
 #include "ultralcd.h"
 MarlinUI ui;
 
-// All displays share the MarlinUI class
 #if HAS_DISPLAY
+  #include "../module/printcounter.h"
+  #include "../MarlinCore.h"
   #include "../gcode/queue.h"
   #include "fontutils.h"
   #include "../sd/cardreader.h"
@@ -97,10 +99,7 @@ MarlinUI ui;
 #include "../sd/cardreader.h"
 #include "../module/temperature.h"
 #include "../module/planner.h"
-#include "../module/printcounter.h"
 #include "../module/motion.h"
-
-#include "../Marlin.h"
 
 #if ENABLED(POWER_LOSS_RECOVERY)
   #include "../feature/power_loss_recovery.h"
@@ -995,6 +994,9 @@ void MarlinUI::update() {
           if (touch_buttons & (EN_A | EN_B)) {          // A and/or B button?
             encoderDiff = (ENCODER_STEPS_PER_MENU_ITEM) * (ENCODER_PULSES_PER_STEP) * encoderDirection;
             if (touch_buttons & EN_A) encoderDiff *= -1;
+            #if ENABLED(AUTO_BED_LEVELING_UBL)
+              if (external_control) ubl.encoder_diff = encoderDiff;
+            #endif
             next_button_update_ms = ms + repeat_delay;            // Assume the repeat delay
             if (!wait_for_unclick && !arrow_pressed) {  // On click prepare for repeat
               next_button_update_ms += 250;             // Longer delay on first press
@@ -1508,7 +1510,7 @@ void MarlinUI::update() {
 
     } // next_button_update_ms
 
-    #if HAS_ENCODER_WHEEL
+    #if HAS_ENCODER_WHEEL && DISABLED(TOUCH_BUTTONS)
       static uint8_t lastEncoderBits;
 
       #define encrot0 0
@@ -1675,9 +1677,6 @@ void MarlinUI::update() {
       return_to_status();
     #endif
   }
-
-  #include "../Marlin.h"
-  #include "../module/printcounter.h"
 
   PGM_P print_paused = GET_TEXT(MSG_PRINT_PAUSED);
 
