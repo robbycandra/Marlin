@@ -248,8 +248,7 @@ class FilamentSensorBase {
                 motion_detected[e]++;
 
                 #ifdef FILAMENT_RUNOUT_SENSOR_DEBUG
-                  SERIAL_CHAR(' '); 
-                  SERIAL_CHAR('0' + e);           
+                  SERIAL_CHAR(' ', '0' + e);           
                   SERIAL_ECHOPAIR(", #", motion_detected[e]);    
                 #endif
               }
