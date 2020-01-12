@@ -711,7 +711,14 @@ G29_TYPE GcodeSuite::G29() {
             ui.status_printf_P(0, PSTR(S_FMT " %i/%i"), GET_TEXT(MSG_PROBING_MESH), int(pt_index), int(GRID_MAX_POINTS));
           #endif
 
-          measured_z = faux ? 0.001f * random(-100, 101) : probe_at_point(probePos, raise_after, verbose_level);
+          if (faux)
+            measured_z = 0.001f * random(-100, 101);
+          else {
+            measured_z = probe_at_point(probePos, raise_after, verbose_level);
+            // Retry once if failed
+            if (isnan(measured_z) || (measured_z > raise_after / 2))
+              measured_z = probe_at_point(probePos, raise_after, verbose_level);
+          }
           probe_xpos = meshCount.x + 1;
           probe_ypos = meshCount.y + 1;
           probe_measured_z = measured_z;
