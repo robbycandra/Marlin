@@ -96,9 +96,9 @@
   #if DISABLED(REXYZ_FILAMENT_MOTION_DETECTOR)
     #error "Please enable REXYZ_FILAMENT_MOTION_DETECTOR."
   #endif
-  #if ENABLED(REXYZ_TOUCH_UI)
-    #error "Please disable REXYZ_TOUCH_UI."
-  #endif
+  //#if ENABLED(REXYZ_TOUCH_UI)
+  //  #error "Please disable REXYZ_TOUCH_UI."
+  //#endif
   #if DISABLED(TARGET_LPC1768)
     #error "Please use LPC1768"
   #endif
@@ -238,13 +238,14 @@
 #endif
 #if defined(REXYZ_BOARD_SKR13)
     #define REXYZ_MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
-    #define REXYZ_SERIAL_PORT -1
     // Use Onboard SD Card.
     #define SDCARD_CONNECTION ONBOARD
   #if defined(REXYZ_TOUCH_UI)
       // If using TFT (or not using)
-      //#define REXYZ_SERIAL_PORT -1
-    #define SERIAL_PORT_2 0
+    #define REXYZ_SERIAL_PORT 0
+    #define SERIAL_PORT_2 -1
+  #else
+    #define REXYZ_SERIAL_PORT -1
   #endif
 #endif
 #if defined(REXYZ_BOARD_ROBINMINI)
@@ -426,7 +427,7 @@
     #define REXYZ_E0_AUTO_FAN_PIN FAN2_PIN
     #define REXYZ_EXTRUDER_AUTO_FAN_SPEED 255  // 255 == full speed
 #endif
-#if defined(REXYZ_N2) || defined(REXYZ_N2G) || defined(REXYZ_N3G)
+#if defined(REXYZ_N_TYPE)
     #define REXYZ_CONTROLLER_FAN_PIN -1   // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 255 // 255 == full speed
     #define REXYZ_E0_AUTO_FAN_PIN FAN1_PIN
@@ -718,7 +719,7 @@
 //============================= Movement Settings ===========================
 //===========================================================================
 
-#if defined(REXYZ_N2) || defined(REXYZ_N2G)
+#if defined(REXYZ_N_TYPE)
   #define NO_MOTION_BEFORE_HOMING
 #endif
 
