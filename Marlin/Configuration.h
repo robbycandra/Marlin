@@ -736,12 +736,13 @@
  * Default Max Feed Rate (mm/s)
  * Override with M203
  *                                      X, Y, Z, E0 [, E1[, E2...]]
+ * Please remind that max step / unit for 8-bit mega is around 35K step / sec
  */
-#define DEFAULT_MAX_FEEDRATE          { 200, 200, 10, 25 }
+#define DEFAULT_MAX_FEEDRATE          { 200, 200, 10, 60 }
 
 #define LIMITED_MAX_FR_EDITING        // Limit edit via M203 or LCD to DEFAULT_MAX_FEEDRATE * 2
 #if ENABLED(LIMITED_MAX_FR_EDITING)
-  #define MAX_FEEDRATE_EDIT_VALUES    { 400, 400, 30, 50 } // ...or, set your own edit limits
+  #define MAX_FEEDRATE_EDIT_VALUES    { 400, 400, 30, 100 } // ...or, set your own edit limits
 #endif
 
 /**
