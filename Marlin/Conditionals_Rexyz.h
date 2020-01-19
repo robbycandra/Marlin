@@ -441,7 +441,7 @@
       #if defined(POWER_OUTAGE_DETECT)
         #define POWER_LOSS_PIN P0_25_A2
         #define POWER_LOSS_STATE LOW
-        #define POWER_LOSS_ZRAISE 10
+        #define POWER_LOSS_ZRAISE 2
         #define BACKUP_POWER_SUPPLY       // Backup power / UPS to move the steppers on power loss
       #endif
     #endif
