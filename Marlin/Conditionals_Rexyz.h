@@ -87,8 +87,10 @@
 #endif
 
 #if ENABLED(REXYZ_N3G)
-  #if DISABLED(REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH)
-    #error "Please enable REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH."
+  #if DISABLED(EXPERIMENTAL)
+    #if DISABLED(REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH)
+      #error "Please enable REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH."
+    #endif
   #endif
 #endif
 
@@ -96,9 +98,11 @@
   #if DISABLED(REXYZ_FILAMENT_MOTION_DETECTOR)
     #error "Please enable REXYZ_FILAMENT_MOTION_DETECTOR."
   #endif
-  //#if ENABLED(REXYZ_TOUCH_UI)
-  //  #error "Please disable REXYZ_TOUCH_UI."
-  //#endif
+  #if DISABLED(EXPERIMENTAL)
+    #if ENABLED(REXYZ_TOUCH_UI)
+      #error "Please disable REXYZ_TOUCH_UI."
+    #endif
+  #endif
   #if DISABLED(TARGET_LPC1768)
     #error "Please use LPC1768"
   #endif
@@ -745,7 +749,11 @@
 // #define MANUAL_FEEDRATE { 50*60, 50*60, 4*60, 60 } // Feedrates for manual moves along X, Y, Z, E from panel
 
 #if defined(REXYZ_N3G)
-  #define LIN_ADVANCE_K 0.12    // Unit: mm compression per 1mm/s extruder speed
+  #if defined(NOZZLE_06)
+    #define LIN_ADVANCE_K 0.03    // Unit: mm compression per 1mm/s extruder speed
+  #else
+    #define LIN_ADVANCE_K 0.12    // Unit: mm compression per 1mm/s extruder speed
+  #endif
 #else
   #define LIN_ADVANCE_K 0.22    // Unit: mm compression per 1mm/s extruder speed
 #endif
@@ -1006,7 +1014,7 @@
       //#define BLTOUCH_LCD_VOLTAGE_MENU
       #define NUM_SERVOS 1
       #define REXYZ_DEFAULT_PROBE 1
-      #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 25, -23, -3 }
+      #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 25, -23, -1 }
 #endif
 #if defined(REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH)
     #define AUTO_BED_LEVELING_BILINEAR
@@ -1025,7 +1033,7 @@
       //#define BLTOUCH_LCD_VOLTAGE_MENU
       #define NUM_SERVOS 1
       #define REXYZ_DEFAULT_PROBE 1
-      #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 25, -23, -3 }
+      #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 25, -23, -1 }
 #endif
 
 //===========================================================================
