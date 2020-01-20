@@ -298,7 +298,7 @@ void menu_bed_leveling() {
     SUBMENU(MSG_LEVEL_CORNERS, _lcd_level_bed_corners);
     #if HAS_BED_PROBE
       SUBMENU_P(PSTR("Measure Probe Offset"), _lcd_measure_probe_offset);
-      SUBMENU_P(PSTR("Adjust Corner"), _lcd_adjust_corner);
+      SUBMENU_P(PSTR("Probe Corner"), _lcd_adjust_corner);
     #endif
   #endif
 

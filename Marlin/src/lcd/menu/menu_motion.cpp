@@ -476,7 +476,7 @@ void menu_motion() {
     ACTION_ITEM(MSG_LEVEL_CORNERS, _lcd_level_bed_corners);
     #if HAS_BED_PROBE
       ACTION_ITEM("Measure Probe Offset", _lcd_measure_probe_offset);
-      ACTION_ITEM("Adjust Corner", _lcd_adjust_corner);
+      ACTION_ITEM("Probe Corner", _lcd_adjust_corner);
     #endif
   #endif
 
