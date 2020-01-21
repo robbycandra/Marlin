@@ -27,12 +27,6 @@
 
 #include "../inc/MarlinConfig.h"
 
-enum RexyzProbeMode : uint8_t {
-  REXYZPROBE_NO_PROBE,
-  REXYZPROBE_PROXYMITY,
-  REXYZPROBE_MANUAL_DEPLOY,
-  REXYZPROBE_BLTOUCH
-};
 #if HAS_BED_PROBE
 
   extern xyz_pos_t probe_offset;
@@ -68,7 +62,7 @@ enum RexyzProbeMode : uint8_t {
 #else
 
   constexpr xyz_pos_t probe_offset{0};
-  constexpr uint8_t rexyz_probe_mode = REXYZPROBE_NO_PROBE;
+  constexpr uint8_t rexyz_probe_mode = REXYZPROBEENUM_0_NO_PROBE;
   constexpr xy_pos_t probe_offset_xy{0};
 
   #define DEPLOY_PROBE()

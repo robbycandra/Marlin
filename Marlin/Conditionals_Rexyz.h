@@ -72,8 +72,7 @@
   + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) \
   + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_MANUAL) \
   + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH) \
-  + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH) \
-  + ENABLED(REXYZ_MK8_PROXIMITY_8MM)
+  + ENABLED(REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH)
   #error "Please enable one and only one toolhead model."
 #endif
 
@@ -937,11 +936,10 @@
 //  1. D = Direct Extruder
 //     B = Bowden Extruder
 //  2. D = Direct Drive
-//  3. M = Manual Probe
-//     P8= Proximity 8mm
-//     F = Fixed Probe
+//     G = Geared Drive
+//  3. F = Fixed Probe
 //     T = 3D Touch Probe
-//     N = No Leveling
+//     N = No Probe
 //  Yg pernah terjual :
 //    REXYZ_MK8_MANUAL_PROBE - Yohanes
 //    REXYZ_MK8_MULTI_FIXPROBE_PROXYMITY - Panji Enjoy dll
@@ -949,7 +947,12 @@
 //
 //  Tidak pernah terjual :
 //    REXYZ_MK8_MULTI_FIXPROBE_MANUAL
-//    REXYZ_MK8_PROXIMITY_8MM
+
+#define REXYZPROBEENUM_0_NO_PROBE      0
+#define REXYZPROBEENUM_1_MANUAL_DEPLOY 1
+#define REXYZPROBEENUM_2_PROXYMITY     2
+#define REXYZPROBEENUM_3_BLTOUCH       3
+#define REXYZPROBEENUM_4_CLEAR3DTOUCH  4
 
 #if defined(REXYZ_BOWDEN_NO_LEVELING)
   #define REXYZ_MACHINE_TOOLHEAD_TYPE "BDN"
@@ -961,18 +964,9 @@
     // Direct DirectDrive Manual
     #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDM"
     #define REXYZ_PROBE_MANUALLY
+    #define REXYZ_DEFAULT_PROBE REXYZPROBEENUM_3_NO_PROBE
     #define REXYZ_MANUAL_PROBE_START_Z 0
     #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 0, 0, 0 }
-#endif
-#if defined(REXYZ_MK8_PROXIMITY_8MM)
-    #define AUTO_BED_LEVELING_BILINEAR
-    #define LCD_BED_LEVELING
-    // Direct DirectDrive Proximity 8
-    #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDP8"
-    #define REXYZ_USE_XMIN_PLUG
-    #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
-    #define REXYZ_FIX_MOUNTED_PROBE
-    #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 28.5, -23.5, -0.5 }
 #endif
 #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY) || defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL)
     #define AUTO_BED_LEVELING_BILINEAR
@@ -989,51 +983,45 @@
     #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
     #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
     #if defined(REXYZ_MK8_MULTI_FIXPROBE_PROXIMITY)
-      #define REXYZ_DEFAULT_PROBE 1
+      #define REXYZ_DEFAULT_PROBE REXYZPROBEENUM_2_PROXYMITY
       #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 29, -20, -0.5 }
     #endif
     #if defined(REXYZ_MK8_MULTI_FIXPROBE_MANUAL)
-      #define REXYZ_DEFAULT_PROBE 2
+      #define REXYZ_DEFAULT_PROBE REXYZPROBEENUM_1_MANUAL_DEPLOY
       #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 23, -27, -2.7 }
     #endif
 #endif
-#if defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH)
+#if defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH) || defined(REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH)
     #define AUTO_BED_LEVELING_BILINEAR
     #define LCD_BED_LEVELING
-    // Direct DirectDrive Touch
-    #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDT"
+    #if defined(REXYZ_N3G)
+      // Direct GearedDrive Touch
+      #define REXYZ_MACHINE_TOOLHEAD_TYPE "DGT"
+    #else
+      // Direct DirectDrive Touch
+      #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDT"
+    #endif
     #define REXYZ_USE_XMIN_PLUG
     #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
     #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
     #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
-
-      #define BLTOUCH
+    #define BLTOUCH
+    #define NUM_SERVOS 1
+    #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 25, -23, -1 }
+    #if defined(REXYZ_MK8_MULTI_FIXPROBE_BLTOUCH)
+      //#define BLTOUCH_SET_5V_MODE
+      //#define BLTOUCH_DELAY 500
+      //#define BLTOUCH_LCD_VOLTAGE_MENU
       #define BLTOUCH_FORCE_SW_MODE
+      #define REXYZ_DEFAULT_PROBE REXYZPROBEENUM_3_BLTOUCH
+    #endif
+    #if defined(REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH)
       //#define BLTOUCH_SET_5V_MODE
       //#define BLTOUCH_DELAY 500
       //#define BLTOUCH_LCD_VOLTAGE_MENU
-      #define NUM_SERVOS 1
-      #define REXYZ_DEFAULT_PROBE 1
-      #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 25, -23, -1 }
-#endif
-#if defined(REXYZ_MK8_MULTI_FIXPROBE_CLEAR3DTOUCH)
-    #define AUTO_BED_LEVELING_BILINEAR
-    #define LCD_BED_LEVELING
-    // Direct DirectDrive Touch
-    #define REXYZ_MACHINE_TOOLHEAD_TYPE "DDT"
-    #define REXYZ_USE_XMIN_PLUG
-    #define REXYZ_Z_MIN_PROBE_PIN X_MIN_PIN
-    #define REXYZ_PAUSE_BEFORE_DEPLOY_STOW
-    #define REXYZ_PAUSE_PROBE_DEPLOY_WHEN_TRIGGERED
-
-      #define BLTOUCH
       //#define BLTOUCH_FORCE_SW_MODE
-      //#define BLTOUCH_SET_5V_MODE
-      //#define BLTOUCH_DELAY 500
-      //#define BLTOUCH_LCD_VOLTAGE_MENU
-      #define NUM_SERVOS 1
-      #define REXYZ_DEFAULT_PROBE 1
-      #define REXYZ_NOZZLE_TO_PROBE_OFFSET { 25, -23, -1 }
+      #define REXYZ_DEFAULT_PROBE REXYZPROBEENUM_4_CLEAR3DTOUCH
+    #endif
 #endif
 
 //===========================================================================

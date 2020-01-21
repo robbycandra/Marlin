@@ -173,85 +173,6 @@ void rlcd_menu_choose_zero();
 
 #endif // !NO_VOLUMETRICS || ADVANCED_PAUSE_FEATURE
 
-#if DISABLED(BABYSTEP_ZPROBE_OFFSET) && HAS_BED_PROBE
-  //
-  // Advanced Settings > Probe
-  //
-  void lcd_menu_choose_probe() {
-    ui.encoder_direction_normal();
-    #if ENABLED(PROBE_MANUALLY)
-      if (int16_t(ui.encoderPosition) < REXYZPROBE_NO_PROBE) ui.encoderPosition = REXYZPROBE_NO_PROBE;
-    #else
-      if (int16_t(ui.encoderPosition) < REXYZPROBE_PROXYMITY) ui.encoderPosition = REXYZPROBE_PROXYMITY;
-    #endif
-    #if ENABLED(FIX_MOUNTED_PROBE)
-      if (int16_t(ui.encoderPosition) > REXYZPROBE_MANUAL_DEPLOY) ui.encoderPosition = REXYZPROBE_MANUAL_DEPLOY;
-    #else
-      if (int16_t(ui.encoderPosition) > REXYZPROBE_NO_PROBE) ui.encoderPosition = REXYZPROBE_NO_PROBE;
-    #endif
-    if (ui.should_draw())
-      switch (ui.encoderPosition) {
-      case REXYZPROBE_NO_PROBE:
-        MenuEditItemBase::draw_edit_screen(PSTR("Choose Probe"), "No Probe / Manual");
-        break;
-      case REXYZPROBE_PROXYMITY:
-        MenuEditItemBase::draw_edit_screen(PSTR("Choose Probe"), "Proximity Sensor.");
-        break;
-      case REXYZPROBE_MANUAL_DEPLOY:
-        MenuEditItemBase::draw_edit_screen(PSTR("Choose Probe"), "Manual Deploy Prb");
-        break;
-      case REXYZPROBE_BLTOUCH:
-        MenuEditItemBase::draw_edit_screen(PSTR("Choose Probe"), "BL/3D Touch");
-        break;
-      }
-    if (ui.lcd_clicked) {
-      rexyz_probe_mode = ui.encoderPosition;
-      if (ui.use_click()) ui.goto_previous_screen();
-    }
-  }
-
-  void menu_advanced_probe() {
-    START_MENU();
-    BACK_ITEM(MSG_ADVANCED_SETTINGS);
-    /*
-    do {
-      _skipStatic = false;
-      if (_menuLineNr == _thisItemNr) {
-        if (encoderLine == _thisItemNr && ui.use_click()) {
-          _MENU_ITEM_MULTIPLIER_CHECK(false);
-          ui.save_previous_screen();
-          ui.refresh();
-          ui.encoderPosition = rexyz_probe_mode;
-          ui.currentScreen = lcd_menu_choose_probe;
-          if (screen_changed) return;
-        }
-        if (ui.should_draw())
-          switch (rexyz_probe_mode) {
-          case REXYZPROBE_NO_PROBE:
-            MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "No Probe", false);
-            break;
-          case REXYZPROBE_PROXYMITY:
-            MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Proximity", false);
-            break;
-          case REXYZPROBE_MANUAL_DEPLOY:
-            MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Manual Deploy",false);
-            break;
-          case REXYZPROBE_BLTOUCH:
-            MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "BL/3D Touch", false);
-            break;
-          }
-      }
-      ++_thisItemNr;
-    }while(0);
-     */
-
-    _MENU_ITEM_P(float3, true, PSTR("Probe X Offset"), &probe_offset.x, 0, 30);
-    _MENU_ITEM_P(float3, true, PSTR("Probe Y Offset"), &probe_offset.y, -30, 30);
-    _MENU_ITEM_P(float52, true, PSTR("Probe Z Offset"), &probe_offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
-    END_MENU();
-  }
-#endif // !BABYSTEP_ZPROBE_OFFSET && HAS_BED_PROBE
-
 //
 // Advanced Settings > Temperature helpers
 //
@@ -259,7 +180,7 @@ void rlcd_menu_choose_zero();
 #if ENABLED(PID_AUTOTUNE_MENU)
 
   #if ENABLED(PIDTEMP)
-    int16_t autotune_temp[HOTENDS] = ARRAY_BY_HOTENDS1(200);
+    int16_t autotune_temp[HOTENDS] = ARRAY_BY_HOTENDS1(150);
   #endif
 
   #if ENABLED(PIDTEMPBED)
@@ -576,32 +497,88 @@ void rlcd_menu_choose_zero();
     END_MENU();
   }
 
-  // M92 Steps-per-mm
-  void menu_advanced_steps_per_mm() {
-    START_MENU();
-    BACK_ITEM(MSG_ADVANCED_SETTINGS);
-
-    #define EDIT_QSTEPS(Q) EDIT_ITEM_FAST(float51, MSG_##Q##_STEPS, &planner.settings.axis_steps_per_mm[_AXIS(Q)], 5, 9999, []{ planner.refresh_positioning(); })
-    EDIT_QSTEPS(A);
-    EDIT_QSTEPS(B);
-    EDIT_QSTEPS(C);
-
-    #if ENABLED(DISTINCT_E_FACTORS)
-      EDIT_ITEM_FAST(float51, MSG_E_STEPS, &planner.settings.axis_steps_per_mm[E_AXIS_N(active_extruder)], 5, 9999, []{ planner.refresh_positioning(); });
-      for (uint8_t n = 0; n < E_STEPPERS; n++)
-        EDIT_ITEM_FAST_N(float51, n, MSG_EN_STEPS, &planner.settings.axis_steps_per_mm[E_AXIS_N(n)], 5, 9999, []{ _planner_refresh_e_positioning(MenuItemBase::itemIndex); });
-    #elif E_STEPPERS
-      EDIT_ITEM_FAST(float51, MSG_E_STEPS, &planner.settings.axis_steps_per_mm[E_AXIS], 5, 9999, []{ planner.refresh_positioning(); });
-    #endif
-
-    END_MENU();
-  }
-
   // M851 - Z Probe Offsets
   #if HAS_BED_PROBE
+    void lcd_menu_choose_probe() {
+      ui.encoder_direction_normal();
+      #if ENABLED(PROBE_MANUALLY)
+        if (int16_t(ui.encoderPosition) < REXYZPROBEENUM_0_NO_PROBE) ui.encoderPosition = REXYZPROBEENUM_0_NO_PROBE;
+        if (int16_t(ui.encoderPosition) > REXYZPROBEENUM_0_NO_PROBE) ui.encoderPosition = REXYZPROBEENUM_0_NO_PROBE;
+      #else
+      #if ENABLED(FIX_MOUNTED_PROBE)
+        if (int16_t(ui.encoderPosition) < REXYZPROBEENUM_1_MANUAL_DEPLOY) ui.encoderPosition = REXYZPROBEENUM_1_MANUAL_DEPLOY;
+        if (int16_t(ui.encoderPosition) > REXYZPROBEENUM_2_PROXYMITY) ui.encoderPosition = REXYZPROBEENUM_2_PROXYMITY;
+      #else
+      #if ENABLED(BLTOUCH)
+        if (int16_t(ui.encoderPosition) < REXYZPROBEENUM_3_BLTOUCH) ui.encoderPosition = REXYZPROBEENUM_3_BLTOUCH;
+        if (int16_t(ui.encoderPosition) > REXYZPROBEENUM_4_CLEAR3DTOUCH) ui.encoderPosition = REXYZPROBEENUM_4_CLEAR3DTOUCH;
+      #else
+        if (int16_t(ui.encoderPosition) < REXYZPROBEENUM_0_NO_PROBE) ui.encoderPosition = REXYZPROBEENUM_0_NO_PROBE;
+        if (int16_t(ui.encoderPosition) > REXYZPROBEENUM_4_CLEAR3DTOUCH) ui.encoderPosition = REXYZPROBEENUM_4_CLEAR3DTOUCH;
+      #endif
+      #endif
+      #endif
+      if (ui.should_draw())
+        switch (ui.encoderPosition) {
+        case REXYZPROBEENUM_1_MANUAL_DEPLOY:
+          MenuEditItemBase::draw_edit_screen(PSTR("Choose Probe"), "Manual Deploy Prb");
+          break;
+        case REXYZPROBEENUM_2_PROXYMITY:
+          MenuEditItemBase::draw_edit_screen(PSTR("Choose Probe"), "Proximity Sensor.");
+          break;
+        case REXYZPROBEENUM_0_NO_PROBE:
+          MenuEditItemBase::draw_edit_screen(PSTR("Choose Probe"), "No Probe / Manual");
+          break;
+        case REXYZPROBEENUM_3_BLTOUCH:
+          MenuEditItemBase::draw_edit_screen(PSTR("Choose Probe"), "3D Touch SW");
+          break;
+        case REXYZPROBEENUM_4_CLEAR3DTOUCH:
+          MenuEditItemBase::draw_edit_screen(PSTR("Choose Probe"), "Clear 3DTouch");
+          break;
+        }
+      if (ui.lcd_clicked) {
+        rexyz_probe_mode = ui.encoderPosition;
+        if (ui.use_click()) ui.goto_previous_screen();
+      }
+    }
+
     void menu_probe_offsets() {
       START_MENU();
       BACK_ITEM(MSG_ADVANCED_SETTINGS);
+
+      do {
+        _skipStatic = false;
+        if (_menuLineNr == _thisItemNr) {
+          if (encoderLine == _thisItemNr && ui.use_click()) {
+            _MENU_ITEM_MULTIPLIER_CHECK(false);
+            ui.save_previous_screen();
+            ui.refresh();
+            ui.encoderPosition = rexyz_probe_mode;
+            ui.currentScreen = lcd_menu_choose_probe;
+            if (ui.screen_changed) return;
+          }
+          if (ui.should_draw())
+            switch (rexyz_probe_mode) {
+            case REXYZPROBEENUM_1_MANUAL_DEPLOY:
+              MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Manual Deploy",false);
+              break;
+            case REXYZPROBEENUM_2_PROXYMITY:
+              MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Proximity", false);
+              break;
+            case REXYZPROBEENUM_0_NO_PROBE:
+              MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "No Probe", false);
+              break;
+            case REXYZPROBEENUM_3_BLTOUCH:
+              MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "3D Touch SW", false);
+              break;
+            case REXYZPROBEENUM_4_CLEAR3DTOUCH:
+              MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Clear 3DTouch", false);
+              break;
+            }
+        }
+        ++_thisItemNr;
+      }while(0);
+
       EDIT_ITEM(float51sign, MSG_ZPROBE_XOFFSET, &probe_offset.x, -(X_BED_SIZE), X_BED_SIZE);
       EDIT_ITEM(float51sign, MSG_ZPROBE_YOFFSET, &probe_offset.y, -(Y_BED_SIZE), Y_BED_SIZE);
       EDIT_ITEM(LCD_Z_OFFSET_TYPE, MSG_ZPROBE_ZOFFSET, &probe_offset.z, Z_PROBE_OFFSET_RANGE_MIN, Z_PROBE_OFFSET_RANGE_MAX);
@@ -610,6 +587,27 @@ void rlcd_menu_choose_zero();
   #endif
 
 #endif // !SLIM_LCD_MENUS
+
+// M92 Steps-per-mm
+void menu_advanced_steps_per_mm() {
+  START_MENU();
+  BACK_ITEM(MSG_ADVANCED_SETTINGS);
+
+  #define EDIT_QSTEPS(Q) EDIT_ITEM_FAST(float51, MSG_##Q##_STEPS, &planner.settings.axis_steps_per_mm[_AXIS(Q)], 5, 9999, []{ planner.refresh_positioning(); })
+  EDIT_QSTEPS(A);
+  EDIT_QSTEPS(B);
+  EDIT_QSTEPS(C);
+
+  #if ENABLED(DISTINCT_E_FACTORS)
+    EDIT_ITEM_FAST(float51, MSG_E_STEPS, &planner.settings.axis_steps_per_mm[E_AXIS_N(active_extruder)], 5, 9999, []{ planner.refresh_positioning(); });
+    for (uint8_t n = 0; n < E_STEPPERS; n++)
+      EDIT_ITEM_FAST_N(float51, n, MSG_EN_STEPS, &planner.settings.axis_steps_per_mm[E_AXIS_N(n)], 5, 9999, []{ _planner_refresh_e_positioning(MenuItemBase::itemIndex); });
+  #elif E_STEPPERS
+    EDIT_ITEM_FAST(float51, MSG_E_STEPS, &planner.settings.axis_steps_per_mm[E_AXIS], 5, 9999, []{ planner.refresh_positioning(); });
+  #endif
+
+  END_MENU();
+}
 
 void menu_advanced_settings() {
   #if ENABLED(FILAMENT_RUNOUT_SENSOR) && FILAMENT_RUNOUT_DISTANCE_MM
@@ -636,26 +634,18 @@ void menu_advanced_settings() {
     SUBMENU(MSG_ACCELERATION, menu_advanced_acceleration);
 
     // M205 - Max Jerk
-    #if DISABLED(CLASSIC_JERK)
-      #if ENABLED(LIN_ADVANCE)
-        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM, planner.recalculate_max_e_jerk);
-      #else
-        EDIT_ITEM(float43, MSG_JUNCTION_DEVIATION, &planner.junction_deviation_mm, MIN_JUNCTION_DEVIATION_MM, MAX_JUNCTION_DEVIATION_MM);
-      #endif
-    #else
-      SUBMENU(MSG_JERK, menu_advanced_jerk);
-    #endif
+    SUBMENU(MSG_JERK, menu_advanced_jerk);
 
-    if (!printer_busy()) {
-      // M92 - Steps Per mm
-      SUBMENU(MSG_STEPS_PER_MM, menu_advanced_steps_per_mm);
-
-      #if HAS_BED_PROBE
-        // M851 - Z Probe Offsets
+    // M851 - Z Probe Offsets
+    #if HAS_BED_PROBE
+      if (!printer_busy())
         SUBMENU(MSG_ZPROBE_OFFSETS, menu_probe_offsets);
-      #endif
-    }
+    #endif
   #endif // !SLIM_LCD_MENUS
+
+  // M92 - Steps Per mm
+  if (!printer_busy())
+    SUBMENU(MSG_STEPS_PER_MM, menu_advanced_steps_per_mm);
 
   #if ENABLED(BACKLASH_GCODE)
     SUBMENU(MSG_BACKLASH, menu_backlash);
@@ -694,12 +684,6 @@ void menu_advanced_settings() {
   // M540 S - Abort on endstop hit when SD printing
   #if ENABLED(SD_ABORT_ON_ENDSTOP_HIT)
     EDIT_ITEM(bool, MSG_ENDSTOP_ABORT, &planner.abort_on_endstop_hit);
-  #endif
-
-  #if ENABLED(BABYSTEP_ZPROBE_OFFSET)
-    SUBEDIT(MSG_ZPROBE_ZOFFSET, lcd_babystep_zoffset);
-  #elif HAS_BED_PROBE
-    SUBEDIT_P(PSTR("Probe"), menu_advanced_probe);
   #endif
 
   #if ENABLED(TOUCH_CALIBRATION)
