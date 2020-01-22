@@ -160,9 +160,11 @@
     #error "Please use Rexyz Dlion D2 Environment"
   #endif
 #endif
+
 //===========================================================================
 //============================= PRINTER MODEL Settings ======================
 //===========================================================================
+
 #if defined(REXYZ_S22)
     #define REXYZ_MACHINE_FRAME_TYPE "S22"
     #define REXYZ_BOARD_MKSGENL
@@ -280,9 +282,11 @@
 #else
   #define REXYZ_BAUDRATE 250000
 #endif
+
 //===========================================================================
 //============================= Media Settings ==============================
 //===========================================================================
+
 //Mega
 #if defined(REXYZ_BOARD_MKSGENL) || defined(REXYZ_BOARD_TRIGORILLA14)
   #define SD_DETECT_INVERTED
@@ -417,6 +421,7 @@
 //===========================================================================
 //============================= Auto Fan Settings ===========================
 //===========================================================================
+
 #if defined(REXYZ_S_TYPE)
     #define REXYZ_CONTROLLER_FAN_PIN -1    // Set a custom pin for the controller fan
     #define REXYZ_CONTROLLERFAN_SPEED 225        // 255 == full speed
@@ -475,6 +480,16 @@
 #endif
 
 //===========================================================================
+//============================= Stepper Driver Settings =====================
+//===========================================================================
+
+#if defined(REXYZ_N2G)
+  #define E0_DRIVER_TYPE DRV8825
+#else
+  #define E0_DRIVER_TYPE A4988
+#endif
+
+//===========================================================================
 //============================= Endstop & Motor Settings ====================
 //===========================================================================
 
@@ -501,8 +516,8 @@
     #define REXYZ_Y_HOME_DIR 1
     #define REXYZ_Z_HOME_DIR 1
 
-    #define Z_DUAL_STEPPER_DRIVERS
-    #define Z_DUAL_ENDSTOPS
+    #define Z_MULTI_ENDSTOPS
+    #define REXYZ_NUM_Z_STEPPER_DRIVERS 2
     #define REXYZ_Z2_USE_ENDSTOP _ZMIN_
 #endif
 #if defined(REXYZ_4MAX)
@@ -551,8 +566,8 @@
     #define REXYZ_Y_HOME_DIR -1
     #define REXYZ_Z_HOME_DIR -1
 
-    #define Z_DUAL_STEPPER_DRIVERS
-    #define Z_DUAL_ENDSTOPS
+    #define Z_MULTI_ENDSTOPS
+    #define REXYZ_NUM_Z_STEPPER_DRIVERS 2
     #define REXYZ_Z2_USE_ENDSTOP _ZMAX_
 
 #endif
@@ -604,8 +619,8 @@
     #define REXYZ_Y_HOME_DIR -1
     #define REXYZ_Z_HOME_DIR -1
 
-    #define Z_DUAL_STEPPER_DRIVERS
-    #define Z_DUAL_ENDSTOPS
+    #define Z_MULTI_ENDSTOPS
+    #define REXYZ_NUM_Z_STEPPER_DRIVERS 2
     #define REXYZ_Z2_USE_ENDSTOP _ZMAX_
 
 #endif
@@ -718,6 +733,7 @@
 #else
   #define REXYZ_NOZZLE_PARK_POINT { (X_MAX_POS - 10), (Y_MAX_POS - 10), 20 }
 #endif
+
 //===========================================================================
 //============================= Movement Settings ===========================
 //===========================================================================
@@ -879,6 +895,7 @@
 //===========================================================================
 //============================= Feature Settings ============================
 //===========================================================================
+
 #if defined(EXTENSIBLE_UI) || defined(REXYZ_A2)// || defined(REXYZ_D2)
 #else
   #define POWER_LOSS_RECOVERY
@@ -888,9 +905,11 @@
   // supaya filament tidak masuk ke lubang kipas.
   #define HOME_BEFORE_FILAMENT_CHANGE
 #endif
+
 //===========================================================================
 //============================= Filament Runout Settings ====================
 //===========================================================================
+
 #define FILAMENT_RUNOUT_SENSOR
 #if defined(REXYZ_S_TYPE)
     #define REXYZ_FIL_RUNOUT_INVERTING false
