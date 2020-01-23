@@ -765,11 +765,19 @@
 
 #if defined(REXYZ_N3G)
   #if defined(NOZZLE_06)
-    #define LIN_ADVANCE_K 0.03    // Unit: mm compression per 1mm/s extruder speed
+    //For Nozzle 06, disable linear advance.
+    //  sjasonsmith spent some time trying to fix it and finally gave up
+    //  decided that the whole thing needs to be rearchitected
+    //  because it sticks random pulses in places
+    //  that result in stepper timings not being honored.
+    //#define LIN_ADVANCE
+    //#define LIN_ADVANCE_K 0.03    // Unit: mm compression per 1mm/s extruder speed
   #else
+    #define LIN_ADVANCE
     #define LIN_ADVANCE_K 0.12    // Unit: mm compression per 1mm/s extruder speed
   #endif
 #else
+  #define LIN_ADVANCE
   #define LIN_ADVANCE_K 0.22    // Unit: mm compression per 1mm/s extruder speed
 #endif
 
