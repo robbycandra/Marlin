@@ -351,6 +351,7 @@ void MarlinUI::_synchronize() {
 // Display the synchronize screen with a custom message
 // ** This blocks the command queue! **
 void MarlinUI::synchronize(PGM_P const msg/*=nullptr*/) {
+  sync_message = msg ?: GET_TEXT(MSG_MOVING);
   _synchronize();
 }
 
