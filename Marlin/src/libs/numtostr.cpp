@@ -215,7 +215,7 @@ const char* ftostr52(const float &f) {
 
 #endif
 
-// Convert signed float to fixed-length string with +123.4 / -123.4 format
+// Convert float to fixed-length string with +123.4 / -123.4 format
 const char* ftostr41sign(const float &f) {
   int i = (f * 100 + (f < 0 ? -5: 5)) / 10;
   conv[1] = MINUSOR(i, '+');

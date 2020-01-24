@@ -73,6 +73,8 @@
   #error "BTENABLED is now BLUETOOTH. Please update your configuration."
 #elif defined(CUSTOM_MENDEL_NAME)
   #error "CUSTOM_MENDEL_NAME is now CUSTOM_MACHINE_NAME. Please update your configuration."
+#elif defined(HAS_AUTOMATIC_VERSIONING)
+  #error "HAS_AUTOMATIC_VERSIONING is now CUSTOM_VERSION_FILE. Please update your configuration."
 #elif defined(USE_AUTOMATIC_VERSIONING)
   #error "USE_AUTOMATIC_VERSIONING is now CUSTOM_VERSION_FILE. Please update your configuration."
 #elif defined(SDSLOW)

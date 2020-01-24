@@ -62,7 +62,7 @@ void GcodeSuite::M1000() {
     if (parser.seen('S')) {
       #if HAS_LCD_MENU
         ui.goto_screen(menu_job_recovery, SCRMODE_MENU_H_2X1);
-      #elif ENABLED(EXTENSIBLE_UI)        
+      #elif ENABLED(EXTENSIBLE_UI)
         ExtUI::OnPowerLossResume();
       #else
         SERIAL_ECHO_MSG("Resume requires LCD.");

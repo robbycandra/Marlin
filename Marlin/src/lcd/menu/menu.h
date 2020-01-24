@@ -635,9 +635,8 @@ class MenuItem_bool : public MenuEditItemBase {
 
 #define _MENU_ITEM_P(TYPE, V...) do { \
   _skipStatic = false;                \
-  if (_menuLineNr == _thisItemNr) {   \
+  if (_menuLineNr == _thisItemNr)     \
     _MENU_INNER_P(TYPE, ##V);         \
-  }                                   \
   NEXT_ITEM();                        \
 }while(0)
 
@@ -662,7 +661,6 @@ class MenuItem_bool : public MenuEditItemBase {
   if (ui.should_draw())                                 \
     MenuItem_static::draw(_lcdLineNr, PLABEL, ##V);     \
 } while(0)
-
 
 #define STATIC_ITEM_P(PLABEL, V...) do{ \
   if (_menuLineNr == _thisItemNr)       \
