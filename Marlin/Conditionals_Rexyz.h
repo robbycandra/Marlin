@@ -645,8 +645,13 @@
     #endif
     #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
 
+  #if defined(REXYZ_MARKING_INIT)
+    #define REXYZ_GRID_MAX_POINTS_X 3
+    #define REXYZ_GRID_MAX_POINTS_Y 2
+  #else
     #define REXYZ_GRID_MAX_POINTS_X 3
     #define REXYZ_GRID_MAX_POINTS_Y 3
+  #endif
 #endif
 #if defined(REXYZ_4MAX)
     #define REXYZ_X_BED_SIZE 216
@@ -676,8 +681,13 @@
 
     #define REXYZ_LEVEL_CORNERS_INSET 30    // (mm) An inset for corner leveling
 
+  #if defined(REXYZ_MARKING_INIT)
+    #define REXYZ_GRID_MAX_POINTS_X 3
+    #define REXYZ_GRID_MAX_POINTS_Y 2
+  #else
     #define REXYZ_GRID_MAX_POINTS_X 5
     #define REXYZ_GRID_MAX_POINTS_Y 5
+  #endif
 #endif
 #if defined(REXYZ_A8P)
     #define REXYZ_X_BED_SIZE 300
