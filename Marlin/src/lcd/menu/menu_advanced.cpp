@@ -254,6 +254,12 @@ void rlcd_menu_choose_zero();
           DEFINE_PIDTEMP_FUNCS(4);
           #if HOTENDS > 5
             DEFINE_PIDTEMP_FUNCS(5);
+            #if HOTENDS > 6
+              DEFINE_PIDTEMP_FUNCS(6);
+              #if HOTENDS > 7
+                DEFINE_PIDTEMP_FUNCS(7);
+              #endif // HOTENDS > 7
+            #endif // HOTENDS > 6
           #endif // HOTENDS > 5
         #endif // HOTENDS > 4
       #endif // HOTENDS > 3
@@ -309,7 +315,7 @@ void rlcd_menu_choose_zero();
       #if ENABLED(PID_FAN_SCALING)
         #define _PID_EDIT_MENU_ITEMS(N) \
           _PID_BASE_MENU_ITEMS(N); \
-          EDIT_ITEM(float3, PID_LABEL(MSG_PID_F,N), &PID_PARAM(Kf, N), 1, 9990)
+          EDIT_ITEM_N(float3, N, MSG_PID_F_E, &PID_PARAM(Kf, N), 1, 9990)
       #else
         #define _PID_EDIT_MENU_ITEMS(N) _PID_BASE_MENU_ITEMS(N)
       #endif
@@ -339,6 +345,12 @@ void rlcd_menu_choose_zero();
             PID_EDIT_MENU_ITEMS(4);
             #if HOTENDS > 5
               PID_EDIT_MENU_ITEMS(5);
+              #if HOTENDS > 6
+                PID_EDIT_MENU_ITEMS(6);
+                #if HOTENDS > 7
+                  PID_EDIT_MENU_ITEMS(7);
+                #endif // HOTENDS > 7
+              #endif // HOTENDS > 6
             #endif // HOTENDS > 5
           #endif // HOTENDS > 4
         #endif // HOTENDS > 3

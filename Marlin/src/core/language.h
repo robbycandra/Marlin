@@ -363,6 +363,8 @@
   #define LCD_STR_N3 "3"
   #define LCD_STR_N4 "4"
   #define LCD_STR_N5 "5"
+  #define LCD_STR_N6 "6"
+  #define LCD_STR_N7 "7"
 #else
   #define LCD_FIRST_TOOL '1'
   #define LCD_STR_N0 "1"
@@ -371,6 +373,8 @@
   #define LCD_STR_N3 "4"
   #define LCD_STR_N4 "5"
   #define LCD_STR_N5 "6"
+  #define LCD_STR_N6 "7"
+  #define LCD_STR_N7 "8"
 #endif
 
 #define LCD_STR_E0 "E" LCD_STR_N0
@@ -379,6 +383,8 @@
 #define LCD_STR_E3 "E" LCD_STR_N3
 #define LCD_STR_E4 "E" LCD_STR_N4
 #define LCD_STR_E5 "E" LCD_STR_N5
+#define LCD_STR_E6 "E" LCD_STR_N6
+#define LCD_STR_E7 "E" LCD_STR_N7
 
 #include "multi_language.h"   // Allow multiple languages
 
