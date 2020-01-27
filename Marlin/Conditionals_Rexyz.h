@@ -245,12 +245,9 @@
     #define REXYZ_MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
     // Use Onboard SD Card.
     #define SDCARD_CONNECTION ONBOARD
-  #if defined(REXYZ_TOUCH_UI)
-      // If using TFT (or not using)
-    #define REXYZ_SERIAL_PORT 0
-    #define SERIAL_PORT_2 -1
-  #else
     #define REXYZ_SERIAL_PORT -1
+  #if defined(REXYZ_TOUCH_UI)
+    #define SERIAL_PORT_2 0
   #endif
 #endif
 #if defined(REXYZ_BOARD_ROBINMINI)
