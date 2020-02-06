@@ -66,6 +66,8 @@ MarlinUI ui;
   char MarlinUI::status_message[MAX_MESSAGE_LENGTH + 1];
 #endif
 
+uint8_t rexyz_menu_mode;
+
 #if ENABLED(LCD_SET_PROGRESS_MANUALLY)
   MarlinUI::progress_t MarlinUI::progress_override; // = 0
   #if BOTH(LCD_SET_PROGRESS_MANUALLY, USE_M73_REMAINING_TIME)

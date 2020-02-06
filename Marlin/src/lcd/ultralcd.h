@@ -35,6 +35,13 @@
 // I2C buttons must be read in the main thread
 #define HAS_SLOW_BUTTONS EITHER(LCD_I2C_VIKI, LCD_I2C_PANELOLU2)
 
+extern uint8_t rexyz_menu_mode;
+
+enum RexyzMenuMode : uint8_t {
+  MENUMODE_BASIC = 1,
+  MENUMODE_ADVANCE
+};
+
 #if HAS_SPI_LCD
 
   #include "../MarlinCore.h"

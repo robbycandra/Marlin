@@ -27,12 +27,6 @@
 
 #include "limits.h"
 
-enum RexyzMenuMode : uint8_t {
-  MENUMODE_BASIC = 1,
-  MENUMODE_ADVANCE
-};
-extern uint8_t rexyz_menu_mode;
-
 extern int8_t encoderLine, encoderTopLine, screen_items;
 
 #if HOTENDS

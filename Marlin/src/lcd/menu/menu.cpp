@@ -54,8 +54,6 @@
 ///////////// Global Variables /////////////
 ////////////////////////////////////////////
 
-uint8_t rexyz_menu_mode;
-
 // Menu Navigation
 int8_t encoderTopLine, encoderLine, screen_items;
 

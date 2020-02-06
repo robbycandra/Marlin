@@ -62,7 +62,6 @@
 #endif
 
 #include "probe.h"
-#include "../lcd/menu/menu.h"
 
 #if HAS_LEVELING
   #include "../feature/bedlevel/bedlevel.h"
