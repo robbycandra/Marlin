@@ -1,6 +1,6 @@
 /**
  * Marlin 3D Printer Firmware
- * Copyright (c) 2019 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
+ * Copyright (c) 2020 MarlinFirmware [https://github.com/MarlinFirmware/Marlin]
  *
  * Based on Sprinter and grbl.
  * Copyright (c) 2011 Camiel Gubbels / Erik van der Zalm
@@ -46,14 +46,6 @@ public:
     static uint8_t rexyz_probe_mode;
 
 
-    // Use offset_xy for read only access
-    // More optimal the XY offset is known to always be zero.
-    #if HAS_PROBE_XY_OFFSET
-      static const xyz_pos_t &offset_xy;
-    #else
-      static constexpr xy_pos_t offset_xy{0};
-    #endif
-
     static bool set_deployed(const bool deploy);
 
     #ifdef Z_AFTER_PROBING
@@ -69,12 +61,19 @@ public:
 
   #else
 
-    static constexpr xyz_pos_t offset{0};
+    static constexpr xyz_pos_t offset = xyz_pos_t({ 0, 0, 0 }); // See #16767
     static uint8_t rexyz_probe_mode = REXYZPROBEENUM_0_NO_PROBE;
-    static constexpr xy_pos_t offset_xy{0};
 
     static bool set_deployed(const bool) { return false; }
 
+  #endif
+
+  // Use offset_xy for read only access
+  // More optimal the XY offset is known to always be zero.
+  #if HAS_PROBE_XY_OFFSET
+    static const xyz_pos_t &offset_xy;
+  #else
+    static constexpr xy_pos_t offset_xy = xy_pos_t({ 0, 0 });   // See #16767
   #endif
 
   static inline bool deploy() { return set_deployed(true); }
