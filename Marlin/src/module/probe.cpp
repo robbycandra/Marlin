@@ -63,7 +63,6 @@
   #include "../feature/backlash.h"
 #endif
 
-uint8_t rexyz_probe_mode;
 #if ENABLED(BLTOUCH)
   #include "../feature/bltouch.h"
 #endif
@@ -95,6 +94,7 @@ uint8_t rexyz_probe_mode;
 Probe probe;
 
 xyz_pos_t Probe::offset; // Initialized by settings.load()
+uint8_t Probe::rexyz_probe_mode;
 
 #if HAS_PROBE_XY_OFFSET
   const xyz_pos_t &Probe::offset_xy = probe.offset;
@@ -308,7 +308,7 @@ void Probe::do_z_raise(const float z_raise) {
 #endif
 
 FORCE_INLINE void probe_specific_action(const bool deploy) {
-  if (rexyz_probe_mode == REXYZPROBEENUM_1_MANUAL_DEPLOY) {
+  if (probe.rexyz_probe_mode == REXYZPROBEENUM_1_MANUAL_DEPLOY) {
     while (deploy != (READ(Z_MIN_PROBE_PIN) == Z_MIN_PROBE_ENDSTOP_INVERTING)) {
 
       #if HAS_LCD_MENU
@@ -399,7 +399,7 @@ bool Probe::set_deployed(const bool deploy) {
 
   #if EITHER(FIX_MOUNTED_PROBE, NOZZLE_AS_PROBE)
     bool deploy_stow_condition = true;
-    if (rexyz_probe_mode == REXYZPROBEENUM_1_MANUAL_DEPLOY)
+    if (probe.rexyz_probe_mode == REXYZPROBEENUM_1_MANUAL_DEPLOY)
       deploy_stow_condition = true;
     else
       deploy_stow_condition = deploy;

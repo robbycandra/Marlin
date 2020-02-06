@@ -203,7 +203,7 @@ typedef struct SettingsDataStruct {
   // HAS_BED_PROBE
   //
   xyz_pos_t probe_offset;
-  uint8_t rexyz_probe_mode;
+  uint8_t probe_rexyz_probe_mode;
 
   //
   // Menu Mode
@@ -691,7 +691,7 @@ void MarlinSettings::postprocess() {
         constexpr xyz_pos_t zpo{0};
       #endif
       EEPROM_WRITE(zpo);
-      EEPROM_WRITE(rexyz_probe_mode);
+      EEPROM_WRITE(probe.rexyz_probe_mode);
     }
 
     //
@@ -1661,7 +1661,7 @@ void MarlinSettings::postprocess() {
         EEPROM_READ(zpo);
 
         #if HAS_BED_PROBE
-          EEPROM_READ(rexyz_probe_mode);
+          EEPROM_READ(probe.rexyz_probe_mode);
         #else
           uint8_t dummy_probe_mode;
           EEPROM_READ(dummy_probe_mode);
@@ -2649,7 +2649,7 @@ void MarlinSettings::reset() {
   #endif
 
   #if HAS_BED_PROBE
-    rexyz_probe_mode = REXYZ_DEFAULT_PROBE;
+    probe.rexyz_probe_mode = REXYZ_DEFAULT_PROBE;
   #endif
 
   rexyz_menu_mode = MENUMODE_BASIC;
@@ -3846,7 +3846,7 @@ void MarlinSettings::reset() {
      */
     CONFIG_ECHO_HEADING("Mode:");
     CONFIG_ECHO_START();
-    SERIAL_ECHOLNPAIR(" Probe Mode : ", rexyz_probe_mode);
+    SERIAL_ECHOLNPAIR(" Probe Mode : ", probe.rexyz_probe_mode);
     SERIAL_ECHO(" Menu Mode : ");
     switch(rexyz_menu_mode) {
       case MENUMODE_BASIC:

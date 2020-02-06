@@ -549,7 +549,7 @@ void rlcd_menu_choose_zero();
           break;
         }
       if (ui.lcd_clicked) {
-        rexyz_probe_mode = ui.encoderPosition;
+        probe.rexyz_probe_mode = ui.encoderPosition;
         if (ui.use_click()) ui.goto_previous_screen();
       }
     }
@@ -565,12 +565,12 @@ void rlcd_menu_choose_zero();
             _MENU_ITEM_MULTIPLIER_CHECK(false);
             ui.save_previous_screen();
             ui.refresh();
-            ui.encoderPosition = rexyz_probe_mode;
+            ui.encoderPosition = probe.rexyz_probe_mode;
             ui.currentScreen = lcd_menu_choose_probe;
             if (ui.screen_changed) return;
           }
           if (ui.should_draw())
-            switch (rexyz_probe_mode) {
+            switch (probe.rexyz_probe_mode) {
             case REXYZPROBEENUM_1_MANUAL_DEPLOY:
               MenuEditItemBase::draw(encoderLine == _thisItemNr, _lcdLineNr, PSTR("Probe"), "Manual Deploy",false);
               break;

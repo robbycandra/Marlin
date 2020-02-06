@@ -134,7 +134,7 @@ bool BLTouch::deploy_proc() {
 
   // One of the recommended ANTClabs ways to probe, using SW MODE
   //#if ENABLED(BLTOUCH_FORCE_SW_MODE)
-  if (rexyz_probe_mode == REXYZPROBEENUM_3_BLTOUCH)
+  if (probe.rexyz_probe_mode == REXYZPROBEENUM_3_BLTOUCH)
    _set_SW_mode();
 
   // Now the probe is ready to issue a 10ms pulse when the pin goes up.

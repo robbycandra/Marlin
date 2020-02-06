@@ -142,35 +142,35 @@ void _lcd_level_bed_corners() {
 #if HAS_BED_PROBE
 
 static inline void _lcd_probe_calibration_back() {
-  STOW_PROBE();
+  probe.stow();
   #if HAS_LEVELING
     set_bed_leveling_enabled(leveling_was_active);
   #endif
-  probe_offset.z = previous_zoffset;
+  probe.offset.z = previous_zoffset;
   restore_feedrate_and_scaling();
   ui.goto_previous_screen_no_defer();
 }
 
 static inline void _lcd_probe_corner() {
   line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
-  if (!DEPLOY_PROBE())
+  if (!probe.deploy())
   {
     switch (bed_corner) {
       case 1:
         if (firstprobe) {
-          corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+          corner_measured_z = probe.probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
           firstprobe = false;
         }
-        corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+        corner_measured_z = probe.probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
         break;
       case 2:
-        corner_measured_z = probe_at_point(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+        corner_measured_z = probe.probe_at_point(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
         break;
       case 3:
-        corner_measured_z = probe_at_point(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+        corner_measured_z = probe.probe_at_point(X_MAX_BED - LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
         break;
       case 4:
-        corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+        corner_measured_z = probe.probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MAX_BED - LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
         break;
     }
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", corner_measured_z);
@@ -198,20 +198,20 @@ static inline void _lcd_adjust_corner_homing() {
   if (all_axes_homed()) {
     bed_corner = 1;
     corner_measured_z = 0;
-    previous_zoffset = probe_offset.z;
+    previous_zoffset = probe.offset.z;
     firstprobe = true;
     remember_feedrate_and_scaling();
     ui.goto_screen(menu_adjust_corner, SCRMODE_MENU_H_3X1);
     line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
-    current_position.x = X_MIN_BED + LEVEL_CORNERS_INSET - probe_offset.x;
-    current_position.y = Y_MIN_BED + LEVEL_CORNERS_INSET - probe_offset.y;
+    current_position.x = X_MIN_BED + LEVEL_CORNERS_INSET - probe.offset.x;
+    current_position.y = Y_MIN_BED + LEVEL_CORNERS_INSET - probe.offset.y;
     planner.buffer_line(current_position, MMM_TO_MMS(manual_feedrate_mm_m.x), active_extruder);
   }
 }
 
 void _lcd_adjust_corner() {
   ui.defer_status_screen();
-  STOW_PROBE();
+  probe.stow();
   if (!all_axes_known()) {
     set_all_unhomed();
     queue.inject_P(G28_STR);
@@ -231,12 +231,12 @@ static inline void _lcd_measure_offset() {
   line_to_z(Z_CLEARANCE_BETWEEN_PROBES);
   planner.synchronize();
   if (bed_corner == 0) ++bed_corner;
-  if (!DEPLOY_PROBE()) {
+  if (!probe.deploy()) {
     if (firstprobe) {
-      corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+      corner_measured_z = probe.probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
       firstprobe = false;
     }
-    corner_measured_z = probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
+    corner_measured_z = probe.probe_at_point(X_MIN_BED + LEVEL_CORNERS_INSET, Y_MIN_BED + LEVEL_CORNERS_INSET, PROBE_PT_RAISE, 1, true);
     if (DEBUGGING(LEVELING)) SERIAL_ECHOLNPAIR_F("Z Offset = ", corner_measured_z);
     ui.lcdDrawUpdate = LCDVIEW_CALL_REDRAW_NEXT;
   }
@@ -244,8 +244,8 @@ static inline void _lcd_measure_offset() {
 
 static inline void _lcd_save_offset() {
   //note: corner_measured_z = run_z_probe() + probe_offset.z;
-  probe_offset.z -= corner_measured_z;
-  previous_zoffset = probe_offset.z;
+  probe.offset.z -= corner_measured_z;
+  previous_zoffset = probe.offset.z;
   corner_measured_z = 0;
   ui.lcdDrawUpdate = LCDVIEW_REDRAW_NOW;
   _lcd_probe_calibration_back();
@@ -267,8 +267,8 @@ static inline void _lcd_measure_probe_offset_homing() {
   _lcd_draw_homing();
   if (all_axes_homed()) {
     bed_corner = 0;
-    previous_zoffset = probe_offset.z;
-    probe_offset.z = 0;
+    previous_zoffset = probe.offset.z;
+    probe.offset.z = 0;
     corner_measured_z = 0;
     firstprobe = true;
     remember_feedrate_and_scaling();
@@ -283,7 +283,7 @@ static inline void _lcd_measure_probe_offset_homing() {
 
 void _lcd_measure_probe_offset() {
   ui.defer_status_screen();
-  STOW_PROBE();
+  probe.stow();
   if (!all_axes_known()) {
     set_all_unhomed();
     queue.inject_P(G28_STR);
