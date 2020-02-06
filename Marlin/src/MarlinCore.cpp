@@ -942,7 +942,9 @@ void setup() {
   #if HAS_SPI_LCD && ENABLED(SHOW_BOOTSCREEN)
     ui.show_bootscreen();
   #endif
-  ui.return_to_status();
+  #if HAS_SPI_LCD
+    ui.return_to_status();
+  #endif
 
   #if ENABLED(STARTUP_TONE)
     ui.buzz(200,784);
@@ -965,8 +967,10 @@ void setup() {
     #else
       SERIAL_ECHOLN("Not Rexyz Product");
       do {
-        ui.buzz(200,784);
-        ui.buzz(200,1046);
+        #if HAS_SPI_LCD
+          ui.buzz(200,784);
+          ui.buzz(200,1046);
+        #endif
       }
       while(true);
     #endif
