@@ -42,7 +42,7 @@ public:
   #if HAS_BED_PROBE
 
     static xyz_pos_t offset;
-    
+
     static uint8_t rexyz_probe_mode;
 
 
@@ -62,7 +62,7 @@ public:
   #else
 
     static constexpr xyz_pos_t offset = xyz_pos_t({ 0, 0, 0 }); // See #16767
-    static uint8_t rexyz_probe_mode = REXYZPROBEENUM_0_NO_PROBE;
+    static constexpr uint8_t rexyz_probe_mode = REXYZPROBEENUM_0_NO_PROBE;
 
     static bool set_deployed(const bool) { return false; }
 

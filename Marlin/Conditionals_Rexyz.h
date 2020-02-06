@@ -242,7 +242,7 @@
     #define REXYZ_SERIAL_PORT 0
 #endif
 #if defined(REXYZ_BOARD_SKR13)
-    #define REXYZ_MOTHERBOARD BOARD_BIGTREE_SKR_V1_3
+    #define REXYZ_MOTHERBOARD BOARD_BTT_SKR_V1_3
     // Use Onboard SD Card.
     #define SDCARD_CONNECTION ONBOARD
     #define REXYZ_SERIAL_PORT -1
@@ -543,6 +543,7 @@
     #define REXYZ_X_HOME_DIR -1
     #define REXYZ_Y_HOME_DIR -1
     #define REXYZ_Z_HOME_DIR 1
+    #define REXYZ_NUM_Z_STEPPER_DRIVERS 1
 #endif
 
 #if defined(REXYZ_A8P)
@@ -595,7 +596,11 @@
     #define REXYZ_X_HOME_DIR -1
     #define REXYZ_Y_HOME_DIR -1
     #define REXYZ_Z_HOME_DIR -1
-
+  #if defined(REXYZ_A1)
+    #define REXYZ_NUM_Z_STEPPER_DRIVERS 1
+  #else
+    #define REXYZ_NUM_Z_STEPPER_DRIVERS 2
+  #endif
 #endif
 
 #if defined(REXYZ_D2)
