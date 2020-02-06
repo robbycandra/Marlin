@@ -28,7 +28,7 @@
 /**
  * Marlin release version identifier
  */
-#define SHORT_BUILD_VERSION "2.0.1" REXYZ_FW_VERSION
+#define SHORT_BUILD_VERSION "2.0" REXYZ_FW_VERSION
 
 /**
  * Verbose version identifier which should contain a reference to the location
@@ -52,7 +52,7 @@
 /**
  * The SOURCE_CODE_URL is the location where users will find the Marlin Source
  * Code which is installed on the device. In most cases —unless the manufacturer
- * has a distinct Github fork— the Source Code URL should just be the main
+ * has a distinct Github fork�? the Source Code URL should just be the main
  * Marlin repository.
  */
   #define SOURCE_CODE_URL "https://github.com/robbycandra/Marlin"
