@@ -1117,6 +1117,10 @@
   #define Z_MIN_PIN          -1
 #endif
 
+#if HAS_FILAMENT_SENSOR
+  #define FIL_RUNOUT1_PIN FIL_RUNOUT_PIN
+#endif
+
 #ifndef LCD_PINS_D4
   #define LCD_PINS_D4 -1
 #endif
