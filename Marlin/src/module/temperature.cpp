@@ -1093,7 +1093,7 @@ void Temperature::manage_heater() {
   #endif
 
   #if ENABLED(EMERGENCY_PARSER)
-    if (emergency_parser.killed_by_M112) kill();
+    if (emergency_parser.killed_by_M112) kill(M112_KILL_STR, nullptr, true);
   #endif
 
   if (!raw_temps_ready) return;
@@ -2656,9 +2656,8 @@ void Temperature::tick() {
 
       #if ENABLED(FAN_SOFT_PWM)
         #define _FAN_PWM(N) do{ \
-          uint8_t &spcf = soft_pwm_count_fan[N]; \
-          spcf = (spcf & pwm_mask) + (soft_pwm_amount_fan[N] >> 1); \
-          WRITE_FAN(N, spcf > pwm_mask ? HIGH : LOW); \
+          const uint8_t spcf = (soft_pwm_count_fan[N] & pwm_mask) + (soft_pwm_amount_fan[N] >> 1); \
+          WRITE_FAN(N, (spcf > pwm_mask)); \
         }while(0)
         #if HAS_FAN0
           _FAN_PWM(0);
