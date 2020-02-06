@@ -19,32 +19,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  *
  */
-
-#include "../../inc/MarlinConfig.h"
-
-#if HAS_BED_PROBE
-
-#include "../gcode.h"
-#include "../../module/motion.h"
-#include "../../module/probe.h"
+#pragma once
 
 /**
- * M401: Deploy and activate the Z probe
+ * feature/z_stepper_align.h
  */
-void GcodeSuite::M401() {
-  probe.deploy();
-  report_current_position();
-}
 
-/**
- * M402: Deactivate and stow the Z probe
- */
-void GcodeSuite::M402() {
-  probe.stow();
-  #ifdef Z_AFTER_PROBING
-    probe.move_z_after_probing();
-  #endif
-  report_current_position();
-}
+#include "../inc/MarlinConfig.h"
 
-#endif // HAS_BED_PROBE
+class ZStepperAlign {
+  public:
+    static xy_pos_t xy[NUM_Z_STEPPER_DRIVERS];
+
+    #if ENABLED(Z_STEPPER_ALIGN_KNOWN_STEPPER_POSITIONS)
+      static xy_pos_t stepper_xy[NUM_Z_STEPPER_DRIVERS];
+    #endif
+
+  static void reset_to_default();
+};
+
+extern ZStepperAlign z_stepper_align;
