@@ -115,9 +115,15 @@ bool relative_mode; // = false;
  */
 xyze_pos_t destination; // {0}
 
+// G60/G61 Position Save and Return
+#if SAVED_POSITIONS
+  uint8_t saved_slots[(SAVED_POSITIONS + 7) >> 3];
+  xyz_pos_t stored_position[SAVED_POSITIONS];
+#endif
+
 // The active extruder (tool). Set with T<extruder> command.
 #if EXTRUDERS > 1
-  uint8_t active_extruder; // = 0
+  uint8_t active_extruder = 0; // = 0
 #endif
 
 #if ENABLED(LCD_SHOW_E_TOTAL)
