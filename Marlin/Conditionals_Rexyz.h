@@ -342,10 +342,15 @@
     #define REXYZ_EXTRUDERS 1
 #endif
 #if defined(REXYZ_N_TYPE)
+  #if defined(REXYZ_N3G)    // 24 Volt
+    #define REXYZ_DEFAULT_Kp 21.20
+    #define REXYZ_DEFAULT_Ki 1.14
+    #define REXYZ_DEFAULT_Kd 98.48
+  #else
     #define REXYZ_DEFAULT_Kp 9.60
     #define REXYZ_DEFAULT_Ki 0.56
     #define REXYZ_DEFAULT_Kd 41.53
-
+  #endif
     #define REXYZ_PREHEAT_1_TEMP_BED  60
     #define REXYZ_PREHEAT_2_TEMP_BED  90
     #define REXYZ_TEMP_SENSOR_1 0
