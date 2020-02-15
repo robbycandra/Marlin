@@ -296,7 +296,6 @@
 #define BOARD_GTM32_REV_B             4023  // STM32F103VET6 controller
 #define BOARD_REXYZ_DLION_D2          4068  // Dlion Rexyz D2 (STM32F103ZET6)
 
-
 //
 // ARM Cortex-M4F
 //
@@ -340,6 +339,11 @@
 #define BOARD_MRR_ESPA                6001
 #define BOARD_MRR_ESPE                6002
 #define BOARD_E4D_BOX                 6003  // E4d@BOX
+
+//
+// SAMD51 ARM Cortex M4
+//
+#define BOARD_AGCM4_RAMPS_144         6100  // RAMPS 1.4.4
 
 //
 // Simulations
